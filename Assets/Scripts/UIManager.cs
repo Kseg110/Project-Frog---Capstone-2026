@@ -3,32 +3,51 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("Sub-menus")]
-    public GameObject settingsSubMenu;  // Contain Audio, Video, Language, Controls
+    [Header("Sub-Menus")]
+    [SerializeField] private GameObject audioMenu;
+    [SerializeField] private GameObject videoMenu;
+    [SerializeField] private GameObject controlsMenu;
 
     [Header("Primary Buttons")]
-    public GameObject startButton;
-    public GameObject optionButton;
-    public GameObject exitButton;
-    public GameObject creditsButton;
+    [SerializeField] private GameObject startButton;
+    [SerializeField] private GameObject optionButton;
+    [SerializeField] private GameObject exitButton;
+    [SerializeField] private GameObject creditsButton;
 
-    private bool isStartExpanded = false;
-    private bool isSettingsExpanded = false;
+    [Header("Audio")]
+    [SerializeField] private GameObject sfxSlider;
+    [SerializeField] private GameObject musicSlider;
+    [SerializeField] private GameObject sfxLabel;
+    [SerializeField] private GameObject musicLabel;
 
-    void Start()
+    private bool isOptionsExpanded;
+    private bool isAudioMenuOpen;
+
+    private void Start()
     {
-        settingsSubMenu.SetActive(false);
+        audioMenu.SetActive(false);
+        videoMenu.SetActive(false);
+        controlsMenu.SetActive(false);
+        sfxSlider.SetActive(false);
+        sfxLabel.SetActive(false);
+        musicSlider.SetActive(false);
+        musicLabel.SetActive(false);
     }
 
     // --- call primary fonction ---
     public void OnStartClicked()
     {
-        SceneManager.LoadScene("gameScene");
+        SceneManager.LoadScene("GameScene");
     }
 
     public void OnOptionsClicked()
     {
-       
+        // open/close settings menu
+        isOptionsExpanded = !isOptionsExpanded;
+        
+        audioMenu.SetActive(isOptionsExpanded);
+        videoMenu.SetActive(isOptionsExpanded);
+        controlsMenu.SetActive(isOptionsExpanded);
     }
 
     public void OnExitClicked()
@@ -41,16 +60,10 @@ public class UIManager : MonoBehaviour
 
     public void OnCreditsClicked()
     {
-
+        // Load credits scene or display credits
     }
 
-    // --- call sub menu ---
-
-    public void OnAudioClicked()
-    {
-        Debug.Log("Menu Audio open");
-        // show audio options
-    }
+    //Sub-menu functions
 
     public void OnVideoClicked()
     {
@@ -58,10 +71,16 @@ public class UIManager : MonoBehaviour
         // show video options
     }
 
-    public void OnLanguageClicked()
+    public void OnAudioClicked()
     {
-        Debug.Log("Menu Language open");
-        // show language options
+        // open/close audio options
+        isAudioMenuOpen = !isAudioMenuOpen;
+
+        sfxSlider.SetActive(isAudioMenuOpen);
+        sfxLabel.SetActive(isAudioMenuOpen);
+        musicSlider.SetActive(isAudioMenuOpen);
+        musicLabel.SetActive(isAudioMenuOpen);
+
     }
 
     public void OnControlsClicked()
