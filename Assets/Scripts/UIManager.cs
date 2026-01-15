@@ -113,6 +113,8 @@ public class UIManager : MonoBehaviour
         // open/close audio options
         isAudioMenuOpen = !isAudioMenuOpen;
 
+        masterSlider.SetActive(isAudioMenuOpen);
+        masterLabel.SetActive(isAudioMenuOpen);
         sfxSlider.SetActive(isAudioMenuOpen);
         sfxLabel.SetActive(isAudioMenuOpen);
         musicSlider.SetActive(isAudioMenuOpen);
