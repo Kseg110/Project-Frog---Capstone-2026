@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("Sub-Menus")]
+    [Header("Sub-Menus Options")]
     [SerializeField] private GameObject audioMenu;
     [SerializeField] private GameObject videoMenu;
     [SerializeField] private GameObject controlsMenu;
@@ -14,14 +14,26 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject exitButton;
     [SerializeField] private GameObject creditsButton;
 
-    [Header("Audio")]
+    [Header("Sub-Menus Audio")]
     [SerializeField] private GameObject sfxSlider;
-    [SerializeField] private GameObject musicSlider;
     [SerializeField] private GameObject sfxLabel;
+    [SerializeField] private GameObject musicSlider;
     [SerializeField] private GameObject musicLabel;
+    [SerializeField] private GameObject masterSlider;
+    [SerializeField] private GameObject masterLabel;
+
+    [Header("Sub-Menus Video")]
+
+
+    [Header("Sub-Menus Controls")]
+    [SerializeField] private GameObject keyboardImage;
+    [SerializeField] private GameObject controllerImage;
+
 
     private bool isOptionsExpanded;
     private bool isAudioMenuOpen;
+    private bool isVideoMenuOpen;
+    private bool isControlsOpen;
 
     private void Start()
     {
@@ -32,6 +44,10 @@ public class UIManager : MonoBehaviour
         sfxLabel.SetActive(false);
         musicSlider.SetActive(false);
         musicLabel.SetActive(false);
+        masterSlider.SetActive(false);
+        masterLabel.SetActive(false);
+        keyboardImage.SetActive(false);
+        controllerImage.SetActive(false);
     }
 
     // --- call primary fonction ---
@@ -58,6 +74,16 @@ public class UIManager : MonoBehaviour
             sfxLabel.SetActive(false);
             musicSlider.SetActive(false);
             musicLabel.SetActive(false);
+            masterSlider.SetActive(false);
+            masterLabel.SetActive(false);
+        }
+
+        // Close controls sub-menu if options menu is closed
+        if (!isOptionsExpanded)
+        {
+            isControlsOpen = false;
+            keyboardImage.SetActive(false);
+            controllerImage.SetActive(false);
         }
     }
 
@@ -95,7 +121,9 @@ public class UIManager : MonoBehaviour
 
     public void OnControlsClicked()
     {
-        Debug.Log("Menu Control open");
-        // show controls options
+        isControlsOpen = !isControlsOpen;
+
+        keyboardImage.SetActive(isControlsOpen);
+        controllerImage.SetActive(isControlsOpen);
     }
 }
