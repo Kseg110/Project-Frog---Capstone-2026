@@ -4,12 +4,14 @@ using UnityEngine.InputSystem;
 public class AttackScript : MonoBehaviour
 {
     [Header("Charge Settings")]
-    public float maxChargeTime = 2f;
-    public float minChargeTime = 0.1f;
+    [SerializeField] private float maxChargeTime = 2f;
+    [SerializeField] private float minChargeTime = 0f;
 
     [Header("Projectile")]
-    public GameObject projectilePrefab;
-    public Transform firePoint;
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private Transform firePoint;
+    [SerializeField] private float fireCooldown = 0.5f;
+    private float lastFireTime = -999f;
 
     private PlayerInputActions input;
     private float chargeTimer;
@@ -31,6 +33,14 @@ public class AttackScript : MonoBehaviour
                 Debug.LogError("FrogTongue reference not found on this GameObject");
             }
         }
+    }
+
+    private bool CanShoot()
+    {
+        if (frogTongue == null)
+            return true; 
+
+        return !frogTongue.extending && !frogTongue.retracting;
     }
 
     private void OnEnable()
@@ -61,18 +71,26 @@ public class AttackScript : MonoBehaviour
     private void StartCharging()
     {
         isCharging = true;
-        chargeTimer = 0f;
+        chargeTimer = minChargeTime;
+
+        if (!CanShoot()) return;
     }
 
     private void ReleaseCharging()
     {
         if (!isCharging) return;
 
+        if (!CanShoot()) return;
+
+        if (Time.time < lastFireTime + fireCooldown) return;
+
         isCharging = false;
 
         float chargePercent = Mathf.Clamp01(chargeTimer / maxChargeTime);
 
         FireProjectile(chargePercent);
+
+        lastFireTime = Time.time; 
     }
 
     private void FireProjectile(float chargePercent)

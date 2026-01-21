@@ -9,29 +9,27 @@ public class FrogTongue : MonoBehaviour
     [SerializeField] private float tongueWidth = 0.3f;
 
     private float currentLength = 0f;
-    private bool extending = false;
-    public bool retracting = false;
+    public bool extending = false; //keep public 
+    public bool retracting = false; //keep public
 
     public void BeginTongue()
     {
+        if (retracting) return;
         extending = true;
         retracting = false;
-        currentLength = 0f;
-        UpdateTongueVisual();
     }
 
     public void EndTongue()
     {
-        extending = false;
-        retracting = true;
-        currentLength = 0f;
-        UpdateTongueVisual();
+        if (!retracting)
+        {
+            extending = false;
+            retracting = true;
+        }
     }
 
     private void Update()
     {
-        if (!extending) return;
-
         if (extending)
         {
             currentLength += extendSpeed * Time.deltaTime;
@@ -39,6 +37,7 @@ public class FrogTongue : MonoBehaviour
             {
                 currentLength = maxLength;
                 extending = false;
+                EndTongue();
             }
         } 
         else if (retracting)
