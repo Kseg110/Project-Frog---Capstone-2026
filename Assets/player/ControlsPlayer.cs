@@ -26,6 +26,7 @@ public class TopDownControllerWithDash : MonoBehaviour
     [SerializeField] private Collider col;
 
     private Vector3 inputDir = Vector3.zero;
+    private Vector3 dashDirection = Vector3.forward;
     private float verticalVelocity = 0f;
     [SerializeField] private bool isGrounded = false;
 
@@ -57,16 +58,24 @@ public class TopDownControllerWithDash : MonoBehaviour
 
     void Update()
     {
-        // Read movement input
+        // Read raw movement input each frame but only apply to inputDir when not dashing
         float hx = Input.GetAxisRaw("Horizontal");
         float hz = Input.GetAxisRaw("Vertical");
-        inputDir = new Vector3(hx, 0f, hz).normalized;
+        Vector3 rawInput = new Vector3(hx, 0f, hz).normalized;
 
-        // Dash input detection
+        if (!isDashing)
+        {
+            // update movement direction when not dashing
+            inputDir = rawInput;
+        }
+
+        // Dash input detection - start dash using current inputDir (or forward when no input)
         if (!isDashing && Time.time >= lastDashTime + dashCooldown)
         {
             if (!string.IsNullOrEmpty(dashInputName) && Input.GetButtonDown(dashInputName))
             {
+                // lock dash direction at start
+                dashDirection = (inputDir.sqrMagnitude > 0.01f) ? inputDir : transform.forward;
                 isDashing = true;
                 dashTimer = dashDuration;
                 lastDashTime = Time.time;
@@ -83,8 +92,8 @@ public class TopDownControllerWithDash : MonoBehaviour
         // speed & dash bookkeeping
         float currentSpeed = UpdateDashAndGetSpeed(dt);
 
-        // horizontal movement
-        Vector3 horizontalMove = inputDir * currentSpeed;
+        // horizontal movement: when dashing use locked dashDirection, otherwise use inputDir
+        Vector3 horizontalMove = (isDashing ? dashDirection : inputDir) * currentSpeed;
 
         // gravity integration
         verticalVelocity += -gravity * dt;
@@ -208,5 +217,4 @@ public class TopDownControllerWithDash : MonoBehaviour
         return newPos;
     }
 
-    // Mesh combining helper omitted (unchanged) - keep original CreateMeshColliderFromChildren implementation if present elsewhere
 }
