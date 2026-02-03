@@ -16,6 +16,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     [SerializeField] private Health health;
 
+    [SerializeField] private Transform player;
+
     protected virtual void Awake()
     {
         agent = GetComponent<NavMeshAgent>(); 
