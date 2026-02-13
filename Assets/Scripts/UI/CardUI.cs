@@ -9,6 +9,7 @@ public class CardUI : MonoBehaviour
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI title;
     [SerializeField] private TextMeshProUGUI description;
+    [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private Button button;
 
     [Header("Frame Sprites")]
@@ -28,6 +29,12 @@ public class CardUI : MonoBehaviour
         icon.sprite = data.icon;
         title.text = data.cardName;
         description.text = data.description;
+
+        // Set level text
+        if (data.IsMaxed)
+            levelText.text = "MAX";
+        else
+            levelText.text = "Lvl " + (data.currentLevel + 1);
 
         // Set frame based on element
         switch (data.element)

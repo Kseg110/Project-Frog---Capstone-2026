@@ -4,7 +4,7 @@ using UnityEngine;
 public class CardSelectionUI : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private EnemySpawnWaves waveSpawner;
+    [SerializeField] private WaveRoundSystem waveSpawner;
     [SerializeField] private Transform cardContainer;
     [SerializeField] private CardUI cardUIPrefab;
     [SerializeField] private CardPoolManager cardPool;
@@ -52,6 +52,6 @@ public class CardSelectionUI : MonoBehaviour
         Time.timeScale = 1f;
 
         // Start next wave
-        waveSpawner.SpawnNextWave();
+        waveSpawner.StartNextWave();
     }
 }
