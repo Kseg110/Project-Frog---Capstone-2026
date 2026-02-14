@@ -17,28 +17,44 @@ public enum CardRarity
 public class CardData : ScriptableObject
 {
     [Header("Basic Info")]
-    public string cardName;
-    [TextArea] public string description;
+    [SerializeField] private string cardName;
+    [SerializeField,TextArea] private string description;
 
     [Header("Classification")]
-    public AnchorElement element;
-    public CardRarity rarity;
+    [SerializeField] private AnchorElement element;
+    [SerializeField] private CardRarity rarity;
 
     [Header("Visuals")]
-    public Sprite icon;
+    [SerializeField] private Sprite icon;
 
     [Header("Leveling")]
     // Example: [1,2,3] = 3 levels
-    public float[] levelValues;
+    [SerializeField] private float[] levelValues;
 
     // Runtime tracking (not saved in asset)
-    [HideInInspector] public int currentLevel = 0;
+    [HideInInspector][SerializeField] private int currentLevel = 0;
 
+    public string CardName => cardName;
+    public string Description => description;
+    public AnchorElement Element => element;
+    public CardRarity Rarity => rarity;
+    public Sprite Icon => icon;
+
+    public int CurrentLevel
+        {
+        get => currentLevel;
+        set => currentLevel = Mathf.Clamp(value, 0, MaxLevel-1);
+        }
     public int MaxLevel => levelValues != null ? levelValues.Length : 1;
 
-    public bool IsMaxed => currentLevel >= MaxLevel;
+    public bool IsMaxed => currentLevel >= MaxLevel-1;
 
-    public float CurrentValue => levelValues != null && currentLevel < levelValues.Length
-        ? levelValues[currentLevel]
-        : 0f;
+    public float CurrentValue
+    {
+        get
+        {
+            int index = Mathf.Clamp(currentLevel, 0, MaxLevel - 1);
+            return levelValues != null ? levelValues[index] : 0f;
+        }
+    }
 }

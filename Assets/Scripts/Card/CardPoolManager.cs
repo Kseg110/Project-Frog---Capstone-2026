@@ -9,8 +9,8 @@ public class CardPoolManager : MonoBehaviour
     private List<CardData> availableCards = new List<CardData>();
 
     [Header("Rarity Chances")]
-    [Range(0, 100)] public int commonChance = 90;
-    [Range(0, 100)] public int rareChance = 10;
+    [SerializeField, Range(0, 100)] private int commonChance = 90;
+    [SerializeField, Range(0, 100)] private int rareChance = 10;
 
     private void Awake()
     {
@@ -18,8 +18,8 @@ public class CardPoolManager : MonoBehaviour
         availableCards = new List<CardData>(allCards);
 
         // Reset all card levels at the start of a run
-        foreach (var card in availableCards)
-            card.currentLevel = 0;
+        foreach (CardData card in availableCards)
+            card.CurrentLevel = 0;
     }
 
     public List<CardData> GetRandomCards(int count)
@@ -47,10 +47,12 @@ public class CardPoolManager : MonoBehaviour
         // First: filter by rarity based on chance
         int roll = Random.Range(0, 100);
 
-        CardRarity targetRarity = (roll < rareChance) ? CardRarity.Rare : CardRarity.Common;
+        CardRarity targetRarity = (roll < rareChance)
+            ? CardRarity.Rare
+            : CardRarity.Common;
 
         // Try to get cards of that rarity
-        List<CardData> rarityPool = pool.FindAll(c => c.rarity == targetRarity && !c.IsMaxed);
+        List<CardData> rarityPool = pool.FindAll(c => c.Rarity == targetRarity && !c.IsMaxed);
 
         // If none available, fallback to any card
         if (rarityPool.Count == 0)
@@ -66,7 +68,7 @@ public class CardPoolManager : MonoBehaviour
     public void OnCardChosen(CardData card)
     {
         // Increase level
-        card.currentLevel++;
+        card.CurrentLevel++;
 
         // If maxed OR only 1 level → remove from pool
         if (card.IsMaxed)

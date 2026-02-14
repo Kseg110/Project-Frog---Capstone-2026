@@ -26,18 +26,18 @@ public class CardUI : MonoBehaviour
         onSelected = callback;
 
         // Set visuals
-        icon.sprite = data.icon;
-        title.text = data.cardName;
-        description.text = data.description;
+        icon.sprite = data.Icon;
+        title.text = data.CardName;
+        description.text = data.Description;
 
         // Set level text
         if (data.IsMaxed)
             levelText.text = "MAX";
         else
-            levelText.text = "Lvl " + (data.currentLevel + 1);
+            levelText.text = "Lvl " + (data.CurrentLevel + 1);
 
         // Set frame based on element
-        switch (data.element)
+        switch (data.Element)
         {
             case AnchorElement.Fire:
                 backgroundFrame.sprite = fireCard;
