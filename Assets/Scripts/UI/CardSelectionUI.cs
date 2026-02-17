@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class CardSelectionUI : MonoBehaviour
@@ -68,12 +69,22 @@ public class CardSelectionUI : MonoBehaviour
         // Ask the pool for 3 valid cards
         List<CardData> selectedCards = cardPool.GetRandomCards(3);
 
-        foreach (CardData card in selectedCards)
+        StartCoroutine(SpawnCardsSequentially(selectedCards));
+    }
+
+    private IEnumerator SpawnCardsSequentially(List<CardData> cards)
+    {
+        foreach (CardData card in cards)
         {
             CardUI ui = Instantiate(cardUIPrefab, cardContainer);
             ui.Setup(card, OnCardChosen);
+
+            ui.PlaySpawnAnimation();
+
+            yield return new WaitForSecondsRealtime(0.35f);
         }
     }
+
 
     private void OnCardChosen(CardData chosenCard)
     {

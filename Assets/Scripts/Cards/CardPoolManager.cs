@@ -70,8 +70,8 @@ public class CardPoolManager : MonoBehaviour
         // Increase level
         card.CurrentLevel++;
 
-        // If maxed OR only 1 level → remove from pool
-        if (card.IsMaxed)
+        // Remove only when truly maxed (index-based levels)
+        if (card.CurrentLevel >= card.MaxLevel)
             availableCards.Remove(card);
     }
 }

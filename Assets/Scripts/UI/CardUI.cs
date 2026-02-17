@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class CardUI : MonoBehaviour
 {
@@ -17,6 +18,10 @@ public class CardUI : MonoBehaviour
     [SerializeField] private Sprite iceCard;
     [SerializeField] private Sprite windCard;
 
+    [Header("Spawn Animation")]
+    [SerializeField] private float spinDuration = 1.5f;
+    [SerializeField] private int spinTurns = 2;
+
     private CardData cardData;
     private System.Action<CardData> onSelected;
 
@@ -31,10 +36,22 @@ public class CardUI : MonoBehaviour
         description.text = data.Description;
 
         // Set level text
-        if (data.IsMaxed)
+        int nextLevel = data.CurrentLevel + 1;
+
+        if (data.MaxLevel == 1)
+        {
             levelText.text = "MAX";
+        }
+       
+        else if (nextLevel >= data.MaxLevel)
+        {
+            levelText.text = "MAX";
+        }
         else
-            levelText.text = "Lvl " + (data.CurrentLevel + 1);
+        {
+            levelText.text = "Lvl " + nextLevel;
+        }
+
 
         // Set frame based on element
         switch (data.Element)
@@ -53,5 +70,34 @@ public class CardUI : MonoBehaviour
         // Set button callback
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => onSelected(cardData));
+    }
+
+    public void PlaySpawnAnimation()
+    {
+        StartCoroutine(SpinIn());
+    }
+
+    private IEnumerator SpinIn()
+    {
+        float elapsed = 0f;
+
+        // Start rotated sideways (invisible)
+        Quaternion startRot = Quaternion.Euler(0, 90f, 0);
+        Quaternion endRot = Quaternion.Euler(0, 0, 0);
+
+        transform.rotation = startRot;
+
+        while (elapsed < spinDuration)
+        {
+            elapsed += Time.unscaledDeltaTime; // UI works even when game paused
+            float t = elapsed / spinDuration;
+
+            float angle = Mathf.Lerp(90f, 0f, t);
+            transform.rotation = Quaternion.Euler(0, angle, 0);
+
+            yield return null;
+        }
+
+        transform.rotation = endRot;
     }
 }

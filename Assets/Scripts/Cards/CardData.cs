@@ -40,20 +40,22 @@ public class CardData : ScriptableObject
     public CardRarity Rarity => rarity;
     public Sprite Icon => icon;
 
-    public int CurrentLevel
-        {
-        get => currentLevel;
-        set => currentLevel = Mathf.Clamp(value, 0, MaxLevel-1);
-        }
     public int MaxLevel => levelValues != null ? levelValues.Length : 1;
 
-    public bool IsMaxed => currentLevel >= MaxLevel-1;
+    // Maxed when currentLevel == MaxLevel
+    public bool IsMaxed => currentLevel >= MaxLevel;
+
+    public int CurrentLevel
+    {
+        get => currentLevel;
+        set => currentLevel = Mathf.Clamp(value, 0, MaxLevel);
+    }
 
     public float CurrentValue
     {
         get
         {
-            int index = Mathf.Clamp(currentLevel, 0, MaxLevel - 1);
+            int index = Mathf.Clamp(currentLevel - 1, 0, MaxLevel - 1);
             return levelValues != null ? levelValues[index] : 0f;
         }
     }
