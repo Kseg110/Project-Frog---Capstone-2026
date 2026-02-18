@@ -76,5 +76,4 @@ public class CardData : ScriptableObject
         float total = GetTotalValueUpToLevel(level);
         return descriptionTemplate.Replace("{value}", total.ToString());
     }
-
 }
