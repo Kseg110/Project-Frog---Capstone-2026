@@ -18,7 +18,7 @@ public class CardData : ScriptableObject
 {
     [Header("Basic Info")]
     [SerializeField] private string cardName;
-    [SerializeField,TextArea] private string description;
+    [SerializeField,TextArea] private string descriptionTemplate;
 
     [Header("Classification")]
     [SerializeField] private AnchorElement element;
@@ -35,7 +35,6 @@ public class CardData : ScriptableObject
     [HideInInspector][SerializeField] private int currentLevel = 0;
 
     public string CardName => cardName;
-    public string Description => description;
     public AnchorElement Element => element;
     public CardRarity Rarity => rarity;
     public Sprite Icon => icon;
@@ -59,4 +58,23 @@ public class CardData : ScriptableObject
             return levelValues != null ? levelValues[index] : 0f;
         }
     }
+
+    public float GetTotalValueUpToLevel(int level)
+    {
+        float total = 0f;
+
+        level = Mathf.Clamp(level, 0, MaxLevel - 1);
+
+        for (int i = 0; i <= level; i++)
+            total += levelValues[i];
+
+        return total;
+    }
+
+    public string GetDescriptionForLevel(int level)
+    {
+        float total = GetTotalValueUpToLevel(level);
+        return descriptionTemplate.Replace("{value}", total.ToString());
+    }
+
 }

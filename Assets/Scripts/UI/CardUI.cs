@@ -33,7 +33,7 @@ public class CardUI : MonoBehaviour
         // Set visuals
         icon.sprite = data.Icon;
         title.text = data.CardName;
-        description.text = data.Description;
+        description.text = data.GetDescriptionForLevel(data.CurrentLevel);
 
         // Set level text
         int nextLevel = data.CurrentLevel + 1;
@@ -89,7 +89,7 @@ public class CardUI : MonoBehaviour
 
         while (elapsed < spinDuration)
         {
-            elapsed += Time.unscaledDeltaTime; // UI works even when game paused
+            elapsed += Time.unscaledDeltaTime;
             float t = elapsed / spinDuration;
 
             float angle = Mathf.Lerp(90f, 0f, t);
