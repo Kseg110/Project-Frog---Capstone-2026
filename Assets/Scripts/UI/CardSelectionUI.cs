@@ -85,7 +85,6 @@ public class CardSelectionUI : MonoBehaviour
         }
     }
 
-
     private void OnCardChosen(CardData chosenCard)
     {
         // Tell the pool that this card was selected

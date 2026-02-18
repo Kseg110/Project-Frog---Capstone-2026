@@ -52,7 +52,6 @@ public class CardUI : MonoBehaviour
             levelText.text = "Lvl " + nextLevel;
         }
 
-
         // Set frame based on element
         switch (data.Element)
         {
