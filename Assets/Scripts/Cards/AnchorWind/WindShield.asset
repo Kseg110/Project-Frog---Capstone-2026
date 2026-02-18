@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: WindShield
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: Wind shield
-  description: 'On attach: gain a shield that blocks the next damage instance and
-    shoot 10 arrows in a radial burst, 36 degrees between each arrow. Break the shield
-    when untethered'
+  descriptionTemplate: Negates the next hit and fires 10 arrows around you.
   element: 2
   rarity: 1
   icon: {fileID: 21300000, guid: dc39b65f7264ead44834da902b83bc60, type: 3}

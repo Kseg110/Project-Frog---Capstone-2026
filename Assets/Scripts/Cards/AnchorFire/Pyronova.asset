@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Pyronova
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: Pyronova
-  description: Explosion damage +25% / +22.5% / +20% / +17.5% / +15%
+  descriptionTemplate: 'Explosion damage +{value}%
+
+'
   element: 0
   rarity: 0
   icon: {fileID: 21300000, guid: 2a47793a3b5798144b9ad26b13b77bed, type: 3}
@@ -23,4 +25,4 @@ MonoBehaviour:
   - 20
   - 17.5
   - 15
-  currentLevel: 4
+  currentLevel: 0
