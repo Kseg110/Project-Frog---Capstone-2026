@@ -20,6 +20,7 @@ public class WaveRoundSystem : MonoBehaviour
     
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
     private int enemiesDestroyedThisRound = 0;
+    public System.Action onWaveCompleted;
 
     void Start()
     {
@@ -38,7 +39,7 @@ public class WaveRoundSystem : MonoBehaviour
         // Check if all enemies are destroyed
         if (activeEnemies.Count == 0 && enemiesDestroyedThisRound > 0)
         {
-            NextRound();
+            onWaveCompleted?.Invoke();
         }
     }
 
@@ -85,7 +86,7 @@ public class WaveRoundSystem : MonoBehaviour
         }
     }
 
-    void NextRound()
+    public void StartNextWave()
     {
         if (currentRound < maxRounds)
         {
