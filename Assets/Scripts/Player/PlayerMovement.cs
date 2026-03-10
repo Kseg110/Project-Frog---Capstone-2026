@@ -34,7 +34,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private Vector3 lookDirection;
 
     private bool isDashing;
-    private bool movementStoppedExternally;
+    private bool isMovementStopped;
 
     private float dashTimer;
     private float dashCooldownTimer;
@@ -54,7 +54,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= Time.deltaTime;
 
-        if (movementStoppedExternally)
+        if (isMovementStopped)
             return;
 
         float horizontalMove = Input.GetAxisRaw("Horizontal");
@@ -102,7 +102,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     /// </summary>
     public void StopMovement(Vector3? forward = null)
     {
-        movementStoppedExternally = true;
+        isMovementStopped = true;
         moveInput = Vector3.zero;
 
         if (forward != null) { lookDirection = forward.Value; }
@@ -114,7 +114,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     /// </summary>
     public void ResumeMovement()
     {
-        movementStoppedExternally = false;
+        isMovementStopped = false;
     }
 
     private void StartDash()
