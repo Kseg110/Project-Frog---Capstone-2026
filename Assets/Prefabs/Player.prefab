@@ -88,6 +88,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1385755719057934092
 GameObject:
@@ -233,6 +234,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &3469857485663395449
 GameObject:
@@ -378,6 +380,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6972304314141020578
 GameObject:
@@ -467,6 +470,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7555014404437206304
 GameObject:
@@ -485,6 +489,9 @@ GameObject:
   - component: {fileID: 583013283057882193}
   - component: {fileID: 7273468441082437183}
   - component: {fileID: 1102886415016949637}
+  - component: {fileID: 2150624896423695695}
+  - component: {fileID: 4717439907184629741}
+  - component: {fileID: 2707616228792324877}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -599,7 +606,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
-  healthbar: {fileID: 8638861364232670842}
 --- !u!114 &583013283057882193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -612,8 +618,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b75fd584d563e284b8bb562648313fa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackScript
-  frogTongue: {fileID: 1102886415016949637}
-  maxTongueChargeTime: 0.5
 --- !u!114 &7273468441082437183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -627,8 +631,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TongueHit
   healAmountPerFly: 0
-  tongue: {fileID: 1102886415016949637}
-  playerHealth: {fileID: 5146856041539489363}
 --- !u!114 &1102886415016949637
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -642,10 +644,59 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTongueAttack
   tongueMesh: {fileID: 6728851348302234101}
-  tongueWidth: 0.3
   extendSpeed: 10
   maxExtendTime: 0.5
-  playerHealth: {fileID: 5146856041539489363}
+  retractionTimeReductionFactor: 2
+  tongueWidth: 0.3
+  tongueHeight: 1.4
+--- !u!114 &2150624896423695695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 860aa7f0e77ad5043a41e3e8a994658e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorProvider
+  CurrentAnchor: 0
+--- !u!136 &4717439907184629741
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2707616228792324877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2475c774a6d39348971ea5bc6ead638, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectHandler
 --- !u!1 &8300862678990091245
 GameObject:
   m_ObjectHideFlags: 0
@@ -768,6 +819,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1001 &4320579789020592354
 PrefabInstance:
@@ -936,14 +988,3 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2476142944374220348, guid: bed1b37891f5efc4c96b2ae3e58dac69, type: 3}
   m_PrefabInstance: {fileID: 4320579789020592354}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8638861364232670842 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5482761799958967960, guid: bed1b37891f5efc4c96b2ae3e58dac69, type: 3}
-  m_PrefabInstance: {fileID: 4320579789020592354}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 972099b45a89f824ba23ce7a71f73287, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Healthbar
