@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+using System;
+using System.Collections;
+using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
+using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
-public class EnemyBase : MonoBehaviour
+public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
-
-
+    [Header("References")]
+    [SerializedField] protected Transform player;
     public Transform Player => player;
 
     protected bool enableNav = true;
@@ -233,6 +237,12 @@ public class EnemyBase : MonoBehaviour
         animator.SetBool(attackParamName, false);
         attackTriggered = false; // allow next attack after cooldown
     }
-    
+
+    internal void ApplySlow(float slowMultiplier, float slowDuration)
+    {
+        throw new NotImplementedException();
+    }
+    #endregion
+
 }
 
