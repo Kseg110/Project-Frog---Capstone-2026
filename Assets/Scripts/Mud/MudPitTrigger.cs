@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MudpitTrigger : MonoBehaviour
+public class MudPitTrigger : MonoBehaviour
 {
     private MudPit mudpit;
 
