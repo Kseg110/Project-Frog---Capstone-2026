@@ -1,8 +1,12 @@
-﻿using System.Collections;
-using Mono.Cecil;
+﻿// AnchorDamageManager
+// Applies periodic tower-type effects (Fire, Ice, Wind) to nearby enemies while the player
+// is actively grappling. Uses an overlap sphere to detect enemies within range and delegates
+// to the appropriate effect logic based on the current tower's type.
+
+using System.Collections;
 using UnityEngine;
 
-public class GrappleDamageTest1 : MonoBehaviour
+public class AnchorDamageManager : MonoBehaviour
 {
     [Header("References")]
     public PlayerGrapple playerGrapple;
@@ -21,7 +25,7 @@ public class GrappleDamageTest1 : MonoBehaviour
         if (playerGrapple == null || !playerGrapple.IsGrappling)
             return;
 
-        GrappleTower tower = playerGrapple.CurrentTower;
+        GrappleTowerManager tower = playerGrapple.CurrentTower;
         if (tower == null) return;
 
         effectTimer += Time.deltaTime;
@@ -33,7 +37,7 @@ public class GrappleDamageTest1 : MonoBehaviour
         }
     }
 
-    private void ApplyEffect(GrappleTower tower)
+    private void ApplyEffect(GrappleTowerManager tower)
     {
         Collider[] hits = Physics.OverlapSphere(
             transform.position,
@@ -46,18 +50,18 @@ public class GrappleDamageTest1 : MonoBehaviour
             Health enemy = hit.GetComponent<Health>();
             if (enemy == null || enemy.IsDead) continue;
 
-            switch (tower.towerType)
+            switch (tower.TowerType)
             {
                 case TowerType.Fire:
-                    StartCoroutine(ApplyBurn(enemy, tower.fireFields));
+                    StartCoroutine(ApplyBurn(enemy, tower.FireFields));
                     break;
 
                 case TowerType.Ice:
-                    ApplyIce(enemy, tower.iceFields);
+                    ApplyIce(enemy, tower.IceFields);
                     break;
 
                 case TowerType.Wind:
-                    ApplyWind(enemy, tower.windFields);
+                    ApplyWind(enemy, tower.WindFields);
                     break;
             }
         }
@@ -68,34 +72,31 @@ public class GrappleDamageTest1 : MonoBehaviour
     {
         float timer = 0f;
 
-        while (timer < fire.burnDuration && enemy != null && !enemy.IsDead)
+        while (timer < fire.BurnDuration && enemy != null && !enemy.IsDead)
         {
-            enemy.TakeDmg(fire.damage);
-            yield return new WaitForSeconds(fire.burnTickRate);
-            timer += fire.burnTickRate;
+            enemy.TakeDmg(fire.Damage);
+            yield return new WaitForSeconds(fire.BurnTickRate);
+            timer += fire.BurnTickRate;
         }
     }
 
     // ---------------- ICE ----------------
     private void ApplyIce(Health enemy, IceTowerFields ice)
     {
-        float iceDamage = ice.damage * ice.damageMultiplier;
+        float iceDamage = ice.Damage * ice.DamageMultiplier;
         enemy.TakeDmg(iceDamage);
 
-        // Apply slow directly to EnemyFrogSkeleton
         EnemyBase enemyBase = enemy.GetComponent<EnemyBase>();
         if (enemyBase != null)
         {
-            enemyBase.ApplySlow(ice.slowMultiplier, ice.slowDuration);
+            enemyBase.ApplySlow(ice.SlowMultiplier, ice.SlowDuration);
         }
-
     }
-
 
     // ---------------- WIND ----------------
     private void ApplyWind(Health enemy, WindTowerFields wind)
     {
-        float windDamage = wind.damage * wind.damageMultiplier;
+        float windDamage = wind.Damage * wind.DamageMultiplier;
         enemy.TakeDmg(windDamage);
     }
 
