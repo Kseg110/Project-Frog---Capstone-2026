@@ -42,7 +42,7 @@ public class EnemyBase : MonoBehaviour
     protected bool attackTriggered = false;
     [SerializeField] protected float attackTimer = 0f;
     [SerializeField] protected float cooldownTimer = 0f;
-    [SerializeField] float FinleSpeed = 3.5f;
+    [SerializeField] protected float FinalSpeed = 3.5f;
     [SerializeField] private float negetivepush = 1;
     Coroutine slowCoroutine;
     float originalSpeed;
@@ -75,8 +75,8 @@ public class EnemyBase : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
-        FinleSpeed = Speed;
-        agent.speed = FinleSpeed;
+        FinalSpeed = Speed;
+        agent.speed = FinalSpeed;
         agent.acceleration = acceleration;
         agent.stoppingDistance = stoppingDistance;
         agent.updateRotation = false;
@@ -95,7 +95,7 @@ public class EnemyBase : MonoBehaviour
         if (player == null) return;
         HandleAttackTimers();
         CheckAttackCondition();
-        agent.speed = FinleSpeed;
+        agent.speed = FinalSpeed;
 
         UpdateHitBox();
         //EnforcePlayerDistance();
@@ -186,14 +186,14 @@ public class EnemyBase : MonoBehaviour
             isAttacking = true;
             canAttack = true;
             attackTimer = attackDuration;
-            FinleSpeed = Speed * 0.1f;
+            FinalSpeed = Speed * 0.1f;
 
 
         }
         if (attackTimer <= 0f && cooldownTimer >= 0f)
         {
 
-            FinleSpeed = Speed;
+            FinalSpeed = Speed;
             // Attack finished
             isAttacking = false;
             canAttack = false;
@@ -233,164 +233,6 @@ public class EnemyBase : MonoBehaviour
         animator.SetBool(attackParamName, false);
         attackTriggered = false; // allow next attack after cooldown
     }
-    //private void EnforcePlayerDistance()
-    //{
-    //    if (player == null) return;
-
-    //    float minDistance = stoppingDistance - negetivepush;
-    //    Vector3 direction = transform.position - player.position;
-    //    float currentDistance = direction.magnitude;
-
-    //    // If enemy is too close to player
-    //    if (currentDistance < minDistance)
-    //    {
-    //        Vector3 pushDir = direction.normalized;
-
-    //        // If exactly same position (rare but safe check)
-    //        if (pushDir == Vector3.zero)
-    //            pushDir = -player.forward;
-
-    //        Vector3 targetPosition = player.position + pushDir * minDistance;
-
-    //        // Move enemy to safe position
-    //        agent.Warp(targetPosition);
-    //    }
-    //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 }
 
-
-
-//public Transform Player => player;
-
-//    protected bool enableNav = true;
-//    protected NavMeshAgent agent;
-//    public NavMeshAgent Agent => agent;
-
-
-
-
-
-
-
-
-
-
-//// Enemy BaseClass
-//public abstract class EnemyBase : MonoBehaviour, IDamageable
-//{
-//    [Header("References")]
-//    [SerializeField] protected Transform player;
-
-//    protected bool enableNav = true;
-//    protected NavMeshAgent agent;
-
-//    protected bool canAttack = true;
-
-//    [Header("References")]
-//    [SerializeField] protected GameObject attackHitbox;
-//    [SerializeField] private protected Health health;
-
-
-
-//    private bool isActive;
-//    private Rigidbody rb;
-
-//    public void Activate(Transform playerTransform)
-//    {
-//        player = playerTransform;
-//        isActive = true;
-//        rb.isKinematic = false;
-//    }
-//    protected virtual void Awake()
-//    {
-//        agent = GetComponent<NavMeshAgent>();
-//        rb = GetComponent<Rigidbody>();
-
-//        // Initialize health component
-//        if (health == null)
-//        {
-//            health = GetComponent<Health>();
-//            if (health == null)
-//            {
-//                Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
-//                health = gameObject.AddComponent<Health>();
-
-//                //// Add Healthbar if missing (required by Health)
-//                //if (GetComponent<Healthbar>() == null)
-//                //{
-//                //    gameObject.AddComponent<Healthbar>();
-//                //}
-//            }
-//        }
-
-//        if (player == null)
-//        {
-//            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-//            if (playerObject != null)
-//            {
-//                player = playerObject.transform;
-//                Debug.Log($"Found player: {player.name}");
-//            }
-//            else
-//            {
-//                Debug.LogError("No GameObject with 'Player' tag found!");
-//            }
-//        }
-//          enableNav = true;
-//    }
-
-//    protected virtual void Update()
-//    {
-//        if (health != null && health.IsDead) return;
-//    }
-
-//    #region Health
-//    void IDamageable.TakeDmg(float dmg)
-//    {
-//        if (health != null)
-//            health.TakeDmg(dmg);
-//    }
-//    #endregion
-
-//    #region Navigation
-
-//    public virtual void MoveTo(Vector3 destination)
-//    {
-//        if (!enableNav) return;
-
-//        agent.isStopped = false;
-//        agent.SetDestination(destination);
-
-//    }
-//    public virtual void StopMovement()
-//    {
-//        if (!enableNav) return;
-//        agent.isStopped = true;
-//    }
-//    public virtual void ResumeMovement()
-//    {
-//        if (!enableNav) return;
-//        agent.isStopped = false;
-//    }
-//    #endregion
-
-//}
