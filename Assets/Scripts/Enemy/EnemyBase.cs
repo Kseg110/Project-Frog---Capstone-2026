@@ -4,11 +4,11 @@ using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
-public abstract class EnemyBase : MonoBehaviour, IDamageable
+
+public abstract class EnemyBase : MonoBehaviour //,IDamageable
 {
     [Header("References")]
-    [SerializedField] protected Transform player;
+    protected Transform player;
     public Transform Player => player;
 
     protected bool enableNav = true;
@@ -22,8 +22,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     protected NavMeshAgent agent;
     public NavMeshAgent Agent => agent;
-
-    protected Transform player;
 
     [Header("Hitbox Settings")]
     [SerializeField] protected BoxCollider attackHitbox;
@@ -238,11 +236,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         attackTriggered = false; // allow next attack after cooldown
     }
 
-    internal void ApplySlow(float slowMultiplier, float slowDuration)
-    {
-        throw new NotImplementedException();
-    }
-    #endregion
+    //internal void ApplySlow(float slowMultiplier, float slowDuration)
+    //{
+    //    throw new NotImplementedException();
+    //}
+    //#endregion
 
 }
 
