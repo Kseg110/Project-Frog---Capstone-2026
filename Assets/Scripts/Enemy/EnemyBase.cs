@@ -8,7 +8,7 @@ using UnityEngine.AI;
 public abstract class EnemyBase : MonoBehaviour //,IDamageable
 {
     [Header("References")]
-    protected Transform player;
+    [SerializeField] protected Transform player;
     public Transform Player => player;
 
     protected bool enableNav = true;
@@ -120,7 +120,7 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
         }
         else
         {
-            StopMovement();
+            //StopMovement();
         }
     }
 

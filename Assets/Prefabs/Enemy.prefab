@@ -67,7 +67,6 @@ GameObject:
   - component: {fileID: 634599614488036655}
   - component: {fileID: 8494639530999919038}
   - component: {fileID: -8664719875652962865}
-  - component: {fileID: 4700711488213680328}
   - component: {fileID: -1992746306456541990}
   - component: {fileID: 3860380783638562474}
   - component: {fileID: 5587405099960226647}
@@ -214,11 +213,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 761d290fbdb13bd4c88c04afa55cabe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviorRise
+  player: {fileID: 0}
   Speed: 3.5
   acceleration: 8
   rotationSpeed: 8
   stoppingDistance: 1.5
-  attackHitbox: {fileID: 0}
+  attackHitbox: {fileID: 4123033000808275663}
   attackRange: 1
   triggerhit: 0
   canAttack: 0
@@ -229,41 +229,8 @@ MonoBehaviour:
   isAttacking: 0
   attackTimer: 0
   cooldownTimer: 0
-  FinleSpeed: 3.5
+  FinalSpeed: 3.5
   negetivepush: 1
-  attackRange: 1
---- !u!114 &4700711488213680328
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7052711535739665740}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: def641098795fe443bbeaebd962aecdc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SwampElder
-  player: {fileID: 0}
-  playerTag: Player
-  moveSpeed: 3.5
-  stopDistance: 0.6
-  faceTargetWhileChasing: 1
-  viewDistance: 12
-  viewHalfAngle: 55
-  obstructionLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  visionRefresh: 0.1
-  eyes: {fileID: 0}
-  eyeHeight: 1.6
-  useSeparation: 1
-  separationRadius: 1
-  separationStrength: 1
-  enemyLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  useNavMeshAgent: 1
 --- !u!114 &-1992746306456541990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,7 +280,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
-  healthbar: {fileID: 7104884652526591232}
 --- !u!1001 &3354953283169577880
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -580,14 +546,3 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2476142944374220348, guid: bed1b37891f5efc4c96b2ae3e58dac69, type: 3}
   m_PrefabInstance: {fileID: 3354953283169577880}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7104884652526591232 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5482761799958967960, guid: bed1b37891f5efc4c96b2ae3e58dac69, type: 3}
-  m_PrefabInstance: {fileID: 3354953283169577880}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 972099b45a89f824ba23ce7a71f73287, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Healthbar
