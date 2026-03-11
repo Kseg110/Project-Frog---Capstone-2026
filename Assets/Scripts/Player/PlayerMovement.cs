@@ -38,6 +38,9 @@ public class PlayerMovement : MonoBehaviour
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         playerGrapple = GetComponent<PlayerGrapple>(); // cached on awake 
+
+        capsuleCollider = GetComponent<CapsuleCollider>();
+
     }
 
     private void Update()
@@ -83,12 +86,52 @@ public class PlayerMovement : MonoBehaviour
         // Apply dynamic shrinking grapple wall
         moveVector = ClampToShrinkingGrappleWall(rb.position, moveVector);
 
-        rb.MovePosition(rb.position + moveVector);
+        // ✅ Move with collision
+        MoveWithCollision(moveVector);
 
         if (!isDashing && moveInput.sqrMagnitude > 0.0001f)
             transform.forward = moveInput;
     }
+    private CapsuleCollider capsuleCollider;
+    [SerializeField] private LayerMask collisionLayers;
+    private void MoveWithCollision(Vector3 motion)
+    {
+        Vector3 start = rb.position + capsuleCollider.center + Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
+        Vector3 end = rb.position + capsuleCollider.center - Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
 
+        if (!Physics.CapsuleCast(start, end, capsuleCollider.radius, motion.normalized, out RaycastHit hit, motion.magnitude, collisionLayers, QueryTriggerInteraction.Ignore))
+        {
+            rb.MovePosition(rb.position + motion);
+
+            if (isDashing && motion.sqrMagnitude > 0.0001f)
+                transform.forward = motion.normalized;
+
+            return;
+        }
+
+        Vector3 slide = Vector3.ProjectOnPlane(motion, hit.normal);
+
+        if (slide.sqrMagnitude < 0.0001f)
+            return;
+
+        rb.MovePosition(rb.position + slide);
+
+        if (isDashing)
+        {
+            Vector3 newForward = slide.normalized;
+
+            float maxRotate = 720f * Time.fixedDeltaTime;
+
+            transform.forward = Vector3.RotateTowards(
+                transform.forward,
+                newForward,
+                Mathf.Deg2Rad * maxRotate,
+                0f
+            );
+
+            dashDirection = newForward;
+        }
+    }
     private void UpdateGrappleStatus()
     {
         if (playerGrapple != null)
