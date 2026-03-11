@@ -1,4 +1,4 @@
-﻿// TetherRenderer
+﻿// PlayerTether - Requires Line Renderer
 // Renders a visual line between the player's fire point and the currently grappled tower
 // using a LineRenderer. The line is only drawn while the player is actively grappling
 // and a valid tower is attached. Automatically hides when the grapple is released.
@@ -6,9 +6,9 @@
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class TetherRenderer : MonoBehaviour
+public class PlayerTether : MonoBehaviour
 {
-    [SerializeField] private PlayerGrapple playerGrapple;
+    [SerializeField] private PlayerAnchor playerAnchor;
     [SerializeField] private Transform firePoint;
 
     private LineRenderer _lineRenderer;
@@ -27,12 +27,12 @@ public class TetherRenderer : MonoBehaviour
 
     private void HandleTether()
     {
-        if (playerGrapple == null || firePoint == null)
+        if (playerAnchor == null || firePoint == null)
             return;
 
-        if (playerGrapple.IsGrappling && playerGrapple.CurrentTower != null)
+        if (playerAnchor.IsTethered && playerAnchor.CurrentAnchor != null)
         {
-            DrawTether(playerGrapple.CurrentTower.transform.position);
+            DrawTether(playerAnchor.CurrentAnchor.transform.position);
         }
         else
         {
