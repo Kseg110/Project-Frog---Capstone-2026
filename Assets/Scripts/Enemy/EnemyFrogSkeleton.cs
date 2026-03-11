@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class EnemyFrogSkeleton : EnemyBase
 {
-    [Header("Attack config")]
-    [SerializeField] private float attackRange = 1f;
-
     protected override void Awake()
     {
         base.Awake();
@@ -21,9 +18,10 @@ public class EnemyFrogSkeleton : EnemyBase
             Debug.Log("player missing");
             return;
         }
+
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        if(distanceToPlayer < attackRange)
+        if (distanceToPlayer < attackRange)
         {
             StopMovement();
             if (canAttack)
@@ -32,6 +30,7 @@ public class EnemyFrogSkeleton : EnemyBase
             }
             return;
         }
+
         MoveTo(player.position);
     }
 

@@ -26,8 +26,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private float dashDistance = 5f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
-
+    [Header("Grapple Info")]
+    [SerializeField] private bool isGrappling;
     private Rigidbody rb;
+    private PlayerGrapple playerGrapple;
 
     private Vector3 moveInput;
     private Vector3 dashDirection;
@@ -41,15 +43,22 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     public bool IsDashing => isDashing;
 
+
+    private float currentMaxRadius; // The distance to the tower at this moment
+    private Vector3 towerPosition;
+    private readonly float currentMinRadius = 3f;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+        playerGrapple = GetComponent<PlayerGrapple>(); // cached on awake 
     }
 
     private void Update()
     {
+        UpdateGrappleStatus();
         // Update dash cooldown
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= Time.deltaTime;
@@ -70,20 +79,19 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void FixedUpdate()
     {
-        if (movementStoppedExternally) { 
-            transform.forward = lookDirection;
+        if (movementStoppedExternally)
             return;
-        }
 
-        // Dash movement
+        Vector3 moveVector;
+
         if (isDashing)
         {
+            moveVector = dashDirection * (dashDistance / dashDuration) * Time.fixedDeltaTime;
             dashTimer -= Time.fixedDeltaTime;
-            rb.MovePosition(rb.position + dashDirection * (dashDistance / dashDuration) * Time.fixedDeltaTime);
             if (dashTimer <= 0f)
                 EndDash();
-            return;
         }
+        else
 
      
         // If no dash, move normally
@@ -92,8 +100,70 @@ public class PlayerMovement : MonoBehaviour, IMovement
         // Rotate player to the move direction
         if (moveInput.sqrMagnitude > 0.0001f)
         {
-            transform.forward = moveInput;
+            moveVector = moveInput * moveSpeed * Time.fixedDeltaTime;
         }
+
+        // Apply dynamic shrinking grapple wall
+        moveVector = ClampToShrinkingGrappleWall(rb.position, moveVector);
+
+        rb.MovePosition(rb.position + moveVector);
+
+        if (!isDashing && moveInput.sqrMagnitude > 0.0001f)
+            transform.forward = moveInput;
+    }
+
+    private void UpdateGrappleStatus()
+    {
+        if (playerGrapple != null)
+            isGrappling = playerGrapple.IsGrappling;
+
+        if (isGrappling && playerGrapple.CurrentTower != null)
+        {
+            towerPosition = playerGrapple.CurrentTower.transform.position;
+
+            // Shrink currentMaxRadius as player moves closer, but never below currentMinRadius
+            float distanceToTower = Vector3.Distance(rb.position, towerPosition);
+            if (currentMaxRadius == 0f || distanceToTower < currentMaxRadius)
+                currentMaxRadius = Mathf.Max(distanceToTower, currentMinRadius);
+        }
+        else
+        {
+            currentMaxRadius = 0f; // Reset when player is not grappling
+        }
+    }
+
+    private Vector3 ClampToShrinkingGrappleWall(Vector3 currentPos, Vector3 moveVector)
+    {
+        if (!isGrappling)
+            return moveVector;
+
+        Vector3 proposedPos = currentPos + moveVector;
+        Vector3 offset = proposedPos - towerPosition;
+        float distance = offset.magnitude;
+
+        // Prevent moving farther than currentMaxRadius
+        if (distance > currentMaxRadius)
+        {
+            Vector3 toCenter = offset.normalized;
+            Vector3 tangentMove = moveVector - Vector3.Dot(moveVector, toCenter) * toCenter;
+
+            float overshoot = distance - currentMaxRadius;
+            tangentMove *= Mathf.Clamp01(1f - overshoot / moveVector.magnitude);
+
+            return tangentMove;
+        }
+
+        // Once inside min radius, block outward movement past it
+        Vector3 currentOffset = currentPos - towerPosition;
+        bool insideMinRadius = currentOffset.magnitude < currentMinRadius;
+
+        if (insideMinRadius && distance > currentMinRadius)
+        {
+            Vector3 toCenter = offset.normalized;
+            return moveVector - Vector3.Dot(moveVector, toCenter) * toCenter;
+        }
+
+        return moveVector;
     }
 
     /// <summary>
@@ -119,6 +189,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void StartDash()
     {
+        playerGrapple.ReleaseGrapple();
         isDashing = true;
         dashTimer = dashDuration;
 
@@ -131,6 +202,19 @@ public class PlayerMovement : MonoBehaviour, IMovement
         isDashing = false;
         dashCooldownTimer = dashCooldown;
     }
+    private void OnDrawGizmos()
+    {
+        if (!isGrappling)
+            return;
+
+        // Only draw if we have a valid tower
+        if (currentMaxRadius > 0f)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(towerPosition, currentMaxRadius);
+        }
+    }
+}
 
 
 
