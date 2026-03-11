@@ -6,7 +6,7 @@ using UnityEngine;
 public class MudPit : MonoBehaviour
 {
     [Header("Slow strength")]
-    [SerializeField] private float speedMult = 0.5f;
+    [SerializeField] private float speedMult = -0.5f;
 
     // Use to track how many colliders of THIS mudpit each player/enemy is inside
     private Dictionary<IMovement, int> insideCounts = new Dictionary<IMovement, int>();
