@@ -1,17 +1,22 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public abstract class EnemyBase : MonoBehaviour //,IDamageable
+public abstract class EnemyBase : MonoBehaviour, IMovement, IDamageable
 {
     [Header("References")]
+    [SerializeField] private protected Health health;
+    private bool isActive;
+    private Rigidbody rb;
+    private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
     protected Transform player;
     public Transform Player => player;
 
-    protected bool enableNav = true;
+    protected bool isNavEnabled = true;
 
     // ===== AI settings =====
     [Header("Movement")]
@@ -52,25 +57,14 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
 
     public void ApplySlow(float slowMultiplier, float duration)
     {
-        if (agent == null) return;
-
-        if (slowCoroutine != null)
-            StopCoroutine(slowCoroutine);
-
+        if (slowCoroutine != null) StopCoroutine(slowCoroutine);
         slowCoroutine = StartCoroutine(SlowRoutine(slowMultiplier, duration));
     }
     private IEnumerator SlowRoutine(float slowMultiplier, float duration)
     {
-        originalSpeed = Speed;
-
-        Speed *= slowMultiplier;
-        agent.speed = Speed;
-
+        AddSpeedModifier(this, slowMultiplier);
         yield return new WaitForSeconds(duration);
-
-        Speed = originalSpeed;
-        agent.speed = Speed;
-
+        RemoveSpeedModifier(this);
         slowCoroutine = null;
     }
     protected virtual void Awake()
@@ -83,6 +77,17 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
         agent.stoppingDistance = stoppingDistance;
         agent.updateRotation = false;
         agent.autoBraking = true;
+        rb = GetComponent <Rigidbody>();
+
+        if (health == null)
+        {
+            health = GetComponent<Health>();   
+            if (health == null)
+            {
+                Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
+                health = gameObject.AddComponent<Health>();
+            }
+        }
 
         GameObject playerObj = GameObject.FindWithTag("Player");
         if (playerObj != null)
@@ -94,6 +99,7 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
 
     protected virtual void Update()
     {
+        if (health != null && health.IsDead) return;
         if (player == null) return;
         HandleAttackTimers();
         CheckAttackCondition();
@@ -108,6 +114,7 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
     // ===== Movement =====
     protected void MoveTo(Vector3 position)
     {
+        if (!isNavEnabled) return;
         if (agent == null) return;
 
         float distance = Vector3.Distance(transform.position, position);
@@ -123,11 +130,51 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
             StopMovement();
         }
     }
+    public void Activate(Transform playerTransform)
+    {
+        player = playerTransform;
+        isActive = true;
+        if (rb != null) rb.isKinematic = true;
+    }
+
+    public virtual void ResumeMovement()
+    {
+        if (!isNavEnabled) return;
+        agent.isStopped = false;
+    }
 
     protected void StopMovement()
     {
+        if (!isNavEnabled) return;
         if (agent != null)
             agent.isStopped = true;
+    }
+
+    public void AddSpeedModifier(object source, float multiplier)
+    {
+        if (!speedModifiers.ContainsKey(source))
+        {
+            speedModifiers.Add(source, multiplier);
+            RecalculateSpeed();
+        }
+    }
+    public void RemoveSpeedModifier(object source)
+    {
+        if (speedModifiers.ContainsKey(source))
+        {
+            speedModifiers.Remove(source);
+            RecalculateSpeed();
+        }
+    }
+
+    private void RecalculateSpeed()
+    {
+        float finalMult = 1f;
+        foreach (var mult in speedModifiers.Values)
+            finalMult *= mult;
+
+        Speed = FinalSpeed * finalMult; // ties into new version's Speed field
+        agent.speed = Speed;
     }
 
     private void RotateTowardsMovement()
@@ -158,6 +205,11 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
                 attackRange
             );
         }
+    }
+    void IDamageable.TakeDmg(float dmg)
+    {
+        if (health != null)
+            health.TakeDmg(dmg);
     }
 
     public void StartHit() => triggerhit = true;
@@ -243,4 +295,3 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
     //#endregion
 
 }
-

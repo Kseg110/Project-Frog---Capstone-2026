@@ -1,11 +1,25 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerAnchor))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, IMovement
 {
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private float baseMoveSpeed = 10f;
+
+    private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
+
+    private float CurrentSpeed
+    {
+        get
+        {
+            float finalMult = 1f;
+            foreach (var mult in speedModifiers.Values)
+                finalMult *= mult;
+            return baseMoveSpeed * finalMult;
+        }
+    }
 
     [Header("Dash")]
     [SerializeField] private float dashDistance = 5f;
@@ -20,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 lookDirection;
 
     private bool isDashing;
-    private bool movementStoppedExternally;
+    private bool isMovementStopped;
     private bool isTethered;
 
     private float dashTimer;
@@ -50,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= Time.deltaTime;
 
-        if (movementStoppedExternally)
+        if (isMovementStopped)
             return;
 
         float horizontalMove = Input.GetAxisRaw("Horizontal");
@@ -66,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (movementStoppedExternally)
+        if (isMovementStopped)
             return;
 
         Vector3 moveVector;
@@ -80,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            moveVector = moveInput * moveSpeed * Time.fixedDeltaTime;
+            moveVector = moveInput * CurrentSpeed * Time.fixedDeltaTime;
         }
 
         // Apply dynamic shrinking grapple wall
@@ -90,6 +104,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (!isDashing && moveInput.sqrMagnitude > 0.0001f)
             transform.forward = moveInput;
+
+        if (isMovementStopped)
+        {
+            transform.forward = lookDirection;
+            return;
+        }
     }
 
     private void UpdateTetherStatus()
@@ -152,7 +172,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public void StopMovement(Vector3? forward = null)
     {
-        movementStoppedExternally = true;
+        isMovementStopped = true;
         moveInput = Vector3.zero;
 
         if (forward != null) { lookDirection = forward.Value; }
@@ -164,7 +184,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public void ResumeMovement()
     {
-        movementStoppedExternally = false;
+        isMovementStopped = false;
     }
 
     private void StartDash()
@@ -181,6 +201,18 @@ public class PlayerMovement : MonoBehaviour
     {
         isDashing = false;
         dashCooldownTimer = dashCooldown;
+    }
+
+    public void AddSpeedModifier(object source, float multiplier)
+    {
+        if (!speedModifiers.ContainsKey(source)) 
+            speedModifiers.Add(source, multiplier);
+    }
+
+    public void RemoveSpeedModifier(object source)
+    {
+        if (speedModifiers.ContainsKey(source))
+            speedModifiers.Remove(source);  
     }
     private void OnDrawGizmos()
     {
