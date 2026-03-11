@@ -12,11 +12,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
     [Header("References")]
     [SerializeField] protected Transform player;
 
-    protected bool enableNav = true;
+    protected bool isNavEnabled = true;
     protected NavMeshAgent agent;
     protected bool canAttack = true;
 
-    [Header("References")]
+    [Header("Combat")]
     [SerializeField] protected GameObject attackHitbox;
     [SerializeField] private protected Health health;
 
@@ -73,7 +73,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
                 Debug.LogError("No GameObject with 'Player' tag found!");
             }
         }
-          enableNav = true;
+          isNavEnabled = true;
     }
 
     protected virtual void Update()
@@ -93,7 +93,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
 
     public virtual void MoveTo(Vector3 destination)
     {
-        if (!enableNav) return;
+        if (!isNavEnabled) return;
 
         agent.isStopped = false;
         agent.SetDestination(destination);
@@ -101,12 +101,12 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
     }
     public virtual void StopMovement()
     {
-        if (!enableNav) return;
+        if (!isNavEnabled) return;
         agent.isStopped = true;
     }
     public virtual void ResumeMovement()
     {
-        if (!enableNav) return;
+        if (!isNavEnabled) return;
         agent.isStopped = false;
     }
     private void RecalculateSpeed()
