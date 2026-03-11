@@ -7,13 +7,11 @@ using UnityEngine;
 
 public class PlayerAnchor : MonoBehaviour
 {
-    [Header("Input")]
-    [SerializeField] private string TetherButton = "Fire3";
-
     private AnchorBase[] allAnchors;
     private AnchorBase currentAnchor;
 
-    [SerializeField] private bool isTethered;
+    private bool isTethered;
+
     public bool IsTethered => isTethered;
     public AnchorBase CurrentAnchor => currentAnchor;
 
@@ -36,7 +34,7 @@ public class PlayerAnchor : MonoBehaviour
 
     private void HandleInput()
     {
-        if (Input.GetButtonDown(TetherButton))
+        if (Input.GetButtonDown("Fire3"))
         {
             if (isTethered) // toggles tether
                 ReleaseTether();

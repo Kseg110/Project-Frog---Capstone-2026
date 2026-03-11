@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerAnchor))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
@@ -10,8 +11,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashDistance = 5f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
-    [Header("Grapple Info")]
-    [SerializeField] private bool isTethered;
+
     private Rigidbody rb;
     private PlayerAnchor playerAnchor;
 
@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isDashing;
     private bool movementStoppedExternally;
+    private bool isTethered;
 
     private float dashTimer;
     private float dashCooldownTimer;
@@ -37,12 +38,14 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
-        playerAnchor = GetComponent<PlayerAnchor>(); // cached on awake 
+
+        playerAnchor = GetComponent<PlayerAnchor>();
     }
 
     private void Update()
     {
         UpdateTetherStatus();
+
         // Update dash cooldown
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= Time.deltaTime;
