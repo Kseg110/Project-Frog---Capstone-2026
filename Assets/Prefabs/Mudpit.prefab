@@ -89,6 +89,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &3193206067580160035
 SphereCollider:
@@ -200,6 +201,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &4285527570716893939
 SphereCollider:
@@ -269,7 +271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d31c81be7c0aebb4ba41e35bccc879f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MudPit
-  speedMult: 0.15
+  speedMult: 50
 --- !u!1 &8523796127666869705
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,6 +361,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &8565435944465813730
 SphereCollider:

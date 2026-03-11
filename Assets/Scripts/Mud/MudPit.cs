@@ -6,14 +6,14 @@ using UnityEngine;
 public class MudPit : MonoBehaviour
 {
     [Header("Slow strength")]
-    [SerializeField] private float speedMult;
+    [SerializeField] private float speedMult = 0.5f;
 
     // Use to track how many colliders of THIS mudpit each player/enemy is inside
     private Dictionary<IMovement, int> insideCounts = new Dictionary<IMovement, int>();
 
     public void HandleEnter(Collider other)
     {
-        IMovement victim = other.GetComponent<IMovement>();
+        IMovement victim = other.GetComponentInParent<IMovement>();
         if (victim == null) return;
 
         if (!insideCounts.ContainsKey(victim))
@@ -33,7 +33,7 @@ public class MudPit : MonoBehaviour
 
     public void HandleExit(Collider other)
     {
-        IMovement victim = other.GetComponent<IMovement>();
+        IMovement victim = other.GetComponentInParent<IMovement>();
         if (victim == null) return;
 
         if (!insideCounts.ContainsKey(victim)) return;

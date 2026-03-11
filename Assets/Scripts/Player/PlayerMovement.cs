@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour, IMovement
@@ -7,20 +7,18 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [Header("Movement")]
     [SerializeField] private float baseMoveSpeed = 10f;
 
+    private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
+
     private float CurrentSpeed
     {
         get
         {
             float finalMult = 1f;
-
             foreach (var mult in speedModifiers.Values)
-                finalMult *= mult;   
-
+                finalMult *= mult;
             return baseMoveSpeed * finalMult;
         }
     }
-
-    private Dictionary<object,float> speedModifiers = new Dictionary<object, float>();
 
     [Header("Dash")]
     [SerializeField] private float dashDistance = 5f;
@@ -79,7 +77,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void FixedUpdate()
     {
-        if (movementStoppedExternally)
+        if (isMovementStopped)
             return;
 
         Vector3 moveVector;
@@ -92,15 +90,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
                 EndDash();
         }
         else
-
-     
-        // If no dash, move normally
-        rb.MovePosition(rb.position + moveInput * CurrentSpeed* Time.fixedDeltaTime);
-
-        // Rotate player to the move direction
-        if (moveInput.sqrMagnitude > 0.0001f)
         {
-            moveVector = moveInput * moveSpeed * Time.fixedDeltaTime;
+            moveVector = moveInput * CurrentSpeed * Time.fixedDeltaTime;
         }
 
         // Apply dynamic shrinking grapple wall
@@ -110,6 +101,12 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         if (!isDashing && moveInput.sqrMagnitude > 0.0001f)
             transform.forward = moveInput;
+
+        if (isMovementStopped)
+        {
+            transform.forward = lookDirection;
+            return;
+        }
     }
 
     private void UpdateGrappleStatus()
@@ -202,6 +199,18 @@ public class PlayerMovement : MonoBehaviour, IMovement
         isDashing = false;
         dashCooldownTimer = dashCooldown;
     }
+
+    public void AddSpeedModifier(object source, float multiplier)
+    {
+        if (!speedModifiers.ContainsKey(source)) 
+            speedModifiers.Add(source, multiplier);
+    }
+
+    public void RemoveSpeedModifier(object source)
+    {
+        if (speedModifiers.ContainsKey(source))
+            speedModifiers.Remove(source);  
+    }
     private void OnDrawGizmos()
     {
         if (!isGrappling)
@@ -214,21 +223,4 @@ public class PlayerMovement : MonoBehaviour, IMovement
             Gizmos.DrawWireSphere(towerPosition, currentMaxRadius);
         }
     }
-}
-
-
-
-    public void AddSpeedModifier(object source, float multiplier)
-    {
-        if (!speedModifiers.ContainsKey(source))
-            speedModifiers.Add(source, multiplier);
-    }
-
-    public void RemoveSpeedModifier(object source)
-    {
-        if (speedModifiers.ContainsKey(source))
-            speedModifiers.Remove(source);
-    }
-
-  
 }

@@ -6,17 +6,17 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-// Enemy BaseClass
-public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
-public abstract class EnemyBase : MonoBehaviour //,IDamageable
+public abstract class EnemyBase : MonoBehaviour, IMovement, IDamageable
 {
     [Header("References")]
+    [SerializeField] private protected Health health;
+    private bool isActive;
+    private Rigidbody rb;
+    private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
     protected Transform player;
     public Transform Player => player;
 
     protected bool isNavEnabled = true;
-    protected bool canAttack = true;
-    protected bool enableNav = true;
 
     // ===== AI settings =====
     [Header("Movement")]
@@ -32,10 +32,6 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
     [SerializeField] protected BoxCollider attackHitbox;
     [SerializeField] protected float attackRange = 2f;
     [SerializeField] protected bool triggerhit;
-
-    [Header("Combat")]
-    [SerializeField] protected GameObject attackHitbox;
-    [SerializeField] private protected Health health;
 
     [Header("Attack Settings")]
     [SerializeField] protected bool canAttack = false;
@@ -61,39 +57,15 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
 
     public void ApplySlow(float slowMultiplier, float duration)
     {
-        if (agent == null) return;
-    [Header("Stats")]
-    [SerializeField] protected float baseMoveSpeed = 5f;
-
-    
-    private bool isActive;
-    private Rigidbody rb;
-
-    private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
-
-    
-    public void Activate(Transform playerTransform)
-        if (slowCoroutine != null)
-            StopCoroutine(slowCoroutine);
-
+        if (slowCoroutine != null) StopCoroutine(slowCoroutine);
         slowCoroutine = StartCoroutine(SlowRoutine(slowMultiplier, duration));
     }
     private IEnumerator SlowRoutine(float slowMultiplier, float duration)
     {
-        originalSpeed = Speed;
-
-        Speed *= slowMultiplier;
-        agent.speed = Speed;
-
+        AddSpeedModifier(this, slowMultiplier);
         yield return new WaitForSeconds(duration);
-
-        Speed = originalSpeed;
-        agent.speed = Speed;
-
+        RemoveSpeedModifier(this);
         slowCoroutine = null;
-        player = playerTransform;
-        isActive = true;
-        rb.isKinematic = true;
     }
     protected virtual void Awake()
     {
@@ -105,6 +77,17 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
         agent.stoppingDistance = stoppingDistance;
         agent.updateRotation = false;
         agent.autoBraking = true;
+        rb = GetComponent <Rigidbody>();
+
+        if (health == null)
+        {
+            health = GetComponent<Health>();   
+            if (health == null)
+            {
+                Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
+                health = gameObject.AddComponent<Health>();
+            }
+        }
 
         GameObject playerObj = GameObject.FindWithTag("Player");
         if (playerObj != null)
@@ -116,6 +99,7 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
 
     protected virtual void Update()
     {
+        if (health != null && health.IsDead) return;
         if (player == null) return;
         HandleAttackTimers();
         CheckAttackCondition();
@@ -130,6 +114,7 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
     // ===== Movement =====
     protected void MoveTo(Vector3 position)
     {
+        if (!isNavEnabled) return;
         if (agent == null) return;
 
         float distance = Vector3.Distance(transform.position, position);
@@ -145,11 +130,51 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
             StopMovement();
         }
     }
+    public void Activate(Transform playerTransform)
+    {
+        player = playerTransform;
+        isActive = true;
+        if (rb != null) rb.isKinematic = true;
+    }
+
+    public virtual void ResumeMovement()
+    {
+        if (!isNavEnabled) return;
+        agent.isStopped = false;
+    }
 
     protected void StopMovement()
     {
+        if (!isNavEnabled) return;
         if (agent != null)
             agent.isStopped = true;
+    }
+
+    public void AddSpeedModifier(object source, float multiplier)
+    {
+        if (!speedModifiers.ContainsKey(source))
+        {
+            speedModifiers.Add(source, multiplier);
+            RecalculateSpeed();
+        }
+    }
+    public void RemoveSpeedModifier(object source)
+    {
+        if (speedModifiers.ContainsKey(source))
+        {
+            speedModifiers.Remove(source);
+            RecalculateSpeed();
+        }
+    }
+
+    private void RecalculateSpeed()
+    {
+        float finalMult = 1f;
+        foreach (var mult in speedModifiers.Values)
+            finalMult *= mult;
+
+        Speed = FinalSpeed * finalMult; // ties into new version's Speed field
+        agent.speed = Speed;
     }
 
     private void RotateTowardsMovement()
@@ -162,40 +187,6 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
             targetRotation,
             rotationSpeed * Time.deltaTime
         );
-        rb = GetComponent<Rigidbody>();
-        RecalculateSpeed();
-        
-        // Initialize health component
-        if (health == null)
-        {
-            health = GetComponent<Health>();
-            if (health == null)
-            {
-                Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
-                health = gameObject.AddComponent<Health>();
-                
-                //// Add Healthbar if missing (required by Health)
-                //if (GetComponent<Healthbar>() == null)
-                //{
-                //    gameObject.AddComponent<Healthbar>();
-                //}
-            }
-        }
-        
-        if (player == null)
-        {
-            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-            if (playerObject != null)
-            {
-                player = playerObject.transform;
-                Debug.Log($"Found player: {player.name}");
-            }
-            else
-            {
-                Debug.LogError("No GameObject with 'Player' tag found!");
-            }
-        }
-          isNavEnabled = true;
     }
 
     // ===== Hitbox =====
@@ -214,6 +205,11 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
                 attackRange
             );
         }
+    }
+    void IDamageable.TakeDmg(float dmg)
+    {
+        if (health != null)
+            health.TakeDmg(dmg);
     }
 
     public void StartHit() => triggerhit = true;
@@ -247,9 +243,6 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
             FinalSpeed = Speed * 0.1f;
 
 
-    public virtual void MoveTo(Vector3 destination)
-    {
-        if (!isNavEnabled) return;
         }
         if (attackTimer <= 0f && cooldownTimer >= 0f)
         {
@@ -286,14 +279,6 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
             cooldownTimer = attackCooldown;
             attackTriggered = true;
         }
-        agent.isStopped = false;
-        agent.SetDestination(destination);
-        
-    }
-    public virtual void StopMovement()
-    {
-        if (!isNavEnabled) return;
-        agent.isStopped = true;
     }
     private IEnumerator ResetAttackBool()
     {
@@ -301,42 +286,7 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
         yield return new WaitForSeconds(0.001f);
         animator.SetBool(attackParamName, false);
         attackTriggered = false; // allow next attack after cooldown
-        if (!isNavEnabled) return;
-        agent.isStopped = false;
     }
-    private void RecalculateSpeed()
-    {
-        float finalMult = 1f;
-
-        foreach (var mult in speedModifiers.Values)
-        {
-            finalMult *= mult;
-        }
-
-        agent.speed = baseMoveSpeed * finalMult;
-    }
-
-
-    public void AddSpeedModifier(object source, float multiplier)
-    {
-        if (!speedModifiers.ContainsKey(source))
-        {
-            speedModifiers.Add(source, multiplier);
-            RecalculateSpeed();
-        }
-    }
-
-
-    public void RemoveSpeedModifier(object source)
-    {
-        if (speedModifiers.ContainsKey(source))
-        {
-            speedModifiers.Remove(source);
-            RecalculateSpeed();
-        }
-    }
-    #endregion
-
 
     //internal void ApplySlow(float slowMultiplier, float slowDuration)
     //{
@@ -345,4 +295,3 @@ public abstract class EnemyBase : MonoBehaviour //,IDamageable
     //#endregion
 
 }
-

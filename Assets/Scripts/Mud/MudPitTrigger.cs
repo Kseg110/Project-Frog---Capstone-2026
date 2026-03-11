@@ -11,6 +11,7 @@ public class MudPitTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log($"MudPitTrigger hit by: {other.name}, IMovement found: {other.GetComponentInParent<IMovement>() != null}");
         mudpit.HandleEnter(other);
     }
 
@@ -18,4 +19,6 @@ public class MudPitTrigger : MonoBehaviour
     {
         mudpit.HandleExit(other);
     }
+
+
 }
