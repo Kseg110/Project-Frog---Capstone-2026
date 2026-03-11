@@ -1,6 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public class AttackScript : MonoBehaviour
+public class PlayerAttacks : MonoBehaviour
 {
     [Header("Charge Settings")]
     [SerializeField] private float maxChargeTime = 2f;
@@ -39,32 +39,27 @@ public class AttackScript : MonoBehaviour
 
     void Update()
     {
-        // --- SHOOT INPUT ---
-        if (Input.GetButtonDown("Fire1"))
-        {
-            StartCharging();
-        }
-
-        if (Input.GetButtonUp("Fire1"))
-        {
-            ReleaseCharging();
-        }
-
-        // --- TONGUE INPUT ---
+        // -------------------------
+        // ATTACK 1 — Tongue
+        // -------------------------
         if (frogTongue != null)
         {
-            if (Input.GetButtonDown("Fire2"))
-            {
+            if (Input.GetButtonDown("Fire1"))
                 frogTongue.BeginTongue();
-            }
 
-            if (Input.GetButtonUp("Fire2"))
-            {
+            if (Input.GetButtonUp("Fire1"))
                 frogTongue.EndTongue();
-            }
         }
 
-        // --- CHARGING LOGIC ---
+        // -------------------------
+        // ATTACK 2 — Charged Shot
+        // -------------------------
+        if (Input.GetButtonDown("Fire2"))
+            StartCharging();
+
+        if (Input.GetButtonUp("Fire2"))
+            ReleaseCharging();
+
         if (isCharging)
         {
             chargeTimer += Time.deltaTime;
@@ -72,7 +67,7 @@ public class AttackScript : MonoBehaviour
         }
     }
 
-    private void StartCharging()
+    public void StartCharging()
     {
         isCharging = true;
         chargeTimer = minChargeTime;
@@ -80,7 +75,7 @@ public class AttackScript : MonoBehaviour
         if (!CanShoot()) return;
     }
 
-    private void ReleaseCharging()
+    public void ReleaseCharging()
     {
         if (!isCharging) return;
         if (!CanShoot()) return;
@@ -106,3 +101,4 @@ public class AttackScript : MonoBehaviour
         }
     }
 }
+
