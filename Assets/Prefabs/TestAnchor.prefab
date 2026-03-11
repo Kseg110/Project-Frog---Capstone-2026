@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7298686678218331544}
   - component: {fileID: 1821872440227396422}
   m_Layer: 0
-  m_Name: TestAnchorTower
+  m_Name: TestAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -107,7 +107,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -122,20 +122,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6911843594789955862}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c6c456d66ddc44bb20d4f8162f41f3, type: 3}
+  m_Script: {fileID: 11500000, guid: 7277e73f9db5673409faf0a07aea6fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrappleTower
-  towerType: 0
-  grappleRange: 15
-  fireFields:
-    damage: 10
-    burnDuration: 2
-    burnTickRate: 0.2
-  iceFields:
-    damage: 8
-    slowMultiplier: 0.5
-    slowDuration: 2
-    damageMultiplier: 2
-  windFields:
-    damage: 12
-    damageMultiplier: 0.7
+  data: {fileID: 11400000, guid: 7398ef3d6d02c5b49998e446532c8419, type: 2}
