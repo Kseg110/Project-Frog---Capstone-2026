@@ -78,8 +78,12 @@ public class PlayerMovement : MonoBehaviour
         // If no dash, move normally
         rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
 
-        // Rotate player to the move direction
-        if (moveInput.sqrMagnitude > 0.0001f)
+        // Rotate player to the move direction and attack direction
+        if (attacks.isAttacking)
+        {
+            RotateTowardCursor();
+        }
+        else if (moveInput.sqrMagnitude > 0.0001f)
         {
             transform.forward = moveInput;
         }
@@ -119,5 +123,22 @@ public class PlayerMovement : MonoBehaviour
     {
         isDashing = false;
         dashCooldownTimer = dashCooldown;
+    }
+
+    private void RotateTowardCursor()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        Plane plane = new Plane(Vector3.up, transform.position);
+
+        if (plane.Raycast(ray, out float distance))
+        {
+            Vector3 hitPoint = ray.GetPoint(distance);
+            Vector3 direction = (hitPoint - transform.position);
+            direction.y = 0f;
+
+            if (direction.sqrMagnitude > 0.001f) 
+                transform.forward = direction.normalized;
+        }
     }
 }
