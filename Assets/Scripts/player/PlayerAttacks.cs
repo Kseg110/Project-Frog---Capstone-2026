@@ -17,6 +17,10 @@ public class PlayerAttacks : MonoBehaviour
 
     private float chargeTimer;
     private bool isCharging;
+    public bool isTethered;
+
+    public float LastChargeValue {  get; private set; }
+    public event System.Action<float> OnChargeShotFired;
 
     public bool isAttacking => isCharging || frogTongue.isActive; //Public bool to let any other script know if the player is attacking at all.
 
@@ -44,26 +48,24 @@ public class PlayerAttacks : MonoBehaviour
 
     void Update()
     {
-        // -------------------------
-        // ATTACK 1 — Tongue
-        // -------------------------
-        if (frogTongue != null)
-        {
-            if (Input.GetButtonDown("Fire1"))
-                frogTongue.BeginTongue();
+        if (Input.GetButtonDown("Fire1"))
+            TryBasicShot();
 
-            if (Input.GetButtonUp("Fire1"))
-                frogTongue.EndTongue();
+        if (Input.GetButtonDown("Fire2"))
+        {
+            if (isTethered)
+                StartCharging();
+            else
+                frogTongue.BeginTongue();
         }
 
-        // -------------------------
-        // ATTACK 2 — Charged Shot
-        // -------------------------
-        if (Input.GetButtonDown("Fire2"))
-            StartCharging();
-
         if (Input.GetButtonUp("Fire2"))
-            ReleaseCharging();
+        {
+            if (isTethered)
+                ReleaseCharging();
+            else
+                frogTongue.EndTongue();
+        }
 
         if (isCharging)
         {
@@ -89,6 +91,9 @@ public class PlayerAttacks : MonoBehaviour
 
         float chargePercent = Mathf.Clamp01(chargeTimer / maxChargeTime);
 
+        LastChargeValue = chargePercent;
+        OnChargeShotFired?.Invoke(chargePercent);
+
         FireProjectile(chargePercent);
 
         lastFireTime = Time.time;
@@ -103,5 +108,25 @@ public class PlayerAttacks : MonoBehaviour
         {
             projectile.Initialize(chargePercent);
         }
+    }
+
+    private void FireBasicShot()
+    {
+        GameObject proj = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+
+        Projectile projectile = proj.GetComponent<Projectile>();
+        if (projectile != null)
+        {
+            projectile.Initialize(0f);
+        }
+    }
+
+    private void TryBasicShot()
+    {
+        if (!CanShoot()) return;
+        if (Time.time < lastFireTime + fireCooldown) return;
+
+        FireBasicShot();
+        lastFireTime = Time.time;
     }
 }
