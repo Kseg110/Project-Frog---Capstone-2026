@@ -5,6 +5,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 10f;
+    private float defaultMoveSpeed = 10f;
 
     [Header("Dash")]
     [SerializeField] private float dashDistance = 5f;
@@ -12,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashCooldown = 0.5f;
 
     private Rigidbody rb;
+    [SerializeField] private PlayerAttacks attacks;
 
     private Vector3 moveInput;
     private Vector3 dashDirection;
@@ -28,12 +30,16 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        attacks = GetComponent<PlayerAttacks>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
     private void Update()
     {
+        float targetSpeed = attacks.isAttacking ? defaultMoveSpeed * 0.5f : defaultMoveSpeed;
+        moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, Time.deltaTime * 10f);
+
         // Update dash cooldown
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= Time.deltaTime;

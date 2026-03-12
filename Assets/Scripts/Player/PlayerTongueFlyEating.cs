@@ -28,7 +28,7 @@ public class PlayerTongueFlyEating : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (tongue.IsActive && other.CompareTag("Fly"))
+        if (tongue.isActive && other.CompareTag("Fly"))
         {
             AttachFly();
             Destroy(other.gameObject);

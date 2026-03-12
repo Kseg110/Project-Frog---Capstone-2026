@@ -10,10 +10,10 @@ public class PlayerTongueAttack : MonoBehaviour
     [SerializeField] private float tongueWidth = 0.3f;
 
     private float currentLength = 0f;
-    public bool extending = false; //keep public AttackScript uses this to stop player shooting when using Tongue.
-    public bool retracting = false; //keep public AttackScript uses this to stop player shooting when using Tongue.
+    private bool extending = false; 
+    private bool retracting = false; 
 
-    public bool IsActive => extending || retracting;
+    public bool isActive => extending || retracting;
 
     public System.Action OnTongueFinished;
 

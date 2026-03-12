@@ -15,6 +15,8 @@ public class PlayerAttacks : MonoBehaviour
     private float chargeTimer;
     private bool isCharging;
 
+    public bool isAttacking => isCharging || frogTongue.isActive; //Public bool to let any other script know if the player is attacking at all.
+
     [SerializeField] private PlayerTongueAttack frogTongue;
 
     private void Awake()
@@ -34,7 +36,7 @@ public class PlayerAttacks : MonoBehaviour
         if (frogTongue == null)
             return true;
 
-        return !frogTongue.extending && !frogTongue.retracting;
+        return !frogTongue.isActive;
     }
 
     void Update()
@@ -69,19 +71,18 @@ public class PlayerAttacks : MonoBehaviour
 
     public void StartCharging()
     {
-        isCharging = true;
-        chargeTimer = minChargeTime;
-
         if (!CanShoot()) return;
+
+        isCharging = true;
+        chargeTimer = minChargeTime; 
     }
 
     public void ReleaseCharging()
     {
         if (!isCharging) return;
+        isCharging = false;
         if (!CanShoot()) return;
         if (Time.time < lastFireTime + fireCooldown) return;
-
-        isCharging = false;
 
         float chargePercent = Mathf.Clamp01(chargeTimer / maxChargeTime);
 
