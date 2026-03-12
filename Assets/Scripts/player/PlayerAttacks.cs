@@ -9,7 +9,10 @@ public class PlayerAttacks : MonoBehaviour
     [Header("Projectile")]
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform firePoint;
-    [SerializeField] private float fireCooldown = 0.5f;
+
+    [Header("Attack Rate")]
+    [SerializeField] private float attacksPerSecond = 2f;
+    private float fireCooldown => 1f / attacksPerSecond;
     private float lastFireTime = -999f;
 
     private float chargeTimer;
@@ -102,4 +105,3 @@ public class PlayerAttacks : MonoBehaviour
         }
     }
 }
-
