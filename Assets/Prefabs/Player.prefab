@@ -354,6 +354,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1848954759416782558}
+  - {fileID: 2091231580955347353}
   m_Father: {fileID: 900614694835417969}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8092192667463358919
@@ -520,8 +521,6 @@ GameObject:
   - component: {fileID: 583013283057882193}
   - component: {fileID: 7273468441082437183}
   - component: {fileID: 1102886415016949637}
-  - component: {fileID: 1697161662986894382}
-  - component: {fileID: -8983956320899048425}
   - component: {fileID: 7481143701210063934}
   m_Layer: 0
   m_Name: Player
@@ -593,7 +592,7 @@ MonoBehaviour:
   dashDistance: 5
   dashDuration: 0.15
   dashCooldown: 0.5
-  isGrappling: 0
+  isTethered: 0
 --- !u!114 &8197622151103158488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -639,7 +638,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
-  healthbar: {fileID: 8638861364232670842}
 --- !u!114 &583013283057882193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -683,14 +681,95 @@ MonoBehaviour:
   retractionTimeReductionFactor: 2
   tongueWidth: 0.3
   tongueHeight: 1.4
---- !u!120 &1697161662986894382
+--- !u!114 &7481143701210063934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcc43d964d9107046b540ebaae6a0a3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGrapple
+  TetherButton: Fire3
+  isTethered: 0
+--- !u!1 &8300862678990091245
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2230023641781056278}
+  m_Layer: 0
+  m_Name: Face
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2230023641781056278
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8300862678990091245}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 675225766960755086}
+  - {fileID: 5676025026049596383}
+  - {fileID: 1464167784867227002}
+  m_Father: {fileID: 900614694835417969}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8863329809606933002
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2091231580955347353}
+  - component: {fileID: 4107736341322026886}
+  - component: {fileID: 5097531064202705934}
+  m_Layer: 0
+  m_Name: Tether
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2091231580955347353
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8863329809606933002}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3479168319086078328}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!120 &4107736341322026886
 LineRenderer:
   serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7555014404437206304}
+  m_GameObject: {fileID: 8863329809606933002}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -743,7 +822,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.3132534
+        value: 0.29729652
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -793,71 +872,20 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &-8983956320899048425
+--- !u!114 &5097531064202705934
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7555014404437206304}
+  m_GameObject: {fileID: 8863329809606933002}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5278f6e139d49c4e87e522de1002b21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrappleRopeRenderer
-  playerGrapple: {fileID: 7481143701210063934}
+  playerAnchor: {fileID: 7481143701210063934}
   firePoint: {fileID: 7861819589242136595}
---- !u!114 &7481143701210063934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7555014404437206304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcc43d964d9107046b540ebaae6a0a3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerGrapple
-  grappleButton: Fire3
-  hookPreview: {fileID: 0}
-  previewSize: 1
-  firePoint: {fileID: 0}
-  isGrappling: 0
---- !u!1 &8300862678990091245
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2230023641781056278}
-  m_Layer: 0
-  m_Name: Face
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2230023641781056278
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8300862678990091245}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 675225766960755086}
-  - {fileID: 5676025026049596383}
-  - {fileID: 1464167784867227002}
-  m_Father: {fileID: 900614694835417969}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9103946886274004586
 GameObject:
   m_ObjectHideFlags: 0
@@ -1115,14 +1143,3 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2476142944374220348, guid: bed1b37891f5efc4c96b2ae3e58dac69, type: 3}
   m_PrefabInstance: {fileID: 4320579789020592354}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8638861364232670842 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5482761799958967960, guid: bed1b37891f5efc4c96b2ae3e58dac69, type: 3}
-  m_PrefabInstance: {fileID: 4320579789020592354}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 972099b45a89f824ba23ce7a71f73287, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Healthbar
