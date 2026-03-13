@@ -46,10 +46,11 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private float currentMaxRadius; // The distance to the tower at this moment
     private Vector3 anchorPosition;
     private readonly float currentMinRadius = 4f;
-
+    [SerializeField] private string hitBoxName = "HitBox";
     private void Awake()
     {
-        capsuleCollider = GetComponent<CapsuleCollider>();
+        Transform hitBox = transform.Find(hitBoxName);
+        capsuleCollider = hitBox.GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;

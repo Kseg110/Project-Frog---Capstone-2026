@@ -4,17 +4,26 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Collider))]
 public class DamageParticleFog : MonoBehaviour
 {
-    public float damagePerSecond = 1f;
+    [SerializeField] private float damagePerSecond = 1f;
+
+    [Header("Tags That Can Be Damaged")]
+    [SerializeField] private List<string> validTags = new List<string> { "Player" };
 
     private Dictionary<Health, float> damageTimers = new Dictionary<Health, float>();
 
     private void OnTriggerStay(Collider other)
     {
-        // Only affect player
-        if (!other.CompareTag("Player")) return;
+        // Get Health from parent (because collider might be on HitBox child)
+        Health health = other.GetComponentInParent<Health>();
 
-        Health health = other.GetComponent<Health>();
-        if (health == null || health.IsDead) return;
+        if (health == null || health.IsDead)
+            return;
+
+        GameObject rootObject = health.gameObject;
+
+        // Check if object's tag is allowed
+        if (!validTags.Contains(rootObject.tag))
+            return;
 
         if (!damageTimers.ContainsKey(health))
             damageTimers[health] = 0f;
@@ -30,9 +39,7 @@ public class DamageParticleFog : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (!other.CompareTag("Player")) return;
-
-        Health health = other.GetComponent<Health>();
+        Health health = other.GetComponentInParent<Health>();
 
         if (health != null && damageTimers.ContainsKey(health))
         {
