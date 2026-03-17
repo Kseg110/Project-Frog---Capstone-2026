@@ -12,6 +12,10 @@ public class PlayerAttacks : MonoBehaviour
 
     [Header("Attack Rate")]
     [SerializeField] private float attacksPerSecond = 2f;
+
+    private float attackWindowTimer = 0f;
+    [SerializeField] private float attackWindowDuration = 0.2f; //for reducing player speed with basic shot
+
     private float fireCooldown => 1f / attacksPerSecond;
     private float lastFireTime = -999f;
 
@@ -22,7 +26,7 @@ public class PlayerAttacks : MonoBehaviour
     public float LastChargeValue {  get; private set; }
     public event System.Action<float> OnChargeShotFired;
 
-    public bool isAttacking => isCharging || frogTongue.isActive; //Public bool to let any other script know if the player is attacking at all.
+    public bool isAttacking => isCharging || frogTongue.isActive || attackWindowTimer > 0f; //Public bool to let any other script know if the player is attacking at all.
 
     [SerializeField] private PlayerTongueAttack frogTongue;
 
@@ -72,12 +76,14 @@ public class PlayerAttacks : MonoBehaviour
             chargeTimer += Time.deltaTime;
             chargeTimer = Mathf.Clamp(chargeTimer, 0f, maxChargeTime);
         }
+
+        if (attackWindowTimer > 0f)
+            attackWindowTimer -= Time.deltaTime;
     }
 
     public void StartCharging()
     {
         if (!CanShoot()) return;
-
         isCharging = true;
         chargeTimer = minChargeTime; 
     }
@@ -101,6 +107,8 @@ public class PlayerAttacks : MonoBehaviour
 
     private void FireProjectile(float chargePercent)
     {
+        
+
         GameObject proj = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
 
         Projectile projectile = proj.GetComponent<Projectile>();
@@ -112,6 +120,8 @@ public class PlayerAttacks : MonoBehaviour
 
     private void FireBasicShot()
     {
+        attackWindowTimer = attackWindowDuration;
+
         GameObject proj = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
 
         Projectile projectile = proj.GetComponent<Projectile>();
