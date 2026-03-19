@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private Rigidbody rb;
     private PlayerAnchor playerAnchor;
+    private UIPlayerHUD playerHUD;
 
     private Vector3 moveInput;
     private Vector3 dashDirection;
@@ -54,6 +55,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
         playerAnchor = GetComponent<PlayerAnchor>();
+        playerHUD = FindAnyObjectByType<UIPlayerHUD>();
     }
 
     private void Update()
@@ -63,6 +65,9 @@ public class PlayerMovement : MonoBehaviour, IMovement
         // Update dash cooldown
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= Time.deltaTime;
+
+        float progress = 1f - (dashCooldownTimer / dashCooldown);
+        playerHUD?.UpdateDashCooldown(progress);
 
         if (isMovementStopped)
             return;
@@ -201,6 +206,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     {
         isDashing = false;
         dashCooldownTimer = dashCooldown;
+        playerHUD?.UpdateDashCooldown(0f);
     }
 
     public void AddSpeedModifier(object source, float multiplier)
