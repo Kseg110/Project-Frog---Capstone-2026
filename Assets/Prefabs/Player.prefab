@@ -482,6 +482,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7343086715298759989}
   - component: {fileID: 8113459574204388304}
+  - component: {fileID: 8355298814944058175}
   m_Layer: 0
   m_Name: DashVFXOrigin
   m_TagString: Untagged
@@ -623,6 +624,18 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!114 &8355298814944058175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7307145619484185438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00388881c6c9454449e660ec516fecd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &7555014404437206304
 GameObject:
   m_ObjectHideFlags: 0
@@ -738,7 +751,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 576901950fbd0a646a2f8525ad748856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerImmortality
-  glowMaterial: {fileID: -876546973899608171, guid: 124c112a6e8f1a54e8b0870e881b56d8, type: 3}
+  glowMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   glowIntensity: 5
   isImmortal: 0
@@ -755,7 +768,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
-  healthbar: {fileID: 8638861364232670842}
 --- !u!114 &7273468441082437183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1090,14 +1102,3 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2476142944374220348, guid: bed1b37891f5efc4c96b2ae3e58dac69, type: 3}
   m_PrefabInstance: {fileID: 4320579789020592354}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8638861364232670842 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5482761799958967960, guid: bed1b37891f5efc4c96b2ae3e58dac69, type: 3}
-  m_PrefabInstance: {fileID: 4320579789020592354}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 972099b45a89f824ba23ce7a71f73287, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Healthbar
