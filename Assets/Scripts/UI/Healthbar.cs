@@ -1,11 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Canvas))]
 public class Healthbar: MonoBehaviour
 {
     [SerializeField] private Image foregroundImage;
     [SerializeField] private Transform uiContainer;
+
     private Camera mainCamera;
+    private Canvas canvas;
 
     public void UpdateHealthBar(float maxHealth, float curHealth)
     {
@@ -13,18 +16,23 @@ public class Healthbar: MonoBehaviour
         foregroundImage.fillAmount = curHealth / maxHealth;
     }
 
-    private void Start()
+    private void Awake()
     {
         mainCamera = Camera.main;
+        canvas = GetComponent<Canvas>();
+
+        Debug.Assert(foregroundImage != null, $"[{gameObject.name}] foregroundImage is not assigned!", this);
+        Debug.Assert(uiContainer != null, $"[{gameObject.name}] uiContainer is not assigned!", this);
+    }
+
+    private void Start()
+    {
+        canvas.worldCamera = mainCamera;
     }
 
     private void LateUpdate()
     {
-        // Point the healthbar to the camera
-        // Only rotate the UI container, not the main GameObject
-        if (uiContainer != null && mainCamera != null)
-        {
-            uiContainer.forward = mainCamera.transform.forward;
-        }
+        // Point the healthbar to the cameraa
+        uiContainer.forward = mainCamera.transform.forward;
     }
 }
