@@ -1,9 +1,9 @@
-//Attach to a empty game object that is attached to the player. Position this game object where the tongue should extend from. Name it TongueRoot for some clarity.
 using UnityEngine;
 
 public class PlayerTongueAttack : MonoBehaviour
 {
-    [SerializeField] private Transform tongueMesh; //Have Tongue mesh be a child of TongueRoot.
+    [SerializeField] private Transform tongueMesh;
+
     [SerializeField] private float maxLength = 10f;
     [SerializeField] private float extendSpeed = 20f;
     [SerializeField] private float retractSpeed = 25f;
@@ -13,18 +13,33 @@ public class PlayerTongueAttack : MonoBehaviour
     private bool extending = false; 
     private bool retracting = false; 
 
-    public bool isActive => extending || retracting;
+    public bool IsActive => extending || retracting;
 
     public System.Action OnTongueFinished;
 
-    public void BeginTongue()
+    private void Awake()
+    {
+        if (tongueMesh == null)
+        {
+            Debug.LogError($"Please assign tongueMesh in ${gameObject.name}", this);
+        }
+    }
+
+    /// <summary>
+    /// Begins extending the tongue. Does nothing if already retracting.
+    /// </summary>
+    public void BeginTongueExtend()
     {
         if (retracting) return;
         extending = true;
         retracting = false;
     }
 
-    public void EndTongue() //Call this when hitting an enemy or healing bug to instantly begin retracting. 
+    /// <summary>
+    /// Begins retracting the tongue. If already retracting, does nothing.
+    /// Call this when letting go of Fire2, or hitting an enemy/fly to instantly begin retracting.
+    /// </summary>
+    public void BeginTongueRetract()
     {
         if (!retracting)
         {
@@ -42,7 +57,7 @@ public class PlayerTongueAttack : MonoBehaviour
             {
                 currentLength = maxLength;
                 extending = false;
-                EndTongue();
+                BeginTongueRetract();
             }
         } 
         else if (retracting)
@@ -63,7 +78,7 @@ public class PlayerTongueAttack : MonoBehaviour
     private void UpdateTongueVisual()
     {
         tongueMesh.localScale = new Vector3(tongueWidth, currentLength / 2f, tongueWidth);
-        tongueMesh.localPosition = new Vector3(0, 0, currentLength / 2f); //MAKE THIS 0, 0, 0 WHEN FINAL MESH IS ADDED, And make sure the pivot for that mech isn't dead center.
+        tongueMesh.localPosition = new Vector3(0, 0, currentLength / 2f); //MAKE THIS 0, 0, 0 WHEN FINAL MESH IS ADDED, And make sure the pivot for that mesh isn't dead center.
     }
 }
 

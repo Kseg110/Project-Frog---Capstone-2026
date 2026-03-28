@@ -5,7 +5,6 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 10f;
-    private float defaultMoveSpeed = 10f;
 
     [Header("Dash")]
     [SerializeField] private float dashDistance = 5f;
@@ -13,7 +12,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashCooldown = 0.5f;
 
     private Rigidbody rb;
-    [SerializeField] private PlayerAttacks attacks;
 
     private Vector3 moveInput;
     private Vector3 dashDirection;
@@ -30,16 +28,12 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        attacks = GetComponent<PlayerAttacks>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
     private void Update()
     {
-        float targetSpeed = attacks.isAttacking ? defaultMoveSpeed * 0.5f : defaultMoveSpeed;
-        moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, Time.deltaTime * 10f);
-
         // Update dash cooldown
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= Time.deltaTime;
@@ -60,9 +54,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (movementStoppedExternally) { 
+        // Rotate player to attack direction
+        if (movementStoppedExternally) 
+        { 
             transform.forward = lookDirection;
             return;
+        } 
+        // If movement not stopped externally, look in move direction
+        else if (moveInput.sqrMagnitude > 0.0001f)
+        {
+            transform.forward = moveInput;
         }
 
         // Dash movement
@@ -77,21 +78,10 @@ public class PlayerMovement : MonoBehaviour
 
         // If no dash, move normally
         rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
-
-        // Rotate player to the move direction and attack direction
-        if (attacks.isAttacking)
-        {
-            RotateTowardCursor();
-        }
-        else if (moveInput.sqrMagnitude > 0.0001f)
-        {
-            transform.forward = moveInput;
-        }
     }
 
     /// <summary>
-    /// Stops player movement. 
-    /// Intended to be called externally
+    /// Stops player movement. Optional rotate player to face new direction (forward)
     /// </summary>
     public void StopMovement(Vector3? forward = null)
     {
@@ -123,22 +113,5 @@ public class PlayerMovement : MonoBehaviour
     {
         isDashing = false;
         dashCooldownTimer = dashCooldown;
-    }
-
-    private void RotateTowardCursor()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        Plane plane = new Plane(Vector3.up, transform.position);
-
-        if (plane.Raycast(ray, out float distance))
-        {
-            Vector3 hitPoint = ray.GetPoint(distance);
-            Vector3 direction = (hitPoint - transform.position);
-            direction.y = 0f;
-
-            if (direction.sqrMagnitude > 0.001f) 
-                transform.forward = direction.normalized;
-        }
     }
 }

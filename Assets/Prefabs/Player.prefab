@@ -605,13 +605,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a789a7a883d4ed499bada1581cb8f9d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AttackScript
-  maxChargeTime: 2
-  minChargeTime: 0
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttacks
   projectilePrefab: {fileID: 6273708042673008390, guid: 6a9850156a660ec48bce694e001d9abc, type: 3}
-  firePoint: {fileID: 1285837155665248869}
-  fireCooldown: 0.5
-  frogTongue: {fileID: 3321269397039265477}
+  firePoint: {fileID: 159703758368673626}
+  attacksPerSecond: 2
+  attackWindowDuration: 0.5
+  maxChargeTime: 2
+  isTethered: 0
 --- !u!114 &3321269397039265477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -629,8 +629,6 @@ MonoBehaviour:
   extendSpeed: 20
   retractSpeed: 25
   tongueWidth: 0.3
-  extending: 0
-  retracting: 0
 --- !u!1 &8300862678990091245
 GameObject:
   m_ObjectHideFlags: 0
