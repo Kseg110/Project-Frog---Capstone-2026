@@ -26,6 +26,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
 
+    // References on player prefab
     private Rigidbody rb;
     private PlayerAnchor playerAnchor;
     private UIPlayerHUD playerHUD;
@@ -50,6 +51,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void Awake()
     {
+        // Grab rigibody reference and set the settings
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -200,6 +202,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         // Set the dash direction to the move direction. If there is no move direction, set the dash direction to the direction the player is facing
         dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
+
+        // Start dash VFX
+        Debug.Log("start dash");
+        PlayerDashVFX.Instance.StartDashVFX();
     }
 
     private void EndDash()
@@ -207,6 +213,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
         isDashing = false;
         dashCooldownTimer = dashCooldown;
         playerHUD?.UpdateDashCooldown(0f);
+        
+        // End dash VFX
+        Debug.Log("end dash");
+        PlayerDashVFX.Instance.EndDashVFX();
     }
 
     public void AddSpeedModifier(object source, float multiplier)
