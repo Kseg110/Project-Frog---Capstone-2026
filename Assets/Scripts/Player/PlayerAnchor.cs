@@ -1,15 +1,9 @@
-﻿// PlayerAnchor
-// Handles the player's anchor mechanic. Each frame it finds the closest Anchor
-// within range and tracks it as the current tower. Listens for the grapple input button to
-// start or release the grapple, and automatically stops if the tower goes out of range.
-
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerAnchor : MonoBehaviour
 {
     private AnchorBase[] allAnchors;
     private AnchorBase currentAnchor;
-
     private bool isTethered;
 
     public bool IsTethered => isTethered;
@@ -36,7 +30,7 @@ public class PlayerAnchor : MonoBehaviour
     {
         if (Input.GetButtonDown("Fire3"))
         {
-            if (isTethered) // toggles tether
+            if (isTethered)
                 ReleaseTether();
             else
                 StartTether();
@@ -46,9 +40,7 @@ public class PlayerAnchor : MonoBehaviour
     private void ValidateTether()
     {
         if (isTethered && currentAnchor == null)
-        {
             ReleaseTether();
-        }
     }
 
     private AnchorBase GetClosestAnchorInRange()
@@ -59,7 +51,6 @@ public class PlayerAnchor : MonoBehaviour
         foreach (AnchorBase anchor in allAnchors)
         {
             float distance = Vector3.Distance(transform.position, anchor.transform.position);
-
             if (distance <= anchor.TetherRange && distance < minDist)
             {
                 minDist = distance;
@@ -71,7 +62,7 @@ public class PlayerAnchor : MonoBehaviour
     }
 
     /// <summary>
-    /// Start tethering if there is a anchor in range
+    /// Start tethering if there is an anchor in range
     /// </summary>
     public void StartTether()
     {
@@ -80,11 +71,10 @@ public class PlayerAnchor : MonoBehaviour
     }
 
     /// <summary>
-    /// Release Tethering
+    /// Release tethering
     /// </summary>
     public void ReleaseTether()
     {
         isTethered = false;
     }
 }
-
