@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerAnchor))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, IMovement
 {
     [Header("Movement")]
     [SerializeField] private float baseMoveSpeed = 10f;
@@ -98,7 +98,8 @@ public class PlayerMovement : MonoBehaviour
             dashTimer -= Time.fixedDeltaTime;
             if (dashTimer <= 0f)
                 EndDash();
-        } else
+        }
+        else
         {
             moveVector = moveInput * CurrentSpeed * Time.fixedDeltaTime;
         }
@@ -131,7 +132,8 @@ public class PlayerMovement : MonoBehaviour
             float distanceToAnchor = Vector3.Distance(rb.position, anchorPosition);
             if (currentMaxRadius == 0f || distanceToAnchor < currentMaxRadius)
                 currentMaxRadius = Mathf.Max(distanceToAnchor, currentMinRadius);
-        } else
+        }
+        else
         {
             currentMaxRadius = 0f; // Reset when player is not grappling
         }
@@ -210,7 +212,7 @@ public class PlayerMovement : MonoBehaviour
         isDashing = false;
         dashCooldownTimer = dashCooldown;
         playerHUD?.UpdateDashCooldown(0f);
-
+        
         // End dash VFX
         Debug.Log("end dash");
         PlayerDashVFX.Instance.EndDashVFX();
@@ -218,16 +220,15 @@ public class PlayerMovement : MonoBehaviour
 
     public void AddSpeedModifier(object source, float multiplier)
     {
-        if (!speedModifiers.ContainsKey(source))
+        if (!speedModifiers.ContainsKey(source)) 
             speedModifiers.Add(source, multiplier);
     }
 
     public void RemoveSpeedModifier(object source)
     {
         if (speedModifiers.ContainsKey(source))
-            speedModifiers.Remove(source);
+            speedModifiers.Remove(source);  
     }
-
     private void OnDrawGizmos()
     {
         if (!isTethered)

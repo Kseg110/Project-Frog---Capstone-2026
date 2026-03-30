@@ -4,20 +4,27 @@ public class Health : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
-    [SerializeField] private Healthbar healthbar;
+    private Healthbar healthbar;
+    private UIPlayerHUD UIPlayerHUD;
 
     public bool IsDead { get; private set; }
 
     private void Awake()
     {
-        if (healthbar != null)
+        healthbar = GetComponentInChildren<Healthbar>();
+
+        if (healthbar == null)
         {
             Debug.LogError(
                 $"Health on {gameObject.name} requires a child HealthBar.", this);
         }
 
+        UIPlayerHUD = FindAnyObjectByType<UIPlayerHUD>();
+
         currentHealth = maxHealth;
         IsDead = false;
+
+        UIPlayerHUD?.UpdateHealth(1f);
     }
 
     public void TakeDmg(float dmg)
@@ -32,6 +39,7 @@ public class Health : MonoBehaviour
 
         // Update healthbar visual
         healthbar.UpdateHealthBar(maxHealth, currentHealth);
+        UIPlayerHUD?.UpdateHealth(currentHealth / maxHealth);
 
         if (currentHealth == 0f)
         {
@@ -47,6 +55,7 @@ public class Health : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
 
         healthbar.UpdateHealthBar(maxHealth, currentHealth);
+        UIPlayerHUD?.UpdateHealth(currentHealth / maxHealth);
     }
 
     private void Die()
