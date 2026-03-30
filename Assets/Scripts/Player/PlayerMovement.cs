@@ -88,7 +88,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private void FixedUpdate()
     {
         if (isMovementStopped)
+        {
+            transform.forward = lookDirection;
             return;
+        }
 
         Vector3 moveVector;
 
@@ -110,13 +113,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         rb.MovePosition(rb.position + moveVector);
 
         if (!isDashing && moveInput.sqrMagnitude > 0.0001f)
-            transform.forward = moveInput;
-
-        if (isMovementStopped)
-        {
-            transform.forward = lookDirection;
-            return;
-        }
+            transform.forward = moveInput; 
     }
 
     private void UpdateTetherStatus()
@@ -180,7 +177,6 @@ public class PlayerMovement : MonoBehaviour, IMovement
     {
         isMovementStopped = true;
         moveInput = Vector3.zero;
-
         if (forward != null) { lookDirection = forward.Value; }
     }
 

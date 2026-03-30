@@ -657,10 +657,10 @@ GameObject:
   - component: {fileID: 8197622151103158488}
   - component: {fileID: 4275648167820347246}
   - component: {fileID: 5146856041539489363}
-  - component: {fileID: 7273468441082437183}
-  - component: {fileID: 8170732299029736621}
   - component: {fileID: 1102886415016949637}
   - component: {fileID: 7481143701210063934}
+  - component: {fileID: 583013283057882193}
+  - component: {fileID: 4281862109518123148}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -685,9 +685,9 @@ Transform:
   - {fileID: 3479168319086078328}
   - {fileID: 2230023641781056278}
   - {fileID: 7770645213513387817}
-  - {fileID: 6728851348302234101}
   - {fileID: 7861819589242136595}
   - {fileID: 9266174834241900}
+  - {fileID: 159703758368673626}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &4346447341780550031
@@ -778,31 +778,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
---- !u!114 &583013283057882193
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7555014404437206304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3299c7e7823704ffbb9e33505ec51b08, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AttackScript
---- !u!114 &7273468441082437183
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7555014404437206304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b75fd584d563e284b8bb562648313fa8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TongueHit
-  healAmountPerFly: 0
 --- !u!114 &1102886415016949637
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -815,12 +790,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75e9ae51b54f1d24abc20c14248c62fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTongueAttack
-  tongueMesh: {fileID: 6728851348302234101}
+  tongueMesh: {fileID: 5647910625679070788}
+  maxLength: 10
   extendSpeed: 10
-  maxExtendTime: 0.5
-  retractionTimeReductionFactor: 2
+  retractSpeed: 25
   tongueWidth: 0.3
-  tongueHeight: 1.4
 --- !u!114 &7481143701210063934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -833,6 +807,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc43d964d9107046b540ebaae6a0a3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGrapple
+--- !u!114 &583013283057882193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3299c7e7823704ffbb9e33505ec51b08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AttackScript
+  healAmountPerFly: 0
+--- !u!114 &4281862109518123148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a789a7a883d4ed499bada1581cb8f9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttacks
+  projectilePrefab: {fileID: 6273708042673008390, guid: 6a9850156a660ec48bce694e001d9abc, type: 3}
+  firePoint: {fileID: 159703758368673626}
+  attacksPerSecond: 2
+  attackWindowDuration: 0.5
+  maxChargeTime: 2
+  isTethered: 0
 --- !u!1 &8300862678990091245
 GameObject:
   m_ObjectHideFlags: 0
