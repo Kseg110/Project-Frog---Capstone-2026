@@ -174,8 +174,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     }
 
     /// <summary>
-    /// Stops player movement. 
-    /// Intended to be called externally
+    /// Stops player movement. Optional rotate player to face new direction (forward)
     /// </summary>
     public void StopMovement(Vector3? forward = null)
     {
