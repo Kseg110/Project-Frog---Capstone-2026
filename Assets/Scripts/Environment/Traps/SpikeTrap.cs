@@ -6,6 +6,7 @@ using UnityEngine;
 /// events to this component. When a Player enters the trigger the player will be damaged
 /// and knocked back.
 /// </summary>
+
 public class SpikeTrap : MonoBehaviour
 {
     public enum TargetMode
@@ -28,7 +29,7 @@ public class SpikeTrap : MonoBehaviour
 
     [Header("Trigger")]
     [Tooltip("Child object tag to use as the trigger that activates this spike trap.")]
-    public string triggerTag = "trap damage";
+    public string triggerTag = "trap";
 
     GameObject _triggerChild;
 
@@ -133,7 +134,19 @@ public class SpikeTrap : MonoBehaviour
     // Reattached: damage the player via PlayerMovement root instead of TopDownControllerWithDash.
     void HandlePlayerHit(Collider other)
     {
-        // Prefer PlayerMovement on the player root
+        // Prefer PlayerTakeDamage (which encapsulates TryApplyDamageAndKnockback)
+        var playerTake = other.GetComponentInParent<PlayerTakeDamage>() ?? other.GetComponent<PlayerTakeDamage>();
+        Vector3 dir = (other.transform.position - transform.position).normalized;
+        dir.y = Mathf.Max(dir.y, 0.2f); // give a little upward lift
+
+        if (playerTake != null)
+        {
+            // Use the PlayerTakeDamage API to apply damage + knockback (distance argument uses knockbackForce)
+            playerTake.TryApplyDamageAndKnockback(damageAmount, dir, knockbackForce);
+            return;
+        }
+
+        // Fallback: if PlayerTakeDamage isn't present, try to find PlayerMovement + Health and apply manually
         var playerMovement = other.GetComponentInParent<PlayerMovement>();
         if (playerMovement == null)
         {
@@ -152,9 +165,7 @@ public class SpikeTrap : MonoBehaviour
             Debug.LogWarning($"[{nameof(SpikeTrap)}] Player has no Health component to take damage.");
         }
 
-        // Compute knockback direction (away from trap center, slightly upward)
-        Vector3 dir = (other.transform.position - transform.position).normalized;
-        dir.y = Mathf.Max(dir.y, 0.2f); // give a little upward lift
+        // Compute knockback distance and direction
         Vector3 knockback = dir * knockbackForce;
 
         // Apply knockback: prefer Rigidbody on player root. If kinematic, move it directly.
@@ -176,11 +187,6 @@ public class SpikeTrap : MonoBehaviour
             // Fallback: nudge root transform (last resort)
             other.transform.root.position += knockback;
         }
-
-        // Optionally stop player movement briefly using public API if available
-        // PlayerMovement provides StopMovement/ResumeMovement; call if you want to momentarily disable input.
-        // playerMovement.StopMovement();
-        // ... schedule ResumeMovement after knockbackDuration if desired.
     }
 
     void HandleEnemyHit(Collider other, EnemyBase enemyBase)
@@ -213,14 +219,27 @@ public class SpikeTrap : MonoBehaviour
         dmgable.TakeDmg(damageAmount);
     }
 
+    // Updated knockback: if target is a player, route through PlayerTakeDamage.TryApplyDamageAndKnockback
     void ApplyKnockbackToCollider(Collider other)
     {
         // Compute knockback direction (away from trap center)
         Vector3 dir = (other.transform.position - transform.position).normalized;
         dir.y = Mathf.Max(dir.y, 0.1f);
-        Vector3 knockback = dir * knockbackForce;
+        float distance = knockbackForce; // distance parameter expected by PlayerTakeDamage
 
-        var rb = other.GetComponentInParent<Rigidbody>();
+        // If this is a player, prefer PlayerTakeDamage API
+        var playerTake = other.GetComponentInParent<PlayerTakeDamage>() ?? other.GetComponent<PlayerTakeDamage>();
+        if (playerTake != null)
+        {
+            // Damage amount already applied by caller in most flows; TryApplyDamageAndKnockback enforces i-frames,
+            // so we call it to apply damage & knockback only if appropriate.
+            playerTake.TryApplyDamageAndKnockback(damageAmount, dir, distance);
+            return;
+        }
+
+        // Otherwise try Rigidbody on the object's root
+        var rb = other.GetComponentInParent<Rigidbody>() ?? other.GetComponent<Rigidbody>() ?? other.GetComponentInChildren<Rigidbody>();
+        Vector3 knockback = dir * knockbackForce;
         if (rb != null)
         {
             if (rb.isKinematic)
@@ -234,6 +253,7 @@ public class SpikeTrap : MonoBehaviour
         }
         else
         {
+            // Fallback: nudge root transform
             other.transform.root.position += knockback;
         }
     }
