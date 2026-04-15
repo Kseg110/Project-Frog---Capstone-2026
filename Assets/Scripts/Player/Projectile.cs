@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] private float baseSpeed = 10f; //Adjust as nessisary 
-    [SerializeField] private float baseDamage = 10f; //Adjust as nessisary 
-    [SerializeField] private float maxScale = 2f; //Adjust as nessisary 
+    [SerializeField] protected float baseSpeed = 10f; //Adjust as nessisary 
+    [SerializeField] protected float baseDamage = 10f; //Adjust as nessisary 
+    [SerializeField] protected float maxScale = 2f; //Adjust as nessisary 
 
     public float speed;
     public float damage;
 
-    public void Initialize(float chargePercent)
+    public virtual void Initialize(float chargePercent)
     {
         speed = Mathf.Lerp(baseSpeed, baseSpeed * 2f, chargePercent);
         damage = Mathf.Lerp(baseDamage, baseDamage * 3f, chargePercent);
@@ -20,9 +20,11 @@ public class Projectile : MonoBehaviour
         Destroy(gameObject, 3f);
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         transform.position += transform.forward * speed * Time.deltaTime;
     }
+
+    //ADD DAMAGE FUNCTION HERE
 }
 
