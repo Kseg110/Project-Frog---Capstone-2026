@@ -8,59 +8,53 @@ using UnityEngine;
 /// When a GameObject tagged "Player" enters the child trigger the trap will start shooting
 /// dart prefabs every `fireInterval` seconds; it stops when all players leave the trigger.
 /// </summary>
-public class DartTrap: MonoBehaviour
+public class DartTrap : MonoBehaviour
 {
     [Header("Dart")]
-    public GameObject dartPrefab;
-    public Transform shootPoint;
-    public float dartSpeed = 20f;
-    public float dartLifetime = 10f;
+    [SerializeField] private GameObject dartPrefab;
+    [SerializeField] private Transform shootPoint;
+    [SerializeField] private float dartSpeed = 20f;
+    [SerializeField] private float dartLifetime = 10f;
 
     [Header("Timing")]
     [Tooltip("Seconds between shots while trigger is active.")]
-    public float fireInterval = 5f;
+    [SerializeField] private float fireInterval = 5f;
 
-    // internal
-    readonly HashSet<GameObject> _playersInTrigger = new();
-    Coroutine _shootingRoutine;
-    GameObject _trapTriggerChild;
+    private readonly HashSet<GameObject> playersInTrigger = new();
+    private Coroutine shootingRoutine;
+    private GameObject trapTriggerChild;
 
-    void Start()
+    private void Start()
     {
         // Find first child tagged "trap"
         foreach (Transform t in GetComponentsInChildren<Transform>(true))
         {
             if (t.gameObject != gameObject && t.gameObject.CompareTag("trap"))
             {
-                _trapTriggerChild = t.gameObject;
+                trapTriggerChild = t.gameObject;
                 break;
             }
         }
 
-        if (_trapTriggerChild == null)
+        if (trapTriggerChild == null)
         {
             Debug.LogWarning($"[{nameof(DartTrap)}] No child with tag \"trap\" found under {name}.");
             return;
         }
 
         // Ensure the child has a Collider set as trigger
-        var col = _trapTriggerChild.GetComponent<Collider>();
+        var col = trapTriggerChild.GetComponent<Collider>();
         if (col == null)
         {
-            Debug.LogWarning($"[{nameof(DartTrap)}] Child tagged \"trap\" on {_trapTriggerChild.name} has no Collider.");
+            Debug.LogWarning($"[{nameof(DartTrap)}] Child tagged \"trap\" on {trapTriggerChild.name} has no Collider.");
         }
         else if (!col.isTrigger)
         {
-            Debug.LogWarning($"[{nameof(DartTrap)}] Collider on {_trapTriggerChild.name} is not marked as isTrigger. Mark it as trigger for trap activation.");
+            Debug.LogWarning($"[{nameof(DartTrap)}] Collider on {trapTriggerChild.name} is not marked as isTrigger. Mark it as trigger for trap activation.");
         }
 
         // Add or get forwarding component so the child's trigger events are forwarded here
-        var forwarder = _trapTriggerChild.GetComponent<TrapTriggerForwarder>();
-        if (forwarder == null)
-        {
-            forwarder = _trapTriggerChild.AddComponent<TrapTriggerForwarder>();
-        }
-
+        var forwarder = trapTriggerChild.GetComponent<TrapTriggerForwarder>() ?? trapTriggerChild.AddComponent<TrapTriggerForwarder>();
         forwarder.parent = this;
     }
 
@@ -69,9 +63,9 @@ public class DartTrap: MonoBehaviour
     {
         if (!other.gameObject.CompareTag("Player")) return;
 
-        _playersInTrigger.Add(other.gameObject);
+        playersInTrigger.Add(other.gameObject);
 
-        if (_playersInTrigger.Count == 1)
+        if (playersInTrigger.Count == 1)
         {
             StartShooting();
         }
@@ -82,30 +76,30 @@ public class DartTrap: MonoBehaviour
     {
         if (!other.gameObject.CompareTag("Player")) return;
 
-        _playersInTrigger.Remove(other.gameObject);
+        playersInTrigger.Remove(other.gameObject);
 
-        if (_playersInTrigger.Count == 0)
+        if (playersInTrigger.Count == 0)
         {
             StopShooting();
         }
     }
 
-    void StartShooting()
+    private void StartShooting()
     {
-        if (_shootingRoutine != null) return;
-        _shootingRoutine = StartCoroutine(ShootingLoop());
+        if (shootingRoutine != null) return;
+        shootingRoutine = StartCoroutine(ShootingLoop());
     }
 
-    void StopShooting()
+    private void StopShooting()
     {
-        if (_shootingRoutine != null)
+        if (shootingRoutine != null)
         {
-            StopCoroutine(_shootingRoutine);
-            _shootingRoutine = null;
+            StopCoroutine(shootingRoutine);
+            shootingRoutine = null;
         }
     }
 
-    IEnumerator ShootingLoop()
+    private IEnumerator ShootingLoop()
     {
         // Fire immediately on activation, then wait between shots
         while (true)
@@ -115,7 +109,7 @@ public class DartTrap: MonoBehaviour
         }
     }
 
-    void ShootOnce()
+    private void ShootOnce()
     {
         if (dartPrefab == null)
         {
@@ -139,7 +133,7 @@ public class DartTrap: MonoBehaviour
         Destroy(dart, dartLifetime);
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         StopShooting();
     }
@@ -153,12 +147,12 @@ public class TrapTriggerForwarder : MonoBehaviour
 {
     [HideInInspector] public DartTrap parent;
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         parent?.OnChildTriggerEnter(other);
     }
 
-    void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         parent?.OnChildTriggerExit(other);
     }

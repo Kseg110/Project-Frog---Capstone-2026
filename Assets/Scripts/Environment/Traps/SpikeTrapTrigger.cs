@@ -42,8 +42,8 @@ public class SpikeTrapTrigger : MonoBehaviour
     [Tooltip("Distance the player is knocked back when hit.")]
     [SerializeField] private float knockbackDistance = 8f;
 
-    private readonly HashSet<GameObject> _occupants = new HashSet<GameObject>();
-    private bool _permanentlyActivated;
+    private readonly HashSet<GameObject> occupants = new HashSet<GameObject>();
+    private bool permanentlyActivated;
 
     private void Start()
     {
@@ -64,16 +64,16 @@ public class SpikeTrapTrigger : MonoBehaviour
         if (!IsValidTarget(other)) return;
 
         var root = other.transform.root.gameObject;
-        bool wasEmpty = _occupants.Count == 0;
-        _occupants.Add(root);
+        bool wasEmpty = occupants.Count == 0;
+        occupants.Add(root);
 
         // Activate linked traps when first valid target enters
-        if (wasEmpty && !_permanentlyActivated)
+        if (wasEmpty && !permanentlyActivated)
         {
             SetTrapsActive(true);
 
             if (stayActiveOnce)
-                _permanentlyActivated = true;
+                permanentlyActivated = true;
         }
 
         // Apply damage to the target that entered
@@ -82,13 +82,13 @@ public class SpikeTrapTrigger : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (_permanentlyActivated) return;
+        if (permanentlyActivated) return;
 
         var root = other.transform.root.gameObject;
-        _occupants.Remove(root);
+        occupants.Remove(root);
 
         // Deactivate traps when all valid targets have left
-        if (_occupants.Count == 0)
+        if (occupants.Count == 0)
             SetTrapsActive(false);
     }
 
@@ -194,7 +194,7 @@ public class SpikeTrapTrigger : MonoBehaviour
 
     private void OnDisable()
     {
-        _occupants.Clear();
+        occupants.Clear();
     }
 
     // Editor gizmo: draw lines from trigger to each linked trap

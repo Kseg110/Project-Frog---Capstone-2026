@@ -9,17 +9,17 @@ public class PlayerCrosshair : MonoBehaviour
 {
     [Header("Crosshair Settings")]
     [Tooltip("Optional sprite to use for the crosshair. If null, a temporary crosshair will be generated.")]
-    public Sprite crosshairSprite;
+    [SerializeField] private Sprite crosshairSprite;
 
     [Tooltip("Size of the crosshair in pixels.")]
-    public Vector2 size = new Vector2(32f, 32f);
+    [SerializeField] private Vector2 size = new Vector2(32f, 32f);
 
     [Tooltip("If true, hides the system cursor while playing.")]
-    public bool hideSystemCursor = true;
+    [SerializeField] private bool hideSystemCursor = true;
 
-    Canvas uiCanvas;
-    Image crosshairImage;
-    RectTransform crosshairRect;
+    private Canvas uiCanvas;
+    private Image crosshairImage;
+    private RectTransform crosshairRect;
 
     void Awake()
     {

@@ -6,7 +6,6 @@ using UnityEngine;
 /// events to this component. When a Player enters the trigger the player will be damaged
 /// and knocked back.
 /// </summary>
-
 public class SpikeTrap : MonoBehaviour
 {
     public enum TargetMode
@@ -17,57 +16,52 @@ public class SpikeTrap : MonoBehaviour
     }
 
     [Header("Damage")]
-    public float damageAmount = 20f;
+    [SerializeField] private float damageAmount = 20f;
 
     [Header("Knockback")]
-    public float knockbackForce = 8f;
-    public float knockbackDuration = 0.25f;
+    [SerializeField] private float knockbackForce = 8f;
+    [SerializeField] private float knockbackDuration = 0.25f;
 
     [Header("Targets")]
     [Tooltip("Choose whether the trap hurts the Player, Enemies, or Both.")]
-    public TargetMode targetMode = TargetMode.Player;
+    [SerializeField] private TargetMode targetMode = TargetMode.Player;
 
     [Header("Trigger")]
     [Tooltip("Child object tag to use as the trigger that activates this spike trap.")]
-    public string triggerTag = "trap";
+    [SerializeField] private string triggerTag = "trap";
 
-    GameObject _triggerChild;
+    private GameObject triggerChild;
 
-    void Start()
+    private void Start()
     {
         // Find first child tagged as the trap trigger (e.g. "trap damage")
         foreach (Transform t in GetComponentsInChildren<Transform>(true))
         {
             if (t.gameObject != gameObject && t.gameObject.CompareTag(triggerTag))
             {
-                _triggerChild = t.gameObject;
+                triggerChild = t.gameObject;
                 break;
             }
         }
 
-        if (_triggerChild == null)
+        if (triggerChild == null)
         {
             Debug.LogWarning($"[{nameof(SpikeTrap)}] No child with tag \"{triggerTag}\" found under {name}.");
             return;
         }
 
-        var col = _triggerChild.GetComponent<Collider>();
+        var col = triggerChild.GetComponent<Collider>();
         if (col == null)
         {
-            Debug.LogWarning($"[{nameof(SpikeTrap)}] Child tagged \"{triggerTag}\" on {_triggerChild.name} has no Collider.");
+            Debug.LogWarning($"[{nameof(SpikeTrap)}] Child tagged \"{triggerTag}\" on {triggerChild.name} has no Collider.");
         }
         else if (!col.isTrigger)
         {
-            Debug.LogWarning($"[{nameof(SpikeTrap)}] Collider on {_triggerChild.name} is not marked as isTrigger. Mark it as trigger for trap activation.");
+            Debug.LogWarning($"[{nameof(SpikeTrap)}] Collider on {triggerChild.name} is not marked as isTrigger. Mark it as trigger for trap activation.");
         }
 
         // Add or get forwarding component so the child's trigger events are forwarded here
-        var forwarder = _triggerChild.GetComponent<SpikeTrapTriggerForwarder>();
-        if (forwarder == null)
-        {
-            forwarder = _triggerChild.AddComponent<SpikeTrapTriggerForwarder>();
-        }
-
+        var forwarder = triggerChild.GetComponent<SpikeTrapTriggerForwarder>() ?? triggerChild.AddComponent<SpikeTrapTriggerForwarder>();
         forwarder.parent = this;
     }
 
@@ -132,7 +126,7 @@ public class SpikeTrap : MonoBehaviour
     }
 
     // Reattached: damage the player via PlayerMovement root instead of TopDownControllerWithDash.
-    void HandlePlayerHit(Collider other)
+    private void HandlePlayerHit(Collider other)
     {
         // Prefer PlayerTakeDamage (which encapsulates TryApplyDamageAndKnockback)
         var playerTake = other.GetComponentInParent<PlayerTakeDamage>() ?? other.GetComponent<PlayerTakeDamage>();
@@ -189,7 +183,7 @@ public class SpikeTrap : MonoBehaviour
         }
     }
 
-    void HandleEnemyHit(Collider other, EnemyBase enemyBase)
+    private void HandleEnemyHit(Collider other, EnemyBase enemyBase)
     {
         // Try to apply damage via IDamageable if available
         if (enemyBase is IDamageable dmgable)
@@ -214,13 +208,13 @@ public class SpikeTrap : MonoBehaviour
         ApplyKnockbackToCollider(other);
     }
 
-    void ApplyDamageToIDamageable(IDamageable dmgable)
+    private void ApplyDamageToIDamageable(IDamageable dmgable)
     {
         dmgable.TakeDmg(damageAmount);
     }
 
     // Updated knockback: if target is a player, route through PlayerTakeDamage.TryApplyDamageAndKnockback
-    void ApplyKnockbackToCollider(Collider other)
+    private void ApplyKnockbackToCollider(Collider other)
     {
         // Compute knockback direction (away from trap center)
         Vector3 dir = (other.transform.position - transform.position).normalized;
@@ -258,7 +252,7 @@ public class SpikeTrap : MonoBehaviour
         }
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         // no-op; ensure any coroutines in player are unaffected
     }
@@ -271,7 +265,7 @@ public class SpikeTrapTriggerForwarder : MonoBehaviour
 {
     [HideInInspector] public SpikeTrap parent;
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         parent?.OnChildTriggerEnter(other);
     }
