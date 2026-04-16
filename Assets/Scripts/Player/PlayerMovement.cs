@@ -125,42 +125,42 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private LayerMask collisionLayers;
     private void MoveWithCollision(Vector3 motion)
     {
-        Vector3 start = rb.position + capsuleCollider.center + Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
-        Vector3 end = rb.position + capsuleCollider.center - Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
+        int maxIterations = 5; // more = more accurate, but heavier
+        Vector3 remaining = motion;
 
-        if (!Physics.CapsuleCast(start, end, capsuleCollider.radius, motion.normalized, out RaycastHit hit, motion.magnitude, collisionLayers, QueryTriggerInteraction.Ignore))
+        for (int i = 0; i < maxIterations; i++)
         {
-            rb.MovePosition(rb.position + motion);
+            if (remaining.sqrMagnitude < 0.0001f)
+                break;
 
-            if (isDashing && motion.sqrMagnitude > 0.0001f)
-                transform.forward = motion.normalized;
+            Vector3 start = rb.position + capsuleCollider.center + Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
+            Vector3 end = rb.position + capsuleCollider.center - Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
 
-            return;
+            if (!Physics.CapsuleCast(start, end, capsuleCollider.radius,
+                remaining.normalized, out RaycastHit hit,
+                remaining.magnitude, collisionLayers, QueryTriggerInteraction.Ignore))
+            {
+                // No hit → safe to move all remaining distance
+                rb.MovePosition(rb.position + remaining);
+                break;
+            }
+
+            // Move up to the surface (minus a tiny skin so we don't stick)
+            float skin = 0.01f;
+            float moveDist = Mathf.Max(hit.distance - skin, 0f);
+
+            if (moveDist > 0f)
+            {
+                Vector3 movePart = remaining.normalized * moveDist;
+                rb.MovePosition(rb.position + movePart);
+            }
+
+            // Reduce remaining motion
+            remaining -= remaining.normalized * moveDist;
+
+            // Slide along surface
+            remaining = Vector3.ProjectOnPlane(remaining, hit.normal);
         }
-
-        Vector3 slide = Vector3.ProjectOnPlane(motion, hit.normal);
-
-        if (slide.sqrMagnitude < 0.0001f)
-            return;
-
-        rb.MovePosition(rb.position + slide);
-
-        if (isDashing)
-        {
-            Vector3 newForward = slide.normalized;
-
-            float maxRotate = 720f * Time.fixedDeltaTime;
-
-            transform.forward = Vector3.RotateTowards(
-                transform.forward,
-                newForward,
-                Mathf.Deg2Rad * maxRotate,
-                0f
-            );
-
-            dashDirection = newForward;
-        }
-            transform.forward = moveInput; 
     }
 
     private void UpdateTetherStatus()
