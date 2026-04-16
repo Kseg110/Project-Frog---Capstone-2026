@@ -48,10 +48,12 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private float currentMaxRadius; // The distance to the tower at this moment
     private Vector3 anchorPosition;
     private readonly float currentMinRadius = 4f;
-
+    [SerializeField] private string hitBoxName = "Hitbox";
     private void Awake()
     {
         // Grab rigibody reference and set the settings
+        Transform hitBox = transform.Find(hitBoxName);
+        capsuleCollider = hitBox.GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -109,10 +111,55 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         // Apply dynamic shrinking grapple wall
         moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
-
-        rb.MovePosition(rb.position + moveVector);
-
+        MoveWithCollision(moveVector);
         if (!isDashing && moveInput.sqrMagnitude > 0.0001f)
+            transform.forward = moveInput;
+
+        if (isMovementStopped)
+        {
+            transform.forward = lookDirection;
+            return;
+        }
+    }
+    private CapsuleCollider capsuleCollider;
+    [SerializeField] private LayerMask collisionLayers;
+    private void MoveWithCollision(Vector3 motion)
+    {
+        Vector3 start = rb.position + capsuleCollider.center + Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
+        Vector3 end = rb.position + capsuleCollider.center - Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
+
+        if (!Physics.CapsuleCast(start, end, capsuleCollider.radius, motion.normalized, out RaycastHit hit, motion.magnitude, collisionLayers, QueryTriggerInteraction.Ignore))
+        {
+            rb.MovePosition(rb.position + motion);
+
+            if (isDashing && motion.sqrMagnitude > 0.0001f)
+                transform.forward = motion.normalized;
+
+            return;
+        }
+
+        Vector3 slide = Vector3.ProjectOnPlane(motion, hit.normal);
+
+        if (slide.sqrMagnitude < 0.0001f)
+            return;
+
+        rb.MovePosition(rb.position + slide);
+
+        if (isDashing)
+        {
+            Vector3 newForward = slide.normalized;
+
+            float maxRotate = 720f * Time.fixedDeltaTime;
+
+            transform.forward = Vector3.RotateTowards(
+                transform.forward,
+                newForward,
+                Mathf.Deg2Rad * maxRotate,
+                0f
+            );
+
+            dashDirection = newForward;
+        }
             transform.forward = moveInput; 
     }
 
@@ -216,14 +263,14 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     public void AddSpeedModifier(object source, float multiplier)
     {
-        if (!speedModifiers.ContainsKey(source)) 
+        if (!speedModifiers.ContainsKey(source))
             speedModifiers.Add(source, multiplier);
     }
 
     public void RemoveSpeedModifier(object source)
     {
         if (speedModifiers.ContainsKey(source))
-            speedModifiers.Remove(source);  
+            speedModifiers.Remove(source);
     }
     private void OnDrawGizmos()
     {
