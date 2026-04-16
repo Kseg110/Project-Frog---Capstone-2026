@@ -11,10 +11,6 @@ public class PauseManager : MonoBehaviour
     {
         // Make sure the pause menu is hidden at the start
         pauseMenuUI.SetActive(false);
-
-        // Lock the cursor for gameplay
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
 
@@ -34,10 +30,6 @@ public class PauseManager : MonoBehaviour
         pauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
-
-        // Lock the cursor for gameplay
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     private void PauseGame()
@@ -45,10 +37,6 @@ public class PauseManager : MonoBehaviour
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
-
-        // Unlock the cursor for menu interaction
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
     }
 
     public void QuitGame()
