@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Collider))]
-public class DamageParticleFog : MonoBehaviour
+public class EnvFogDamage : MonoBehaviour
 {
     [SerializeField] private float damagePerSecond = 1f;
 
