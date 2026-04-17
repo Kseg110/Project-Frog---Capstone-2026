@@ -18,7 +18,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     protected bool canAttack = true;
 
-    [SerializeField] protected Health health;
+    [Header("References")]
+    [SerializeField] protected GameObject attackHitbox;
+    [SerializeField] private protected Health health;
+    
 
     
     private bool isActive;
@@ -121,19 +124,52 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     }
     protected virtual void Awake()
     {
-        agent = GetComponent<NavMeshAgent>(); 
-        enableNav = true;
+        agent = GetComponent<NavMeshAgent>();
+        rb = GetComponent<Rigidbody>();
+        
+        // Initialize health component
+        if (health == null)
+        {
+            health = GetComponent<Health>();
+            if (health == null)
+            {
+                Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
+                health = gameObject.AddComponent<Health>();
+                
+                //// Add Healthbar if missing (required by Health)
+                //if (GetComponent<Healthbar>() == null)
+                //{
+                //    gameObject.AddComponent<Healthbar>();
+                //}
+            }
+        }
+        
+        if (player == null)
+        {
+            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+            if (playerObject != null)
+            {
+                player = playerObject.transform;
+                Debug.Log($"Found player: {player.name}");
+            }
+            else
+            {
+                Debug.LogError("No GameObject with 'Player' tag found!");
+            }
+        }
+          enableNav = true;
     }
 
     protected virtual void Update()
     {
-        if (health.IsDead) return;
+        if (health != null && health.IsDead) return;
     }
 
     #region Health
     void IDamageable.TakeDmg(float dmg)
     {
-        health.TakeDmg(dmg);
+        if (health != null)
+            health.TakeDmg(dmg);
     }
     #endregion
 
