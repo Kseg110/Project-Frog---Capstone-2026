@@ -19,9 +19,12 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     [Header("References")]
     [SerializeField] protected GameObject attackHitbox;
     [SerializeField] private protected Health health;
-    
 
-    
+    protected bool isAttacking;
+    public bool IsAttacking => IsAttacking;
+
+
+
     private bool isActive;
     private Rigidbody rb;
 
@@ -35,7 +38,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
-        
+
         // Initialize health component
         if (health == null)
         {
@@ -44,7 +47,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             {
                 Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
                 health = gameObject.AddComponent<Health>();
-                
+
                 //// Add Healthbar if missing (required by Health)
                 //if (GetComponent<Healthbar>() == null)
                 //{
@@ -52,7 +55,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
                 //}
             }
         }
-        
+
         if (player == null)
         {
             GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
@@ -66,7 +69,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
                 Debug.LogError("No GameObject with 'Player' tag found!");
             }
         }
-          enableNav = true;
+        enableNav = true;
     }
 
     protected virtual void Update()
@@ -90,7 +93,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         agent.isStopped = false;
         agent.SetDestination(destination);
-        
+
     }
     public virtual void StopMovement()
     {
@@ -103,5 +106,5 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         agent.isStopped = false;
     }
     #endregion
-   
+
 }
