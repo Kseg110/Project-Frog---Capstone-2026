@@ -1,10 +1,10 @@
 using System.Collections;
 using UnityEngine;
 
-public class RockGolemSpecial : MonoBehaviour
+public class RockGolemSpecial : EnemyRockGolem
 {
     [Header("References")]
-    [SerializeField] private RockGolem2 owner;
+    [SerializeField] private EnemyRockGolem owner;
 
 
     [Header("Special Settings")]
@@ -27,13 +27,13 @@ public class RockGolemSpecial : MonoBehaviour
     private IEnumerator SpecialRoutine()
     {
         // Stop movement
-        owner.Agent.isStopped = true;
+        agent.isStopped = true;
 
         //swtich golem's canSpecial to false
         owner.SetSpecialAvailable(false);
 
         // Determine strike position
-        Vector3 strikePosition = owner.Player.position;
+        Vector3 strikePosition = player.position;
         strikePosition.y = 0f;
 
         // Spawn preview
@@ -63,7 +63,7 @@ public class RockGolemSpecial : MonoBehaviour
         Destroy(cylinder, 1f);
 
         // Re-enable movement
-        owner.Agent.isStopped = false;
+        agent.isStopped = false;
 
         // Call cooldown reset
         OnSpecialFinished?.Invoke();

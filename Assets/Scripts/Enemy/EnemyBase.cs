@@ -10,112 +10,24 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
     [Header("References")]
     [SerializeField] protected Transform player;
-    public Transform Player => player;
 
     protected bool enableNav = true;
     protected NavMeshAgent agent;
-    public NavMeshAgent Agent => agent;
 
     protected bool canAttack = true;
 
     [Header("References")]
     [SerializeField] protected GameObject attackHitbox;
     [SerializeField] private protected Health health;
-    
 
-    
+    protected bool isAttacking;
+    public bool IsAttacking => IsAttacking;
+
+
+
     private bool isActive;
     private Rigidbody rb;
 
-<<<<<<< Updated upstream
-=======
-    [SerializeField] protected bool isAttacking = false;
-    public bool IsAttacking => isAttacking;
-    protected bool attackTriggered = false;
-    [SerializeField] protected float attackTimer = 0f;
-    [SerializeField] protected float cooldownTimer = 0f;
-    [SerializeField] protected float FinalSpeed = 3.5f;
-    [SerializeField] private float negetivepush = 1;
-    Coroutine slowCoroutine;
-    float originalSpeed;
-    // ===== Unity Callbacks =====
-
-    public void ApplySlow(float slowMultiplier, float duration)
-    {
-        if (slowCoroutine != null) StopCoroutine(slowCoroutine);
-        slowCoroutine = StartCoroutine(SlowRoutine(slowMultiplier, duration));
-    }
-    private IEnumerator SlowRoutine(float slowMultiplier, float duration)
-    {
-        AddSpeedModifier(this, slowMultiplier);
-        yield return new WaitForSeconds(duration);
-        RemoveSpeedModifier(this);
-        slowCoroutine = null;
-    }
-    protected virtual void Awake()
-    {
-        animator = GetComponent<Animator>();
-        agent = GetComponent<NavMeshAgent>();
-        FinalSpeed = Speed;
-        agent.speed = FinalSpeed;
-        agent.acceleration = acceleration;
-        agent.stoppingDistance = stoppingDistance;
-        agent.updateRotation = false;
-        agent.autoBraking = true;
-        rb = GetComponent <Rigidbody>();
-
-        if (health == null)
-        {
-            health = GetComponent<Health>();   
-            if (health == null)
-            {
-                Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
-                health = gameObject.AddComponent<Health>();
-            }
-        }
-
-        GameObject playerObj = GameObject.FindWithTag("Player");
-        if (playerObj != null)
-            player = playerObj.transform;
-
-        if (attackHitbox != null)
-            attackHitbox.isTrigger = true;
-    }
-
-    protected virtual void Update()
-    {
-        if (health != null && health.IsDead) return;
-        if (player == null) return;
-        HandleAttackTimers();
-        CheckAttackCondition();
-        agent.speed = FinalSpeed;
-
-        UpdateHitBox();
-        //EnforcePlayerDistance();
-        MoveTo(player.position);
-
-    }
-
-    // ===== Movement =====
-    protected void MoveTo(Vector3 position)
-    {
-        if (!isNavEnabled) return;
-        if (agent == null) return;
-
-        float distance = Vector3.Distance(transform.position, position);
-
-        if (distance > stoppingDistance)
-        {
-            agent.isStopped = false;
-            agent.SetDestination(position);
-            RotateTowardsMovement();
-        }
-        else
-        {
-            StopMovement();
-        }
-    }
->>>>>>> Stashed changes
     public void Activate(Transform playerTransform)
     {
         player = playerTransform;
@@ -126,7 +38,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
-        
+
         // Initialize health component
         if (health == null)
         {
@@ -135,7 +47,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             {
                 Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
                 health = gameObject.AddComponent<Health>();
-                
+
                 //// Add Healthbar if missing (required by Health)
                 //if (GetComponent<Healthbar>() == null)
                 //{
@@ -143,7 +55,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
                 //}
             }
         }
-        
+
         if (player == null)
         {
             GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
@@ -157,7 +69,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
                 Debug.LogError("No GameObject with 'Player' tag found!");
             }
         }
-          enableNav = true;
+        enableNav = true;
     }
 
     protected virtual void Update()
@@ -181,7 +93,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         agent.isStopped = false;
         agent.SetDestination(destination);
-        
+
     }
     public virtual void StopMovement()
     {
@@ -194,5 +106,5 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         agent.isStopped = false;
     }
     #endregion
-   
+
 }
