@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Trap that shoots a dart in a fixed direction and can optionally spawn a poison cloud.
 /// </summary>
-public class DartTrap : TrapBase
+public class DartTrapEffect : TrapBase
 {
     [SerializeField]
     private GameObject dartPrefab;
