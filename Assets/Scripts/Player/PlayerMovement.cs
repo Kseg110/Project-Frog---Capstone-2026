@@ -1,229 +1,100 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(PlayerAnchor))]
-public class PlayerMovement : MonoBehaviour, IMovement
+public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float baseMoveSpeed = 10f;
-
-    private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
-
-    private float CurrentSpeed
-    {
-        get
-        {
-            float finalMult = 1f;
-            foreach (var mult in speedModifiers.Values)
-                finalMult *= mult;
-            return baseMoveSpeed * finalMult;
-        }
-    }
+    [SerializeField] private float moveSpeed = 10f;
 
     [Header("Dash")]
     [SerializeField] private float dashDistance = 5f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
 
-    // References on player prefab
+    InputAction moveAction;
+    InputAction dashAction;
+
     private Rigidbody rb;
-    private PlayerAnchor playerAnchor;
-    private UIPlayerHUD playerHUD;
 
     private Vector3 moveInput;
     private Vector3 dashDirection;
     private Vector3 lookDirection;
 
     private bool isDashing;
-    private bool isMovementStopped;
-    private bool isTethered;
+    private bool movementStoppedExternally;
 
     private float dashTimer;
     private float dashCooldownTimer;
 
     public bool IsDashing => isDashing;
 
-
-    private float currentMaxRadius; // The distance to the tower at this moment
-    private Vector3 anchorPosition;
-    private readonly float currentMinRadius = 4f;
-    [SerializeField] private string hitBoxName = "Hitbox";
     private void Awake()
     {
-        // Grab rigibody reference and set the settings
-        Transform hitBox = transform.Find(hitBoxName);
-        capsuleCollider = hitBox.GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        playerAnchor = GetComponent<PlayerAnchor>();
-        playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+        moveAction = InputSystem.actions.FindAction("Move");
+        dashAction = InputSystem.actions.FindAction("Dash");
     }
 
     private void Update()
     {
-        UpdateTetherStatus();
-
         // Update dash cooldown
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= Time.deltaTime;
 
-        float progress = 1f - (dashCooldownTimer / dashCooldown);
-        playerHUD?.UpdateDashCooldown(progress);
-
-        if (isMovementStopped)
+        if (movementStoppedExternally)
             return;
 
-        float horizontalMove = Input.GetAxisRaw("Horizontal");
-        float verticalMove = Input.GetAxisRaw("Vertical");
+        Vector2 move = moveAction.ReadValue<Vector2>();
 
-        // No movement input during dash, otherwise create movement vector using horizontalMove and verticalMove
-        moveInput = isDashing ? Vector3.zero : new Vector3(horizontalMove, 0f, verticalMove).normalized;
+        // No movement input during dash, otherwise create movement vector
+        moveInput = isDashing ? Vector3.zero : new Vector3(move.x, 0f, move.y).normalized;
 
         // Check for valid dash input
-        if (!isDashing && dashCooldownTimer <= 0f && Input.GetButtonDown("Jump"))
+        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
             StartDash();
     }
 
     private void FixedUpdate()
     {
-        if (isMovementStopped)
+        if (movementStoppedExternally)
         {
             transform.forward = lookDirection;
             return;
         }
 
-        Vector3 moveVector;
-
+        // Dash movement
         if (isDashing)
         {
-            moveVector = dashDirection * (dashDistance / dashDuration) * Time.fixedDeltaTime;
             dashTimer -= Time.fixedDeltaTime;
+            rb.MovePosition(rb.position + dashDirection * (dashDistance / dashDuration) * Time.fixedDeltaTime);
             if (dashTimer <= 0f)
                 EndDash();
-        }
-        else
-        {
-            moveVector = moveInput * CurrentSpeed * Time.fixedDeltaTime;
-        }
-
-        // Apply dynamic shrinking grapple wall
-        moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
-        MoveWithCollision(moveVector);
-        if (!isDashing && moveInput.sqrMagnitude > 0.0001f)
-            transform.forward = moveInput;
-
-        if (isMovementStopped)
-        {
-            transform.forward = lookDirection;
             return;
         }
-    }
-    private CapsuleCollider capsuleCollider;
-    [SerializeField] private LayerMask collisionLayers;
-    private void MoveWithCollision(Vector3 motion)
-    {
-        int maxIterations = 5; // more = more accurate, but heavier
-        Vector3 remaining = motion;
 
-        for (int i = 0; i < maxIterations; i++)
+        // If no dash, move normally
+        rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
+
+        // Rotate player to the move direction
+        if (moveInput.sqrMagnitude > 0.0001f)
         {
-            if (remaining.sqrMagnitude < 0.0001f)
-                break;
-
-            Vector3 start = rb.position + capsuleCollider.center + Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
-            Vector3 end = rb.position + capsuleCollider.center - Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
-
-            if (!Physics.CapsuleCast(start, end, capsuleCollider.radius,
-                remaining.normalized, out RaycastHit hit,
-                remaining.magnitude, collisionLayers, QueryTriggerInteraction.Ignore))
-            {
-                // No hit → safe to move all remaining distance
-                rb.MovePosition(rb.position + remaining);
-                break;
-            }
-
-            // Move up to the surface (minus a tiny skin so we don't stick)
-            float skin = 0.01f;
-            float moveDist = Mathf.Max(hit.distance - skin, 0f);
-
-            if (moveDist > 0f)
-            {
-                Vector3 movePart = remaining.normalized * moveDist;
-                rb.MovePosition(rb.position + movePart);
-            }
-
-            // Reduce remaining motion
-            remaining -= remaining.normalized * moveDist;
-
-            // Slide along surface
-            remaining = Vector3.ProjectOnPlane(remaining, hit.normal);
+            transform.forward = moveInput;
         }
-    }
-
-    private void UpdateTetherStatus()
-    {
-        if (playerAnchor != null)
-            isTethered = playerAnchor.IsTethered;
-
-        if (isTethered && playerAnchor.CurrentAnchor != null)
-        {
-            anchorPosition = playerAnchor.CurrentAnchor.transform.position;
-
-            // Shrink currentMaxRadius as player moves closer, but never below currentMinRadius
-            float distanceToAnchor = Vector3.Distance(rb.position, anchorPosition);
-            if (currentMaxRadius == 0f || distanceToAnchor < currentMaxRadius)
-                currentMaxRadius = Mathf.Max(distanceToAnchor, currentMinRadius);
-        }
-        else
-        {
-            currentMaxRadius = 0f; // Reset when player is not grappling
-        }
-    }
-
-    private Vector3 ClampToShrinkingAnchorWall(Vector3 currentPos, Vector3 moveVector)
-    {
-        if (!isTethered)
-            return moveVector;
-
-        Vector3 proposedPos = currentPos + moveVector;
-        Vector3 offset = proposedPos - anchorPosition;
-        float distance = offset.magnitude;
-
-        // Prevent moving farther than currentMaxRadius
-        if (distance > currentMaxRadius)
-        {
-            Vector3 toCenter = offset.normalized;
-            Vector3 tangentMove = moveVector - Vector3.Dot(moveVector, toCenter) * toCenter;
-
-            float overshoot = distance - currentMaxRadius;
-            tangentMove *= Mathf.Clamp01(1f - overshoot / moveVector.magnitude);
-
-            return tangentMove;
-        }
-
-        // Once inside min radius, block outward movement past it
-        Vector3 currentOffset = currentPos - anchorPosition;
-        bool insideMinRadius = currentOffset.magnitude < currentMinRadius;
-
-        if (insideMinRadius && distance > currentMinRadius)
-        {
-            Vector3 toCenter = offset.normalized;
-            return moveVector - Vector3.Dot(moveVector, toCenter) * toCenter;
-        }
-
-        return moveVector;
     }
 
     /// <summary>
-    /// Stops player movement. Optional rotate player to face new direction (forward)
+    /// Stops player movement. 
+    /// Intended to be called externally
     /// </summary>
     public void StopMovement(Vector3? forward = null)
     {
-        isMovementStopped = true;
+        movementStoppedExternally = true;
         moveInput = Vector3.zero;
+
         if (forward != null) { lookDirection = forward.Value; }
     }
 
@@ -233,55 +104,21 @@ public class PlayerMovement : MonoBehaviour, IMovement
     /// </summary>
     public void ResumeMovement()
     {
-        isMovementStopped = false;
+        movementStoppedExternally = false;
     }
 
     private void StartDash()
     {
-        playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;
 
         // Set the dash direction to the move direction. If there is no move direction, set the dash direction to the direction the player is facing
         dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
-
-        // Start dash VFX
-        Debug.Log("start dash");
-        PlayerDashVFX.Instance.StartDashVFX();
     }
 
     private void EndDash()
     {
         isDashing = false;
         dashCooldownTimer = dashCooldown;
-        playerHUD?.UpdateDashCooldown(0f);
-        
-        // End dash VFX
-        Debug.Log("end dash");
-        PlayerDashVFX.Instance.EndDashVFX();
-    }
-
-    public void AddSpeedModifier(object source, float multiplier)
-    {
-        if (!speedModifiers.ContainsKey(source))
-            speedModifiers.Add(source, multiplier);
-    }
-
-    public void RemoveSpeedModifier(object source)
-    {
-        if (speedModifiers.ContainsKey(source))
-            speedModifiers.Remove(source);
-    }
-    private void OnDrawGizmos()
-    {
-        if (!isTethered)
-            return;
-
-        // Only draw if we have a valid tower
-        if (currentMaxRadius > 0f)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(anchorPosition, currentMaxRadius);
-        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerAnchor : MonoBehaviour
 {
@@ -6,12 +7,17 @@ public class PlayerAnchor : MonoBehaviour
     private AnchorBase currentAnchor;
     private bool isTethered;
 
+    private InputAction tetherAction;
+
     public bool IsTethered => isTethered;
     public AnchorBase CurrentAnchor => currentAnchor;
 
     private void Awake()
     {
         allAnchors = FindObjectsByType<AnchorBase>(FindObjectsSortMode.None);
+        tetherAction = InputSystem.actions.FindAction("Tether");
+
+        Debug.Assert(tetherAction != null, "Tether action not found in Input Actions asset!");
     }
 
     private void Update()
@@ -28,7 +34,7 @@ public class PlayerAnchor : MonoBehaviour
 
     private void HandleInput()
     {
-        if (Input.GetButtonDown("Fire3"))
+        if (tetherAction.WasPressedThisFrame())
         {
             if (isTethered)
                 ReleaseTether();
@@ -57,7 +63,6 @@ public class PlayerAnchor : MonoBehaviour
                 closest = anchor;
             }
         }
-
         return closest;
     }
 

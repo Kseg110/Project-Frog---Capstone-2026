@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(PlayerTongueAttack))]
@@ -27,7 +28,11 @@ public class PlayerAttacks : MonoBehaviour
     private PlayerMovement playerMovement;
     private PlayerTongueAttack playerTongueAttack;
 
-    // True if any attack is active
+    // Input actions
+    private InputAction attackAction;          // Fire1 → LMB / Right Trigger
+    private InputAction secondaryAttackAction; // Fire2 → RMB / Left Trigger
+    private InputAction aimAction;             // Mouse position / Right Stick
+
     public bool IsAttacking => isCharging || playerTongueAttack.IsActive || attackWindowTimer > 0f;
 
     private void Awake()
@@ -36,23 +41,35 @@ public class PlayerAttacks : MonoBehaviour
         playerMovement = GetComponent<PlayerMovement>();
         playerTongueAttack = GetComponentInChildren<PlayerTongueAttack>();
 
-        // Subscribe to event OnTongueFinished to ResumeMovement when tongue fully retracts
         playerTongueAttack.OnTongueFinished += playerMovement.ResumeMovement;
+
+        // Cache input actions
+        attackAction = InputSystem.actions.FindAction("Attack");
+        secondaryAttackAction = InputSystem.actions.FindAction("SecondaryAttack");
+        aimAction = InputSystem.actions.FindAction("Look"); // or "Aim" if you renamed it
 
         Debug.Assert(playerTongueAttack != null, $"[{gameObject.name}] missing PlayerTongueAttack!", this);
     }
 
+    private void OnDestroy()
+    {
+        if (playerTongueAttack != null)
+            playerTongueAttack.OnTongueFinished -= playerMovement.ResumeMovement;
+    }
+
     private void Update()
     {
-        if (Input.GetButton("Fire1")) TryBasicShot();
+        // Basic shot — held LMB / Right Trigger (rate-limited inside TryBasicShot)
+        if (attackAction.IsPressed()) TryBasicShot();
 
-        if (Input.GetButtonDown("Fire2"))
+        // Secondary — RMB / Left Trigger
+        if (secondaryAttackAction.WasPressedThisFrame())
         {
             if (isTethered) StartCharging();
             else TryTongue();
         }
 
-        if (Input.GetButtonUp("Fire2"))
+        if (secondaryAttackAction.WasReleasedThisFrame())
         {
             if (isTethered) ReleaseCharging();
             else playerTongueAttack.BeginTongueRetract();
@@ -75,24 +92,24 @@ public class PlayerAttacks : MonoBehaviour
         if (playerTongueAttack.IsActive) return;
         if (Time.time < lastFireTime + fireCooldown) return;
 
-        Vector3 cursorDirection = GetCursorDirection();
+        Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
-        playerMovement.StopMovement(cursorDirection);
-        Shoot(0f, cursorDirection);
+        playerMovement.StopMovement(aimDirection);
+        Shoot(0f, aimDirection);
         lastFireTime = Time.time;
     }
 
     private void TryTongue()
     {
         if (isCharging) return;
-        playerMovement.StopMovement(GetCursorDirection());
+        playerMovement.StopMovement(GetAimDirection());
         playerTongueAttack.BeginTongueExtend();
     }
 
     public void StartCharging()
     {
         if (playerTongueAttack.IsActive) return;
-        playerMovement.StopMovement(GetCursorDirection());
+        playerMovement.StopMovement(GetAimDirection());
         isCharging = true;
         chargeTimer = 0f;
     }
@@ -121,9 +138,27 @@ public class PlayerAttacks : MonoBehaviour
         proj.GetComponent<Projectile>()?.Initialize(chargePercent);
     }
 
-    private Vector3 GetCursorDirection()
+    private Vector3 GetAimDirection()
     {
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        // Determine if the gamepad stick is actively aiming
+        Vector2 aimValue = aimAction.ReadValue<Vector2>();
+        var lastControl = aimAction.activeControl;
+        bool gamepadActive = lastControl != null
+                          && lastControl.device is Gamepad
+                          && aimValue.sqrMagnitude > 0.01f;
+
+        if (gamepadActive)
+        {
+            // Twin-stick: stick (x, y) → world (x, z)
+            return new Vector3(aimValue.x, 0f, aimValue.y).normalized;
+        }
+
+        // Mouse path
+        if (Mouse.current == null)
+            return transform.forward;
+
+        Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
+        Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
         Plane plane = new Plane(Vector3.up, transform.position);
 
         if (plane.Raycast(ray, out float distance))
