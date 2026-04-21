@@ -14,7 +14,7 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private float attackWindowDuration = 0.5f;
     [SerializeField] private float maxChargeTime = 2f;
 
-    public bool isTethered;
+    //public bool isTethered;
     public float LastChargeValue { get; private set; }
     public event System.Action<float> OnChargeShotFired;
 
@@ -27,6 +27,8 @@ public class PlayerAttacks : MonoBehaviour
     private Camera mainCamera;
     private PlayerMovement playerMovement;
     private PlayerTongueAttack playerTongueAttack;
+    private PlayerChargeAttack playerChargeAttack;
+    private PlayerAnchor playerAnchor;
 
     // Input actions
     private InputAction attackAction;          // Fire1 → LMB / Right Trigger
@@ -40,6 +42,9 @@ public class PlayerAttacks : MonoBehaviour
         mainCamera = Camera.main;
         playerMovement = GetComponent<PlayerMovement>();
         playerTongueAttack = GetComponentInChildren<PlayerTongueAttack>();
+        playerChargeAttack = GetComponent<PlayerChargeAttack>();
+        playerAnchor = GetComponent<PlayerAnchor>();
+
 
         playerTongueAttack.OnTongueFinished += playerMovement.ResumeMovement;
 
@@ -63,16 +68,40 @@ public class PlayerAttacks : MonoBehaviour
         if (attackAction.IsPressed()) TryBasicShot();
 
         // Secondary — RMB / Left Trigger
-        if (secondaryAttackAction.WasPressedThisFrame())
+        if (playerAnchor.IsTethered)
         {
-            if (isTethered) StartCharging();
-            else TryTongue();
-        }
+            if (secondaryAttackAction.WasPressedThisFrame())
+            {
+                if (!playerChargeAttack.IsCharging)
+                {
+                    playerMovement.StopMovement(GetAimDirection());
+                    playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
+                }
+            }
 
-        if (secondaryAttackAction.WasReleasedThisFrame())
+            if (secondaryAttackAction.IsPressed())
+            {
+                playerChargeAttack.UpdateCharge();
+            }
+
+            if (secondaryAttackAction.WasReleasedThisFrame())
+            {
+                playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+                playerMovement.ResumeMovement();
+            }
+        }
+        // not tethered use tongue attack
+        else
         {
-            if (isTethered) ReleaseCharging();
-            else playerTongueAttack.BeginTongueRetract();
+            if (secondaryAttackAction.WasPressedThisFrame())
+            {
+                TryTongue();
+            }
+
+            if (secondaryAttackAction.WasReleasedThisFrame())
+            {
+                playerTongueAttack.BeginTongueRetract();
+            }
         }
 
         if (isCharging)
