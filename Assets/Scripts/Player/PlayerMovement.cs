@@ -48,10 +48,12 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private float currentMaxRadius; // The distance to the tower at this moment
     private Vector3 anchorPosition;
     private readonly float currentMinRadius = 4f;
-
+    [SerializeField] private string hitBoxName = "Hitbox";
     private void Awake()
     {
         // Grab rigibody reference and set the settings
+        Transform hitBox = transform.Find(hitBoxName);
+        capsuleCollider = hitBox.GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -109,11 +111,56 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         // Apply dynamic shrinking grapple wall
         moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
-
-        rb.MovePosition(rb.position + moveVector);
-
+        MoveWithCollision(moveVector);
         if (!isDashing && moveInput.sqrMagnitude > 0.0001f)
-            transform.forward = moveInput; 
+            transform.forward = moveInput;
+
+        if (isMovementStopped)
+        {
+            transform.forward = lookDirection;
+            return;
+        }
+    }
+    private CapsuleCollider capsuleCollider;
+    [SerializeField] private LayerMask collisionLayers;
+    private void MoveWithCollision(Vector3 motion)
+    {
+        int maxIterations = 5; // more = more accurate, but heavier
+        Vector3 remaining = motion;
+
+        for (int i = 0; i < maxIterations; i++)
+        {
+            if (remaining.sqrMagnitude < 0.0001f)
+                break;
+
+            Vector3 start = rb.position + capsuleCollider.center + Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
+            Vector3 end = rb.position + capsuleCollider.center - Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
+
+            if (!Physics.CapsuleCast(start, end, capsuleCollider.radius,
+                remaining.normalized, out RaycastHit hit,
+                remaining.magnitude, collisionLayers, QueryTriggerInteraction.Ignore))
+            {
+                // No hit → safe to move all remaining distance
+                rb.MovePosition(rb.position + remaining);
+                break;
+            }
+
+            // Move up to the surface (minus a tiny skin so we don't stick)
+            float skin = 0.01f;
+            float moveDist = Mathf.Max(hit.distance - skin, 0f);
+
+            if (moveDist > 0f)
+            {
+                Vector3 movePart = remaining.normalized * moveDist;
+                rb.MovePosition(rb.position + movePart);
+            }
+
+            // Reduce remaining motion
+            remaining -= remaining.normalized * moveDist;
+
+            // Slide along surface
+            remaining = Vector3.ProjectOnPlane(remaining, hit.normal);
+        }
     }
 
     private void UpdateTetherStatus()
@@ -216,14 +263,14 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     public void AddSpeedModifier(object source, float multiplier)
     {
-        if (!speedModifiers.ContainsKey(source)) 
+        if (!speedModifiers.ContainsKey(source))
             speedModifiers.Add(source, multiplier);
     }
 
     public void RemoveSpeedModifier(object source)
     {
         if (speedModifiers.ContainsKey(source))
-            speedModifiers.Remove(source);  
+            speedModifiers.Remove(source);
     }
     private void OnDrawGizmos()
     {
