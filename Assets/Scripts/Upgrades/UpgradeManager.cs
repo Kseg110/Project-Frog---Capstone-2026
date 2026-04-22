@@ -45,7 +45,7 @@ public class UpgradeManager : MonoBehaviour
     {
         if (card == null) return 0;
         cardLevels.TryGetValue(card, out int level);
-        Debug.Log($"[{GetInstanceID()}] Card {card.CardName} is level {level}");
+        //Debug.Log($"[{GetInstanceID()}] Card {card.CardName} is level {level}");
         return level; // returns 0 if not found   
     }
 
