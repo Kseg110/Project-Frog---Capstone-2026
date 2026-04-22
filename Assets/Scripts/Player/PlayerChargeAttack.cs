@@ -54,42 +54,82 @@ public class PlayerChargeAttack : MonoBehaviour
 
         // Baseline values
         float ChargedDamage = 5f;
-        float BaseEffectDuration = 5f;
         int BaseWindProjectiles = 4;
 
         switch (CurrentAnchor.BaseData)
         {
-            case AnchorFireData FireData:
-                float BurnDuration = Mathf.Max(BaseEffectDuration, FireData.BurnDuration);
-                FireProjectile(FireChargeProjectilePrefab, FirePoint, direction, ChargedDamage, BurnDuration, "Burn", ChargePercent);
+            case AnchorFireData fireData:
+                FireProjectile(
+                    FireChargeProjectilePrefab,
+                    FirePoint,
+                    direction,
+                    ChargedDamage,
+                    fireData.BurnDuration,
+                    fireData.BurnTickRate,
+                    "Burn",
+                    ChargePercent
+                );
                 break;
-            case AnchorIceData IceData:
-                float IceDamage = ChargedDamage * IceData.DamageMultiplier;
-                float FreezeDuration = Mathf.Max(BaseEffectDuration, IceData.SlowDuration);
-                FireProjectile(IceChargeProjectilePrefab, FirePoint, direction, ChargedDamage, FreezeDuration, "Freeze", ChargePercent);
+
+            case AnchorIceData iceData:
+                float iceDamage = ChargedDamage * iceData.DamageMultiplier;
+                FireProjectile(
+                    IceChargeProjectilePrefab,
+                    FirePoint,
+                    direction,
+                    iceDamage,
+                    iceData.SlowDuration,
+                    iceData.SlowMultiplier,
+                    "Freeze",
+                    ChargePercent
+                );
                 break;
-            case AnchorWindData WindData:
-                int WindProjectiles = BaseWindProjectiles;
-                float WindDamage = ChargedDamage * WindData.DamageMultiplier; 
-                for (int i = 0; i < WindProjectiles; i++)
+
+            case AnchorWindData windData:
+                int windProjectiles = BaseWindProjectiles;
+                float windDamage = ChargedDamage * windData.DamageMultiplier;
+                float spreadAngle = 5f;
+                for (int i = 0; i < windProjectiles; i++)
                 {
-                    FireProjectile(WindChargeProjectilePrefab, FirePoint, direction, ChargedDamage, 0f, null, ChargePercent);
+                    float angle = spreadAngle * i;
+                    Vector3 spreadDir = Quaternion.Euler(0, angle, 0) * direction;
+                    FireProjectile(
+                        WindChargeProjectilePrefab,
+                        FirePoint,
+                        spreadDir,
+                        windDamage,
+                        0f,
+                        0f,
+                        null,
+                        ChargePercent
+                    );
                 }
                 break;
         }
         CancelCharge();
     }
 
-    private void FireProjectile(GameObject prefab, Vector3 position, Vector3 direction, float damage, float EffectDuration, string effect, float ChargePercent)
+    // Helper FireProjectile method accepts all effect parameters for each anchor type
+    private void FireProjectile(
+        GameObject prefab,
+        Vector3 position,
+        Vector3 direction,
+        float damage,
+        float effectDuration,
+        float effectValue,
+        string effect,
+        float chargePercent)
     {
-        var ProjObj = Instantiate(prefab, position, Quaternion.LookRotation(direction));
-        var Proj = ProjObj.GetComponent<Projectile>();
-        if (Proj != null)
+        var projObj = Instantiate(prefab, position, Quaternion.LookRotation(direction));
+        var proj = projObj.GetComponent<Projectile>();
+        if (proj != null)
         {
-            Proj.Initialize(ChargePercent);
-            Proj.damage = damage;
+            proj.Initialize(chargePercent);
+            proj.damage = damage;
+            proj.effectType = effect;
+            proj.effectDuration = effectDuration;
+            proj.effectValue = effectValue;
         }
-        // derieved projectile effects here
     }
 
 }

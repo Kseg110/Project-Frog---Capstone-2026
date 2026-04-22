@@ -83,6 +83,18 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (health != null)
             health.TakeDmg(dmg);
     }
+    // Overload for status effects
+    void IDamageable.TakeDmg(float dmg, string effectType, float effectDuration, float effectValue)
+    {
+        if (health != null)
+            health.TakeDmg(dmg);
+
+        if (effectType == "Burn")
+        {
+            health.ApplyBurn(effectDuration, effectValue, dmg);
+        }
+        // Add other effects here if needed
+    }
     #endregion
 
     #region Navigation

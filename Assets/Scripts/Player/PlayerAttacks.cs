@@ -165,6 +165,7 @@ public class PlayerAttacks : MonoBehaviour
 
         GameObject proj = Instantiate(projectilePrefab, firePoint.position, rotation);
         proj.GetComponent<Projectile>()?.Initialize(chargePercent);
+        proj.GetComponent<Projectile>().damage = 2f;
     }
 
     private Vector3 GetAimDirection()

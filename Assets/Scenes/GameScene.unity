@@ -1572,6 +1572,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 718225827}
   m_CullTransparentMesh: 1
+--- !u!114 &765925379 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5587405099960226647, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
+  m_PrefabInstance: {fileID: 1268855591}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a860fdbe827944e4fb4c367744d9ebe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2512,6 +2523,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8664719875652962865, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
+      propertyPath: health
+      value: 
+      objectReference: {fileID: 765925379}
     - target: {fileID: 692011066797079519, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -2575,6 +2590,10 @@ PrefabInstance:
     - target: {fileID: 7052711535739665740, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7052711535739665740, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2724,7 +2743,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 103865238343418693, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 881389741648580211, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
       propertyPath: m_Enabled
@@ -2732,7 +2751,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1821872440227396422, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6911843594789955862, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
       propertyPath: m_Name
@@ -3926,6 +3945,10 @@ PrefabInstance:
     - target: {fileID: 7052711535739665740, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7052711535739665740, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -8821429896287400500, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
