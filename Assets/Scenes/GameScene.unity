@@ -1702,11 +1702,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 888795169}
   m_CullTransparentMesh: 1
---- !u!4 &950593783 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 900614694835417969, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-  m_PrefabInstance: {fileID: 1276989941}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &973508087
 GameObject:
   m_ObjectHideFlags: 0
@@ -1779,7 +1774,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4144f56bd9889ed45931ebc76ceb9f3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnWaves
-  player: {fileID: 950593783}
+  player: {fileID: 0}
   enemyPrefab: {fileID: 7052711535739665740, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
   enemiesPerWave: 1
   spawnRadius: 8
