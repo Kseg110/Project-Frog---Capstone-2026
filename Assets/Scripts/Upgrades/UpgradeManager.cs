@@ -111,6 +111,8 @@ public class UpgradeManager : MonoBehaviour
         {
             deck.Remove(card);
         }
+
+        FindFirstObjectByType<CardIconManager>().RefreshIcons();
     }
 
     /// <summary>

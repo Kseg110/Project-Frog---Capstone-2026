@@ -47,6 +47,9 @@ public class CardSelectionUI : MonoBehaviour
 
     private void ShowCardSelection()
     {
+        // Make Player unable to move while selecting card
+        Time.timeScale = 0f;
+
         ShowUI();
 
         // Ask the upgrade manager to pick 3 random cards for the player to choose from
@@ -78,6 +81,9 @@ public class CardSelectionUI : MonoBehaviour
 
         // Hide the selection screen, unfreeze the game, and lock the cursor again
         HideUI();
+
+        // Unfreeze game
+        Time.timeScale = 1f;
 
         //call next wave
         waveSpawner.StartNextWaveAfterCard();
