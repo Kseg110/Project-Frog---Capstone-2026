@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 7298686678218331544}
   - component: {fileID: 1821872440227396422}
   - component: {fileID: 5323031320560320621}
+  - component: {fileID: 881389741648580211}
+  - component: {fileID: 103865238343418693}
   m_Layer: 0
   m_Name: TestAnchor
   m_TagString: Untagged
@@ -143,6 +145,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnchorVFX
   idleParticles: {fileID: 9037145567064275014}
   activationParticles: {fileID: 5714838199568846619}
+--- !u!114 &881389741648580211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6911843594789955862}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9360c50b4d322f8429500b9e989aa76b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorIce
+  data: {fileID: 11400000, guid: 2f31fb0e8ea9c91458af544eecf718d2, type: 2}
+--- !u!114 &103865238343418693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6911843594789955862}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb1e3522debfb8b4885607eaeadb83ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorWind
+  data: {fileID: 11400000, guid: 2a233af66dd705c42b517e46ea9570a7, type: 2}
 --- !u!1001 &5887745885699512522
 PrefabInstance:
   m_ObjectHideFlags: 0

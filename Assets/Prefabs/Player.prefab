@@ -685,6 +685,7 @@ GameObject:
   - component: {fileID: 7481143701210063934}
   - component: {fileID: 583013283057882193}
   - component: {fileID: 4281862109518123148}
+  - component: {fileID: -4889873046943597826}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -754,14 +755,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 114454af98abb4845acb8b406c9a1a22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  baseMoveSpeed: 10
-  dashDistance: 5
-  dashDuration: 0.15
-  dashCooldown: 0.5
-  hitBoxName: Hitbox
+  moveSpeed: 10
   collisionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
+  hitBoxName: Hitbox
+  dashDistance: 5
+  dashDuration: 0.15
+  dashCooldown: 0.5
 --- !u!114 &8197622151103158488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -866,7 +867,22 @@ MonoBehaviour:
   attacksPerSecond: 2
   attackWindowDuration: 0.5
   maxChargeTime: 2
-  isTethered: 0
+--- !u!114 &-4889873046943597826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cbc9a160b01007459176c25224b9767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerChargeAttack
+  FireChargeProjectilePrefab: {fileID: 1850782377406893800, guid: db44afe42fb077d4283580623fd413fd, type: 3}
+  IceChargeProjectilePrefab: {fileID: 1850782377406893800, guid: db44afe42fb077d4283580623fd413fd, type: 3}
+  WindChargeProjectilePrefab: {fileID: 1850782377406893800, guid: db44afe42fb077d4283580623fd413fd, type: 3}
+  MaxChargeTime: 1
 --- !u!1 &8300862678990091245
 GameObject:
   m_ObjectHideFlags: 0
