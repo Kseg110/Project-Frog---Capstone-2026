@@ -8,11 +8,11 @@ public class UpgradeManager : MonoBehaviour
 {
     [Header("All Cards")]
     [SerializeField] private List<UpgradeDataSO> allCards;
+    private List<UpgradeDataSO> deck; //runtime pool of cards that can be drawn from, starts as a copy of allCards and shrinks as cards reach max level
 
     [Header("Rarity Chances")]
     [SerializeField, Range(0, 100)] private int commonChance = 90;
     [SerializeField, Range(0, 100)] private int rareChance = 10;
-
 
     // Runtime state: UpgradeDataSO -> level
     private Dictionary<UpgradeDataSO, int> cardLevels = new Dictionary<UpgradeDataSO, int>();
@@ -31,11 +31,15 @@ public class UpgradeManager : MonoBehaviour
 
     public void ResetAllCards()
     {
+        // Reset all card levels to 0
         cardLevels.Clear();
         foreach (var card in allCards)
         {
             cardLevels[card] = 0;
         }
+
+        // Reset the deck to be a copy of allCards
+        deck = new List<UpgradeDataSO>(allCards);
     }
 
     /// <summary>
@@ -57,7 +61,7 @@ public class UpgradeManager : MonoBehaviour
         List<UpgradeDataSO> result = new List<UpgradeDataSO>();
 
         // Temporary pool to avoid duplicates
-        List<UpgradeDataSO> tempPool = new List<UpgradeDataSO>(allCards);
+        List<UpgradeDataSO> tempPool = new List<UpgradeDataSO>(deck);
 
         for (int i = 0; i < count; i++)
         {
@@ -95,11 +99,21 @@ public class UpgradeManager : MonoBehaviour
     public void OnCardChosen(UpgradeDataSO card)
     {
         if (card == null) return;
-        if (!cardLevels.ContainsKey(card)) cardLevels[card] = 0;
-        cardLevels[card]++;   
-        Debug.Log($"[{GetInstanceID()}] Card {card.CardName} chosen → new level {cardLevels[card]}");
-    }
 
+        // Ensure the card is tracked in the dictionary
+        if (!cardLevels.ContainsKey(card)) cardLevels[card] = 0;
+
+        // Increment the card's level
+        cardLevels[card]++;   
+
+        //remove the card from the pool if it reaches max level
+        if (cardLevels[card] >= card.MaxLevel -1)
+        {
+            deck.Remove(card);
+        }
+
+        FindFirstObjectByType<CardIconManager>().RefreshIcons();
+    }
 
     /// <summary>
     /// Returns a list of all the cards
