@@ -24,6 +24,8 @@ public class PlayerTakeDamage : MonoBehaviour
     [Tooltip("Red flashes per second during immortality time.")]
     [SerializeField] private float flashFrequency = 10f;
 
+    public bool isGod; //used for debug purposes, keep public so debug menu can control this plz.
+
     // References
     private Health playerHealth;
     private PlayerMovement playerMovement;
@@ -65,6 +67,9 @@ public class PlayerTakeDamage : MonoBehaviour
     /// <param name="knockbackDistance">Distance the player should be knocked back.</param>
     public void TryApplyDamageAndKnockback(float damageAmount, Vector3 knockDirection, float knockbackDistance)
     {
+        if (isGod)
+            return;
+
         // Check player immortality
         if (playerImmortality.IsImmortal)
             return;
