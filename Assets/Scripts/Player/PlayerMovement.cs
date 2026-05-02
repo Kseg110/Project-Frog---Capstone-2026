@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private LayerMask collisionLayers;
     [SerializeField] private string hitBoxName = "Hitbox";
+    [SerializeField] private float inputSmoothSpeed = 20f;
 
     private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
     private float CurrentSpeed
@@ -64,6 +65,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         playerAnchor = GetComponent<PlayerAnchor>();
         playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+        lookDirection = transform.forward;
         moveAction = InputSystem.actions.FindAction("Move");
         dashAction = InputSystem.actions.FindAction("Dash");
     }
@@ -83,7 +85,13 @@ public class PlayerMovement : MonoBehaviour, IMovement
             return;
 
         Vector2 move = moveAction.ReadValue<Vector2>();
-        moveInput = isDashing ? Vector3.zero : new Vector3(move.x, 0f, move.y).normalized;
+        Vector3 rawInput = new Vector3(move.x, 0f, move.y);
+        // Clamp magnitude to 1 (keyboard diagonals can exceed it) but preserve analog range for controllers
+        if (rawInput.sqrMagnitude > 1f)
+            rawInput.Normalize();
+        Vector3 targetInput = rawInput.sqrMagnitude > 0.001f ? rawInput : Vector3.zero;
+        // Smooth input to prevent analog stick jitter from causing dead-stops
+        moveInput = isDashing ? Vector3.zero : Vector3.Lerp(moveInput, targetInput, Time.deltaTime * inputSmoothSpeed);
 
         // Check for valid dash input
         if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
@@ -94,7 +102,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     {
         if (isMovementStopped || movementStoppedExternally)
         {
-            transform.forward = lookDirection;
+            rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             return;
         }
 
@@ -115,7 +123,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
             MoveWithCollision(moveVector);
 
             if (moveInput.sqrMagnitude > 0.0001f)
-                transform.forward = moveInput;
+                rb.MoveRotation(Quaternion.LookRotation(moveInput.normalized));
         }
     }
 
@@ -202,9 +210,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         return moveVector;
     }
 
-    /// <summary>
-    /// Stops player movement. Intended to be called externally.
-    /// </summary>
+    // Stops player movement. Intended to be called externally.
     public void StopMovement(Vector3? forward = null)
     {
         isMovementStopped = true;
@@ -215,9 +221,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
             lookDirection = forward.Value;
     }
 
-    /// <summary>
-    /// Resumes player movement. Intended to be called externally.
-    /// </summary>
+    // Resumes player movement. Intended to be called externally.
     public void ResumeMovement()
     {
         isMovementStopped = false;
@@ -229,7 +233,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;
-        dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
+        dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput.normalized : transform.forward;
 
         Debug.Log("start dash");
         PlayerDashVFX.Instance.StartDashVFX();
