@@ -11,7 +11,7 @@ public class RoundData
     [Header("Trigger To Activate This Rule")]
     public Collider trigger;
 
-    [Header("Disable In This Range (NOT auto used)")]
+    [Header("Disable In This Range")]
     public List<GameObject> disableList = new List<GameObject>();
 
     [Header("Enable In This Range")]
@@ -20,43 +20,88 @@ public class RoundData
 
 public class FogEnvRoundSystem : MonoBehaviour
 {
-    public int currentRound = 0;
+    public WaveRoundSystem waveSystem;
+
+    // 🔥 Current round (synced from wave system)
+    public int CurrentRound;
+
+    // 🔥 Track last applied round so we don’t spam updates
+    private int lastRound = -1;
+
+    // 🔥 Store the trigger player is currently inside
+    private Collider currentTrigger;
 
     public List<RoundData> rounds = new List<RoundData>();
 
-    // 🔹 Trigger ONLY enables
+    void Update()
+    {
+        if (waveSystem == null) return;
+
+        // Sync round
+        CurrentRound = waveSystem.CurrentWave;
+
+        // Only react if round actually changed
+        if (CurrentRound == lastRound)
+            return;
+
+        lastRound = CurrentRound;
+
+        // If player is still inside a trigger, re-apply rules
+        if (currentTrigger != null)
+        {
+            ApplyRules(currentTrigger);
+        }
+    }
+
+    // 🔹 Call when entering a trigger
     public void ActivateFromTrigger(Collider hitTrigger)
+    {
+        currentTrigger = hitTrigger;
+        ApplyRules(hitTrigger);
+    }
+
+    // 🔥 Core logic (used on enter + round change)
+    private void ApplyRules(Collider hitTrigger)
     {
         foreach (var round in rounds)
         {
+            if (round.trigger == null)
+                continue;
+
             if (round.trigger != hitTrigger)
                 continue;
 
-            if (currentRound < round.fromRound || currentRound > round.toRound)
+            if (CurrentRound < round.fromRound || CurrentRound > round.toRound)
                 continue;
 
             EnableObjects(round.enableList);
             DisableObjects(round.disableList);
+
+            Debug.Log($"Applied Round Rule {round.fromRound}-{round.toRound} on {hitTrigger.name}");
         }
     }
 
-    // 🔹 Enable (USED)
+    // 🔹 Enable objects
     public void EnableObjects(List<GameObject> list)
     {
         foreach (GameObject obj in list)
         {
-            if (obj != null)
-                obj.SetActive(true);
+            if (obj) obj.SetActive(true);
         }
     }
 
-    // 🔻 Disable (UNUSED for now — you said you’ll use later)
+    // 🔻 Disable objects
     public void DisableObjects(List<GameObject> list)
     {
         foreach (GameObject obj in list)
         {
-            if (obj != null)
-                obj.SetActive(false);
+            if (obj) obj.SetActive(false);
         }
+    }
+
+    // Optional (call this on exit trigger)
+    public void ClearTrigger()
+    {
+        currentTrigger = null;
     }
 }
