@@ -389,7 +389,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 26d88ade74010784089a3c02ad3e6bfe, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -760,6 +760,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   hitBoxName: Hitbox
+  inputSmoothSpeed: 20
   dashDistance: 5
   dashDuration: 0.15
   dashCooldown: 0.5
@@ -779,6 +780,7 @@ MonoBehaviour:
   knockbackSpeed: 20
   knockbackEasePower: 2
   flashFrequency: 10
+  isGod: 0
 --- !u!114 &4275648167820347246
 MonoBehaviour:
   m_ObjectHideFlags: 0
