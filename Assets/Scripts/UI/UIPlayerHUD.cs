@@ -7,6 +7,7 @@ public class UIPlayerHUD : MonoBehaviour
 {
     [Header("Health Wheel")]
     [SerializeField] private Image healthFillImage;
+    [SerializeField] private float healthLerpSpeed = 5f;
 
     [Header("Health Colours")]
     [SerializeField] private Gradient healthGradient;
@@ -17,13 +18,15 @@ public class UIPlayerHUD : MonoBehaviour
     [Header("Dash Wheel")]
     [SerializeField] private Image DashFillImage;
 
+    private float targetHealthFill = 1f;
+
     //[Header("Overcharge Bar")]
     //[SerializeField] private Image OverchargeFillImage;
 
     // Calls from the health system whenever HP changes.
     public void UpdateHealth(float normalized)
     {
-        healthFillImage.fillAmount = Mathf.Clamp01(normalized);
+        targetHealthFill = Mathf.Clamp01(normalized);
         healthFillImage.color = healthGradient.Evaluate(normalized);
 
         //if (normalized > 0.5f)
@@ -34,6 +37,16 @@ public class UIPlayerHUD : MonoBehaviour
 
         //else healthFillImage.color = CriticalColor;
 
+    }
+
+    private void Update()
+    {
+        // Smoothly lerp the fill toward the target value
+        healthFillImage.fillAmount = Mathf.Lerp(
+            healthFillImage.fillAmount,
+            targetHealthFill,
+            Time.deltaTime * healthLerpSpeed
+        );
     }
 
     // Calls from the dash system every frame (or whenever the cooldown ticks).
