@@ -1,17 +1,19 @@
 using UnityEngine;
+using System.Collections;
 
 public class Health : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
     private Healthbar healthbar;
-    private UIPlayerHUD UIPlayerHUD;
+    private UIPlayerHUD playerHUD;
 
     public bool IsDead { get; private set; }
 
     private void Awake()
     {
         healthbar = GetComponentInChildren<Healthbar>();
+        playerHUD = FindAnyObjectByType<UIPlayerHUD>();
 
         if (healthbar == null)
         {
@@ -19,12 +21,9 @@ public class Health : MonoBehaviour
                 $"Health on {gameObject.name} requires a child HealthBar.", this);
         }
 
-        UIPlayerHUD = FindAnyObjectByType<UIPlayerHUD>();
-
         currentHealth = maxHealth;
         IsDead = false;
-
-        UIPlayerHUD?.UpdateHealth(1f);
+        playerHUD?.UpdateHealth(currentHealth / maxHealth);
     }
 
     public void TakeDmg(float dmg)
@@ -39,7 +38,9 @@ public class Health : MonoBehaviour
 
         // Update healthbar visual
         healthbar.UpdateHealthBar(maxHealth, currentHealth);
-        UIPlayerHUD?.UpdateHealth(currentHealth / maxHealth);
+
+        // Update player HUD if this is the player's health
+        playerHUD?.UpdateHealth(currentHealth / maxHealth);
 
         if (currentHealth == 0f)
         {
@@ -55,7 +56,8 @@ public class Health : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
 
         healthbar.UpdateHealthBar(maxHealth, currentHealth);
-        UIPlayerHUD?.UpdateHealth(currentHealth / maxHealth);
+
+        playerHUD?.UpdateHealth(currentHealth / maxHealth);
     }
 
     private void Die()
@@ -63,4 +65,25 @@ public class Health : MonoBehaviour
         IsDead = true;
         Destroy(gameObject);
     }
+
+    #region Burn DOT
+    public void ApplyBurn(float duration, float tickRate, float totalDamage)
+    {
+        StartCoroutine(BurnCoroutine(duration, tickRate, totalDamage));
+    }
+
+    private IEnumerator BurnCoroutine(float duration, float tickRate, float totalDamage)
+    {
+        float elapsed = 0f;
+        int ticks = Mathf.CeilToInt(duration / tickRate);
+        float damagePerTick = totalDamage / ticks;
+
+        while (elapsed < duration)
+        {
+            TakeDmg(damagePerTick);
+            yield return new WaitForSeconds(tickRate);
+            elapsed += tickRate;
+        }
+    }
+    #endregion
 }
