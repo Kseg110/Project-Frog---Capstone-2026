@@ -22,13 +22,13 @@ public class FogEnvRoundSystem : MonoBehaviour
 {
     public WaveRoundSystem waveSystem;
 
-    // 🔥 Current round (synced from wave system)
+    // Current round (synced from wave system)
     public int CurrentRound;
 
-    // 🔥 Track last applied round so we don’t spam updates
+    // Track last applied round so we don’t spam updates
     private int lastRound = -1;
 
-    // 🔥 Store the trigger player is currently inside
+    // Store the trigger player is currently inside
     private Collider currentTrigger;
 
     public List<RoundData> rounds = new List<RoundData>();
@@ -53,14 +53,14 @@ public class FogEnvRoundSystem : MonoBehaviour
         }
     }
 
-    // 🔹 Call when entering a trigger
+    // Call when entering a trigger
     public void ActivateFromTrigger(Collider hitTrigger)
     {
         currentTrigger = hitTrigger;
         ApplyRules(hitTrigger);
     }
 
-    // 🔥 Core logic (used on enter + round change)
+    // Core logic (used on enter + round change)
     private void ApplyRules(Collider hitTrigger)
     {
         foreach (var round in rounds)
@@ -81,7 +81,7 @@ public class FogEnvRoundSystem : MonoBehaviour
         }
     }
 
-    // 🔹 Enable objects
+    // Enable objects
     public void EnableObjects(List<GameObject> list)
     {
         foreach (GameObject obj in list)
@@ -90,7 +90,7 @@ public class FogEnvRoundSystem : MonoBehaviour
         }
     }
 
-    // 🔻 Disable objects
+    // Disable objects
     public void DisableObjects(List<GameObject> list)
     {
         foreach (GameObject obj in list)

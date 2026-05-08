@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 645019673814369691}
   - component: {fileID: 576474897582870007}
   - component: {fileID: 6931997348458742684}
+  - component: {fileID: -7822172256103403791}
   m_Layer: 0
   m_Name: RockGolemAttackHitbox
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -125,3 +126,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 237c737fa0008fd499d665ba059e8eff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackHitbox
+--- !u!114 &-7822172256103403791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5833809153833045461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec38341ad6d353458e61dec4ae1d12c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TESTEnemyDamageOnCollision
+  damageAmount: 10
+  knockbackDistance: 5

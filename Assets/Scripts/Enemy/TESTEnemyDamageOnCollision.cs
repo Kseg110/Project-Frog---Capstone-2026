@@ -20,6 +20,8 @@ public class TESTEnemyDamageOnCollision : MonoBehaviour
 
     private void TryDamage(Collider other)
     {
+        if (!CompareTag("Enemy")) return;
+
         PlayerTakeDamage playerTakeDamage = other.GetComponentInParent<PlayerTakeDamage>();
 
         if (playerTakeDamage == null) return;
