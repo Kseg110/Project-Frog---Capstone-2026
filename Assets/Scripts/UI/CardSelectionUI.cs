@@ -47,6 +47,7 @@ public class CardSelectionUI : MonoBehaviour
 
     private void ShowCardSelection()
     {
+        var manager = UpgradeManager.Instance;
         // Make Player unable to move while selecting card
         Time.timeScale = 0f;
 

@@ -3,12 +3,15 @@ using UnityEngine;
 public class DebugController : MonoBehaviour
 {
     public CombatStatistics combatStats;
+    [SerializeField] private PlayerTakeDamage playerTakeDamage;
 
     private bool showDebug;
 
     // Strings are needed because TextField works with strings
     private string playerSpeedInput;
     private string tongueSpeedInput;
+
+    [SerializeField] private bool godModeEnabled;
 
     private void Start()
     {
@@ -23,13 +26,22 @@ public class DebugController : MonoBehaviour
         {
             showDebug = !showDebug;
         }
+
+        if (playerTakeDamage == null)
+        {
+            playerTakeDamage = FindAnyObjectByType<PlayerTakeDamage>();
+            if (playerTakeDamage == null)
+                return;
+        }            
+
+        playerTakeDamage.isGod = godModeEnabled;
     }
 
     private void OnGUI()
     {
         if (!showDebug) return;
 
-        GUI.Box(new Rect(10, 10, 400, 180), "Debug Menu");
+        GUI.Box(new Rect(10, 10, 400, 200), "Debug Menu");
 
         GUILayout.BeginArea(new Rect(20, 40, 380, 140));
 
@@ -38,6 +50,8 @@ public class DebugController : MonoBehaviour
 
         GUILayout.Label("Tongue Extend Speed:");
         tongueSpeedInput = GUILayout.TextField(tongueSpeedInput);
+
+        godModeEnabled = GUILayout.Toggle(godModeEnabled, "God Mode");
 
         GUILayout.Space(10);
 
