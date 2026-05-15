@@ -22,7 +22,6 @@ public class WaveRoundSystem : MonoBehaviour
     
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
 
-    public int CurrentWave => currentWaveIndex;
     private int currentWaveIndex = -1;
     public int CurrentWave => currentWaveIndex;
     private bool waitingForCardSelection = false;
