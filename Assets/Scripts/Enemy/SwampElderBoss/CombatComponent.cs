@@ -5,28 +5,22 @@ using UnityEngine;
 public class CombatComponent : MonoBehaviour
 {
     [Header("Attacks")]
-    [SerializeField] private BossAttackData[] attacks;
+    [SerializeField] private AttackBaseSO[] attacks;
+
+    [SerializeField] private Transform player;
 
     private void Update()
     {
-        foreach (var attack in attacks)
-        {
-            if (attack.cooldownTimer > 0f)
-                attack.cooldownTimer -= Time.deltaTime;
-        }
     }
 
     //check which attack can currently be used//
-    public BossAttackData GetAvailableAttack(float distanceToTarget)
+    public AttackBaseSO GetAvailableAttack(float distanceToTarget)
     {
-        List<BossAttackData> validAttacks = new List<BossAttackData>();
+        List<AttackBaseSO> validAttacks = new List<AttackBaseSO>();
 
         foreach(var attack in attacks)
         {
-            if(distanceToTarget <= attack.Range && attack.cooldownTimer <= 0f)
-            {
-                validAttacks.Add(attack);
-            }
+            attack.CanAttack(player, transform);
         }
         if (validAttacks.Count == 0)
             return null;
@@ -36,23 +30,23 @@ public class CombatComponent : MonoBehaviour
 
     public bool HasAnyAttackInRange(float distanceToTarget)
     {
-        foreach(var attack in attacks)
+        foreach(AttackBaseSO attack in attacks)
         {
-            if (distanceToTarget <= attack.Range)
-                return true;
+           if (attack.CanAttack(player, transform))
+           return true;
         }
         return false;
     }
 
     //Execute attack (CURRENTLY PLACEHOLDER, ADD ATTACK FUCTIONS LATER)//
-    public void ExecuteAttack(BossAttackData attack)
+    public void ExecuteAttack(AttackBaseSO attack)
     {
         if (attack == null) return;
 
-        Debug.Log("Boss used " + attack.AttackName);
+        attack.Attack(player, transform);
 
         //reset cooldown//
-        attack.cooldownTimer = attack.Cooldown;
+        attack.lastUsed = Time.time;
 
         //add animations//
         //add hitbox//
