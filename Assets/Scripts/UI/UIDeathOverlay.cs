@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlayerDeathOverlay : MonoBehaviour
+public class UIDeathOverlay : MonoBehaviour
 {
     // The UI panel that appears when the player dies
     public GameObject deathOverlayPanel;

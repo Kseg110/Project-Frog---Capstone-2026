@@ -66,7 +66,7 @@ public class Health : MonoBehaviour
         //  so that enemies dont trigger the death overlay and only the player does
         if (CompareTag("Player"))
         {
-            PlayerDeathOverlay deathOverlay = FindFirstObjectByType<PlayerDeathOverlay>();
+            UIDeathOverlay deathOverlay = FindFirstObjectByType<UIDeathOverlay>();
 
             if (deathOverlay != null)
             {
