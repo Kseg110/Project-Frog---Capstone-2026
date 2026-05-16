@@ -63,7 +63,26 @@ public class Health : MonoBehaviour
     private void Die()
     {
         IsDead = true;
-        Destroy(gameObject);
+        //  so that enemies dont trigger the death overlay and only the player does
+        if (CompareTag("Player"))
+        {
+            UIDeathOverlay deathOverlay = FindFirstObjectByType<UIDeathOverlay>();
+
+            if (deathOverlay != null)
+            {
+                deathOverlay.ShowDeathOverlay();
+            }
+            else
+            {
+                Debug.LogError("No PlayerDeathOverlay found in scene.");
+            }
+
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     #region Burn DOT
