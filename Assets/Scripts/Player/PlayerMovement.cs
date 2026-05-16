@@ -50,6 +50,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private float dashCooldownTimer;
 
     public bool IsDashing => isDashing;
+    public float DashCooldownProgress => dashCooldownTimer > 0f ? 1f - (dashCooldownTimer / dashCooldown) : 1f;
 
     private float currentMaxRadius;
     private Vector3 anchorPosition;
@@ -233,7 +234,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;
-        dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput.normalized : transform.forward;
+        dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
 
         Debug.Log("start dash");
         PlayerDashVFX.Instance.StartDashVFX();
