@@ -4,11 +4,11 @@ using System;
 
 [ExecuteAlways]
 [RequireComponent(typeof(LineRenderer))]
-public class SimplifiedRope : MonoBehaviour
+public class AnchorTether : MonoBehaviour
 {
     public event Action OnPointsChanged;
 
-    [Header("Rope Transforms")]
+    [Header("Tether Transforms")]
     [SerializeField] private Transform startPoint;
     public Transform StartPoint => startPoint;
     [SerializeField] private Transform midPoint;
@@ -16,10 +16,10 @@ public class SimplifiedRope : MonoBehaviour
     [SerializeField] private Transform endPoint;
     public Transform EndPoint => endPoint;
 
-    [Header("Rope Settings")]
+    [Header("Tether Settings")]
     [Range(2, 100)] public int linePoints = 10;
-    public float ropeWidth = 0.1f;
-    public float ropeLength = 15f;
+    public float tetherWidth = 0.1f;
+    public float tetherLength = 15f;
 
     [Header("Physics (spring-damper)")]
     public float stiffness = 350f;
@@ -39,7 +39,7 @@ public class SimplifiedRope : MonoBehaviour
     private LineRenderer lr;
     private bool isFirstFixed = true;
 
-    // simple previous-state check (only positions)
+    // state check (only positions)
     private Vector3 prevStartPos;
     private Vector3 prevEndPos;
     private float prevMidPos;
@@ -48,7 +48,7 @@ public class SimplifiedRope : MonoBehaviour
     private void Awake()
     {
         lr = GetComponent<LineRenderer>();
-        lr.startWidth = lr.endWidth = ropeWidth;
+        lr.startWidth = lr.endWidth = tetherWidth;
     }
 
     private void Start()
@@ -62,7 +62,7 @@ public class SimplifiedRope : MonoBehaviour
     private void OnValidate()
     {
         if (!lr) lr = GetComponent<LineRenderer>();
-        lr.startWidth = lr.endWidth = ropeWidth;
+        lr.startWidth = lr.endWidth = tetherWidth;
 
         if (!Application.isPlaying && AreEndPointsValid())
         {
@@ -94,7 +94,7 @@ public class SimplifiedRope : MonoBehaviour
             }
         }
 
-        // always update transform of optional MidPoint to match curve sample
+        // always update transform of optional MidPoint to match curve
         if (midPoint != null)
         {
             midPoint.position = GetRationalBezierPoint(startPoint.position, animatedMid, endPoint.position, midPointPosition, StartWeight, midPointWeight, EndWeight);
@@ -131,10 +131,10 @@ public class SimplifiedRope : MonoBehaviour
         // base linear midpoint along the line
         Vector3 mid = Vector3.Lerp(a, b, midPointPosition);
 
-        // sag: positive when ropeLength > distance(a,b)
+        // sag: positive when tetherLength > distance(a,b)
         float dist = Vector3.Distance(a, b);
-        float effectiveDist = Mathf.Min(dist, ropeLength);
-        float fall = (ropeLength - effectiveDist) / CalculateYFactorAdjustment(midPointWeight);
+        float effectiveDist = Mathf.Min(dist, tetherLength);
+        float fall = (tetherLength - effectiveDist) / CalculateYFactorAdjustment(midPointWeight);
         mid.y -= fall;
         return mid;
     }
@@ -208,29 +208,64 @@ public class SimplifiedRope : MonoBehaviour
             || !Mathf.Approximately(midPointWeight, prevWeight);
     }
 
-    // Public API to set points (instantAssign snaps immediately when true)
+    // Public API to set points (instantAssign snaps when true)
     public void SetStartPoint(Transform t, bool instantAssign = false)
     {
         startPoint = t;
-        if (instantAssign || t == null) { animatedMid = ComputeTargetMidpoint(); velocity = Vector3.zero; RebuildLineImmediate(); }
+        if (instantAssign)
+        {
+            if (AreEndPointsValid())
+            {
+                animatedMid = ComputeTargetMidpoint();
+                velocity = Vector3.zero;
+                RebuildLineImmediate();
+            }
+            else
+            {
+                if (lr) lr.positionCount = 0;
+            }
+        }
         NotifyPointsChanged();
     }
 
     public void SetMidPoint(Transform t, bool instantAssign = false)
     {
         midPoint = t;
-        if (instantAssign || t == null) { animatedMid = ComputeTargetMidpoint(); velocity = Vector3.zero; RebuildLineImmediate(); }
+        if (instantAssign)
+        {
+            if (AreEndPointsValid())
+            {
+                animatedMid = ComputeTargetMidpoint();
+                velocity = Vector3.zero;
+                RebuildLineImmediate();
+            }
+            else
+            {
+                if (lr) lr.positionCount = 0;
+            }
+        }
         NotifyPointsChanged();
     }
 
     public void SetEndPoint(Transform t, bool instantAssign = false)
     {
         endPoint = t;
-        if (instantAssign || t == null) { animatedMid = ComputeTargetMidpoint(); velocity = Vector3.zero; RebuildLineImmediate(); }
+        if (instantAssign)
+        {
+            if (AreEndPointsValid())
+            {
+                animatedMid = ComputeTargetMidpoint();
+                velocity = Vector3.zero;
+                RebuildLineImmediate();
+            }
+            else
+            {
+                if (lr) lr.positionCount = 0;
+            }
+        }
         NotifyPointsChanged();
     }
 
-    // helper to sample from script (0..1)
     public Vector3 GetPointAt(float t)
     {
         if (!AreEndPointsValid()) return Vector3.zero;
