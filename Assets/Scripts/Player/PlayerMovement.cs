@@ -76,7 +76,14 @@ public class PlayerMovement : MonoBehaviour, IMovement
         lookDirection = transform.forward;
 
         playerInput = GetComponent<PlayerInput>();
-        SetActionMap(playerInput.currentActionMap.name);
+
+        // Désactive toutes les maps au démarrage
+        foreach (var map in playerInput.actions.actionMaps)
+            map.Disable();
+
+        // Active seulement la map par défaut
+        playerInput.actions.FindActionMap("PlayerMK").Enable();
+        SetActionMap("PlayerMK");
     }
 
     private void OnEnable()
@@ -91,7 +98,21 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void OnActionTriggered(InputAction.CallbackContext ctx)
     {
-        usingGamepad = ctx.control.device is Gamepad;
+        // Si un gamepad est utilisé → switch vers PlayerGamepad
+        if (ctx.control.device is Gamepad && playerInput.currentActionMap.name != "PlayerGamepad")
+        {
+            playerInput.SwitchCurrentActionMap("PlayerGamepad");
+            usingGamepad = true;
+            Debug.Log("Switched to Gamepad");
+        }
+        // Si clavier ou souris → switch vers PlayerMK
+        else if ((ctx.control.device is Keyboard || ctx.control.device is Mouse)
+                 && playerInput.currentActionMap.name != "PlayerMK")
+        {
+            playerInput.SwitchCurrentActionMap("PlayerMK");
+            usingGamepad = false;
+            Debug.Log("Switched to MK");
+        }
     }
 
     private void SetActionMap(string mapName)
@@ -128,6 +149,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
             StartDash();
         Debug.Log("Current Map: " + playerInput.currentActionMap.name);
+        Debug.Log("Gamepad? " + usingGamepad);
     }
 
     private void FixedUpdate()
