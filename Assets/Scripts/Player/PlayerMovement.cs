@@ -29,13 +29,18 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
 
+    private PlayerInput playerInput;
     private InputAction moveAction;
+    private InputAction lookAction;
     private InputAction dashAction;
+
+    private bool usingGamepad;
 
     private Rigidbody rb;
     private PlayerAnchor playerAnchor;
     private UIPlayerHUD playerHUD;
     private CapsuleCollider capsuleCollider;
+    private PlayerCrosshair playerCrosshair;
 
     private Vector3 moveInput;
     private Vector3 dashDirection;
@@ -66,9 +71,34 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         playerAnchor = GetComponent<PlayerAnchor>();
         playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+        playerCrosshair = FindAnyObjectByType<PlayerCrosshair>();
+
         lookDirection = transform.forward;
-        moveAction = InputSystem.actions.FindAction("Move");
-        dashAction = InputSystem.actions.FindAction("Dash");
+
+        playerInput = GetComponent<PlayerInput>();
+        SetActionMap(playerInput.currentActionMap.name);
+    }
+
+    private void OnEnable()
+    {
+        playerInput.onActionTriggered += OnActionTriggered;
+    }
+
+    private void OnDisable()
+    {
+        playerInput.onActionTriggered -= OnActionTriggered;
+    }
+
+    private void OnActionTriggered(InputAction.CallbackContext ctx)
+    {
+        usingGamepad = ctx.control.device is Gamepad;
+    }
+
+    private void SetActionMap(string mapName)
+    {
+        moveAction = playerInput.actions.FindAction("Move");
+        lookAction = playerInput.actions.FindAction("Look");
+        dashAction = playerInput.actions.FindAction("Dash");
     }
 
     private void Update()
@@ -97,6 +127,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         // Check for valid dash input
         if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
             StartDash();
+        Debug.Log("Current Map: " + playerInput.currentActionMap.name);
     }
 
     private void FixedUpdate()
@@ -123,7 +154,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
             moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
             MoveWithCollision(moveVector);
 
-            if (moveInput.sqrMagnitude > 0.0001f)
+            if (!usingGamepad && moveInput.sqrMagnitude > 0.0001f)
                 rb.MoveRotation(Quaternion.LookRotation(moveInput.normalized));
         }
     }

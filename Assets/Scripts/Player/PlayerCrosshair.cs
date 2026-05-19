@@ -17,9 +17,15 @@ public class PlayerCrosshair : MonoBehaviour
     [Tooltip("If true, hides the system cursor while playing.")]
     [SerializeField] private bool hideSystemCursor = true;
 
+    [Header("Controller Mode")]
+    [SerializeField] private float controllerRadius = 200f;
+
     private Canvas uiCanvas;
     private Image crosshairImage;
     private RectTransform crosshairRect;
+
+    private bool usingController = false;
+    private Vector2 controllerLookInput;
 
     void Awake()
     {
@@ -41,16 +47,36 @@ public class PlayerCrosshair : MonoBehaviour
         Cursor.visible = true;
     }
 
+    public void SetControllerMode(bool active)
+    {
+        usingController = active;
+    }
+
+    public void UpdateControllerLook(Vector2 lookInput)
+    {
+        controllerLookInput = lookInput;
+    }
+
     void LateUpdate()
     {
-        // Move crosshair to mouse position every frame (works with Screen Space - Overlay canvas).
-        if (crosshairRect != null)
+        if (crosshairRect == null)
+            return;
+
+        if (usingController)
         {
-            Vector2 mousePos = Input.mousePosition;
-            crosshairRect.position = mousePos;
+            Vector2 center = new Vector2(Screen.width / 2f, Screen.height / 2f);
+
+            if (controllerLookInput.sqrMagnitude > 0.01f)
+            {
+                Vector2 offset = controllerLookInput.normalized * controllerRadius;
+                crosshairRect.position = center + offset;
+            }
+        }
+        else
+        {
+            crosshairRect.position = Input.mousePosition;
         }
 
-        // Defensive: keep cursor unlocked while the game runs (in case other code sets it)
         if (Cursor.lockState != CursorLockMode.None)
             Cursor.lockState = CursorLockMode.None;
     }
