@@ -23,6 +23,8 @@ public class PlayerCrosshair : MonoBehaviour
     private Canvas uiCanvas;
     private Image crosshairImage;
     private RectTransform crosshairRect;
+    private Transform player;
+    private Camera cam;
 
     private bool usingController = false;
     private Vector2 controllerLookInput;
@@ -31,6 +33,13 @@ public class PlayerCrosshair : MonoBehaviour
     {
         // Ensure cursor is not locked by other systems
         Cursor.lockState = CursorLockMode.None;
+        cam = Camera.main;
+
+        GameObject p =
+        GameObject.FindGameObjectWithTag("Player");
+
+        if (p != null)
+            player = p.transform;
 
         SetupCanvasAndCrosshair();
     }
@@ -57,6 +66,14 @@ public class PlayerCrosshair : MonoBehaviour
         controllerLookInput = lookInput;
     }
 
+    public Vector3 GetLookDirection()
+    {
+        Vector3 dir =
+        new Vector3(
+            controllerLookInput.x, 0, controllerLookInput.y);
+        return dir.normalized;
+    }
+
     void LateUpdate()
     {
         if (crosshairRect == null)
@@ -64,13 +81,35 @@ public class PlayerCrosshair : MonoBehaviour
 
         if (usingController)
         {
-            Vector2 center = new Vector2(Screen.width / 2f, Screen.height / 2f);
+            if (player == null)
+                return;
+
+            Vector3 playerScreenPos = cam.WorldToScreenPoint(player.position);
+
+            Vector2 stickDir;
 
             if (controllerLookInput.sqrMagnitude > 0.01f)
             {
-                Vector2 offset = controllerLookInput.normalized * controllerRadius;
-                crosshairRect.position = center + offset;
+                stickDir = controllerLookInput.normalized;
             }
+            else
+            {
+                // keep last direction when stick released
+                stickDir = (Vector2)(crosshairRect.position - playerScreenPos);
+
+                if (stickDir.sqrMagnitude > 0.01f)
+                {
+                    stickDir.Normalize();
+                }
+                else
+                {
+                    // default start direction
+                    stickDir = Vector2.up;
+                }
+            }
+
+            Vector2 offset = stickDir * controllerRadius;
+            crosshairRect.position = playerScreenPos + (Vector3)offset;
         }
         else
         {

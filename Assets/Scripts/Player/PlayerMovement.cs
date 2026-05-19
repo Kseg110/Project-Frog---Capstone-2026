@@ -30,13 +30,15 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private float dashCooldown = 0.5f;
 
     private PlayerInput playerInput;
+
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction dashAction;
 
-    private bool usingGamepad;
+    private bool usingGamePad;
 
     private Rigidbody rb;
+
     private PlayerAnchor playerAnchor;
     private UIPlayerHUD playerHUD;
     private CapsuleCollider capsuleCollider;
@@ -77,13 +79,15 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         playerInput = GetComponent<PlayerInput>();
 
-        // Désactive toutes les maps au démarrage
+        // Desable all action maps at start, will enable the correct one based on input
         foreach (var map in playerInput.actions.actionMaps)
             map.Disable();
 
-        // Active seulement la map par défaut
-        playerInput.actions.FindActionMap("PlayerMK").Enable();
+        // Enable PlayerMK by default, will switch to Gamepad if input is detected
+        playerInput.SwitchCurrentActionMap("PlayerMK");
         SetActionMap("PlayerMK");
+
+        usingGamePad = false;
     }
 
     private void OnEnable()
@@ -98,28 +102,38 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void OnActionTriggered(InputAction.CallbackContext ctx)
     {
-        // Si un gamepad est utilisé → switch vers PlayerGamepad
-        if (ctx.control.device is Gamepad && playerInput.currentActionMap.name != "PlayerGamepad")
+        if (!ctx.performed)
+            return;
+
+        if (ctx.control.device is Gamepad && playerInput.currentActionMap.name != "PlayerGamePad")
         {
-            playerInput.SwitchCurrentActionMap("PlayerGamepad");
-            usingGamepad = true;
-            Debug.Log("Switched to Gamepad");
+            playerInput.SwitchCurrentActionMap("PlayerGamePad");
+            SetActionMap("PlayerGamePad");
+
+            usingGamePad = true;
+
+            Debug.Log("Controller detected");
         }
-        // Si clavier ou souris → switch vers PlayerMK
-        else if ((ctx.control.device is Keyboard || ctx.control.device is Mouse)
-                 && playerInput.currentActionMap.name != "PlayerMK")
+
+        else if (
+            (ctx.control.device is Keyboard || ctx.control.device is Mouse)
+            && playerInput.currentActionMap.name != "PlayerMK")
         {
             playerInput.SwitchCurrentActionMap("PlayerMK");
-            usingGamepad = false;
-            Debug.Log("Switched to MK");
+            SetActionMap("PlayerMK");
+
+            usingGamePad = false;
+
+            Debug.Log("MK detected");
         }
     }
 
     private void SetActionMap(string mapName)
     {
-        moveAction = playerInput.actions.FindAction("Move");
-        lookAction = playerInput.actions.FindAction("Look");
-        dashAction = playerInput.actions.FindAction("Dash");
+        var map = playerInput.actions.FindActionMap(mapName);
+        moveAction = map.FindAction("Move");
+        lookAction = map.FindAction("Look");
+        dashAction = map.FindAction("Dash");
     }
 
     private void Update()
@@ -136,20 +150,46 @@ public class PlayerMovement : MonoBehaviour, IMovement
         if (isMovementStopped || movementStoppedExternally)
             return;
 
+        // READ INPUT
         Vector2 move = moveAction.ReadValue<Vector2>();
         Vector3 rawInput = new Vector3(move.x, 0f, move.y);
+
         // Clamp magnitude to 1 (keyboard diagonals can exceed it) but preserve analog range for controllers
         if (rawInput.sqrMagnitude > 1f)
             rawInput.Normalize();
         Vector3 targetInput = rawInput.sqrMagnitude > 0.001f ? rawInput : Vector3.zero;
+
         // Smooth input to prevent analog stick jitter from causing dead-stops
         moveInput = isDashing ? Vector3.zero : Vector3.Lerp(moveInput, targetInput, Time.deltaTime * inputSmoothSpeed);
+
+        //READ LOOK INPUT
+        Vector2 look = lookAction.ReadValue<Vector2>();
+
+        // SEND LOOK INPUT TO CROSSHAIR
+        if (playerCrosshair != null)
+        {
+            playerCrosshair.SetControllerMode(usingGamePad);
+            playerCrosshair.UpdateControllerLook(look);
+        }
+
+        if (usingGamePad && playerCrosshair != null)
+        {
+            Vector3 dir = playerCrosshair.GetLookDirection();
+
+            if (dir.sqrMagnitude > 0.01f)
+            {
+                rb.MoveRotation(
+                Quaternion.LookRotation(lookDirection));
+            }
+        }
 
         // Check for valid dash input
         if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
             StartDash();
+
         Debug.Log("Current Map: " + playerInput.currentActionMap.name);
-        Debug.Log("Gamepad? " + usingGamepad);
+        Debug.Log("GamePad? " + usingGamePad);
+        Debug.Log("LOOK VALUE = " + lookAction.ReadValue<Vector2>());
     }
 
     private void FixedUpdate()
@@ -176,7 +216,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
             moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
             MoveWithCollision(moveVector);
 
-            if (!usingGamepad && moveInput.sqrMagnitude > 0.0001f)
+            if (!usingGamePad && moveInput.sqrMagnitude > 0.0001f)
                 rb.MoveRotation(Quaternion.LookRotation(moveInput.normalized));
         }
     }
