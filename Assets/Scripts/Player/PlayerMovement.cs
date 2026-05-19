@@ -35,7 +35,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private InputAction lookAction;
     private InputAction dashAction;
 
-    private bool usingGamePad;
+    private bool usingGamepad;
 
     private Rigidbody rb;
 
@@ -87,7 +87,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         playerInput.SwitchCurrentActionMap("PlayerMK");
         SetActionMap("PlayerMK");
 
-        usingGamePad = false;
+        usingGamepad = false;
     }
 
     private void OnEnable()
@@ -105,12 +105,12 @@ public class PlayerMovement : MonoBehaviour, IMovement
         if (!ctx.performed)
             return;
 
-        if (ctx.control.device is Gamepad && playerInput.currentActionMap.name != "PlayerGamePad")
+        if (ctx.control.device is Gamepad && playerInput.currentActionMap.name != "PlayerGamepad")
         {
-            playerInput.SwitchCurrentActionMap("PlayerGamePad");
-            SetActionMap("PlayerGamePad");
+            playerInput.SwitchCurrentActionMap("PlayerGamepad");
+            SetActionMap("PlayerGamepad");
 
-            usingGamePad = true;
+            usingGamepad = true;
 
             Debug.Log("Controller detected");
         }
@@ -122,7 +122,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
             playerInput.SwitchCurrentActionMap("PlayerMK");
             SetActionMap("PlayerMK");
 
-            usingGamePad = false;
+            usingGamepad = false;
 
             Debug.Log("MK detected");
         }
@@ -168,11 +168,11 @@ public class PlayerMovement : MonoBehaviour, IMovement
         // SEND LOOK INPUT TO CROSSHAIR
         if (playerCrosshair != null)
         {
-            playerCrosshair.SetControllerMode(usingGamePad);
+            playerCrosshair.SetControllerMode(usingGamepad);
             playerCrosshair.UpdateControllerLook(look);
         }
 
-        if (usingGamePad && playerCrosshair != null)
+        if (usingGamepad && playerCrosshair != null)
         {
             Vector3 dir = playerCrosshair.GetLookDirection();
 
@@ -188,8 +188,9 @@ public class PlayerMovement : MonoBehaviour, IMovement
             StartDash();
 
         Debug.Log("Current Map: " + playerInput.currentActionMap.name);
-        Debug.Log("GamePad? " + usingGamePad);
+        Debug.Log("Gamepad? " + usingGamepad);
         Debug.Log("LOOK VALUE = " + lookAction.ReadValue<Vector2>());
+        Debug.Log("Gamepad.current = " + Gamepad.current);
     }
 
     private void FixedUpdate()
@@ -216,7 +217,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
             moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
             MoveWithCollision(moveVector);
 
-            if (!usingGamePad && moveInput.sqrMagnitude > 0.0001f)
+            if (!usingGamepad && moveInput.sqrMagnitude > 0.0001f)
                 rb.MoveRotation(Quaternion.LookRotation(moveInput.normalized));
         }
     }
