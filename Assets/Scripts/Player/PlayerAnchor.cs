@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerAnchor : MonoBehaviour
@@ -8,6 +9,7 @@ public class PlayerAnchor : MonoBehaviour
     private bool isTethered;
 
     private InputAction tetherAction;
+    [SerializeField] private AnchorTether anchorTether;
 
     public bool IsTethered => isTethered;
     public AnchorBase CurrentAnchor => currentAnchor;
@@ -71,8 +73,15 @@ public class PlayerAnchor : MonoBehaviour
     /// </summary>
     public void StartTether()
     {
-        if (currentAnchor != null)
-            isTethered = true;
+        if (currentAnchor == null)
+            return;
+
+        Transform anchorPoint = GetAnchorPointTransform(currentAnchor);
+
+        if (anchorTether != null)
+            anchorTether.SetEndPoint(anchorPoint, true);
+
+        isTethered = true;
     }
 
     /// <summary>
@@ -81,5 +90,17 @@ public class PlayerAnchor : MonoBehaviour
     public void ReleaseTether()
     {
         isTethered = false;
+
+        if (anchorTether != null)
+            anchorTether.SetEndPoint(null, true);
+    }
+
+    private Transform GetAnchorPointTransform(AnchorBase anchor)
+    {
+        if (anchor == null)
+            return null;
+
+        Transform child = anchor.transform.Find("AnchorPoint");
+        return child != null ? child : anchor.transform;
     }
 }
