@@ -2,80 +2,39 @@ using UnityEngine;
 
 public class DebugController : MonoBehaviour
 {
-    public CombatStatistics combatStats;
-    [SerializeField] private PlayerTakeDamage playerTakeDamage;
 
-    private bool showDebug;
+    [Header("Panels")]
+    public GameObject panelGeneral;
+    public GameObject panelPlayer;
+    public GameObject panelEnemies;
+    public GameObject panelGameMode;
 
-    // Strings are needed because TextField works with strings
-    private string playerSpeedInput;
-    private string tongueSpeedInput;
+    public GameObject panelRoot;
 
-    [SerializeField] private bool godModeEnabled;
-
-    private void Start()
+    private void Awake()
     {
-        // Initialize input fields with current values
-        playerSpeedInput = combatStats.playerSpeed.ToString();
-        tongueSpeedInput = combatStats.tongueExtendSpeed.ToString();
+        panelRoot.SetActive(false);
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            showDebug = !showDebug;
-        }
-
-        if (playerTakeDamage == null)
-        {
-            playerTakeDamage = FindAnyObjectByType<PlayerTakeDamage>();
-            if (playerTakeDamage == null)
-                return;
-        }            
-
-        playerTakeDamage.isGod = godModeEnabled;
+        if (Input.GetKeyDown(KeyCode.BackQuote))
+            panelRoot.SetActive(!panelRoot.activeSelf);
     }
 
-    private void OnGUI()
+    public void ShowGeneral() => ShowPanel(panelGeneral);
+    public void ShowPlayer() => ShowPanel(panelPlayer);
+    public void ShowEnemies() => ShowPanel(panelEnemies);
+    public void ShowGameMode() => ShowPanel(panelGameMode);
+
+    public void ShowPanel(GameObject target)
     {
-        if (!showDebug) return;
+        panelGeneral.SetActive(false);
+        panelPlayer.SetActive(false);
+        panelEnemies.SetActive(false);
+        panelGameMode.SetActive(false);
 
-        GUI.Box(new Rect(10, 10, 400, 200), "Debug Menu");
-
-        GUILayout.BeginArea(new Rect(20, 40, 380, 140));
-
-        GUILayout.Label("Player Speed:");
-        playerSpeedInput = GUILayout.TextField(playerSpeedInput);
-
-        GUILayout.Label("Tongue Extend Speed:");
-        tongueSpeedInput = GUILayout.TextField(tongueSpeedInput);
-
-        godModeEnabled = GUILayout.Toggle(godModeEnabled, "God Mode");
-
-        GUILayout.Space(10);
-
-        if (GUILayout.Button("Apply Changes"))
-        {
-            ApplyChanges();
-        }
-
-        GUILayout.EndArea();
-    }
-
-    private void ApplyChanges()
-    {
-        float parsedValue;
-
-        if (float.TryParse(playerSpeedInput, out parsedValue))
-        {
-            combatStats.playerSpeed = parsedValue;
-        }
-
-        if (float.TryParse(tongueSpeedInput, out parsedValue))
-        {
-            combatStats.tongueExtendSpeed = parsedValue;
-        }
+        target.SetActive(true);
     }
 }
 
