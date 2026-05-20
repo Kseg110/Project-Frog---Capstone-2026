@@ -63,6 +63,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private Vector3 anchorPosition;
     private readonly float currentMinRadius = 4f;
 
+    private const string GamepadSchemeNameLower = "gamepad";
+
     private void Awake()
     {
         Transform hitBox = transform.Find(hitBoxName);
@@ -93,38 +95,104 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private void OnEnable()
     {
         playerInput.onActionTriggered += OnActionTriggered;
+        InputSystem.onDeviceChange += OnDeviceChange;
+        playerInput.onControlsChanged += OnControlsChanged;
     }
 
     private void OnDisable()
     {
         playerInput.onActionTriggered -= OnActionTriggered;
+        InputSystem.onDeviceChange -= OnDeviceChange;
+        playerInput.onControlsChanged -= OnControlsChanged;
+    }
+
+    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
+    {
+        if (!(device is Gamepad))
+            return;
+
+        // Gamepad connected
+        if (change == InputDeviceChange.Added || change == InputDeviceChange.Reconnected || change == InputDeviceChange.Enabled)
+        {
+            // Ensure PlayerInput reflects the gamepad control scheme as well as switching map
+            if (Gamepad.current != null)
+                playerInput.SwitchCurrentControlScheme("Gamepad", Gamepad.current);
+
+            playerInput.SwitchCurrentActionMap("PlayerGamepad");
+            SetActionMap("PlayerGamepad");
+            usingGamepad = true;
+            Debug.Log("Controller connected - switched to PlayerGamepad");
+        }
+
+        // Gamepad removed
+        if (change == InputDeviceChange.Removed || change == InputDeviceChange.Disconnected || change == InputDeviceChange.Disabled)
+        {
+            // Switch control scheme back to keyboard+mouse if available
+            if (Keyboard.current != null && Mouse.current != null)
+                playerInput.SwitchCurrentControlScheme("Keyboard&Mouse", Keyboard.current, Mouse.current);
+
+            playerInput.SwitchCurrentActionMap("PlayerMK");
+            SetActionMap("PlayerMK");
+            usingGamepad = false;
+            Debug.Log("Controller removed - switched to PlayerMK");
+        }
+    }
+
+    // New handler: react to PlayerInput control-scheme changes (fires reliably)
+    private void OnControlsChanged(PlayerInput pi)
+    {
+        var scheme = playerInput.currentControlScheme ?? string.Empty;
+        string s = scheme.ToLowerInvariant();
+        if (s.Contains(GamepadSchemeNameLower))
+        {
+            if (playerInput.currentActionMap == null || playerInput.currentActionMap.name != "PlayerGamepad")
+            {
+                playerInput.SwitchCurrentActionMap("PlayerGamepad");
+                SetActionMap("PlayerGamepad");
+                usingGamepad = true;
+                Debug.Log("ControlsChanged -> switched to PlayerGamepad");
+            }
+        }
+        else
+        {
+            if (playerInput.currentActionMap == null || playerInput.currentActionMap.name != "PlayerMK")
+            {
+                playerInput.SwitchCurrentActionMap("PlayerMK");
+                SetActionMap("PlayerMK");
+                usingGamepad = false;
+                Debug.Log("ControlsChanged -> switched to PlayerMK");
+            }
+        }
     }
 
     private void OnActionTriggered(InputAction.CallbackContext ctx)
     {
-        if (!ctx.performed)
+        // Accept Started OR Performed so we don't miss initial inputs from some devices/bindings
+        if (!(ctx.phase == InputActionPhase.Started || ctx.phase == InputActionPhase.Performed))
             return;
 
-        if (ctx.control.device is Gamepad && playerInput.currentActionMap.name != "PlayerGamepad")
+        var device = ctx.control?.device;
+
+        if (device is Gamepad && playerInput.currentActionMap.name != "PlayerGamepad")
         {
             playerInput.SwitchCurrentActionMap("PlayerGamepad");
             SetActionMap("PlayerGamepad");
 
             usingGamepad = true;
 
-            Debug.Log("Controller detected");
+            Debug.Log("Controller detected via action");
+            return;
         }
 
-        else if (
-            (ctx.control.device is Keyboard || ctx.control.device is Mouse)
-            && playerInput.currentActionMap.name != "PlayerMK")
+        if ((device is Keyboard || device is Mouse) && playerInput.currentActionMap.name != "PlayerMK")
         {
             playerInput.SwitchCurrentActionMap("PlayerMK");
             SetActionMap("PlayerMK");
 
             usingGamepad = false;
 
-            Debug.Log("MK detected");
+            Debug.Log("MK detected via action");
+            return;
         }
     }
 
@@ -139,6 +207,23 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private void Update()
     {
         UpdateTetherStatus();
+
+        // Fallback auto-switch: if a Gamepad device exists but we haven't switched yet
+        if (!usingGamepad && Gamepad.current != null && playerInput.currentActionMap.name != "PlayerGamepad")
+        {
+            playerInput.SwitchCurrentActionMap("PlayerGamepad");
+            SetActionMap("PlayerGamepad");
+            usingGamepad = true;
+            Debug.Log("Controller auto-switched (Gamepad.current != null)");
+        }
+        else if (usingGamepad && Gamepad.current == null && playerInput.currentActionMap.name != "PlayerMK")
+        {
+            // If the connected gamepad was removed, switch back to MK
+            playerInput.SwitchCurrentActionMap("PlayerMK");
+            SetActionMap("PlayerMK");
+            usingGamepad = false;
+            Debug.Log("MK auto-switched (no Gamepad.current)");
+        }
 
         // Update dash cooldown
         if (dashCooldownTimer > 0f)
@@ -178,8 +263,9 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
             if (dir.sqrMagnitude > 0.01f)
             {
-                rb.MoveRotation(
-                Quaternion.LookRotation(lookDirection));
+                dir.y = 0f;
+                lookDirection = dir.normalized;
+                rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             }
         }
 
@@ -187,10 +273,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
         if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
             StartDash();
 
-        Debug.Log("Current Map: " + playerInput.currentActionMap.name);
-        Debug.Log("Gamepad? " + usingGamepad);
-        Debug.Log("LOOK VALUE = " + lookAction.ReadValue<Vector2>());
-        Debug.Log("Gamepad.current = " + Gamepad.current);
+        //Debug.Log("Current Map: " + playerInput.currentActionMap.name);
+        //Debug.Log("Gamepad? " + usingGamepad);
+        //Debug.Log("LOOK VALUE = " + lookAction.ReadValue<Vector2>());
+        //Debug.Log("Gamepad.current = " + Gamepad.current);
     }
 
     private void FixedUpdate()
@@ -367,4 +453,5 @@ public class PlayerMovement : MonoBehaviour, IMovement
             Gizmos.DrawWireSphere(anchorPosition, currentMaxRadius);
         }
     }
+    
 }

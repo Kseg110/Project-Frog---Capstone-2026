@@ -29,11 +29,18 @@ public class PlayerAttacks : MonoBehaviour
     private PlayerTongueAttack playerTongueAttack;
     private PlayerChargeAttack playerChargeAttack;
     private PlayerAnchor playerAnchor;
+    private PlayerInput playerInput;
 
     // Input actions
     private InputAction attackAction;          // Fire1 → LMB / Right Trigger
     private InputAction secondaryAttackAction; // Fire2 → RMB / Left Trigger
     private InputAction aimAction;             // Mouse position / Right Stick
+
+    // map tracking + trigger fallbacks
+    private string currentActionMapName;
+    private float prevAttackValue;
+    private float prevSecondaryValue;
+    private const float triggerThreshold = 0.5f;
 
     public bool IsAttacking => isCharging || playerTongueAttack.IsActive || attackWindowTimer > 0f;
 
@@ -45,15 +52,12 @@ public class PlayerAttacks : MonoBehaviour
         playerChargeAttack = GetComponent<PlayerChargeAttack>();
         playerAnchor = GetComponent<PlayerAnchor>();
 
-
         playerTongueAttack.OnTongueFinished += playerMovement.ResumeMovement;
 
-        // Cache input actions
-        attackAction = InputSystem.actions.FindAction("Attack");
-        secondaryAttackAction = InputSystem.actions.FindAction("SecondaryAttack");
-        aimAction = InputSystem.actions.FindAction("Look"); // or "Aim" if you renamed it
+        playerInput = GetComponent<PlayerInput>();
+        Debug.Assert(playerInput != null, $"[{gameObject.name}] missing PlayerInput!", this);
 
-        Debug.Assert(playerTongueAttack != null, $"[{gameObject.name}] missing PlayerTongueAttack!", this);
+        RebindActionsFromCurrentMap();
     }
 
     private void OnDestroy()
@@ -62,15 +66,88 @@ public class PlayerAttacks : MonoBehaviour
             playerTongueAttack.OnTongueFinished -= playerMovement.ResumeMovement;
     }
 
+    private void RebindActionsFromCurrentMap()
+    {
+        if (playerInput == null || playerInput.currentActionMap == null)
+            return;
+
+        currentActionMapName = playerInput.currentActionMap.name;
+
+        attackAction = playerInput.currentActionMap.FindAction("Attack");
+        secondaryAttackAction = playerInput.currentActionMap.FindAction("SecondaryAttack");
+        aimAction = playerInput.currentActionMap.FindAction("Look"); // or "Aim" if you renamed it
+
+        Debug.Assert(attackAction != null, $"[{gameObject.name}] Attack action not found on map {currentActionMapName}!", this);
+        Debug.Assert(secondaryAttackAction != null, $"[{gameObject.name}] SecondaryAttack action not found on map {currentActionMapName}!", this);
+        Debug.Assert(aimAction != null, $"[{gameObject.name}] Look action not found on map {currentActionMapName}!", this);
+
+        // reset previous values for trigger fallbacks
+        prevAttackValue = 0f;
+        prevSecondaryValue = 0f;
+    }
+
     private void Update()
     {
-        // Basic shot — held LMB / Right Trigger (rate-limited inside TryBasicShot)
-        if (attackAction.IsPressed()) TryBasicShot();
+        // if the PlayerInput map changed at runtime, rebind to the active map
+        if (playerInput != null && playerInput.currentActionMap != null && playerInput.currentActionMap.name != currentActionMapName)
+            RebindActionsFromCurrentMap();
 
-        // Secondary — RMB / Left Trigger
+        // READ ATTACK INPUTS WITH FALLBACKS FOR TRIGGERS
+        bool attackHeld = false;
+        bool attackPressedThisFrame = false;
+
+        if (attackAction != null)
+        {
+            // prefer built-in checks which work when the action is configured as a Button
+            attackHeld = attackAction.IsPressed();
+            attackPressedThisFrame = attackAction.WasPressedThisFrame();
+
+            // fallback for trigger/axis bindings: treat float values >= threshold as "pressed"
+            float val = 0f;
+            try { val = attackAction.ReadValue<float>(); } catch { /* ignore if not float */ }
+
+            if (!attackHeld && val >= triggerThreshold)
+                attackHeld = true;
+
+            if (!attackPressedThisFrame && val >= triggerThreshold && prevAttackValue < triggerThreshold)
+                attackPressedThisFrame = true;
+
+            prevAttackValue = val;
+        }
+
+        bool secondaryHeld = false;
+        bool secondaryPressedThisFrame = false;
+        bool secondaryReleasedThisFrame = false;
+
+        if (secondaryAttackAction != null)
+        {
+            secondaryHeld = secondaryAttackAction.IsPressed();
+            secondaryPressedThisFrame = secondaryAttackAction.WasPressedThisFrame();
+            secondaryReleasedThisFrame = secondaryAttackAction.WasReleasedThisFrame();
+
+            float val = 0f;
+            try { val = secondaryAttackAction.ReadValue<float>(); } catch { /* ignore if not float */ }
+
+            if (!secondaryHeld && val >= triggerThreshold)
+                secondaryHeld = true;
+
+            if (!secondaryPressedThisFrame && val >= triggerThreshold && prevSecondaryValue < triggerThreshold)
+                secondaryPressedThisFrame = true;
+
+            if (!secondaryReleasedThisFrame && val < triggerThreshold && prevSecondaryValue >= triggerThreshold)
+                secondaryReleasedThisFrame = true;
+
+            prevSecondaryValue = val;
+        }
+
+        // Basic shot — held LMB / Right Trigger (rate-limited inside TryBasicShot)
+        if (attackHeld)
+            TryBasicShot();
+
+        // Secondary — tether / charge / tongue logic
         if (playerAnchor.IsTethered)
         {
-            if (secondaryAttackAction.WasPressedThisFrame())
+            if (secondaryPressedThisFrame)
             {
                 if (!playerChargeAttack.IsCharging)
                 {
@@ -79,26 +156,25 @@ public class PlayerAttacks : MonoBehaviour
                 }
             }
 
-            if (secondaryAttackAction.IsPressed())
+            if (secondaryHeld)
             {
                 playerChargeAttack.UpdateCharge();
             }
 
-            if (secondaryAttackAction.WasReleasedThisFrame())
+            if (secondaryReleasedThisFrame)
             {
                 playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
                 playerMovement.ResumeMovement();
             }
         }
-        // not tethered use tongue attack
         else
         {
-            if (secondaryAttackAction.WasPressedThisFrame())
+            if (secondaryPressedThisFrame)
             {
                 TryTongue();
             }
 
-            if (secondaryAttackAction.WasReleasedThisFrame())
+            if (secondaryReleasedThisFrame)
             {
                 playerTongueAttack.BeginTongueRetract();
             }
@@ -171,8 +247,8 @@ public class PlayerAttacks : MonoBehaviour
     private Vector3 GetAimDirection()
     {
         // Determine if the gamepad stick is actively aiming
-        Vector2 aimValue = aimAction.ReadValue<Vector2>();
-        var lastControl = aimAction.activeControl;
+        Vector2 aimValue = aimAction != null ? aimAction.ReadValue<Vector2>() : Vector2.zero;
+        var lastControl = aimAction != null ? aimAction.activeControl : null;
         bool gamepadActive = lastControl != null
                           && lastControl.device is Gamepad
                           && aimValue.sqrMagnitude > 0.01f;
