@@ -272,11 +272,6 @@ public class PlayerMovement : MonoBehaviour, IMovement
         // Check for valid dash input
         if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
             StartDash();
-
-        //Debug.Log("Current Map: " + playerInput.currentActionMap.name);
-        //Debug.Log("Gamepad? " + usingGamepad);
-        //Debug.Log("LOOK VALUE = " + lookAction.ReadValue<Vector2>());
-        //Debug.Log("Gamepad.current = " + Gamepad.current);
     }
 
     private void FixedUpdate()

@@ -103,7 +103,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Look"",
-                    ""type"": ""Value"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""6b444451-8a00-4d00-a97e-f47457f736a8"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
@@ -195,6 +195,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""name"": ""Tether"",
                     ""type"": ""Button"",
                     ""id"": ""b2d187a8-719c-4eda-8c52-8e52e9adec76"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""f33d4869-1aba-46ea-842c-738abe781143"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -307,7 +316,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""path"": ""<XRController>/{Primary2DAxis}"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""XR"",
+                    ""groups"": ""XR;Keyboard&Mouse"",
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -432,11 +441,22 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""SecondaryAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fce74043-96fa-4a6c-8597-9c7c5ec76423"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
         {
-            ""name"": ""PlayerGamePad"",
+            ""name"": ""PlayerGamepad"",
             ""id"": ""c98ea462-b73e-4a03-b2c0-e5aeedc76f70"",
             ""actions"": [
                 {
@@ -488,7 +508,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""name"": ""Crouch"",
                     ""type"": ""Button"",
                     ""id"": ""4b6fe967-cc61-4ee0-91ea-6c5bbfbd433f"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -530,7 +550,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""DashGP"",
+                    ""name"": ""Dash"",
                     ""type"": ""Button"",
                     ""id"": ""3d898255-7802-4833-b0e6-b440610f8b0a"",
                     ""expectedControlType"": """",
@@ -545,6 +565,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""d7688d96-f0cb-4209-876a-2b42ed554aeb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Press"",
                     ""initialStateCheck"": false
                 }
             ],
@@ -566,7 +595,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""path"": ""<XRController>/{Primary2DAxis}"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""XR"",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -577,7 +606,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""path"": ""<Joystick>/stick"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Joystick"",
+                    ""groups"": ""Gamepad"",
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -599,7 +628,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""path"": ""<Pointer>/delta"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": "";Keyboard&Mouse;Touch"",
+                    ""groups"": "";Touch"",
                     ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -610,7 +639,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""path"": ""<Joystick>/{Hatswitch}"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Joystick"",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -654,7 +683,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""path"": ""<XRController>/trigger"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""XR"",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Sprint"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -665,7 +694,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""path"": ""<XRController>/secondaryButton"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""XR"",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -699,7 +728,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
-                    ""action"": ""DashGP"",
+                    ""action"": ""Dash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -724,6 +753,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""SecondaryAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""26cdc3b8-7cb1-440f-b0f8-7d07fb9633d7"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -738,6 +778,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""a84ca5a4-c75c-4fe2-9223-195b211571f3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Press"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -1089,6 +1138,28 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""e36c06a1-a17e-40a1-989c-a91b98a862c1"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""421c4d80-dd40-4777-9fe2-f62980066ac6"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""9e92bb26-7e3b-4ec4-b06b-3c8f8e498ddc"",
                     ""path"": ""*/{Submit}"",
                     ""interactions"": """",
@@ -1321,23 +1392,26 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_PlayerMK_Sprint = m_PlayerMK.FindAction("Sprint", throwIfNotFound: true);
         m_PlayerMK_Dash = m_PlayerMK.FindAction("Dash", throwIfNotFound: true);
         m_PlayerMK_Tether = m_PlayerMK.FindAction("Tether", throwIfNotFound: true);
-        // PlayerGamePad
-        m_PlayerGamePad = asset.FindActionMap("PlayerGamePad", throwIfNotFound: true);
-        m_PlayerGamePad_Move = m_PlayerGamePad.FindAction("Move", throwIfNotFound: true);
-        m_PlayerGamePad_Look = m_PlayerGamePad.FindAction("Look", throwIfNotFound: true);
-        m_PlayerGamePad_Attack = m_PlayerGamePad.FindAction("Attack", throwIfNotFound: true);
-        m_PlayerGamePad_SecondaryAttack = m_PlayerGamePad.FindAction("SecondaryAttack", throwIfNotFound: true);
-        m_PlayerGamePad_Interact = m_PlayerGamePad.FindAction("Interact", throwIfNotFound: true);
-        m_PlayerGamePad_Crouch = m_PlayerGamePad.FindAction("Crouch", throwIfNotFound: true);
-        m_PlayerGamePad_Jump = m_PlayerGamePad.FindAction("Jump", throwIfNotFound: true);
-        m_PlayerGamePad_Previous = m_PlayerGamePad.FindAction("Previous", throwIfNotFound: true);
-        m_PlayerGamePad_Next = m_PlayerGamePad.FindAction("Next", throwIfNotFound: true);
-        m_PlayerGamePad_Sprint = m_PlayerGamePad.FindAction("Sprint", throwIfNotFound: true);
-        m_PlayerGamePad_DashGP = m_PlayerGamePad.FindAction("DashGP", throwIfNotFound: true);
-        m_PlayerGamePad_Tether = m_PlayerGamePad.FindAction("Tether", throwIfNotFound: true);
+        m_PlayerMK_Pause = m_PlayerMK.FindAction("Pause", throwIfNotFound: true);
+        // PlayerGamepad
+        m_PlayerGamepad = asset.FindActionMap("PlayerGamepad", throwIfNotFound: true);
+        m_PlayerGamepad_Move = m_PlayerGamepad.FindAction("Move", throwIfNotFound: true);
+        m_PlayerGamepad_Look = m_PlayerGamepad.FindAction("Look", throwIfNotFound: true);
+        m_PlayerGamepad_Attack = m_PlayerGamepad.FindAction("Attack", throwIfNotFound: true);
+        m_PlayerGamepad_SecondaryAttack = m_PlayerGamepad.FindAction("SecondaryAttack", throwIfNotFound: true);
+        m_PlayerGamepad_Interact = m_PlayerGamepad.FindAction("Interact", throwIfNotFound: true);
+        m_PlayerGamepad_Crouch = m_PlayerGamepad.FindAction("Crouch", throwIfNotFound: true);
+        m_PlayerGamepad_Jump = m_PlayerGamepad.FindAction("Jump", throwIfNotFound: true);
+        m_PlayerGamepad_Previous = m_PlayerGamepad.FindAction("Previous", throwIfNotFound: true);
+        m_PlayerGamepad_Next = m_PlayerGamepad.FindAction("Next", throwIfNotFound: true);
+        m_PlayerGamepad_Sprint = m_PlayerGamepad.FindAction("Sprint", throwIfNotFound: true);
+        m_PlayerGamepad_Dash = m_PlayerGamepad.FindAction("Dash", throwIfNotFound: true);
+        m_PlayerGamepad_Tether = m_PlayerGamepad.FindAction("Tether", throwIfNotFound: true);
+        m_PlayerGamepad_Pause = m_PlayerGamepad.FindAction("Pause", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
+        m_UI_Pause = m_UI.FindAction("Pause", throwIfNotFound: true);
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
         m_UI_Cancel = m_UI.FindAction("Cancel", throwIfNotFound: true);
         m_UI_Point = m_UI.FindAction("Point", throwIfNotFound: true);
@@ -1352,7 +1426,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     ~@InputSystem_Actions()
     {
         UnityEngine.Debug.Assert(!m_PlayerMK.enabled, "This will cause a leak and performance issues, InputSystem_Actions.PlayerMK.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_PlayerGamePad.enabled, "This will cause a leak and performance issues, InputSystem_Actions.PlayerGamePad.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_PlayerGamepad.enabled, "This will cause a leak and performance issues, InputSystem_Actions.PlayerGamepad.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, InputSystem_Actions.UI.Disable() has not been called.");
     }
 
@@ -1441,6 +1515,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerMK_Sprint;
     private readonly InputAction m_PlayerMK_Dash;
     private readonly InputAction m_PlayerMK_Tether;
+    private readonly InputAction m_PlayerMK_Pause;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerMK".
     /// </summary>
@@ -1500,6 +1575,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerMK/Tether".
         /// </summary>
         public InputAction @Tether => m_Wrapper.m_PlayerMK_Tether;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerMK/Pause".
+        /// </summary>
+        public InputAction @Pause => m_Wrapper.m_PlayerMK_Pause;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1562,6 +1641,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Tether.started += instance.OnTether;
             @Tether.performed += instance.OnTether;
             @Tether.canceled += instance.OnTether;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         /// <summary>
@@ -1609,6 +1691,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Tether.started -= instance.OnTether;
             @Tether.performed -= instance.OnTether;
             @Tether.canceled -= instance.OnTether;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         /// <summary>
@@ -1643,84 +1728,89 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// </summary>
     public PlayerMKActions @PlayerMK => new PlayerMKActions(this);
 
-    // PlayerGamePad
-    private readonly InputActionMap m_PlayerGamePad;
-    private List<IPlayerGamePadActions> m_PlayerGamePadActionsCallbackInterfaces = new List<IPlayerGamePadActions>();
-    private readonly InputAction m_PlayerGamePad_Move;
-    private readonly InputAction m_PlayerGamePad_Look;
-    private readonly InputAction m_PlayerGamePad_Attack;
-    private readonly InputAction m_PlayerGamePad_SecondaryAttack;
-    private readonly InputAction m_PlayerGamePad_Interact;
-    private readonly InputAction m_PlayerGamePad_Crouch;
-    private readonly InputAction m_PlayerGamePad_Jump;
-    private readonly InputAction m_PlayerGamePad_Previous;
-    private readonly InputAction m_PlayerGamePad_Next;
-    private readonly InputAction m_PlayerGamePad_Sprint;
-    private readonly InputAction m_PlayerGamePad_DashGP;
-    private readonly InputAction m_PlayerGamePad_Tether;
+    // PlayerGamepad
+    private readonly InputActionMap m_PlayerGamepad;
+    private List<IPlayerGamepadActions> m_PlayerGamepadActionsCallbackInterfaces = new List<IPlayerGamepadActions>();
+    private readonly InputAction m_PlayerGamepad_Move;
+    private readonly InputAction m_PlayerGamepad_Look;
+    private readonly InputAction m_PlayerGamepad_Attack;
+    private readonly InputAction m_PlayerGamepad_SecondaryAttack;
+    private readonly InputAction m_PlayerGamepad_Interact;
+    private readonly InputAction m_PlayerGamepad_Crouch;
+    private readonly InputAction m_PlayerGamepad_Jump;
+    private readonly InputAction m_PlayerGamepad_Previous;
+    private readonly InputAction m_PlayerGamepad_Next;
+    private readonly InputAction m_PlayerGamepad_Sprint;
+    private readonly InputAction m_PlayerGamepad_Dash;
+    private readonly InputAction m_PlayerGamepad_Tether;
+    private readonly InputAction m_PlayerGamepad_Pause;
     /// <summary>
-    /// Provides access to input actions defined in input action map "PlayerGamePad".
+    /// Provides access to input actions defined in input action map "PlayerGamepad".
     /// </summary>
-    public struct PlayerGamePadActions
+    public struct PlayerGamepadActions
     {
         private @InputSystem_Actions m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public PlayerGamePadActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        public PlayerGamepadActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/Move".
+        /// Provides access to the underlying input action "PlayerGamepad/Move".
         /// </summary>
-        public InputAction @Move => m_Wrapper.m_PlayerGamePad_Move;
+        public InputAction @Move => m_Wrapper.m_PlayerGamepad_Move;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/Look".
+        /// Provides access to the underlying input action "PlayerGamepad/Look".
         /// </summary>
-        public InputAction @Look => m_Wrapper.m_PlayerGamePad_Look;
+        public InputAction @Look => m_Wrapper.m_PlayerGamepad_Look;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/Attack".
+        /// Provides access to the underlying input action "PlayerGamepad/Attack".
         /// </summary>
-        public InputAction @Attack => m_Wrapper.m_PlayerGamePad_Attack;
+        public InputAction @Attack => m_Wrapper.m_PlayerGamepad_Attack;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/SecondaryAttack".
+        /// Provides access to the underlying input action "PlayerGamepad/SecondaryAttack".
         /// </summary>
-        public InputAction @SecondaryAttack => m_Wrapper.m_PlayerGamePad_SecondaryAttack;
+        public InputAction @SecondaryAttack => m_Wrapper.m_PlayerGamepad_SecondaryAttack;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/Interact".
+        /// Provides access to the underlying input action "PlayerGamepad/Interact".
         /// </summary>
-        public InputAction @Interact => m_Wrapper.m_PlayerGamePad_Interact;
+        public InputAction @Interact => m_Wrapper.m_PlayerGamepad_Interact;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/Crouch".
+        /// Provides access to the underlying input action "PlayerGamepad/Crouch".
         /// </summary>
-        public InputAction @Crouch => m_Wrapper.m_PlayerGamePad_Crouch;
+        public InputAction @Crouch => m_Wrapper.m_PlayerGamepad_Crouch;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/Jump".
+        /// Provides access to the underlying input action "PlayerGamepad/Jump".
         /// </summary>
-        public InputAction @Jump => m_Wrapper.m_PlayerGamePad_Jump;
+        public InputAction @Jump => m_Wrapper.m_PlayerGamepad_Jump;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/Previous".
+        /// Provides access to the underlying input action "PlayerGamepad/Previous".
         /// </summary>
-        public InputAction @Previous => m_Wrapper.m_PlayerGamePad_Previous;
+        public InputAction @Previous => m_Wrapper.m_PlayerGamepad_Previous;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/Next".
+        /// Provides access to the underlying input action "PlayerGamepad/Next".
         /// </summary>
-        public InputAction @Next => m_Wrapper.m_PlayerGamePad_Next;
+        public InputAction @Next => m_Wrapper.m_PlayerGamepad_Next;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/Sprint".
+        /// Provides access to the underlying input action "PlayerGamepad/Sprint".
         /// </summary>
-        public InputAction @Sprint => m_Wrapper.m_PlayerGamePad_Sprint;
+        public InputAction @Sprint => m_Wrapper.m_PlayerGamepad_Sprint;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/DashGP".
+        /// Provides access to the underlying input action "PlayerGamepad/Dash".
         /// </summary>
-        public InputAction @DashGP => m_Wrapper.m_PlayerGamePad_DashGP;
+        public InputAction @Dash => m_Wrapper.m_PlayerGamepad_Dash;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerGamePad/Tether".
+        /// Provides access to the underlying input action "PlayerGamepad/Tether".
         /// </summary>
-        public InputAction @Tether => m_Wrapper.m_PlayerGamePad_Tether;
+        public InputAction @Tether => m_Wrapper.m_PlayerGamepad_Tether;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerGamepad/Pause".
+        /// </summary>
+        public InputAction @Pause => m_Wrapper.m_PlayerGamepad_Pause;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
-        public InputActionMap Get() { return m_Wrapper.m_PlayerGamePad; }
+        public InputActionMap Get() { return m_Wrapper.m_PlayerGamepad; }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
         public void Enable() { Get().Enable(); }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -1728,9 +1818,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
         public bool enabled => Get().enabled;
         /// <summary>
-        /// Implicitly converts an <see ref="PlayerGamePadActions" /> to an <see ref="InputActionMap" /> instance.
+        /// Implicitly converts an <see ref="PlayerGamepadActions" /> to an <see ref="InputActionMap" /> instance.
         /// </summary>
-        public static implicit operator InputActionMap(PlayerGamePadActions set) { return set.Get(); }
+        public static implicit operator InputActionMap(PlayerGamepadActions set) { return set.Get(); }
         /// <summary>
         /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
         /// </summary>
@@ -1738,11 +1828,11 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
         /// </remarks>
-        /// <seealso cref="PlayerGamePadActions" />
-        public void AddCallbacks(IPlayerGamePadActions instance)
+        /// <seealso cref="PlayerGamepadActions" />
+        public void AddCallbacks(IPlayerGamepadActions instance)
         {
-            if (instance == null || m_Wrapper.m_PlayerGamePadActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_PlayerGamePadActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_PlayerGamepadActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_PlayerGamepadActionsCallbackInterfaces.Add(instance);
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
@@ -1773,12 +1863,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
-            @DashGP.started += instance.OnDashGP;
-            @DashGP.performed += instance.OnDashGP;
-            @DashGP.canceled += instance.OnDashGP;
+            @Dash.started += instance.OnDash;
+            @Dash.performed += instance.OnDash;
+            @Dash.canceled += instance.OnDash;
             @Tether.started += instance.OnTether;
             @Tether.performed += instance.OnTether;
             @Tether.canceled += instance.OnTether;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         /// <summary>
@@ -1787,8 +1880,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
         /// </remarks>
-        /// <seealso cref="PlayerGamePadActions" />
-        private void UnregisterCallbacks(IPlayerGamePadActions instance)
+        /// <seealso cref="PlayerGamepadActions" />
+        private void UnregisterCallbacks(IPlayerGamepadActions instance)
         {
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
@@ -1820,21 +1913,24 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
-            @DashGP.started -= instance.OnDashGP;
-            @DashGP.performed -= instance.OnDashGP;
-            @DashGP.canceled -= instance.OnDashGP;
+            @Dash.started -= instance.OnDash;
+            @Dash.performed -= instance.OnDash;
+            @Dash.canceled -= instance.OnDash;
             @Tether.started -= instance.OnTether;
             @Tether.performed -= instance.OnTether;
             @Tether.canceled -= instance.OnTether;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         /// <summary>
-        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="PlayerGamePadActions.UnregisterCallbacks(IPlayerGamePadActions)" />.
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="PlayerGamepadActions.UnregisterCallbacks(IPlayerGamepadActions)" />.
         /// </summary>
-        /// <seealso cref="PlayerGamePadActions.UnregisterCallbacks(IPlayerGamePadActions)" />
-        public void RemoveCallbacks(IPlayerGamePadActions instance)
+        /// <seealso cref="PlayerGamepadActions.UnregisterCallbacks(IPlayerGamepadActions)" />
+        public void RemoveCallbacks(IPlayerGamepadActions instance)
         {
-            if (m_Wrapper.m_PlayerGamePadActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_PlayerGamepadActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
@@ -1844,26 +1940,27 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
         /// </remarks>
-        /// <seealso cref="PlayerGamePadActions.AddCallbacks(IPlayerGamePadActions)" />
-        /// <seealso cref="PlayerGamePadActions.RemoveCallbacks(IPlayerGamePadActions)" />
-        /// <seealso cref="PlayerGamePadActions.UnregisterCallbacks(IPlayerGamePadActions)" />
-        public void SetCallbacks(IPlayerGamePadActions instance)
+        /// <seealso cref="PlayerGamepadActions.AddCallbacks(IPlayerGamepadActions)" />
+        /// <seealso cref="PlayerGamepadActions.RemoveCallbacks(IPlayerGamepadActions)" />
+        /// <seealso cref="PlayerGamepadActions.UnregisterCallbacks(IPlayerGamepadActions)" />
+        public void SetCallbacks(IPlayerGamepadActions instance)
         {
-            foreach (var item in m_Wrapper.m_PlayerGamePadActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_PlayerGamepadActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_PlayerGamePadActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_PlayerGamepadActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
     /// <summary>
-    /// Provides a new <see cref="PlayerGamePadActions" /> instance referencing this action map.
+    /// Provides a new <see cref="PlayerGamepadActions" /> instance referencing this action map.
     /// </summary>
-    public PlayerGamePadActions @PlayerGamePad => new PlayerGamePadActions(this);
+    public PlayerGamepadActions @PlayerGamepad => new PlayerGamepadActions(this);
 
     // UI
     private readonly InputActionMap m_UI;
     private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
     private readonly InputAction m_UI_Navigate;
+    private readonly InputAction m_UI_Pause;
     private readonly InputAction m_UI_Submit;
     private readonly InputAction m_UI_Cancel;
     private readonly InputAction m_UI_Point;
@@ -1888,6 +1985,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI/Navigate".
         /// </summary>
         public InputAction @Navigate => m_Wrapper.m_UI_Navigate;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/Pause".
+        /// </summary>
+        public InputAction @Pause => m_Wrapper.m_UI_Pause;
         /// <summary>
         /// Provides access to the underlying input action "UI/Submit".
         /// </summary>
@@ -1953,6 +2054,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Navigate.started += instance.OnNavigate;
             @Navigate.performed += instance.OnNavigate;
             @Navigate.canceled += instance.OnNavigate;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
             @Submit.started += instance.OnSubmit;
             @Submit.performed += instance.OnSubmit;
             @Submit.canceled += instance.OnSubmit;
@@ -1994,6 +2098,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Navigate.started -= instance.OnNavigate;
             @Navigate.performed -= instance.OnNavigate;
             @Navigate.canceled -= instance.OnNavigate;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
             @Submit.started -= instance.OnSubmit;
             @Submit.performed -= instance.OnSubmit;
             @Submit.canceled -= instance.OnSubmit;
@@ -2210,13 +2317,20 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTether(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPause(InputAction.CallbackContext context);
     }
     /// <summary>
-    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "PlayerGamePad" which allows adding and removing callbacks.
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "PlayerGamepad" which allows adding and removing callbacks.
     /// </summary>
-    /// <seealso cref="PlayerGamePadActions.AddCallbacks(IPlayerGamePadActions)" />
-    /// <seealso cref="PlayerGamePadActions.RemoveCallbacks(IPlayerGamePadActions)" />
-    public interface IPlayerGamePadActions
+    /// <seealso cref="PlayerGamepadActions.AddCallbacks(IPlayerGamepadActions)" />
+    /// <seealso cref="PlayerGamepadActions.RemoveCallbacks(IPlayerGamepadActions)" />
+    public interface IPlayerGamepadActions
     {
         /// <summary>
         /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
@@ -2289,12 +2403,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSprint(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "DashGP" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Dash" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnDashGP(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Tether" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -2302,6 +2416,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTether(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPause(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
@@ -2317,6 +2438,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnNavigate(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPause(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Submit" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

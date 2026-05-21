@@ -75,7 +75,7 @@ public class PlayerAttacks : MonoBehaviour
 
         attackAction = playerInput.currentActionMap.FindAction("Attack");
         secondaryAttackAction = playerInput.currentActionMap.FindAction("SecondaryAttack");
-        aimAction = playerInput.currentActionMap.FindAction("Look"); // or "Aim" if you renamed it
+        aimAction = playerInput.currentActionMap.FindAction("Look");
 
         Debug.Assert(attackAction != null, $"[{gameObject.name}] Attack action not found on map {currentActionMapName}!", this);
         Debug.Assert(secondaryAttackAction != null, $"[{gameObject.name}] SecondaryAttack action not found on map {currentActionMapName}!", this);
