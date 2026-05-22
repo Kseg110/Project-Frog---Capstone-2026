@@ -70,8 +70,11 @@ GameObject:
   - component: {fileID: -1992746306456541990}
   - component: {fileID: 3860380783638562474}
   - component: {fileID: 5587405099960226647}
+  - component: {fileID: 161073505441525405}
+  - component: {fileID: 6594946477511551439}
+  - component: {fileID: 2511430579554957149}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: NewTestEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -217,6 +220,8 @@ MonoBehaviour:
   attackHitbox: {fileID: 0}
   health: {fileID: 0}
   attackRange: 1
+  attackPoint: {fileID: 0}
+  hitboxLifetime: 0.2
 --- !u!114 &-1992746306456541990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,6 +271,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
+--- !u!114 &161073505441525405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7052711535739665740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b094de056c9811c4dbe2b308a9e7fcf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossStateMachine
+  movement: {fileID: 2511430579554957149}
+  combat: {fileID: 6594946477511551439}
+  target: {fileID: 0}
+--- !u!114 &6594946477511551439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7052711535739665740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bd873acf2d679c438456100b490ad2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatComponent
+  attacks:
+  - {fileID: 11400000, guid: 3a854b2de4a4c9549b57f33234fe9ce5, type: 2}
+  player: {fileID: 0}
+--- !u!114 &2511430579554957149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7052711535739665740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be22f9f649befc940a48ac6ac4662061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovementComponent
+  target: {fileID: 0}
+  stopDistance: 3
+  movementSpeed: 1
+  repathRate: 0.2
 --- !u!1001 &6430763608415819135
 PrefabInstance:
   m_ObjectHideFlags: 0

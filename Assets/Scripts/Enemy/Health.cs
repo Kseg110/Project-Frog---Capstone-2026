@@ -1,5 +1,7 @@
-using UnityEngine;
+using System;
 using System.Collections;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public class Health : MonoBehaviour
 {
@@ -9,6 +11,7 @@ public class Health : MonoBehaviour
     private UIPlayerHUD playerHUD;
 
     public bool IsDead { get; private set; }
+    public event Action<GameObject> OnDestroyed;
 
     private void Awake()
     {
@@ -63,7 +66,27 @@ public class Health : MonoBehaviour
     private void Die()
     {
         IsDead = true;
-        Destroy(gameObject);
+        //  so that enemies dont trigger the death overlay and only the player does
+        if (CompareTag("Player"))
+        {
+            UIDeathOverlay deathOverlay = FindFirstObjectByType<UIDeathOverlay>();
+
+            if (deathOverlay != null)
+            {
+                deathOverlay.ShowDeathOverlay();
+            }
+            else
+            {
+                Debug.LogError("No PlayerDeathOverlay found in scene.");
+            }
+
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            OnDestroyed?.Invoke(gameObject);
+            Destroy(gameObject);
+        }
     }
 
     #region Burn DOT
