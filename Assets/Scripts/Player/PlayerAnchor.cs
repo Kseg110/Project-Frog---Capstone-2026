@@ -9,6 +9,8 @@ public class PlayerAnchor : MonoBehaviour
     private bool isTethered;
 
     private InputAction tetherAction;
+    private PlayerInput playerInput;
+    private string currentActionMapName;
     [SerializeField] private AnchorTether anchorTether;
 
     public bool IsTethered => isTethered;
@@ -17,16 +19,33 @@ public class PlayerAnchor : MonoBehaviour
     private void Awake()
     {
         allAnchors = FindObjectsByType<AnchorBase>(FindObjectsSortMode.None);
-        tetherAction = InputSystem.actions.FindAction("Tether");
 
-        Debug.Assert(tetherAction != null, "Tether action not found in Input Actions asset!");
+        playerInput = GetComponent<PlayerInput>();
+        Debug.Assert(playerInput != null, $"[{gameObject.name}] missing PlayerInput!", this);
+
+        RebindTetherActionFromCurrentMap();
     }
 
     private void Update()
     {
+        // If the active map changed (PlayerMK <-> PlayerGamepad), rebind tether action to the active map
+        if (playerInput != null && playerInput.currentActionMap != null && playerInput.currentActionMap.name != currentActionMapName)
+            RebindTetherActionFromCurrentMap();
+
         UpdateCurrentAnchor();
         HandleInput();
         ValidateTether();
+    }
+
+    private void RebindTetherActionFromCurrentMap()
+    {
+        if (playerInput == null || playerInput.currentActionMap == null)
+            return;
+
+        currentActionMapName = playerInput.currentActionMap.name;
+        tetherAction = playerInput.currentActionMap.FindAction("Tether");
+
+        Debug.Assert(tetherAction != null, $"Tether action not found on active map '{currentActionMapName}' for [{gameObject.name}]!", this);
     }
 
     private void UpdateCurrentAnchor()
@@ -36,12 +55,15 @@ public class PlayerAnchor : MonoBehaviour
 
     private void HandleInput()
     {
-        if (tetherAction.WasPressedThisFrame())
+        if (tetherAction != null)
         {
-            if (isTethered)
-                ReleaseTether();
-            else
-                StartTether();
+            if (tetherAction.WasPressedThisFrame())
+            {
+                if (isTethered)
+                    ReleaseTether();
+                else
+                    StartTether();
+            }
         }
     }
 

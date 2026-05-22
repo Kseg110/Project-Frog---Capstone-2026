@@ -17,14 +17,29 @@ public class PlayerCrosshair : MonoBehaviour
     [Tooltip("If true, hides the system cursor while playing.")]
     [SerializeField] private bool hideSystemCursor = true;
 
+    [Header("Controller Mode")]
+    [SerializeField] private float controllerRadius = 200f;
+
     private Canvas uiCanvas;
     private Image crosshairImage;
     private RectTransform crosshairRect;
+    private Transform player;
+    private Camera cam;
+
+    private bool usingController = false;
+    private Vector2 controllerLookInput;
 
     void Awake()
     {
         // Ensure cursor is not locked by other systems
         Cursor.lockState = CursorLockMode.None;
+        cam = Camera.main;
+
+        GameObject p =
+        GameObject.FindGameObjectWithTag("Player");
+
+        if (p != null)
+            player = p.transform;
 
         SetupCanvasAndCrosshair();
     }
@@ -41,16 +56,66 @@ public class PlayerCrosshair : MonoBehaviour
         Cursor.visible = true;
     }
 
+    public void SetControllerMode(bool active)
+    {
+        usingController = active;
+    }
+
+    public void UpdateControllerLook(Vector2 lookInput)
+    {
+        controllerLookInput = lookInput;
+    }
+
+    public Vector3 GetLookDirection()
+    {
+        Vector3 dir =
+        new Vector3(
+            controllerLookInput.x, 0, controllerLookInput.y);
+        return dir.normalized;
+    }
+
     void LateUpdate()
     {
-        // Move crosshair to mouse position every frame (works with Screen Space - Overlay canvas).
-        if (crosshairRect != null)
+        if (crosshairRect == null)
+            return;
+
+        if (usingController)
         {
-            Vector2 mousePos = Input.mousePosition;
-            crosshairRect.position = mousePos;
+            if (player == null)
+                return;
+
+            Vector3 playerScreenPos = cam.WorldToScreenPoint(player.position);
+
+            Vector2 stickDir;
+
+            if (controllerLookInput.sqrMagnitude > 0.01f)
+            {
+                stickDir = controllerLookInput.normalized;
+            }
+            else
+            {
+                // keep last direction when stick released
+                stickDir = (Vector2)(crosshairRect.position - playerScreenPos);
+
+                if (stickDir.sqrMagnitude > 0.01f)
+                {
+                    stickDir.Normalize();
+                }
+                else
+                {
+                    // default start direction
+                    stickDir = Vector2.up;
+                }
+            }
+
+            Vector2 offset = stickDir * controllerRadius;
+            crosshairRect.position = playerScreenPos + (Vector3)offset;
+        }
+        else
+        {
+            crosshairRect.position = Input.mousePosition;
         }
 
-        // Defensive: keep cursor unlocked while the game runs (in case other code sets it)
         if (Cursor.lockState != CursorLockMode.None)
             Cursor.lockState = CursorLockMode.None;
     }

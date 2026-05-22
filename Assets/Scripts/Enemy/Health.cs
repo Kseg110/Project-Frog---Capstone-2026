@@ -1,5 +1,7 @@
-using UnityEngine;
+using System;
 using System.Collections;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public class Health : MonoBehaviour
 {
@@ -9,6 +11,7 @@ public class Health : MonoBehaviour
     private UIPlayerHUD playerHUD;
 
     public bool IsDead { get; private set; }
+    public event Action<GameObject> OnDestroyed;
 
     private void Awake()
     {
@@ -81,6 +84,7 @@ public class Health : MonoBehaviour
         }
         else
         {
+            OnDestroyed?.Invoke(gameObject);
             Destroy(gameObject);
         }
     }
