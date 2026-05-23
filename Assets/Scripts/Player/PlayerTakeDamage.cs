@@ -8,6 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerImmortality))]
+[RequireComponent(typeof(CapsuleCollider))]
 public class PlayerTakeDamage : MonoBehaviour
 {
     [Header("Damage Settings")]
@@ -24,6 +25,9 @@ public class PlayerTakeDamage : MonoBehaviour
     [Tooltip("Red flashes per second during immortality time.")]
     [SerializeField] private float flashFrequency = 10f;
 
+    [Header("Collision")]
+    [SerializeField] private LayerMask collisionLayers;
+
     public bool isGod; //used for debug purposes, keep public so debug menu can control this plz.
 
     // References
@@ -31,6 +35,7 @@ public class PlayerTakeDamage : MonoBehaviour
     private PlayerMovement playerMovement;
     private PlayerImmortality playerImmortality;
     private Rigidbody rb;
+    private CapsuleCollider capsule;
     private Renderer[] cachedRenderers;
     private Color[] originalColors;
 
@@ -51,10 +56,12 @@ public class PlayerTakeDamage : MonoBehaviour
         playerMovement = GetComponent<PlayerMovement>();
         rb = GetComponent<Rigidbody>();
         playerImmortality = GetComponent<PlayerImmortality>();
+        capsule = GetComponent<CapsuleCollider>();
 
         // Cache all renderers to flash all parts of the player
         cachedRenderers = GetComponentsInChildren<Renderer>();
         originalColors = new Color[cachedRenderers.Length];
+
         for (int i = 0; i < cachedRenderers.Length; i++)
             originalColors[i] = cachedRenderers[i].material.color;
     }
@@ -100,44 +107,51 @@ public class PlayerTakeDamage : MonoBehaviour
         knockbackCoroutine = StartCoroutine(KnockbackRoutine(direction.normalized, distance));
     }
 
-     /// <summary>
-     /// Moves the player using Rigidbody.MovePosition with ease-out, based on distance and knockback speed.
-     /// Runs in FixedUpdate for physics consistency.
-     /// </summary>
-     private IEnumerator KnockbackRoutine(Vector3 dir, float distance)
-     {
-         // Prevent player movement during knockback
-         playerMovement.StopMovement();
+    /// <summary>
+    /// Moves the player using Rigidbody.MovePosition with ease-out, based on distance and knockback speed.
+    /// Runs in FixedUpdate for physics consistency.
+    /// </summary>
+    private IEnumerator KnockbackRoutine(Vector3 dir, float distance)
+    {
+        // Prevent player movement during knockback
+        playerMovement.StopMovement();
 
-         Vector3 start = rb.position;
-         Vector3 target = start + dir * distance;
+        Vector3 start = rb.position;
+        Vector3 target = start + dir * distance;
 
-         // Duration is based on distance and speed
-         float duration = Mathf.Max(0.01f, distance / knockbackSpeed);
-       float elapsed = 0f;
+        // Duration is based on distance and speed
+        float duration = Mathf.Max(0.01f, distance / knockbackSpeed);
+        float elapsed = 0f;
 
-       while (elapsed < duration)
-       {
-           float t = elapsed / duration;
+        while (elapsed < duration)
+        {
+            float t = elapsed / duration;
 
-           // Ease-out interpolation (fast start, slow end)
-           float easedT = 1f - Mathf.Pow(1f - t, knockbackEasePower);
+            // Ease-out interpolation (fast start, slow end)
+            float easedT = 1f - Mathf.Pow(1f - t, knockbackEasePower);
 
-           // Move Rigidbody to interpolated position
-           rb.MovePosition(Vector3.Lerp(start, target, easedT));
+            Vector3 newPos = Vector3.Lerp(start, target, easedT);
 
-           elapsed += Time.fixedDeltaTime;
+            // 🔥 ONLY CHANGE: collision-safe movement
+            CollisionUtility.MoveWithCapsuleCollision(
+                rb,
+                capsule,
+                newPos - rb.position,
+                collisionLayers
+            );
 
-           // Wait for the next physics step
-           yield return new WaitForFixedUpdate();
-       }
+            elapsed += Time.fixedDeltaTime;
 
-       // Snap exactly to target to prevent drift
-       rb.MovePosition(target);
+            // Wait for the next physics step
+            yield return new WaitForFixedUpdate();
+        }
 
-       // Resume player movement
-       playerMovement.ResumeMovement();
-   }
+        // Snap exactly to target to prevent drift
+        rb.MovePosition(target);
+
+        // Resume player movement
+        playerMovement.ResumeMovement();
+    }
 
     /// <summary>
     /// Starts flashing the player’s renderers. Stops existing flash coroutine if running.
