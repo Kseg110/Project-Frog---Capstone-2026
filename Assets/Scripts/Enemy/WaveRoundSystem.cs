@@ -73,7 +73,7 @@ public class WaveRoundSystem : MonoBehaviour
             waveInProgress = false;
 
             if (cardSelectionUI != null)
-                cardSelectionUI.ShowCardSelectionFromWave();
+                cardSelectionUI.ShowCardSelectionFromWave();  
         }
     }
 
@@ -135,7 +135,7 @@ public class WaveRoundSystem : MonoBehaviour
         GameObject enemy = Instantiate(enemyPrefab, zone.position, Quaternion.identity);
         activeEnemies.Add(enemy);
 
-        EnemyHealth hp = enemy.GetComponent<EnemyHealth>();
+        Health hp = enemy.GetComponent<Health>();
         if (hp != null)
             hp.OnDestroyed += (deadEnemy) => HandleEnemyDeath(deadEnemy);
     }
@@ -178,10 +178,10 @@ public class WaveRoundSystem : MonoBehaviour
         {
             if (enemy != null)
             {
-                EnemyHealth hp = enemy.GetComponent<EnemyHealth>();
+                Health hp = enemy.GetComponent<Health>();
                 if (hp != null)
                 {
-                    hp.TakeDamage(999999f);
+                    hp.TakeDmg(999999f);
                 }
                 else
                 {
