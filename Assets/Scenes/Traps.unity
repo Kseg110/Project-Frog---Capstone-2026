@@ -1753,14 +1753,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1357989249}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.034452334, z: -0, w: 0.99940634}
-  m_LocalPosition: {x: 81.6, y: 0, z: 285.8}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalRotation: {x: -0, y: -0.005210622, z: -0, w: 0.99998647}
+  m_LocalPosition: {x: 127.15, y: 0, z: 287.06}
+  m_LocalScale: {x: 4.366353, y: 10, z: 10}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1449496242}
   m_Father: {fileID: 1535729723}
-  m_LocalEulerAnglesHint: {x: 0, y: -3.949, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -0.597, z: 0}
 --- !u!65 &1357989251
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1778,7 +1778,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -1903,7 +1903,7 @@ GameObject:
   - component: {fileID: 1449496242}
   - component: {fileID: 1449496241}
   m_Layer: 0
-  m_Name: OpenTrigger
+  m_Name: Close
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1939,7 +1939,7 @@ Transform:
   m_GameObject: {fileID: 1449496240}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.98, y: 0, z: -0}
+  m_LocalPosition: {x: 1.42, y: 0, z: -0.025}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2237,52 +2237,52 @@ MonoBehaviour:
   - door: {fileID: 1357989249}
     trigger: {fileID: 1449496240}
     minWave: 0
-    maxWave: 4
-    destroyDoor: 1
+    maxWave: 3
+    destroyDoor: 0
     doorAnimator: {fileID: 0}
-    openTriggerName: DoorTrigger
+    reopenCooldown: 1
   - door: {fileID: 1621620681}
     trigger: {fileID: 1631326451}
-    minWave: 5
+    minWave: 4
     maxWave: 9
     destroyDoor: 0
     doorAnimator: {fileID: 0}
-    openTriggerName: 
+    reopenCooldown: 1
   - door: {fileID: 769711082}
     trigger: {fileID: 2147163871}
     minWave: 10
     maxWave: 14
     destroyDoor: 0
     doorAnimator: {fileID: 0}
-    openTriggerName: 
+    reopenCooldown: 1
   - door: {fileID: 1039725791}
     trigger: {fileID: 282216700}
     minWave: 15
     maxWave: 19
     destroyDoor: 0
     doorAnimator: {fileID: 0}
-    openTriggerName: 
+    reopenCooldown: 1
   - door: {fileID: 128378900}
     trigger: {fileID: 300448186}
     minWave: 20
     maxWave: 24
     destroyDoor: 0
     doorAnimator: {fileID: 0}
-    openTriggerName: 
+    reopenCooldown: 1
   - door: {fileID: 1469268796}
     trigger: {fileID: 371416412}
     minWave: 25
     maxWave: 29
     destroyDoor: 0
     doorAnimator: {fileID: 0}
-    openTriggerName: 
+    reopenCooldown: 1
   - door: {fileID: 0}
     trigger: {fileID: 0}
     minWave: 0
     maxWave: 0
     destroyDoor: 0
     doorAnimator: {fileID: 0}
-    openTriggerName: 
+    reopenCooldown: 1
   waveRoundSystem: {fileID: 0}
 --- !u!1 &1607768801
 GameObject:
@@ -2343,8 +2343,8 @@ Transform:
   m_GameObject: {fileID: 1621620681}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.1487179, z: -0, w: 0.9888797}
-  m_LocalPosition: {x: 206.01, y: 0, z: 147.44}
-  m_LocalScale: {x: 15, y: 15, z: 15}
+  m_LocalPosition: {x: 203.93, y: 0, z: 154.19}
+  m_LocalScale: {x: 15, y: 15, z: 2.7120001}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1631326453}
@@ -2439,7 +2439,7 @@ GameObject:
   - component: {fileID: 1631326453}
   - component: {fileID: 1631326452}
   m_Layer: 0
-  m_Name: OpenTrigger (1)
+  m_Name: Close (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2474,13 +2474,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1631326451}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.114560395, z: -0, w: 0.9934163}
-  m_LocalPosition: {x: 0.05, y: 0, z: 0.91}
-  m_LocalScale: {x: 0.6666667, y: 0.6666667, z: 0.6666667}
+  m_LocalRotation: {x: -0, y: 0.025610048, z: -0, w: 0.999672}
+  m_LocalPosition: {x: 0.047, y: 0, z: -2.31}
+  m_LocalScale: {x: 1.2284667, y: 1.2284667, z: 1.2284667}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1621620682}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 2.935, z: 0}
 --- !u!1001 &1760290943
 PrefabInstance:
   m_ObjectHideFlags: 0
