@@ -1,127 +1,111 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// DoorSystem
 /// - Configure pairs of door GameObjects and trigger GameObjects
 /// - Each pair has a minimum wave (and optional maximum wave) when it becomes active
-/// - When the player enters the configured trigger and the wave requirement is met,
-///   the door will open (via Animator trigger), or be destroyed/disabled.
+/// - Doors open automatically when the configured wave is reached (via Animator or by disabling colliders)
+/// - When the player passes through a child trigger (e.g. a 'Close' child), the door will be closed behind them
+///   (colliders/renderers restored or Animator close trigger invoked).
 ///
 /// Usage:
 /// - Create DoorSystem on a manager GameObject and add entries in the inspector.
 /// - Set the WaveRoundSystem reference (optional; will be found automatically if null).
 /// - Triggers must have a Collider set to isTrigger. The script will attach a small relay
-///   component to each trigger at runtime to listen for player entry.
+///   component to each trigger at runtime to listen for player entry (used to close doors after opening).
 /// </summary>
 public class DoorSystem : MonoBehaviour
 {
     [Serializable]
     public class DoorLink
     {
-        [Tooltip("The door GameObject that will be opened or destroyed.")]
+        [Tooltip("The door GameObject to hide/disable or destroy when the wave opens it.")]
         public GameObject door;
 
-        [Tooltip("The trigger GameObject the player must enter to open the door. Must have a Collider with isTrigger=true.")]
+        [Tooltip("A root trigger GameObject; child trigger colliders under this or under the door will be used to close the door.")]
         public GameObject trigger;
 
-        [Tooltip("Minimum wave number (1-based) required for this trigger to work.")]
+        [Tooltip("Minimum wave number (1-based) when this door becomes active/opened.")]
         public int minWave = 1;
 
         [Tooltip("Optional maximum wave (1-based). Set to 0 for no maximum.")]
         public int maxWave = 0;
 
-        [Tooltip("If true the door GameObject will be destroyed when opened. Otherwise its Collider will be disabled.")]
-        public bool destroyDoor = true;
+        [Tooltip("If true the door GameObject will be destroyed when opened and cannot be restored.")]
+        public bool destroyDoor = false;
 
-        [Tooltip("Optional Animator on the door. If provided, the animator's trigger named OpenTriggerName will be invoked instead of immediately destroying/disabling the door.")]
+        [Tooltip("Optional Animator. If present and has a bool 'Open' parameter, it will be used to animate opening.")]
         public Animator doorAnimator;
-
-        // The open trigger name was removed; animator-based doors will use a boolean parameter named 'Open' if present.
-
-        [Tooltip("Animator trigger name to use to close the door when the player passes through.")]
-        public string closeTriggerName = "Close";
-
-        [Tooltip("If true the door can be closed after it was opened. If false and destroyDoor=true the door will be destroyed and cannot be closed.")]
-        public bool closable = true;
 
         [NonSerialized]
         public bool opened = false;
+
+        // components we disabled when opening so we can restore them later
+        [NonSerialized]
+        public List<Collider> disabledColliders = new List<Collider>();
+
+        [NonSerialized]
+        public List<Renderer> disabledRenderers = new List<Renderer>();
+
+        [NonSerialized]
+        public bool destroyed = false;
+
+        // If true the player manually closed/restored the door; automatic reopening will be blocked until reset.
+        [NonSerialized]
+        public bool playerClosed = false;
+
+        // How long (seconds) to wait after a player-initiated close before allowing automatic reopen
+        public float reopenCooldown = 1.0f;
+
+        [NonSerialized]
+        public float lastClosedTime = -Mathf.Infinity;
     }
 
     [Header("Door Links")]
-    [SerializeField]
-    private DoorLink[] links = Array.Empty<DoorLink>();
+    [SerializeField] private DoorLink[] links = Array.Empty<DoorLink>();
 
     [Header("References")]
-    [SerializeField]
-    private WaveRoundSystem waveRoundSystem;
+    [SerializeField] private WaveRoundSystem waveRoundSystem;
 
     private void Awake()
     {
         if (waveRoundSystem == null)
             waveRoundSystem = FindObjectOfType<WaveRoundSystem>();
 
-        // Attach relays to triggers so we get OnTriggerEnter callbacks
+        // attach relays to any trigger colliders under both the configured trigger root and the door itself
         for (int i = 0; i < links.Length; i++)
         {
             var link = links[i];
-            if (link == null || link.trigger == null)
-            {
-                Debug.LogWarning($"DoorSystem: Link {i} has no trigger assigned.");
-                continue;
-            }
+            if (link == null) continue;
 
-            Collider triggerCollider = link.trigger.GetComponent<Collider>();
-            if (triggerCollider == null)
-            {
-                Debug.LogWarning($"DoorSystem: Trigger on link {i} has no Collider component.");
-                continue;
-            }
+            if (link.trigger != null)
+                AttachRelaysToTriggers(link.trigger, i);
 
-            if (!triggerCollider.isTrigger)
-            {
-                Debug.LogWarning($"DoorSystem: Trigger Collider on '{link.trigger.name}' should have isTrigger = true.");
-            }
-
-            // Add or configure relay
-            var relay = link.trigger.GetComponent<DoorTriggerRelay>();
-            if (relay == null)
-                relay = link.trigger.AddComponent<DoorTriggerRelay>();
-
-            relay.owner = this;
-            relay.index = i;
+            if (link.door != null)
+                AttachRelaysToTriggers(link.door, i);
         }
     }
 
-    /// <summary>
-    /// Called by the trigger relay when the player enters a trigger.
-    /// </summary>
-    internal void OnTriggerActivated(int index)
+    private void AttachRelaysToTriggers(GameObject root, int index)
     {
-        // When the player touches the trigger, we close the door behind them (if it was opened and closable).
-        if (index < 0 || index >= links.Length) return;
-        var link = links[index];
-        if (link == null) return;
-
-        if (!link.opened)
+        var cols = root.GetComponentsInChildren<Collider>(true);
+        foreach (var c in cols)
         {
-            // nothing to close
-            return;
-        }
+            if (c == null) continue;
+            if (!c.isTrigger) continue;
 
-        if (!link.closable)
-        {
-            Debug.Log($"DoorSystem: Door '{link.door?.name}' is not closable (destroyed or permanent open).");
-            return;
+            var go = c.gameObject;
+            var relay = go.GetComponent<DoorTriggerRelay>();
+            if (relay == null) relay = go.AddComponent<DoorTriggerRelay>();
+            relay.owner = this;
+            relay.index = index;
         }
-
-        CloseDoor(link);
     }
 
     private void Update()
     {
-        // Automatically open doors when the configured wave is reached.
         int currentWave = GetCurrentWaveSafe();
         if (currentWave == 0) return;
 
@@ -129,7 +113,13 @@ public class DoorSystem : MonoBehaviour
         {
             var link = links[i];
             if (link == null) continue;
-            if (link.opened) continue;
+            if (link.opened || link.destroyed) continue;
+
+            // if player manually closed the door, don't auto-open it
+            if (link.playerClosed) continue;
+
+            // honor recent player close cooldown to avoid immediate re-open
+            if (Time.time - link.lastClosedTime < link.reopenCooldown) continue;
 
             if (currentWave < link.minWave) continue;
             if (link.maxWave > 0 && currentWave > link.maxWave) continue;
@@ -138,117 +128,170 @@ public class DoorSystem : MonoBehaviour
         }
     }
 
-    // Robust helper that reads the current wave value from the WaveRoundSystem.
-    // Prefer the strongly-typed, public property added to WaveRoundSystem.
-    // This is simple, fast and compile-time checked.
     private int GetCurrentWaveSafe()
     {
         if (waveRoundSystem == null) return 0;
-
-        try
-        {
-            return waveRoundSystem.CurrentWaveNumber;
-        }
-        catch
-        {
-            // If for some reason the property isn't present at runtime (old build, different component),
-            // fall back to 0 to avoid exceptions.
-            return 0;
-        }
+        try { return waveRoundSystem.CurrentWaveNumber; }
+        catch { return 0; }
     }
 
     private void OpenDoor(DoorLink link)
     {
         if (link.doorAnimator != null)
         {
-            // Use a boolean parameter 'Open' when available for simplicity.
-            var openProp = link.doorAnimator.GetType().GetProperty("parameters");
-            // Try to set a parameter named 'Open' if it exists, otherwise fall back to trigger-less open.
+            bool hasBoolOpen = false;
             try
             {
-                link.doorAnimator.SetBool("Open", true);
+                foreach (var p in link.doorAnimator.parameters)
+                {
+                    if (p.type == AnimatorControllerParameterType.Bool && p.name == "Open") { hasBoolOpen = true; break; }
+                }
             }
-            catch
+            catch { }
+
+            if (hasBoolOpen)
             {
-                // Animator may not have the parameter; ignore and proceed.
+                link.doorAnimator.SetBool("Open", true);
+                link.opened = true;
+                Debug.Log($"DoorSystem: Door '{link.door?.name}' animated open.");
+                return;
             }
         }
-        else
-        {
-            if (link.destroyDoor && !link.closable)
-            {
-                // If explicitly configured to destroy and not closable, destroy.
-                if (link.door != null)
-                    Destroy(link.door);
-            }
-            else
-            {
-                if (link.door != null)
-                {
-                    // Try to disable colliders and optionally make the object invisible / non-blocking
-                    var colliders = link.door.GetComponentsInChildren<Collider>();
-                    foreach (var c in colliders)
-                        c.enabled = false;
 
-                    var renderer = link.door.GetComponentInChildren<Renderer>();
-                    if (renderer != null)
-                        renderer.enabled = false;
-                }
+        if (link.door == null)
+        {
+            link.opened = true;
+            return;
+        }
+
+        if (link.destroyDoor)
+        {
+            Destroy(link.door);
+            link.destroyed = true;
+            link.opened = true;
+            Debug.Log($"DoorSystem: Door '{link.door?.name}' destroyed for wave.");
+            return;
+        }
+
+        // disable non-trigger colliders and renderers, record them for restore
+        link.disabledColliders.Clear();
+        link.disabledRenderers.Clear();
+
+        var cols = link.door.GetComponentsInChildren<Collider>(true);
+        foreach (var c in cols)
+        {
+            if (c == null) continue;
+            if (c.isTrigger) continue;
+            if (c.enabled)
+            {
+                c.enabled = false;
+                link.disabledColliders.Add(c);
+            }
+        }
+
+        var renders = link.door.GetComponentsInChildren<Renderer>(true);
+        foreach (var r in renders)
+        {
+            if (r == null) continue;
+            if (r.enabled)
+            {
+                r.enabled = false;
+                link.disabledRenderers.Add(r);
             }
         }
 
         link.opened = true;
-        Debug.Log($"DoorSystem: Door '{link.door?.name}' opened for wave.");
+        Debug.Log($"DoorSystem: Door '{link.door?.name}' opened (components disabled) for wave.");
+    }
+
+    internal void OnTriggerActivated(int index)
+    {
+        if (index < 0 || index >= links.Length) return;
+        var link = links[index];
+        if (link == null)
+        {
+            Debug.LogWarning($"DoorSystem: OnTriggerActivated received invalid link index {index}.");
+            return;
+        }
+
+        Debug.Log($"DoorSystem: OnTriggerActivated index={index}, door='{link.door?.name}', opened={link.opened}, destroyed={link.destroyed}, disabledColliders={link.disabledColliders.Count}, disabledRenderers={link.disabledRenderers.Count}");
+
+        if (link.door == null)
+        {
+            Debug.LogWarning($"DoorSystem: OnTriggerActivated link {index} has no door assigned.");
+            return;
+        }
+
+        CloseDoor(link);
     }
 
     private void CloseDoor(DoorLink link)
     {
-        if (link.doorAnimator != null)
+        if (link.destroyed)
         {
-            if (!string.IsNullOrEmpty(link.closeTriggerName))
-                link.doorAnimator.SetTrigger(link.closeTriggerName);
-        }
-        else
-        {
-            if (link.destroyDoor && !link.closable)
-            {
-                // was destroyed and cannot be restored
-                Debug.LogWarning($"DoorSystem: Door '{link.door?.name}' was destroyed and cannot be closed/restored.");
-                return;
-            }
-
-            if (link.door != null)
-            {
-                var colliders = link.door.GetComponentsInChildren<Collider>();
-                foreach (var c in colliders)
-                    c.enabled = true;
-
-                var renderer = link.door.GetComponentInChildren<Renderer>();
-                if (renderer != null)
-                    renderer.enabled = true;
-            }
+            Debug.LogWarning($"DoorSystem: Door '{link.door?.name}' was destroyed and cannot be restored.");
+            return;
         }
 
+        // Reactivate GameObject if necessary
+        if (!link.door.activeInHierarchy)
+        {
+            link.door.SetActive(true);
+        }
+
+        // Restore recorded components
+        foreach (var c in link.disabledColliders)
+        {
+            if (c == null) continue;
+            c.enabled = true;
+        }
+
+        foreach (var r in link.disabledRenderers)
+        {
+            if (r == null) continue;
+            r.enabled = true;
+        }
+
+        // Also explicitly try common types in case they weren't recorded
+        try
+        {
+            var mrs = link.door.GetComponentsInChildren<MeshRenderer>(true);
+            foreach (var mr in mrs) if (mr != null) mr.enabled = true;
+
+            var sk = link.door.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            foreach (var sr in sk) if (sr != null) sr.enabled = true;
+
+            var bcs = link.door.GetComponentsInChildren<BoxCollider>(true);
+            foreach (var bc in bcs) if (bc != null) bc.enabled = true;
+
+            var col2 = link.door.GetComponentsInChildren<Collider2D>(true);
+            foreach (var c2 in col2) if (c2 != null) c2.enabled = true;
+        }
+        catch { }
+
+        link.disabledColliders.Clear();
+        link.disabledRenderers.Clear();
         link.opened = false;
-        Debug.Log($"DoorSystem: Door '{link.door?.name}' closed after player passed.");
+        link.lastClosedTime = Time.time;
+        link.playerClosed = true;
+        Debug.Log($"DoorSystem: Door '{link.door?.name}' restored (closed) after player passed.");
     }
 
-    /// <summary>
-    /// Small helper MonoBehaviour that relays trigger events back to the DoorSystem.
-    /// This is added to the trigger GameObjects at runtime.
-    /// </summary>
+    // Optional API: allow external code to re-enable automatic opening for a link (e.g., after some time)
+    public void ResetPlayerClosed(int linkIndex)
+    {
+        if (linkIndex < 0 || linkIndex >= links.Length) return;
+        links[linkIndex].playerClosed = false;
+    }
+
     private class DoorTriggerRelay : MonoBehaviour
     {
         public DoorSystem owner;
         public int index;
-
         private void OnTriggerEnter(Collider other)
         {
             if (owner == null) return;
-            if (other.CompareTag("Player"))
-            {
-                owner.OnTriggerActivated(index);
-            }
+            if (other.CompareTag("Player")) owner.OnTriggerActivated(index);
         }
     }
 }
