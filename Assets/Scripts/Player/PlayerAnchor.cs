@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerAnchor : MonoBehaviour
 {
@@ -6,19 +8,44 @@ public class PlayerAnchor : MonoBehaviour
     private AnchorBase currentAnchor;
     private bool isTethered;
 
+    private InputAction tetherAction;
+    private PlayerInput playerInput;
+    private string currentActionMapName;
+    [SerializeField] private AnchorTether anchorTether;
+
     public bool IsTethered => isTethered;
     public AnchorBase CurrentAnchor => currentAnchor;
 
     private void Awake()
     {
         allAnchors = FindObjectsByType<AnchorBase>(FindObjectsSortMode.None);
+
+        playerInput = GetComponent<PlayerInput>();
+        Debug.Assert(playerInput != null, $"[{gameObject.name}] missing PlayerInput!", this);
+
+        RebindTetherActionFromCurrentMap();
     }
 
     private void Update()
     {
+        // If the active map changed (PlayerMK <-> PlayerGamepad), rebind tether action to the active map
+        if (playerInput != null && playerInput.currentActionMap != null && playerInput.currentActionMap.name != currentActionMapName)
+            RebindTetherActionFromCurrentMap();
+
         UpdateCurrentAnchor();
         HandleInput();
         ValidateTether();
+    }
+
+    private void RebindTetherActionFromCurrentMap()
+    {
+        if (playerInput == null || playerInput.currentActionMap == null)
+            return;
+
+        currentActionMapName = playerInput.currentActionMap.name;
+        tetherAction = playerInput.currentActionMap.FindAction("Tether");
+
+        Debug.Assert(tetherAction != null, $"Tether action not found on active map '{currentActionMapName}' for [{gameObject.name}]!", this);
     }
 
     private void UpdateCurrentAnchor()
@@ -28,12 +55,15 @@ public class PlayerAnchor : MonoBehaviour
 
     private void HandleInput()
     {
-        if (Input.GetButtonDown("Fire3"))
+        if (tetherAction != null)
         {
-            if (isTethered)
-                ReleaseTether();
-            else
-                StartTether();
+            if (tetherAction.WasPressedThisFrame())
+            {
+                if (isTethered)
+                    ReleaseTether();
+                else
+                    StartTether();
+            }
         }
     }
 
@@ -57,7 +87,6 @@ public class PlayerAnchor : MonoBehaviour
                 closest = anchor;
             }
         }
-
         return closest;
     }
 
@@ -66,8 +95,15 @@ public class PlayerAnchor : MonoBehaviour
     /// </summary>
     public void StartTether()
     {
-        if (currentAnchor != null)
-            isTethered = true;
+        if (currentAnchor == null)
+            return;
+
+        Transform anchorPoint = GetAnchorPointTransform(currentAnchor);
+
+        if (anchorTether != null)
+            anchorTether.SetEndPoint(anchorPoint, true);
+
+        isTethered = true;
     }
 
     /// <summary>
@@ -76,5 +112,17 @@ public class PlayerAnchor : MonoBehaviour
     public void ReleaseTether()
     {
         isTethered = false;
+
+        if (anchorTether != null)
+            anchorTether.SetEndPoint(null, true);
+    }
+
+    private Transform GetAnchorPointTransform(AnchorBase anchor)
+    {
+        if (anchor == null)
+            return null;
+
+        Transform child = anchor.transform.Find("AnchorPoint");
+        return child != null ? child : anchor.transform;
     }
 }

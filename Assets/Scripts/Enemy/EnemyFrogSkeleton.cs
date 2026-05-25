@@ -6,6 +6,10 @@ public class EnemyFrogSkeleton : EnemyBase
 {
     [Header("Attack config")]
     [SerializeField] private float attackRange = 1f;
+    [SerializeField] private Transform attackPoint; //empty transform where the attack spawns
+    [SerializeField] private float hitboxLifetime = 0.1f; //how long the attack lingers
+
+    private GameObject currentHitbox; //prevent multiple hitboxes being created
 
     protected override void Awake()
     {
@@ -37,6 +41,26 @@ public class EnemyFrogSkeleton : EnemyBase
 
     private void Attack()
     {
+        if (attackHitbox == null || attackPoint == null) return;
+        if (currentHitbox != null) return;
 
+        currentHitbox = Instantiate(
+            attackHitbox,
+            attackPoint.position,
+            attackPoint.rotation
+            );
+
+        StartCoroutine(DestroyHitbox(hitboxLifetime));
+    }
+
+    private IEnumerator DestroyHitbox(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (currentHitbox != null)
+        {
+            Destroy(currentHitbox);
+            currentHitbox = null;
+        }
     }
 }

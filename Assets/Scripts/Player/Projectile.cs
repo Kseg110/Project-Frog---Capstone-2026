@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -8,6 +9,10 @@ public class Projectile : MonoBehaviour
 
     public float speed;
     public float damage;
+
+    public string effectType;
+    public float effectDuration;
+    public float effectValue;
 
     public virtual void Initialize(float chargePercent)
     {
@@ -25,6 +30,22 @@ public class Projectile : MonoBehaviour
         transform.position += transform.forward * speed * Time.deltaTime;
     }
 
-    //ADD DAMAGE FUNCTION HERE
+    private void OnTriggerEnter(Collider other)
+    {
+        // Does Collided object implement IDamageable
+        var damageable = other.GetComponent<IDamageable>();
+        if (damageable != null)
+        {
+            if (!string.IsNullOrEmpty(effectType))
+            {
+                damageable.TakeDmg(damage, effectType, effectDuration, effectValue);
+            }
+            else
+            {
+                damageable.TakeDmg(damage);
+            }                
+            //Destroy(gameObject); // Destroy projectile commented out for now
+        }
+    }
 }
 

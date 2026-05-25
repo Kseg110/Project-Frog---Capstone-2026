@@ -1,140 +1,207 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+
+/// <summary>
+/// Manages the entire wave system:
+/// - Starts waves
+/// - Spawns enemies
+/// - Detects when a wave is finished
+/// - Shows the card selection UI
+/// - Starts the next wave after a card is chosen
+/// </summary>
 
 public class WaveRoundSystem : MonoBehaviour
 {
-    [Header("Prefab Settings")]
-    [SerializeField] private GameObject enemyPrefab;
+    [Header("Wave Settings")]
+    [SerializeField] private WaveDefinition[] waves;
     
     [Header("Spawn Settings")]
-    [SerializeField] private int prefabsPerWave = 5;
-    [SerializeField] private float spawnRadius = 10f;
-    [SerializeField] private Vector3 spawnCenter = Vector3.zero;
-    
-    [Header("Round Settings")]
-    [SerializeField] private int currentRound = 1;
-    [SerializeField] private int maxRounds = 20;
-    
-    [Header("Input")]
-    [SerializeField] private readonly KeyCode skipRoundKey = KeyCode.L;
+    [SerializeField] private float delayBetweenSpawns = 0.2f;
     
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
-    private int enemiesDestroyedThisRound = 0;
 
-    void Start()
+    private int currentWaveIndex = -1;
+
+    /// <summary>
+    /// Public accessor for the current wave number (1-based). Returns 0 when no wave has started.
+    /// This mirrors what other systems (e.g., DoorSystem) expect when querying the current wave.
+    /// </summary>
+    public int CurrentWaveNumber
     {
-        SpawnWave();
+        get { return currentWaveIndex >= 0 ? currentWaveIndex + 1 : 0; }
     }
 
-    void Update()
+    // Raw zero-based index (kept for internal use)
+    public int CurrentWave => currentWaveIndex;
+    private bool waitingForCardSelection = false;
+    private bool waveInProgress = false;
+
+    [SerializeField] private CardSelectionUI cardSelectionUI;
+
+    [Header("UI")]
+    [SerializeField] private TextMeshProUGUI waveText;
+
+    /// <summary>
+    /// Called by WaveStartTrigger when the player enters the trigger.
+    /// Starts the very first wave of the game.
+    /// </summary>
+    
+    public void StartFirstWave()
     {
-        // Check for skip round input
-        if (Input.GetKeyDown(skipRoundKey))
+        if (waveInProgress || currentWaveIndex >= 0) return;
+
+        currentWaveIndex = 0;
+        StartWave(currentWaveIndex);
+    }
+
+    // check if wave is over and show card selection
+    private void Update()
+    {
+        //kill all enemies in the wave to test card selection
+        if (Input.GetKeyDown(KeyCode.T))
         {
-            Debug.Log("Space key pressed!");
-            SkipRound();
+            KillAllEnemiesInWave();
         }
-        
-        // Check if all enemies are destroyed
-        if (activeEnemies.Count == 0 && enemiesDestroyedThisRound > 0)
+
+        if (waveInProgress &&
+            !waitingForCardSelection && 
+            activeEnemies.Count == 0)
         {
-            NextRound();
+            waitingForCardSelection = true;
+            waveInProgress = false;
+
+            if (cardSelectionUI != null)
+                cardSelectionUI.ShowCardSelectionFromWave();  
         }
     }
 
-    void SpawnWave()
+    /// <summary>
+    /// Starts a wave by reading its WaveDefinition
+    /// and spawning all enemy groups.
+    /// </summary>
+    
+    private void StartWave(int waveIndex)
     {
-        if (currentRound > maxRounds)
+        if (waveIndex < 0 || waveIndex >= waves.Length)
         {
-            Debug.Log("Max rounds reached!");
+            Debug.LogError("Invalid wave index!");
             return;
+            // load victory screen or end game logic here
         }
-        
-        Debug.Log($"Starting Round {currentRound}");
-        enemiesDestroyedThisRound = 0;
-        
-        for (int i = 0; i < prefabsPerWave; i++)
+        WaveDefinition wave = waves[waveIndex];
+        activeEnemies.Clear();
+        waitingForCardSelection = false;
+        waveInProgress = true;
+
+        Debug.Log($"Starting Wave {waveIndex + 1} with {wave.enemyGroups.Length} enemy groups.");
+
+        StartCoroutine(SpawnWaveEnemies(wave));
+
+        UpdateWaveText();
+    }
+
+    /// <summary>
+    /// Spawns all enemy groups in the wave with a delay between each enemy.
+    /// </summary>
+
+    private IEnumerator SpawnWaveEnemies(WaveDefinition wave)
+    {
+        foreach (EnemyGroup group in wave.enemyGroups)
         {
-            // Spawn at random position within radius (2D)
-            Vector2 randomOffset = Random.insideUnitCircle * spawnRadius;
-            Vector3 randomPosition = new Vector3(
-                spawnCenter.x + randomOffset.x,
-                spawnCenter.y + randomOffset.y,
-                spawnCenter.z
-            );
-            
-            GameObject enemy = Instantiate(enemyPrefab, randomPosition, Quaternion.identity);
-            activeEnemies.Add(enemy);
-            
-            // Subscribe to destruction event if the prefab has a health/destroyable component
-            EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-            if (enemyHealth != null)
+            for (int i = 0; i < group.count; i++)
             {
-                enemyHealth.OnDestroyed += HandleEnemyDestroyed;
+                SpawnEnemy(group.enemyPrefab, wave.spawnZones);
+                yield return new WaitForSeconds(delayBetweenSpawns);
             }
         }
     }
 
-    void HandleEnemyDestroyed(GameObject enemy)
+    /// <summary>
+    /// Spawns a single enemy at a random spawn zone
+    /// and registers its death callback.
+    /// </summary>
+
+    private void SpawnEnemy(GameObject enemyPrefab, Transform[] spawnZones)
+    {
+        if (enemyPrefab == null || spawnZones == null || spawnZones.Length == 0)
+        {
+            Debug.LogWarning("Missing prefab or spawn zones on wave.");
+            return;
+        }
+
+        Transform zone = spawnZones[Random.Range(0, spawnZones.Length)];
+        GameObject enemy = Instantiate(enemyPrefab, zone.position, Quaternion.identity);
+        activeEnemies.Add(enemy);
+
+        Health hp = enemy.GetComponent<Health>();
+        if (hp != null)
+            hp.OnDestroyed += (deadEnemy) => HandleEnemyDeath(deadEnemy);
+    }
+
+    /// <summary>
+    /// Removes an enemy from the active list when it dies.
+    /// </summary>
+
+    private void HandleEnemyDeath(GameObject enemy)
     {
         if (activeEnemies.Contains(enemy))
-        {
             activeEnemies.Remove(enemy);
-            enemiesDestroyedThisRound++;
-            Debug.Log($"Enemy destroyed. Remaining: {activeEnemies.Count}");
-        }
     }
 
-    void NextRound()
+    /// <summary>
+    /// Called by CardSelectionUI after the player chooses a card.
+    /// Starts the next wave in the sequence.
+    /// </summary>
+
+    public void StartNextWaveAfterCard()
     {
-        if (currentRound < maxRounds)
+        currentWaveIndex++;
+
+        if (currentWaveIndex >= waves.Length)
         {
-            currentRound++;
-            SpawnWave();
+            Debug.Log("All waves completed after card selection!");
+            return;
         }
-        else
-        {
-            Debug.Log("All rounds complete!");
-        }
+
+        StartWave(currentWaveIndex);
     }
 
-    void SkipRound()
+    /// <summary>
+    /// Debug tool: instantly kills all enemies in the current wave.
+    /// </summary>
+
+    private void KillAllEnemiesInWave()
     {
-        Debug.Log($"Skipping Round {currentRound} - Active enemies: {activeEnemies.Count}");
-        
-        // Destroy all active enemies
-        int destroyedCount = 0;
         foreach (GameObject enemy in activeEnemies)
         {
             if (enemy != null)
             {
-                Destroy(enemy);
-                destroyedCount++;
+                Health hp = enemy.GetComponent<Health>();
+                if (hp != null)
+                {
+                    hp.TakeDmg(999999f);
+                }
+                else
+                {
+                    Destroy(enemy);
+                }
             }
         }
-        
-        Debug.Log($"Destroyed {destroyedCount} enemies");
+
         activeEnemies.Clear();
-        
-        // Increment round
-        if (currentRound < maxRounds)
-        {
-            currentRound++;
-            SpawnWave();
-        }
-        else
-        {
-            Debug.Log("Already at max rounds!");
-        }
     }
 
-    // Alternative: Manual tracking without health component
-    public void RegisterEnemyDestruction(GameObject enemy)
+    /// <summary>
+    /// Updates the UI text to show the current wave number.
+    /// </summary>
+
+    private void UpdateWaveText()
     {
-        HandleEnemyDestroyed(enemy);
+        if (waveText != null)
+        {
+            waveText.text = $"Wave {currentWaveIndex + 1}";
+        }
     }
-
-    // Public getters
-    public int GetCurrentRound() => currentRound;
-    public int GetRemainingEnemies() => activeEnemies.Count;
 }

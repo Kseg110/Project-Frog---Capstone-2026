@@ -1,15 +1,18 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerAnchor))]
 public class PlayerMovement : MonoBehaviour, IMovement
 {
     [Header("Movement")]
-    [SerializeField] private float baseMoveSpeed = 10f;
+    [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private LayerMask collisionLayers;
+    [SerializeField] private string hitBoxName = "Hitbox";
+    [SerializeField] private float inputSmoothSpeed = 20f;
 
     private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
-
     private float CurrentSpeed
     {
         get
@@ -17,7 +20,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
             float finalMult = 1f;
             foreach (var mult in speedModifiers.Values)
                 finalMult *= mult;
-            return baseMoveSpeed * finalMult;
+            return moveSpeed * finalMult;
         }
     }
 
@@ -26,10 +29,20 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
 
-    // References on player prefab
+    private PlayerInput playerInput;
+
+    private InputAction moveAction;
+    private InputAction lookAction;
+    private InputAction dashAction;
+
+    private bool usingGamepad;
+
     private Rigidbody rb;
+
     private PlayerAnchor playerAnchor;
     private UIPlayerHUD playerHUD;
+    private CapsuleCollider capsuleCollider;
+    private PlayerCrosshair playerCrosshair;
 
     private Vector3 moveInput;
     private Vector3 dashDirection;
@@ -38,20 +51,22 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private bool isDashing;
     private bool isMovementStopped;
     private bool isTethered;
+    private bool movementStoppedExternally;
 
     private float dashTimer;
     private float dashCooldownTimer;
 
     public bool IsDashing => isDashing;
+    public float DashCooldownProgress => dashCooldownTimer > 0f ? 1f - (dashCooldownTimer / dashCooldown) : 1f;
 
-
-    private float currentMaxRadius; // The distance to the tower at this moment
+    private float currentMaxRadius;
     private Vector3 anchorPosition;
     private readonly float currentMinRadius = 4f;
-    [SerializeField] private string hitBoxName = "Hitbox";
+
+    private const string GamepadSchemeNameLower = "gamepad";
+
     private void Awake()
     {
-        // Grab rigibody reference and set the settings
         Transform hitBox = transform.Find(hitBoxName);
         capsuleCollider = hitBox.GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
@@ -60,11 +75,155 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         playerAnchor = GetComponent<PlayerAnchor>();
         playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+        playerCrosshair = FindAnyObjectByType<PlayerCrosshair>();
+
+        lookDirection = transform.forward;
+
+        playerInput = GetComponent<PlayerInput>();
+
+        // Desable all action maps at start, will enable the correct one based on input
+        foreach (var map in playerInput.actions.actionMaps)
+            map.Disable();
+
+        // Enable PlayerMK by default, will switch to Gamepad if input is detected
+        playerInput.SwitchCurrentActionMap("PlayerMK");
+        SetActionMap("PlayerMK");
+
+        usingGamepad = false;
+    }
+
+    private void OnEnable()
+    {
+        playerInput.onActionTriggered += OnActionTriggered;
+        InputSystem.onDeviceChange += OnDeviceChange;
+        playerInput.onControlsChanged += OnControlsChanged;
+    }
+
+    private void OnDisable()
+    {
+        playerInput.onActionTriggered -= OnActionTriggered;
+        InputSystem.onDeviceChange -= OnDeviceChange;
+        playerInput.onControlsChanged -= OnControlsChanged;
+    }
+
+    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
+    {
+        if (!(device is Gamepad))
+            return;
+
+        // Gamepad connected
+        if (change == InputDeviceChange.Added || change == InputDeviceChange.Reconnected || change == InputDeviceChange.Enabled)
+        {
+            // Ensure PlayerInput reflects the gamepad control scheme as well as switching map
+            if (Gamepad.current != null)
+                playerInput.SwitchCurrentControlScheme("Gamepad", Gamepad.current);
+
+            playerInput.SwitchCurrentActionMap("PlayerGamepad");
+            SetActionMap("PlayerGamepad");
+            usingGamepad = true;
+            Debug.Log("Controller connected - switched to PlayerGamepad");
+        }
+
+        // Gamepad removed
+        if (change == InputDeviceChange.Removed || change == InputDeviceChange.Disconnected || change == InputDeviceChange.Disabled)
+        {
+            // Switch control scheme back to keyboard+mouse if available
+            if (Keyboard.current != null && Mouse.current != null)
+                playerInput.SwitchCurrentControlScheme("Keyboard&Mouse", Keyboard.current, Mouse.current);
+
+            playerInput.SwitchCurrentActionMap("PlayerMK");
+            SetActionMap("PlayerMK");
+            usingGamepad = false;
+            Debug.Log("Controller removed - switched to PlayerMK");
+        }
+    }
+
+    // New handler: react to PlayerInput control-scheme changes (fires reliably)
+    private void OnControlsChanged(PlayerInput pi)
+    {
+        var scheme = playerInput.currentControlScheme ?? string.Empty;
+        string s = scheme.ToLowerInvariant();
+        if (s.Contains(GamepadSchemeNameLower))
+        {
+            if (playerInput.currentActionMap == null || playerInput.currentActionMap.name != "PlayerGamepad")
+            {
+                playerInput.SwitchCurrentActionMap("PlayerGamepad");
+                SetActionMap("PlayerGamepad");
+                usingGamepad = true;
+                Debug.Log("ControlsChanged -> switched to PlayerGamepad");
+            }
+        }
+        else
+        {
+            if (playerInput.currentActionMap == null || playerInput.currentActionMap.name != "PlayerMK")
+            {
+                playerInput.SwitchCurrentActionMap("PlayerMK");
+                SetActionMap("PlayerMK");
+                usingGamepad = false;
+                Debug.Log("ControlsChanged -> switched to PlayerMK");
+            }
+        }
+    }
+
+    private void OnActionTriggered(InputAction.CallbackContext ctx)
+    {
+        // Accept Started OR Performed so we don't miss initial inputs from some devices/bindings
+        if (!(ctx.phase == InputActionPhase.Started || ctx.phase == InputActionPhase.Performed))
+            return;
+
+        var device = ctx.control?.device;
+
+        if (device is Gamepad && playerInput.currentActionMap.name != "PlayerGamepad")
+        {
+            playerInput.SwitchCurrentActionMap("PlayerGamepad");
+            SetActionMap("PlayerGamepad");
+
+            usingGamepad = true;
+
+            Debug.Log("Controller detected via action");
+            return;
+        }
+
+        if ((device is Keyboard || device is Mouse) && playerInput.currentActionMap.name != "PlayerMK")
+        {
+            playerInput.SwitchCurrentActionMap("PlayerMK");
+            SetActionMap("PlayerMK");
+
+            usingGamepad = false;
+
+            Debug.Log("MK detected via action");
+            return;
+        }
+    }
+
+    private void SetActionMap(string mapName)
+    {
+        var map = playerInput.actions.FindActionMap(mapName);
+        moveAction = map.FindAction("Move");
+        lookAction = map.FindAction("Look");
+        dashAction = map.FindAction("Dash");
     }
 
     private void Update()
     {
         UpdateTetherStatus();
+
+        // Fallback auto-switch: if a Gamepad device exists but we haven't switched yet
+        if (!usingGamepad && Gamepad.current != null && playerInput.currentActionMap.name != "PlayerGamepad")
+        {
+            playerInput.SwitchCurrentActionMap("PlayerGamepad");
+            SetActionMap("PlayerGamepad");
+            usingGamepad = true;
+            Debug.Log("Controller auto-switched (Gamepad.current != null)");
+        }
+        else if (usingGamepad && Gamepad.current == null && playerInput.currentActionMap.name != "PlayerMK")
+        {
+            // If the connected gamepad was removed, switch back to MK
+            playerInput.SwitchCurrentActionMap("PlayerMK");
+            SetActionMap("PlayerMK");
+            usingGamepad = false;
+            Debug.Log("MK auto-switched (no Gamepad.current)");
+        }
 
         // Update dash cooldown
         if (dashCooldownTimer > 0f)
@@ -73,25 +232,53 @@ public class PlayerMovement : MonoBehaviour, IMovement
         float progress = 1f - (dashCooldownTimer / dashCooldown);
         playerHUD?.UpdateDashCooldown(progress);
 
-        if (isMovementStopped)
+        if (isMovementStopped || movementStoppedExternally)
             return;
 
-        float horizontalMove = Input.GetAxisRaw("Horizontal");
-        float verticalMove = Input.GetAxisRaw("Vertical");
+        // READ INPUT
+        Vector2 move = moveAction.ReadValue<Vector2>();
+        Vector3 rawInput = new Vector3(move.x, 0f, move.y);
 
-        // No movement input during dash, otherwise create movement vector using horizontalMove and verticalMove
-        moveInput = isDashing ? Vector3.zero : new Vector3(horizontalMove, 0f, verticalMove).normalized;
+        // Clamp magnitude to 1 (keyboard diagonals can exceed it) but preserve analog range for controllers
+        if (rawInput.sqrMagnitude > 1f)
+            rawInput.Normalize();
+        Vector3 targetInput = rawInput.sqrMagnitude > 0.001f ? rawInput : Vector3.zero;
+
+        // Smooth input to prevent analog stick jitter from causing dead-stops
+        moveInput = isDashing ? Vector3.zero : Vector3.Lerp(moveInput, targetInput, Time.deltaTime * inputSmoothSpeed);
+
+        //READ LOOK INPUT
+        Vector2 look = lookAction.ReadValue<Vector2>();
+
+        // SEND LOOK INPUT TO CROSSHAIR
+        if (playerCrosshair != null)
+        {
+            playerCrosshair.SetControllerMode(usingGamepad);
+            playerCrosshair.UpdateControllerLook(look);
+        }
+
+        if (usingGamepad && playerCrosshair != null)
+        {
+            Vector3 dir = playerCrosshair.GetLookDirection();
+
+            if (dir.sqrMagnitude > 0.01f)
+            {
+                dir.y = 0f;
+                lookDirection = dir.normalized;
+                rb.MoveRotation(Quaternion.LookRotation(lookDirection));
+            }
+        }
 
         // Check for valid dash input
-        if (!isDashing && dashCooldownTimer <= 0f && Input.GetButtonDown("Jump"))
+        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
             StartDash();
     }
 
     private void FixedUpdate()
     {
-        if (isMovementStopped)
+        if (isMovementStopped || movementStoppedExternally)
         {
-            transform.forward = lookDirection;
+            rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             return;
         }
 
@@ -101,68 +288,33 @@ public class PlayerMovement : MonoBehaviour, IMovement
         {
             moveVector = dashDirection * (dashDistance / dashDuration) * Time.fixedDeltaTime;
             dashTimer -= Time.fixedDeltaTime;
+
+            CollisionUtility.MoveWithCapsuleCollision(
+                rb,
+                capsuleCollider,
+                moveVector,
+                collisionLayers
+            );
+
             if (dashTimer <= 0f)
                 EndDash();
         }
         else
         {
             moveVector = moveInput * CurrentSpeed * Time.fixedDeltaTime;
-        }
+            moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
 
-        // Apply dynamic shrinking grapple wall
-        moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
-        MoveWithCollision(moveVector);
-        if (!isDashing && moveInput.sqrMagnitude > 0.0001f)
-            transform.forward = moveInput;
+            CollisionUtility.MoveWithCapsuleCollision(
+                rb,
+                capsuleCollider,
+                moveVector,
+                collisionLayers
+            );
 
-        if (isMovementStopped)
-        {
-            transform.forward = lookDirection;
-            return;
-        }
-    }
-    private CapsuleCollider capsuleCollider;
-    [SerializeField] private LayerMask collisionLayers;
-    private void MoveWithCollision(Vector3 motion)
-    {
-        int maxIterations = 5; // more = more accurate, but heavier
-        Vector3 remaining = motion;
-
-        for (int i = 0; i < maxIterations; i++)
-        {
-            if (remaining.sqrMagnitude < 0.0001f)
-                break;
-
-            Vector3 start = rb.position + capsuleCollider.center + Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
-            Vector3 end = rb.position + capsuleCollider.center - Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
-
-            if (!Physics.CapsuleCast(start, end, capsuleCollider.radius,
-                remaining.normalized, out RaycastHit hit,
-                remaining.magnitude, collisionLayers, QueryTriggerInteraction.Ignore))
-            {
-                // No hit → safe to move all remaining distance
-                rb.MovePosition(rb.position + remaining);
-                break;
-            }
-
-            // Move up to the surface (minus a tiny skin so we don't stick)
-            float skin = 0.01f;
-            float moveDist = Mathf.Max(hit.distance - skin, 0f);
-
-            if (moveDist > 0f)
-            {
-                Vector3 movePart = remaining.normalized * moveDist;
-                rb.MovePosition(rb.position + movePart);
-            }
-
-            // Reduce remaining motion
-            remaining -= remaining.normalized * moveDist;
-
-            // Slide along surface
-            remaining = Vector3.ProjectOnPlane(remaining, hit.normal);
+            if (!usingGamepad && moveInput.sqrMagnitude > 0.0001f)
+                rb.MoveRotation(Quaternion.LookRotation(moveInput.normalized));
         }
     }
-
     private void UpdateTetherStatus()
     {
         if (playerAnchor != null)
@@ -171,15 +323,13 @@ public class PlayerMovement : MonoBehaviour, IMovement
         if (isTethered && playerAnchor.CurrentAnchor != null)
         {
             anchorPosition = playerAnchor.CurrentAnchor.transform.position;
-
-            // Shrink currentMaxRadius as player moves closer, but never below currentMinRadius
             float distanceToAnchor = Vector3.Distance(rb.position, anchorPosition);
             if (currentMaxRadius == 0f || distanceToAnchor < currentMaxRadius)
                 currentMaxRadius = Mathf.Max(distanceToAnchor, currentMinRadius);
         }
         else
         {
-            currentMaxRadius = 0f; // Reset when player is not grappling
+            currentMaxRadius = 0f;
         }
     }
 
@@ -192,19 +342,15 @@ public class PlayerMovement : MonoBehaviour, IMovement
         Vector3 offset = proposedPos - anchorPosition;
         float distance = offset.magnitude;
 
-        // Prevent moving farther than currentMaxRadius
         if (distance > currentMaxRadius)
         {
             Vector3 toCenter = offset.normalized;
             Vector3 tangentMove = moveVector - Vector3.Dot(moveVector, toCenter) * toCenter;
-
             float overshoot = distance - currentMaxRadius;
             tangentMove *= Mathf.Clamp01(1f - overshoot / moveVector.magnitude);
-
             return tangentMove;
         }
 
-        // Once inside min radius, block outward movement past it
         Vector3 currentOffset = currentPos - anchorPosition;
         bool insideMinRadius = currentOffset.magnitude < currentMinRadius;
 
@@ -217,23 +363,22 @@ public class PlayerMovement : MonoBehaviour, IMovement
         return moveVector;
     }
 
-    /// <summary>
-    /// Stops player movement. Optional rotate player to face new direction (forward)
-    /// </summary>
+    // Stops player movement. Intended to be called externally.
     public void StopMovement(Vector3? forward = null)
     {
         isMovementStopped = true;
+        movementStoppedExternally = true;
         moveInput = Vector3.zero;
-        if (forward != null) { lookDirection = forward.Value; }
+
+        if (forward != null)
+            lookDirection = forward.Value;
     }
 
-    /// <summary>
-    /// Resumes player movement.
-    /// Intended to be called externally
-    /// </summary>
+    // Resumes player movement. Intended to be called externally.
     public void ResumeMovement()
     {
         isMovementStopped = false;
+        movementStoppedExternally = false;
     }
 
     private void StartDash()
@@ -241,11 +386,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
         playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;
-
-        // Set the dash direction to the move direction. If there is no move direction, set the dash direction to the direction the player is facing
         dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
 
-        // Start dash VFX
         Debug.Log("start dash");
         PlayerDashVFX.Instance.StartDashVFX();
     }
@@ -255,8 +397,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         isDashing = false;
         dashCooldownTimer = dashCooldown;
         playerHUD?.UpdateDashCooldown(0f);
-        
-        // End dash VFX
+
         Debug.Log("end dash");
         PlayerDashVFX.Instance.EndDashVFX();
     }
@@ -272,16 +413,17 @@ public class PlayerMovement : MonoBehaviour, IMovement
         if (speedModifiers.ContainsKey(source))
             speedModifiers.Remove(source);
     }
+
     private void OnDrawGizmos()
     {
         if (!isTethered)
             return;
 
-        // Only draw if we have a valid tower
         if (currentMaxRadius > 0f)
         {
             Gizmos.color = Color.cyan;
             Gizmos.DrawWireSphere(anchorPosition, currentMaxRadius);
         }
     }
+
 }

@@ -14,9 +14,8 @@ public class CardSelectionUI : MonoBehaviour
 
     private void Awake()
     {
-        // Grab the component that controls whether this UI is visible and clickable
-        canvasGroup = GetComponent<CanvasGroup>();
-        if (canvasGroup == null) { canvasGroup = gameObject.AddComponent<CanvasGroup>(); }
+        canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+        upgradeManager = UpgradeManager.Instance;
     }
 
     private void Start()
@@ -25,10 +24,9 @@ public class CardSelectionUI : MonoBehaviour
         HideUI();
     }
 
-    private void Update()
+    public void ShowCardSelectionFromWave()
     {
-        // TODO: remove before ship — pressing T is a shortcut to test card selection without playing through a wave
-        if (Input.GetKeyDown(KeyCode.T)) { ShowCardSelection(); }
+        ShowCardSelection();
     }
 
     private void ShowUI()
@@ -49,12 +47,9 @@ public class CardSelectionUI : MonoBehaviour
 
     private void ShowCardSelection()
     {
-        // Freeze the game while the player is choosing a card
+        var manager = UpgradeManager.Instance;
+        // Make Player unable to move while selecting card
         Time.timeScale = 0f;
-
-        // Show and unlock the mouse cursor so the player can click a card
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
 
         ShowUI();
 
@@ -87,8 +82,11 @@ public class CardSelectionUI : MonoBehaviour
 
         // Hide the selection screen, unfreeze the game, and lock the cursor again
         HideUI();
+
+        // Unfreeze game
         Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+
+        //call next wave
+        waveSpawner.StartNextWaveAfterCard();
     }
 }
