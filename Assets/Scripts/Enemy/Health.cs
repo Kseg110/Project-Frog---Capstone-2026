@@ -3,7 +3,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Health : MonoBehaviour
+public class Health : MonoBehaviour, IDamageable
 {
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
@@ -50,6 +50,16 @@ public class Health : MonoBehaviour
             Die();
         }
     }
+
+    public void TakeDmg(float dmg, string effectType, float effectDuration, float effectValue)
+    {
+        TakeDmg(dmg);
+        if (effectType == "Burn")
+        {
+            ApplyBurn(effectDuration, effectValue, dmg);
+        }
+    }
+
     public void Heal(float amount)
     {
         Debug.Log("heal");
