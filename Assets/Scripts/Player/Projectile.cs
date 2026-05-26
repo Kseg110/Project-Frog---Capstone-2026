@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class Projectile : MonoBehaviour, IProjectile
 {
     [SerializeField] protected float baseSpeed = 10f; //Adjust as nessisary 
     [SerializeField] protected float baseDamage = 10f; //Adjust as nessisary 
@@ -23,6 +23,13 @@ public class Projectile : MonoBehaviour
         transform.localScale = Vector3.one * scale;
 
         Destroy(gameObject, 3f);
+    }
+
+    public void Init(float damage, float lifetime)
+    {
+        this.damage = damage;
+        this.speed = baseSpeed;
+        Destroy(gameObject, lifetime);
     }
 
     protected virtual void Update()
