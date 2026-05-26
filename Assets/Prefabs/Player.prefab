@@ -295,7 +295,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 26d88ade74010784089a3c02ad3e6bfe, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -922,6 +922,10 @@ MonoBehaviour:
   knockbackSpeed: 20
   knockbackEasePower: 2
   flashFrequency: 10
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  hitBoxName: Hitbox
   isGod: 0
 --- !u!114 &4275648167820347246
 MonoBehaviour:

@@ -11,13 +11,10 @@ public class UIDeathOverlay : MonoBehaviour
     [SerializeField] private Button MenuButton;
     private string mainMenuSceneName = "MainMenu";
 
-    private bool isDeathOverlayOpen;
 
     private void Start()
     {
         Time.timeScale = 1f;
-        // Tracks whether the death overlay is currently open.
-        isDeathOverlayOpen = false;
 
         if (deathOverlayPanel != null)
             deathOverlayPanel.SetActive(false);
@@ -51,7 +48,6 @@ public class UIDeathOverlay : MonoBehaviour
         if (playerHUD != null)
             playerHUD.SetActive(false);
 
-        isDeathOverlayOpen = true;
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
