@@ -1,11 +1,15 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIDeathOverlay : MonoBehaviour
 {
     // The UI panel that appears when the player dies
-    public GameObject deathOverlayPanel;
-    public string mainMenuSceneName = "MainMenu";
+    [SerializeField] private GameObject deathOverlayPanel;
+    [SerializeField] private GameObject playerHUD;
+    [SerializeField] private Button RestartButton;
+    [SerializeField] private Button MenuButton;
+    private string mainMenuSceneName = "MainMenu";
 
     private bool isDeathOverlayOpen;
 
@@ -17,24 +21,35 @@ public class UIDeathOverlay : MonoBehaviour
 
         if (deathOverlayPanel != null)
             deathOverlayPanel.SetActive(false);
+
+        if (RestartButton != null)
+        {
+            RestartButton.onClick.RemoveAllListeners();
+            RestartButton.onClick.AddListener(RestartScene);
+        }
+
+        if (MenuButton != null)
+        {
+            MenuButton.onClick.RemoveAllListeners();
+            MenuButton.onClick.AddListener(ReturnToMainMenu);
+        }
     }
 
-    private void Update()
+    private void OnDestroy()
     {
-        if (!isDeathOverlayOpen) return;
-
-        if (Input.GetKeyDown(KeyCode.R))
-            RestartScene();
-
-        if (Input.GetKeyDown(KeyCode.M))
-            ReturnToMainMenu();
+        if (RestartButton != null)
+            RestartButton.onClick.RemoveListener(RestartScene);
+        if (MenuButton != null)
+            MenuButton.onClick.RemoveListener(ReturnToMainMenu);
     }
 
-    // This function is called when the player dies.
+    // Function is called when the player dies.
     public void ShowDeathOverlay()
     {
         if (deathOverlayPanel != null)
             deathOverlayPanel.SetActive(true);
+        if (playerHUD != null)
+            playerHUD.SetActive(false);
 
         isDeathOverlayOpen = true;
 
