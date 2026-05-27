@@ -29,6 +29,7 @@ public class AttackState : BossStates
         if(attack != null )
         {
             stateMachine.Combat.ExecuteAttack(attack);
+            Debug.Log("Attack trying");
         }
     }
 

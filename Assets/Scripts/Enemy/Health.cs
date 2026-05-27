@@ -1,7 +1,9 @@
-using UnityEngine;
+using System;
 using System.Collections;
+using Unity.VisualScripting;
+using UnityEngine;
 
-public class Health : MonoBehaviour
+public class Health : MonoBehaviour, IDamageable
 {
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
@@ -9,11 +11,21 @@ public class Health : MonoBehaviour
     private UIPlayerHUD playerHUD;
 
     public bool IsDead { get; private set; }
+    public event Action<GameObject> OnDestroyed;
 
     private void Awake()
     {
         healthbar = GetComponentInChildren<Healthbar>();
-        playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+
+        if (CompareTag("Player"))
+        {
+            playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+        }
+        else
+        {
+            playerHUD = null;
+        }
+
 
         if (healthbar == null)
         {
@@ -47,6 +59,16 @@ public class Health : MonoBehaviour
             Die();
         }
     }
+
+    public void TakeDmg(float dmg, string effectType, float effectDuration, float effectValue)
+    {
+        TakeDmg(dmg);
+        if (effectType == "Burn")
+        {
+            ApplyBurn(effectDuration, effectValue, dmg);
+        }
+    }
+
     public void Heal(float amount)
     {
         Debug.Log("heal");
@@ -81,6 +103,7 @@ public class Health : MonoBehaviour
         }
         else
         {
+            OnDestroyed?.Invoke(gameObject);
             Destroy(gameObject);
         }
     }

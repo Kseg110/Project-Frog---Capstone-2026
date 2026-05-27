@@ -7,6 +7,7 @@ using UnityEngine.AI;
 public class MovementComponent : MonoBehaviour
 {
     private NavMeshAgent agent;
+    public NavMeshAgent Agent => agent;
 
     [Header("Target")]
     [SerializeField] private Transform target;
@@ -34,7 +35,7 @@ public class MovementComponent : MonoBehaviour
     {
         if (!canMove || target == null) return;
 
-        repathRate -= Time.deltaTime;
+        repathTimer -= Time.deltaTime;
 
         if (repathTimer <= 0f)
         {

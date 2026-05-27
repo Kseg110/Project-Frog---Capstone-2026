@@ -11,7 +11,9 @@ public class PlayerTongueAttack : MonoBehaviour
 
     private float currentLength = 0f;
     private bool extending = false; 
-    private bool retracting = false; 
+    private bool retracting = false;
+
+    private Vector3 tongueLocation;
 
     public bool IsActive => extending || retracting;
 
@@ -23,6 +25,7 @@ public class PlayerTongueAttack : MonoBehaviour
         {
             Debug.LogError($"Please assign tongueMesh in ${gameObject.name}", this);
         }
+        tongueLocation = tongueMesh.localPosition;
     }
 
     /// <summary>
@@ -78,7 +81,7 @@ public class PlayerTongueAttack : MonoBehaviour
     private void UpdateTongueVisual()
     {
         tongueMesh.localScale = new Vector3(tongueWidth, currentLength / 2f, tongueWidth);
-        tongueMesh.localPosition = new Vector3(0, 0, currentLength / 2f); //MAKE THIS 0, 0, 0 WHEN FINAL MESH IS ADDED, And make sure the pivot for that mesh isn't dead center.
+        tongueMesh.localPosition = tongueLocation + new Vector3(0, 0, currentLength / 2f); //MAKE THIS 0, 0, 0 WHEN FINAL MESH IS ADDED, And make sure the pivot for that mesh isn't dead center.
     }
 }
 

@@ -23,6 +23,17 @@ public class WaveRoundSystem : MonoBehaviour
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
 
     private int currentWaveIndex = -1;
+
+    /// <summary>
+    /// Public accessor for the current wave number (1-based). Returns 0 when no wave has started.
+    /// This mirrors what other systems (e.g., DoorSystem) expect when querying the current wave.
+    /// </summary>
+    public int CurrentWaveNumber
+    {
+        get { return currentWaveIndex >= 0 ? currentWaveIndex + 1 : 0; }
+    }
+
+    // Raw zero-based index (kept for internal use)
     public int CurrentWave => currentWaveIndex;
     private bool waitingForCardSelection = false;
     private bool waveInProgress = false;
@@ -61,8 +72,15 @@ public class WaveRoundSystem : MonoBehaviour
             waitingForCardSelection = true;
             waveInProgress = false;
 
+            if (currentWaveIndex == waves.Length - 1)
+            {
+                Debug.Log("Last wave completed");
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Victory");
+                return;
+            }
+
             if (cardSelectionUI != null)
-                cardSelectionUI.ShowCardSelectionFromWave();
+                cardSelectionUI.ShowCardSelectionFromWave();  
         }
     }
 
@@ -124,7 +142,7 @@ public class WaveRoundSystem : MonoBehaviour
         GameObject enemy = Instantiate(enemyPrefab, zone.position, Quaternion.identity);
         activeEnemies.Add(enemy);
 
-        EnemyHealth hp = enemy.GetComponent<EnemyHealth>();
+        Health hp = enemy.GetComponent<Health>();
         if (hp != null)
             hp.OnDestroyed += (deadEnemy) => HandleEnemyDeath(deadEnemy);
     }
@@ -167,10 +185,10 @@ public class WaveRoundSystem : MonoBehaviour
         {
             if (enemy != null)
             {
-                EnemyHealth hp = enemy.GetComponent<EnemyHealth>();
+                Health hp = enemy.GetComponent<Health>();
                 if (hp != null)
                 {
-                    hp.TakeDamage(999999f);
+                    hp.TakeDmg(999999f);
                 }
                 else
                 {
