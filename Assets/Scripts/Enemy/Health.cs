@@ -16,7 +16,16 @@ public class Health : MonoBehaviour, IDamageable
     private void Awake()
     {
         healthbar = GetComponentInChildren<Healthbar>();
-        playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+
+        if (CompareTag("Player"))
+        {
+            playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+        }
+        else
+        {
+            playerHUD = null;
+        }
+
 
         if (healthbar == null)
         {
