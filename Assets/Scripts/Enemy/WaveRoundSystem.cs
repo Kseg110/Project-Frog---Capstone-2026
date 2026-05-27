@@ -182,6 +182,12 @@ public class WaveRoundSystem : MonoBehaviour
         activeEnemies.Clear();
     }
 
+    public void KillAllEnemiesInWaveDebug() //allows Debug menu to touch it. will likely remove later (unless it's already later)
+    {
+        KillAllEnemiesInWave();
+    }
+
+
     /// <summary>
     /// Updates the UI text to show the current wave number.
     /// </summary>

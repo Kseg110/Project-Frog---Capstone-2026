@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class DebugMenu : MonoBehaviour
 {
+    [Header("References")]
+    public CombatStatistics statistics;
+    public PlayerTakeDamage playerTakeDamage;
+    public WaveRoundSystem waveRoundSystem;
 
     [Header("Appearance")]
     public GUISkin skin;
