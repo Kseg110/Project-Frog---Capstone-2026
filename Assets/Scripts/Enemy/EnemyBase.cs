@@ -21,7 +21,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     [SerializeField] private protected Health health;
 
     protected bool isAttacking;
-    public bool IsAttacking => IsAttacking;
+    public bool IsAttacking => isAttacking;
 
 
 
