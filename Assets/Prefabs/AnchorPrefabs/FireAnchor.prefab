@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 1821872440227396422}
   - component: {fileID: 5323031320560320621}
   - component: {fileID: 5343022913514592130}
+  - component: {fileID: 4841448948749723779}
   m_Layer: 0
   m_Name: FireAnchor
   m_TagString: Untagged
@@ -235,6 +236,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.13, y: 4.02, z: 1.32}
   m_Center: {x: 0, y: 2.07, z: 0}
+--- !u!114 &4841448948749723779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6911843594789955862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feccdfd16b465e94fb416f8388c95dc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorUpgradeController
 --- !u!1 &7164860429683319075
 GameObject:
   m_ObjectHideFlags: 0
