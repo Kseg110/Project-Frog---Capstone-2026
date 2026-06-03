@@ -72,6 +72,13 @@ public class WaveRoundSystem : MonoBehaviour
             waitingForCardSelection = true;
             waveInProgress = false;
 
+            if (currentWaveIndex == waves.Length - 1)
+            {
+                Debug.Log("Last wave completed");
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Victory");
+                return;
+            }
+
             if (cardSelectionUI != null)
                 cardSelectionUI.ShowCardSelectionFromWave();  
         }

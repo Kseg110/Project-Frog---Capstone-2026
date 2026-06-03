@@ -25,7 +25,8 @@ public class DoorSystem : MonoBehaviour
         public GameObject door;
 
         [Tooltip("A root trigger GameObject; child trigger colliders under this or under the door will be used to close the door.")]
-        public GameObject trigger;
+        public GameObject openTrigger;
+        public GameObject closeTrigger;
 
         [Tooltip("Minimum wave number (1-based) when this door becomes active/opened.")]
         public int minWave = 1;
@@ -72,7 +73,7 @@ public class DoorSystem : MonoBehaviour
     private void Awake()
     {
         if (waveRoundSystem == null)
-            waveRoundSystem = FindObjectOfType<WaveRoundSystem>();
+            waveRoundSystem = FindAnyObjectByType<WaveRoundSystem>();
 
         // attach relays to any trigger colliders under both the configured trigger root and the door itself
         for (int i = 0; i < links.Length; i++)
@@ -80,8 +81,8 @@ public class DoorSystem : MonoBehaviour
             var link = links[i];
             if (link == null) continue;
 
-            if (link.trigger != null)
-                AttachRelaysToTriggers(link.trigger, i);
+            if (link.openTrigger != null)
+                AttachRelaysToTriggers(link.openTrigger, i);
 
             if (link.door != null)
                 AttachRelaysToTriggers(link.door, i);
