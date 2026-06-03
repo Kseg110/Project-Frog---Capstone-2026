@@ -1,12 +1,17 @@
-using UnityEngine;
 using System;
-
+using System.Collections;
+using System.Net;
+using UnityEngine;
 
 [ExecuteAlways]
 [RequireComponent(typeof(LineRenderer))]
 public class AnchorTether : MonoBehaviour
 {
     public event Action OnPointsChanged;
+
+    // These events are for external systems (like upgrades) to react to tethering changes.
+    public event Action<AnchorBase> OnAnchorAttached;
+    public event Action OnAnchorDetached;
 
     [Header("Tether Transforms")]
     [SerializeField] private Transform startPoint;
@@ -44,6 +49,10 @@ public class AnchorTether : MonoBehaviour
     private Vector3 prevEndPos;
     private float prevMidPos;
     private float prevWeight;
+
+    private AnchorBase currentAnchor;
+    [SerializeField] private float tetherCooldown = 1.0f;
+    private bool canTether = true;
 
     private void Awake()
     {
@@ -247,7 +256,7 @@ public class AnchorTether : MonoBehaviour
         NotifyPointsChanged();
     }
 
-    public void SetEndPoint(Transform t, bool instantAssign = false)
+    public void SetEndPoint(Transform t, bool instantAssign = false)   ///////
     {
         endPoint = t;
         if (instantAssign)
@@ -271,4 +280,74 @@ public class AnchorTether : MonoBehaviour
         if (!AreEndPointsValid()) return Vector3.zero;
         return GetRationalBezierPoint(startPoint.position, animatedMid, endPoint.position, Mathf.Clamp01(t), StartWeight, midPointWeight, EndWeight);
     }
+}
+
+/////
+
+public void SetEndPoint(Transform t, bool instantAssign = false)
+{
+    // Anti-abuse : empêche de spam tether/detether trop vite
+    if (!canTether && t != endPoint && t != null)
+        return;
+
+    endPoint = t;
+
+    // Détection d’Anchor attaché / détaché
+    AnchorBase newAnchor = null;
+    if (endPoint != null)
+        newAnchor = endPoint.GetComponent<AnchorBase>();
+
+    if (newAnchor != currentAnchor)
+    {
+        // Détaché
+        if (currentAnchor != null && newAnchor == null)
+        {
+            currentAnchor = null;
+            OnAnchorDetached?.Invoke();
+        }
+        // Changement d’anchor ou nouvel attach
+        else if (newAnchor != null)
+        {
+            currentAnchor = newAnchor;
+            OnAnchorAttached?.Invoke(currentAnchor);
+            StartCoroutine(TetherCooldownRoutine());
+        }
+    }
+
+    if (instantAssign)
+    {
+        if (AreEndPointsValid())
+        {
+            animatedMid = ComputeTargetMidpoint();
+            velocity = Vector3.zero;
+            RebuildLineImmediate();
+        }
+        else
+        {
+            if (lr) lr.positionCount = 0;
+        }
+    }
+    NotifyPointsChanged();
+}
+
+private IEnumerator TetherCooldownRoutine()
+{
+    canTether = false;
+    yield return new WaitForSeconds(tetherCooldown);
+    canTether = true;
+}
+
+public Vector3 GetPointAt(float t)
+{
+    if (!AreEndPointsValid()) return Vector3.zero;
+    return GetRationalBezierPoint(
+        startPoint.position,
+        animatedMid,
+        endPoint.position,
+        Mathf.Clamp01(t),
+        StartWeight,
+        midPointWeight,
+        EndWeight
+    );
+}
 }
