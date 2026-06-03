@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerTongueHealing : MonoBehaviour
 {
     [SerializeField] private float healAmountPerFly;
-    
+
+    [SerializeField] private InventoryManager inventoryManager;
     private PlayerTongueAttack playerTongueAttack;
     private Health playerHealth;
 
@@ -17,13 +18,13 @@ public class PlayerTongueHealing : MonoBehaviour
         playerHealth = GetComponent<Health>();
 
         // Subscribe to the playerTongueAttack's finish event so we can heal after retraction
-        playerTongueAttack.OnTongueFinished += HealPlayer;
+        playerTongueAttack.OnTongueFinished += GainFly;
     }
 
     private void OnDestroy()
     {
         // Unsubscribe from event to prevent memory leaks
-        playerTongueAttack.OnTongueFinished -= HealPlayer;
+        playerTongueAttack.OnTongueFinished -= GainFly;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -40,11 +41,22 @@ public class PlayerTongueHealing : MonoBehaviour
         numberOfFliesAttached++;
     }
 
-    private void HealPlayer()
+    private void GainFly()
     {
-        playerHealth.Heal(healAmountPerFly * numberOfFliesAttached);
+        if (playerHealth.IsMaxHP())
+        {
+            inventoryManager.GainFlyInInventory(numberOfFliesAttached);
+        }
+        else
+        {
+            HealPlayer(numberOfFliesAttached);
+        }
 
-        // Reset fly counter
         numberOfFliesAttached = 0;
+    }
+
+    public void HealPlayer(int numberOfFlies)
+    {
+        playerHealth.Heal(healAmountPerFly * numberOfFlies);
     }
 }

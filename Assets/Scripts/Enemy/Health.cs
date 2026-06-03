@@ -60,6 +60,11 @@ public class Health : MonoBehaviour, IDamageable
         }
     }
 
+    public bool IsMaxHP()
+    {
+        return currentHealth >= maxHealth;
+    }
+
     public void TakeDmg(float dmg, string effectType, float effectDuration, float effectValue)
     {
         TakeDmg(dmg);
