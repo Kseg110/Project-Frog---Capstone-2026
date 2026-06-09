@@ -3,13 +3,15 @@ using UnityEngine.AI;
 
 public class EnemyFly : MonoBehaviour
 {
-    public Transform[] patrolPoints;
-    public float waitTime = 2f;
+
+    [SerializeField] private float roamRadius = 5;
+    [SerializeField] private float minMoveInterval = 1f;
+    [SerializeField] private float maxMoveInterval = 3f;
 
     private NavMeshAgent agent;
-    private int currentPointIndex = 0;
-    private float waitTimer;
-    private bool waiting;
+    private Vector3 centerPoint;
+    private float moveTimer;
+    private float nextMoveTime;
 
     void Start()
     {
@@ -20,36 +22,53 @@ public class EnemyFly : MonoBehaviour
        
         }
         agent.baseOffset = 1f;
-        GoToNextPoint();
+        centerPoint = transform.position;
+
+        SetNextMoveTime();
+        PickNewDestination();
     }
 
     void Update()
     {
-        if (waiting)
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 1)
         {
-            waitTimer += Time.deltaTime;
-            if (waitTimer >= waitTime)
-            {
-                waiting = false;
-                GoToNextPoint();
-            }
-            return;
-        }
+            moveTimer += Time.deltaTime;
 
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-        {
-            waiting = true;
-            waitTimer = 0f;
+            if (moveTimer >= nextMoveTime)
+            {
+                PickNewDestination();
+                SetNextMoveTime();
+            }
         }
     }
 
-    void GoToNextPoint()
+    void SetNextMoveTime()
     {
-        if (patrolPoints.Length == 0) return;
+        moveTimer = 0f;
+        nextMoveTime = Random.Range(minMoveInterval, maxMoveInterval);
+    }
+    void PickNewDestination()
+    {
+        Vector2 randomCircle = Random.insideUnitCircle * roamRadius;
 
-        agent.SetDestination(patrolPoints[currentPointIndex].position);
+        Vector3 randomPoint = centerPoint + new Vector3(
+            randomCircle.x,
+            0f,
+            randomCircle.y
+        );
 
-        currentPointIndex = (currentPointIndex + 1) % patrolPoints.Length;
-        Debug.Log("Setting destination: " + patrolPoints[currentPointIndex].position);
+        NavMeshHit hit;
+
+        if (NavMesh.SamplePosition(randomPoint, out hit, roamRadius, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+        }
+    }
+
+    // add visual of the roam area //
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(Application.isPlaying ? centerPoint : transform.position, roamRadius);
     }
 }
