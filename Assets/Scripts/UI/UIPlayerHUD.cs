@@ -15,10 +15,15 @@ public class UIPlayerHUD : MonoBehaviour
     [SerializeField] private Color WarningColor = Color.yellow;
     [SerializeField] private Color CriticalColor = Color.red;
 
-    [Header("Dash Wheel")]
+    [Header("Dash Box")]
     [SerializeField] private Image DashFillImage;
 
+    [Header("Overcharge Wheel")]
+    [SerializeField] private Image OverchargeFillImage;
+    [SerializeField] private float OverChargeLerpSpeed = 3f;
+
     private float targetHealthFill = 1f;
+    private float targetOverchargeFill = 0f;
 
     [SerializeField] private Health playerHealth;
 
@@ -62,6 +67,16 @@ public class UIPlayerHUD : MonoBehaviour
             targetHealthFill,
             Time.deltaTime * healthLerpSpeed
         );
+
+        // Smoothly Lerp overchage fill
+        if (OverchargeFillImage != null)
+        {
+            OverchargeFillImage.fillAmount = Mathf.Lerp(
+                OverchargeFillImage.fillAmount,
+                targetOverchargeFill,
+                Time.deltaTime * OverChargeLerpSpeed
+                );
+        }
     }
 
     // Calls from the dash system every frame (or whenever the cooldown ticks).
@@ -75,4 +90,9 @@ public class UIPlayerHUD : MonoBehaviour
     //{
     //    OverchargeFillImage.fillAmount = Mathf.Clamp01(normalized);
     //}
+
+    public void UpdateOverchargeWheel(float normalized)
+    {
+        targetOverchargeFill = Mathf.Clamp01(normalized);
+    }
 }

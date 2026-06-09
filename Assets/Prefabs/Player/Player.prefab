@@ -827,6 +827,7 @@ GameObject:
   - component: {fileID: 7481143701210063934}
   - component: {fileID: 583013283057882193}
   - component: {fileID: 4281862109518123148}
+  - component: {fileID: 3953045122372634609}
   - component: {fileID: -4889873046943597826}
   - component: {fileID: -5455150326957673816}
   - component: {fileID: 7342988453639927308}
@@ -986,6 +987,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGrapple
   anchorTether: {fileID: 5289892553675338067}
+  playerOvercharge: {fileID: 0}
 --- !u!114 &583013283057882193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1017,6 +1019,23 @@ MonoBehaviour:
   attacksPerSecond: 2
   attackWindowDuration: 0.5
   maxChargeTime: 2
+--- !u!114 &3953045122372634609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c951ed0a25165840aefe597cea5cf3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerOvercharge
+  chargedTime: 20
+  chargeCooldown: 15
+  chargeDecayRate: 1
+  playerAnchor: {fileID: 7481143701210063934}
+  playerHUD: {fileID: 0}
 --- !u!114 &-4889873046943597826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1206,6 +1225,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: d168f5ca-dc0f-4b46-86ac-9aec64b58d97
+    m_ActionName: 'PlayerMK/ConsumeFly[/Keyboard/q]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: PlayerMK
