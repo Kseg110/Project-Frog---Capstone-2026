@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Net;
 using UnityEngine;
 
 [ExecuteAlways]
@@ -258,32 +257,39 @@ public class AnchorTether : MonoBehaviour
 
     public void SetEndPoint(Transform t, bool instantAssign = false)
     {
-        // Prevent tethering to a new point if cooldown is active
+        Debug.Log("<color=orange>[AnchorTether]</color> SetEndPoint called with: " + (t ? t.name : "NULL"));
+
         if (!canTether && t != endPoint && t != null)
+        {
+            Debug.Log("<color=red>[AnchorTether]</color> BLOCKED by cooldown");
             return;
+        }
 
         endPoint = t;
 
-        // Detect anchor change and invoke events
         AnchorBase newAnchor = null;
         if (endPoint != null)
             newAnchor = endPoint.GetComponent<AnchorBase>();
 
+        Debug.Log("<color=yellow>[AnchorTether]</color> newAnchor = " + (newAnchor ? newAnchor.name : "NULL"));
+
         if (newAnchor != currentAnchor)
         {
-            // Removal of existing anchor
+            Debug.Log("<color=cyan>[AnchorTether]</color> Anchor changed!");
+
             if (currentAnchor != null && newAnchor == null)
             {
-                currentAnchor = null;
+                Debug.Log("<color=magenta>[AnchorTether]</color> OnAnchorDetached invoked");
                 OnAnchorDetached?.Invoke();
             }
-            // New anchor attached
             else if (newAnchor != null)
             {
-                currentAnchor = newAnchor;
-                OnAnchorAttached?.Invoke(currentAnchor);
+                Debug.Log("<color=green>[AnchorTether]</color> OnAnchorAttached invoked");
+                OnAnchorAttached?.Invoke(newAnchor);
                 StartCoroutine(TetherCooldownRoutine());
             }
+
+            currentAnchor = newAnchor;
         }
 
         if (instantAssign)
@@ -299,6 +305,7 @@ public class AnchorTether : MonoBehaviour
                 if (lr) lr.positionCount = 0;
             }
         }
+
         NotifyPointsChanged();
     }
 

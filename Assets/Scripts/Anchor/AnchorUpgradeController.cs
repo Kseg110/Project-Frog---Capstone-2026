@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class AnchorUpgradeController : MonoBehaviour
@@ -13,7 +14,8 @@ public class AnchorUpgradeController : MonoBehaviour
 
     private void OnEnable()
     {
-        UpgradeManager.Instance.OnUpgradesChanged += ApplyUpgrades;
+        if (UpgradeManager.Instance != null)
+            UpgradeManager.Instance.OnUpgradesChanged += ApplyUpgrades;
     }
 
     private void OnDisable()
