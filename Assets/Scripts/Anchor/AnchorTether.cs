@@ -256,9 +256,36 @@ public class AnchorTether : MonoBehaviour
         NotifyPointsChanged();
     }
 
-    public void SetEndPoint(Transform t, bool instantAssign = false)   ///////
+    public void SetEndPoint(Transform t, bool instantAssign = false)
     {
+        // Prevent tethering to a new point if cooldown is active
+        if (!canTether && t != endPoint && t != null)
+            return;
+
         endPoint = t;
+
+        // Detect anchor change and invoke events
+        AnchorBase newAnchor = null;
+        if (endPoint != null)
+            newAnchor = endPoint.GetComponent<AnchorBase>();
+
+        if (newAnchor != currentAnchor)
+        {
+            // Removal of existing anchor
+            if (currentAnchor != null && newAnchor == null)
+            {
+                currentAnchor = null;
+                OnAnchorDetached?.Invoke();
+            }
+            // New anchor attached
+            else if (newAnchor != null)
+            {
+                currentAnchor = newAnchor;
+                OnAnchorAttached?.Invoke(currentAnchor);
+                StartCoroutine(TetherCooldownRoutine());
+            }
+        }
+
         if (instantAssign)
         {
             if (AreEndPointsValid())
@@ -275,79 +302,17 @@ public class AnchorTether : MonoBehaviour
         NotifyPointsChanged();
     }
 
+    private IEnumerator TetherCooldownRoutine()
+    {
+        canTether = false;
+        yield return new WaitForSeconds(tetherCooldown);
+        canTether = true;
+    }
+
     public Vector3 GetPointAt(float t)
     {
         if (!AreEndPointsValid()) return Vector3.zero;
         return GetRationalBezierPoint(startPoint.position, animatedMid, endPoint.position, Mathf.Clamp01(t), StartWeight, midPointWeight, EndWeight);
     }
-}
 
-/////
-
-public void SetEndPoint(Transform t, bool instantAssign = false)
-{
-    // Anti-abuse : empêche de spam tether/detether trop vite
-    if (!canTether && t != endPoint && t != null)
-        return;
-
-    endPoint = t;
-
-    // Détection d’Anchor attaché / détaché
-    AnchorBase newAnchor = null;
-    if (endPoint != null)
-        newAnchor = endPoint.GetComponent<AnchorBase>();
-
-    if (newAnchor != currentAnchor)
-    {
-        // Détaché
-        if (currentAnchor != null && newAnchor == null)
-        {
-            currentAnchor = null;
-            OnAnchorDetached?.Invoke();
-        }
-        // Changement d’anchor ou nouvel attach
-        else if (newAnchor != null)
-        {
-            currentAnchor = newAnchor;
-            OnAnchorAttached?.Invoke(currentAnchor);
-            StartCoroutine(TetherCooldownRoutine());
-        }
-    }
-
-    if (instantAssign)
-    {
-        if (AreEndPointsValid())
-        {
-            animatedMid = ComputeTargetMidpoint();
-            velocity = Vector3.zero;
-            RebuildLineImmediate();
-        }
-        else
-        {
-            if (lr) lr.positionCount = 0;
-        }
-    }
-    NotifyPointsChanged();
-}
-
-private IEnumerator TetherCooldownRoutine()
-{
-    canTether = false;
-    yield return new WaitForSeconds(tetherCooldown);
-    canTether = true;
-}
-
-public Vector3 GetPointAt(float t)
-{
-    if (!AreEndPointsValid()) return Vector3.zero;
-    return GetRationalBezierPoint(
-        startPoint.position,
-        animatedMid,
-        endPoint.position,
-        Mathf.Clamp01(t),
-        StartWeight,
-        midPointWeight,
-        EndWeight
-    );
-}
 }

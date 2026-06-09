@@ -168,4 +168,14 @@ public class UpgradeManager : MonoBehaviour
     {
         return allCards;
     }
+
+    public bool HasUpgrade(string cardName)
+    {
+        foreach (var kvp in cardLevels)
+        {
+            if (kvp.Key.CardName == cardName && kvp.Value > 0)
+                return true;
+        }
+        return false;
+    }
 }

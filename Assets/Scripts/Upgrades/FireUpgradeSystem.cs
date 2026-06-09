@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+
 public class FireUpgradeSystem : MonoBehaviour
 {
     private PlayerShieldController shield;
@@ -82,8 +83,8 @@ public class FireUpgradeSystem : MonoBehaviour
         Debug.Log("FIRE SHIELD EXPLOSION TRIGGERED");
     }
 
-    // EXTINGUISHER
-    public void OnHitEnemy(Enemy enemy)
+    //EXTINGUISHER
+    public void OnHitEnemy(EnemyBase enemy)
     {
         if (!UpgradeManager.Instance.HasUpgrade("Extinguisher"))
             return;

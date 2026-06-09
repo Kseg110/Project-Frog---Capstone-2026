@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -119,4 +119,77 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     }
     #endregion
 
+    // ===============================
+    // STATUS EFFECTS FOR UPGRADES
+    // ===============================
+
+    public bool IsBurning { get; private set; }
+    public bool IsFrozen { get; private set; }
+    public bool IsSlowed { get; private set; }
+
+    // Apply a slow effect
+    public void ApplySlow(float duration)
+    {
+        if (IsSlowed) return;
+        StartCoroutine(SlowRoutine(duration));
+    }
+
+    private IEnumerator SlowRoutine(float duration)
+    {
+        IsSlowed = true;
+        yield return new WaitForSeconds(duration);
+        IsSlowed = false;
+    }
+
+    // Apply freeze
+    public void Freeze(float duration)
+    {
+        if (IsFrozen) return;
+        StartCoroutine(FreezeRoutine(duration));
+    }
+
+    private IEnumerator FreezeRoutine(float duration)
+    {
+        IsFrozen = true;
+        StopMovement(); // freeze movement
+        yield return new WaitForSeconds(duration);
+        ResumeMovement();
+        IsFrozen = false;
+    }
+
+    // Burning DOT is handled by Health, but we track the state here
+    public void SetBurning(bool state)
+    {
+        IsBurning = state;
+    }
+
+    // Cleanse all effects (used by Extinguisher, Shatter, etc.)
+    public void Cleanse()
+    {
+        IsBurning = false;
+        IsFrozen = false;
+        IsSlowed = false;
+    }
+
+    public void TakeDamagePercent(float percent)
+    {
+        if (health == null) return;
+
+        // Exemple : percent = 50 → inflige 50% de la vie max
+        float damageAmount = (percent / 100f) * health.MaxHealth;
+
+        health.TakeDmg(damageAmount);
+    }
+
+    public void TakeDamage(float dmg)
+    {
+        if (health != null)
+            health.TakeDmg(dmg);
+    }
+
+    public void TakeDamage(float dmg, string effectType, float effectDuration, float effectValue)
+    {
+        if (health != null)
+            health.TakeDmg(dmg, effectType, effectDuration, effectValue);
+    }
 }

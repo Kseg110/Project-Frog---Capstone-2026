@@ -68,12 +68,12 @@ public class IceUpgradeSystem : MonoBehaviour
 
     private void FreezeAllEnemies()
     {
-        foreach (var enemy in FindObjectsOfType<Enemy>())
+        foreach (var enemy in FindObjectsOfType<EnemyBase>())
             enemy.Freeze(2f);
     }
 
     // SHATTER
-    public void OnHitEnemy(Enemy enemy)
+    public void OnHitEnemy(EnemyBase enemy)
     {
         if (UpgradeManager.Instance.HasUpgrade("Shatter") && enemy.IsFrozen)
         {

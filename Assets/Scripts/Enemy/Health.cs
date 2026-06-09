@@ -12,6 +12,7 @@ public class Health : MonoBehaviour, IDamageable
 
     public bool IsDead { get; private set; }
     public event Action<GameObject> OnDestroyed;
+    public float MaxHealth => maxHealth;
 
     private void Awake()
     {
