@@ -8,10 +8,13 @@ public class PlayerOvercharge : MonoBehaviour
     [SerializeField] private float chargedTime = 20f;
     [SerializeField] private float chargeCooldown = 15f;
     [SerializeField] private float chargeDecayRate = 1f; // Charge decay countdown when not tethered
+    [SerializeField] private float trailDamage = 5f; // temporary for testing
 
     [Header("References")]
     [SerializeField] private PlayerAnchor playerAnchor;
     [SerializeField] private UIPlayerHUD playerHUD;
+    [SerializeField] private PlayerOverchargeVFX overchargeVFX;
+    [SerializeField] private OverchargeTrailCollider trailCollider;
 
     // Overcharge Events
     public event Action<float> OnChargeChanged; 
@@ -28,10 +31,11 @@ public class PlayerOvercharge : MonoBehaviour
     // Overcharge Properties
     public float CurrentChargeTime => currentChargeTime;
     public float ChargeProgress => Mathf.Clamp01(currentChargeTime / chargedTime);
-    public float CooldownProgress => isInCooldown ? Mathf.Clamp01(currentCooldownTime / chargeCooldown) : 1f;
+    public float CooldownProgress => isInCooldown ? Mathf.Clamp01(currentCooldownTime / chargeCooldown) : 0f;
     public bool IsInCooldown => isInCooldown;
     public bool IsOvercharged => isOvercharged;
     public AnchorBase LastTetheredAnchor => lastTetheredAnchor;
+    public bool IsTrailActive => isOvercharged || isInCooldown;
 
     private void Awake()
     {
@@ -39,11 +43,34 @@ public class PlayerOvercharge : MonoBehaviour
         {
             playerAnchor = GetComponent<PlayerAnchor>();
         }
+        if (overchargeVFX == null)
+        {
+            overchargeVFX = GetComponentInChildren<PlayerOverchargeVFX>();
+        }
+        if (trailCollider == null)
+        {
+            trailCollider = GetComponentInChildren<OverchargeTrailCollider>();
+        }
 
         currentChargeTime = 0f;
         currentCooldownTime = 0f;
         isInCooldown = false;
         isOvercharged = false;
+
+        // subscribe to trail collision events
+        if (trailCollider != null)
+        {
+            trailCollider.OnEnemyHit += HandleEnemyHit;
+        }
+    }
+
+    private void OnDestroy()
+    {
+       // unsub from collision events
+       if (trailCollider != null)
+        {
+            trailCollider.OnEnemyHit -= HandleEnemyHit;
+        }
     }
 
     private void Update()
@@ -104,6 +131,8 @@ public class PlayerOvercharge : MonoBehaviour
             currentCooldownTime = 0f;
             isInCooldown = false;
             OnCooldownComplete?.Invoke();
+
+            EndOverchargeTrail();
         }
 
         float fillAmount = CooldownProgress;
@@ -122,6 +151,9 @@ public class PlayerOvercharge : MonoBehaviour
         // Untether Player
         playerAnchor.ReleaseTether();
 
+        // Start trail effects
+        StartOverchargeTrail();
+
         // Begin Cooldown
         StartCooldown();
 
@@ -137,6 +169,41 @@ public class PlayerOvercharge : MonoBehaviour
         currentCooldownTime = chargeCooldown;
         currentChargeTime = 0f;
         isOvercharged = false;
+    }
+
+    private void StartOverchargeTrail()
+    {
+        if (overchargeVFX != null)
+        {
+            overchargeVFX.StartOverchargeTrail(lastTetheredAnchor);
+        }
+
+        if (trailCollider != null)
+        {
+            trailCollider.EnableCollider();
+        }
+    }
+
+    private void EndOverchargeTrail()
+    {
+        if (overchargeVFX != null)
+        {
+            overchargeVFX.EndOverchargeTrail();
+        }
+
+        if (trailCollider != null)
+        {
+            trailCollider.DisableCollider();
+        }
+    }
+
+    private void HandleEnemyHit(GameObject enemy)
+    {
+        Health enemyHealth = enemy.GetComponent<Health>();
+        if (enemyHealth != null)
+        {
+            enemyHealth.TakeDmg(trailDamage);
+        }
     }
 
     // Returns true if the player can tether (Not in cooldown state)
@@ -159,6 +226,9 @@ public class PlayerOvercharge : MonoBehaviour
         isInCooldown = false;
         isOvercharged = false;
         lastTetheredAnchor = null;
+
+        // Stop trail Effects
+        EndOverchargeTrail();
 
         OnChargeChanged?.Invoke(0f);
 
