@@ -10,7 +10,7 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private Transform firePoint;
 
     [Header("Attack Settings")]
-    [SerializeField] private float attacksPerSecond = 2f;
+    [SerializeField] public float attacksPerSecond = 2f;
     [SerializeField] private float attackWindowDuration = 0.5f;
     [SerializeField] private float maxChargeTime = 2f;
 

@@ -4,7 +4,7 @@ using UnityEngine;
 public class UpgradeEffectManager : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private AnchorTether tether;
+    [SerializeField] private PlayerAnchor playerAnchor;
 
     [SerializeField] private FireUpgradeSystem fireSystem;
     [SerializeField] private IceUpgradeSystem iceSystem;
@@ -12,18 +12,30 @@ public class UpgradeEffectManager : MonoBehaviour
 
     private void OnEnable()
     {
-        tether.OnAnchorAttached += HandleAttach;
-        tether.OnAnchorDetached += HandleDetach;
+        if (playerAnchor == null)
+            playerAnchor = FindFirstObjectByType<PlayerAnchor>();
 
-        Debug.Log("<color=yellow>[UpgradeEffectManager]</color> Enabled and listening for tether events.");
+        if (playerAnchor == null)
+        {
+            Debug.LogError("[UpgradeEffectManager] PlayerAnchor reference is missing!");
+            return;
+        }
+
+        playerAnchor.OnTetherStarted += HandleAttach;
+        playerAnchor.OnTetherReleased += HandleDetach;
+
+        Debug.Log("[UpgradeEffectManager] Subscribed to PlayerAnchor events.");
     }
 
     private void OnDisable()
     {
-        tether.OnAnchorAttached -= HandleAttach;
-        tether.OnAnchorDetached -= HandleDetach;
+        if (playerAnchor != null)
+        {
+            playerAnchor.OnTetherStarted -= HandleAttach;
+            playerAnchor.OnTetherReleased -= HandleDetach;
 
-        Debug.Log("<color=yellow>[UpgradeEffectManager]</color> Disabled.");
+            Debug.Log("<color=yellow>[UpgradeEffectManager]</color> Unsubscribed from PlayerAnchor events.");
+        }
     }
 
     private void HandleAttach(AnchorBase anchor)

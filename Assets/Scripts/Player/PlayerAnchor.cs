@@ -1,9 +1,13 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class PlayerAnchor : MonoBehaviour
 {
+    public event Action<AnchorBase> OnTetherStarted;
+    public event Action OnTetherReleased;
+
     private AnchorBase[] allAnchors;
     private AnchorBase currentAnchor;
     private bool isTethered;
@@ -55,15 +59,12 @@ public class PlayerAnchor : MonoBehaviour
 
     private void HandleInput()
     {
-        if (tetherAction != null)
+        if (tetherAction != null && tetherAction.WasPressedThisFrame())
         {
-            if (tetherAction.WasPressedThisFrame())
-            {
-                if (isTethered)
-                    ReleaseTether();
-                else
-                    StartTether();
-            }
+            if (isTethered)
+                ReleaseTether();
+            else
+                StartTether();
         }
     }
 
@@ -104,6 +105,7 @@ public class PlayerAnchor : MonoBehaviour
             anchorTether.SetEndPoint(anchorPoint, true);
 
         isTethered = true;
+        OnTetherStarted?.Invoke(currentAnchor);
     }
 
     /// <summary>
@@ -115,6 +117,7 @@ public class PlayerAnchor : MonoBehaviour
 
         if (anchorTether != null)
             anchorTether.SetEndPoint(null, true);
+        OnTetherReleased?.Invoke();
     }
 
     private Transform GetAnchorPointTransform(AnchorBase anchor)

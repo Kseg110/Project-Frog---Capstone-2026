@@ -14,6 +14,37 @@ public class Projectile : MonoBehaviour, IProjectile
     public float effectDuration;
     public float effectValue;
 
+    // Wind Upgrade
+    private bool isHoming = false;
+    private float turnSpeed = 10f; // Adjust as necessary
+    private EnemyBase target;
+    private float pointBlankRange = 10f;
+
+    public void EnableHoming(float turnSpeed = 10f)
+    {
+        isHoming = true;
+        this.turnSpeed = turnSpeed;
+        target = FindNearestEnemy();
+    }
+
+    private EnemyBase FindNearestEnemy()
+    {
+        EnemyBase[] enemies = Object.FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
+        EnemyBase closest = null;
+        float minDist = Mathf.Infinity;
+
+        foreach (var e in enemies)
+        {
+            float dist = Vector3.Distance(transform.position, e.transform.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closest = e;
+            }
+        }
+        return closest;
+    }
+
     public virtual void Initialize(float chargePercent)
     {
         speed = Mathf.Lerp(baseSpeed, baseSpeed * 2f, chargePercent);
@@ -34,24 +65,39 @@ public class Projectile : MonoBehaviour, IProjectile
 
     protected virtual void Update()
     {
+        if (isHoming && target != null)
+        {
+            Vector3 dir = (target.transform.position - transform.position).normalized;
+            Quaternion targetRot = Quaternion.LookRotation(dir);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
+        }
+
         transform.position += transform.forward * speed * Time.deltaTime;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // Does Collided object implement IDamageable
-        var damageable = other.GetComponent<IDamageable>();
-        if (damageable != null)
+        var enemy = other.GetComponent<EnemyBase>();
+        if (enemy != null)
         {
-            if (!string.IsNullOrEmpty(effectType))
+            float finalDamage = damage;
+
+            // POINT BLANK BONUS
+            float dist = Vector3.Distance(transform.position, enemy.transform.position);
+            if (dist < pointBlankRange)
             {
-                damageable.TakeDmg(damage, effectType, effectDuration, effectValue);
+                float bonus = UpgradeManager.Instance.GetTotalStatForElement(
+                    AnchorElement.Wind,
+                    UpgradeStat.PointBlankDamage
+                );
+                finalDamage *= 1f + bonus / 100f;
             }
+
+            // APPLY DAMAGE
+            if (!string.IsNullOrEmpty(effectType))
+                enemy.TakeDamage(finalDamage, effectType, effectDuration, effectValue);
             else
-            {
-                damageable.TakeDmg(damage);
-            }                
-            //Destroy(gameObject); // Destroy projectile commented out for now
+                enemy.TakeDamage(finalDamage);
         }
     }
 }

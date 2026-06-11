@@ -132,7 +132,7 @@ public class UpgradeManager : MonoBehaviour
         // Element tracking
         var element = card.Element;
         elementLevels[element][card]++;
-
+        Debug.Log($"[UpgradeManager] {card.CardName} level = {cardLevels[card]}");
         // Remove the card from the pool if it reaches max level
         if (cardLevels[card] >= card.MaxLevel -1)
         {
@@ -157,7 +157,7 @@ public class UpgradeManager : MonoBehaviour
             if (kvp.Key.Stat == stat)
                 total += kvp.Key.GetTotalValueUpToLevel(kvp.Value);
         }
-
+        Debug.Log($"[UpgradeManager] {element} stat {stat} total = {total}");
         return total;
     }
 

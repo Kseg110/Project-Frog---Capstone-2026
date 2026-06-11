@@ -16,6 +16,10 @@ public class PlayerChargeAttack : MonoBehaviour
     private float ChargeTimer;
     private bool isCharging;
 
+    private FireUpgradeSystem fireSystem;
+    private IceUpgradeSystem iceSystem;
+    private WindUpgradeSystem windSystem;
+
     public bool IsCharging => isCharging;
 
 
@@ -24,6 +28,29 @@ public class PlayerChargeAttack : MonoBehaviour
         if (FireChargeProjectilePrefab == null || IceChargeProjectilePrefab == null || WindChargeProjectilePrefab == null)
         {
             Debug.LogError($"Missing Projectile Prefab assignment within inspector");
+            Debug.Log("[PlayerChargeAttack] WindSystem instance = " + windSystem.gameObject.name);
+        }
+
+        //Get FireUpgradeSystem reference
+        fireSystem = FindFirstObjectByType<FireUpgradeSystem>();
+        if (fireSystem == null)
+        {
+            Debug.LogError("FireUpgradeSystem not found in scene!", this);
+        }
+
+        //Get IceUpgradeSystem reference
+        iceSystem = FindFirstObjectByType<IceUpgradeSystem>();
+        if (iceSystem == null)
+        {
+            Debug.LogError("IceUpgradeSystem not found in scene!", this);
+        }
+
+        //Get WindUpgradeSystem reference 
+        windSystem = FindFirstObjectByType<WindUpgradeSystem>();
+
+        if (windSystem == null)
+        {
+            Debug.LogError("WindUpgradeSystem not found in scene!", this);
         }
     }
 
@@ -54,7 +81,6 @@ public class PlayerChargeAttack : MonoBehaviour
 
         // Baseline values
         float ChargedDamage = 5f;
-        int BaseWindProjectiles = 4;
 
         switch (CurrentAnchor.BaseData)
         {
@@ -85,24 +111,56 @@ public class PlayerChargeAttack : MonoBehaviour
                 );
                 break;
 
+            //case AnchorWindData windData:
+            //    int windProjectiles = BaseWindProjectiles;
+            //    float windDamage = ChargedDamage * windData.DamageMultiplier;
+            //    float spreadAngle = 5f;
+            //    for (int i = 0; i < windProjectiles; i++)
+            //    {
+            //        float angle = spreadAngle * i;
+            //        Vector3 spreadDir = Quaternion.Euler(0, angle, 0) * direction;
+            //        FireProjectile(
+            //            WindChargeProjectilePrefab,
+            //            FirePoint,
+            //            spreadDir,
+            //            windDamage,
+            //            0f,
+            //            0f,
+            //            null,
+            //            ChargePercent
+            //        );
+            //    }
+            //    break;
+
             case AnchorWindData windData:
-                int windProjectiles = BaseWindProjectiles;
-                float windDamage = ChargedDamage * windData.DamageMultiplier;
-                float spreadAngle = 5f;
-                for (int i = 0; i < windProjectiles; i++)
                 {
-                    float angle = spreadAngle * i;
-                    Vector3 spreadDir = Quaternion.Euler(0, angle, 0) * direction;
-                    FireProjectile(
-                        WindChargeProjectilePrefab,
-                        FirePoint,
-                        spreadDir,
-                        windDamage,
-                        0f,
-                        0f,
-                        null,
-                        ChargePercent
-                    );
+                    int baseProjectiles = 4;
+
+                    // MULTISHOT UPGRADE
+                    int extra = windSystem != null ? windSystem.GetExtraVolley() : 0;
+                    int totalProjectiles = baseProjectiles + extra;
+
+                    float windDamage = ChargedDamage * windData.DamageMultiplier;
+                    float spreadAngle = 5f;
+
+                    for (int i = 0; i < totalProjectiles; i++)
+                    {
+                        float angle = spreadAngle * (i - totalProjectiles / 2f);
+                        Vector3 spreadDir = Quaternion.Euler(0, angle, 0) * direction;
+
+                        var projObj = Instantiate(WindChargeProjectilePrefab, FirePoint, Quaternion.LookRotation(spreadDir));
+                        var proj = projObj.GetComponent<Projectile>();
+
+                        if (proj != null)
+                        {
+                            proj.Initialize(ChargePercent);
+                            proj.damage = windDamage;
+
+                            // HOMING UPGRADE
+                            if (windSystem != null && windSystem.IsHomingEnabled())
+                                proj.EnableHoming();
+                        }
+                    }
                 }
                 break;
         }
