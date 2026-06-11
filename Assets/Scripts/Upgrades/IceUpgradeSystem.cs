@@ -8,6 +8,9 @@ public class IceUpgradeSystem : MonoBehaviour
 
     private bool iceShieldReady = true;
     private float tetherCooldown = 1.0f;
+    private bool canTether = true;
+
+    private const float freezeRadius = 10f;
 
     private void Awake()
     {
@@ -29,8 +32,6 @@ public class IceUpgradeSystem : MonoBehaviour
         shield.OnShieldBroken -= HandleShieldBreak;
     }
 
-    private bool canTether = true;
-
     private IEnumerator TetherCooldown()
     {
         canTether = false;
@@ -46,6 +47,7 @@ public class IceUpgradeSystem : MonoBehaviour
         if (anchor.Element != AnchorElement.Ice)
             return;
 
+        // ICE SHIELD
         if (UpgradeManager.Instance.HasUpgrade("Ice shield") && iceShieldReady)
         {
             shield.GiveShield();
@@ -56,25 +58,30 @@ public class IceUpgradeSystem : MonoBehaviour
     private void HandleDetach()
     {
         shield.RemoveShield();
+        iceShieldReady = true;
     }
 
     private void HandleShieldBreak()
     {
-        if (UpgradeManager.Instance.HasUpgrade("Ice shield"))
+        if (!UpgradeManager.Instance.HasUpgrade("Ice shield"))
+            return;
+
+        FreezeExplosion();
+    }
+
+    private void FreezeExplosion()
+    {
+        foreach (var enemy in FindObjectsOfType<EnemyBase>())
         {
-            FreezeAllEnemies();
+            float dist = Vector3.Distance(transform.position, enemy.transform.position);
+            if (dist <= freezeRadius)
+                enemy.Freeze(1f);
         }
     }
 
-    private void FreezeAllEnemies()
+    public void OnHitEnemy(EnemyBase enemy, bool isPiercingHit)
     {
-        foreach (var enemy in FindObjectsOfType<EnemyBase>())
-            enemy.Freeze(2f);
-    }
-
-    // SHATTER
-    public void OnHitEnemy(EnemyBase enemy)
-    {
+        // SHATTER
         if (UpgradeManager.Instance.HasUpgrade("Shatter") && enemy.IsFrozen)
         {
             enemy.TakeDamage(50);
@@ -84,7 +91,20 @@ public class IceUpgradeSystem : MonoBehaviour
         // CRYO FRAGILITY
         if (UpgradeManager.Instance.HasUpgrade("Cryo Fragility") && enemy.IsSlowed)
         {
-            float bonus = UpgradeManager.Instance.GetTotalStatForElement(AnchorElement.Ice, UpgradeStat.DamageTakenIfSlowed);
+            float bonus = UpgradeManager.Instance.GetTotalStatForElement(
+                AnchorElement.Ice,
+                UpgradeStat.DamageTakenIfSlowed
+            );
+            enemy.TakeDamagePercent(bonus);
+        }
+
+        // LETHAL PIERCING
+        if (isPiercingHit && UpgradeManager.Instance.HasUpgrade("Lethal Piercing"))
+        {
+            float bonus = UpgradeManager.Instance.GetTotalStatForElement(
+                AnchorElement.Ice,
+                UpgradeStat.PostPierceDamage
+            );
             enemy.TakeDamagePercent(bonus);
         }
     }

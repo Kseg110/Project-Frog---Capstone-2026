@@ -20,6 +20,18 @@ public class Projectile : MonoBehaviour, IProjectile
     private EnemyBase target;
     private float pointBlankRange = 10f;
 
+    // Ice Upgrade
+    public bool isPiercingProjectile = false;
+    private int pierceCount = 0;
+
+    private IceUpgradeSystem iceSystem;
+
+    private void Awake()
+    {
+        iceSystem = FindFirstObjectByType<IceUpgradeSystem>();   // a chanlenger pk pas les 2 autre ? meme chose pour le private iceupgrade system
+    }
+
+    // Wind homing
     public void EnableHoming(float turnSpeed = 10f)
     {
         isHoming = true;
@@ -50,6 +62,13 @@ public class Projectile : MonoBehaviour, IProjectile
         speed = Mathf.Lerp(baseSpeed, baseSpeed * 2f, chargePercent);
         damage = Mathf.Lerp(baseDamage, baseDamage * 3f, chargePercent);
 
+        // FROSTWIND UPGRADE
+        float frostBonus = UpgradeManager.Instance.GetTotalStatForElement(
+            AnchorElement.Ice,
+            UpgradeStat.PrimarySpeed
+        );
+        speed *= 1f + frostBonus / 100f;
+
         float scale = Mathf.Lerp(0.25f, maxScale, chargePercent); //Only exists to help visualize the charge's effect on the projectile in the absence of damage
         transform.localScale = Vector3.one * scale;
 
@@ -63,6 +82,9 @@ public class Projectile : MonoBehaviour, IProjectile
         Destroy(gameObject, lifetime);
     }
 
+    // -----------------------------
+    // MOVEMENT
+    // -----------------------------
     protected virtual void Update()
     {
         if (isHoming && target != null)
@@ -75,6 +97,9 @@ public class Projectile : MonoBehaviour, IProjectile
         transform.position += transform.forward * speed * Time.deltaTime;
     }
 
+    // -----------------------------
+    // COLLISION
+    // -----------------------------
     private void OnTriggerEnter(Collider other)
     {
         var enemy = other.GetComponent<EnemyBase>();
@@ -99,6 +124,28 @@ public class Projectile : MonoBehaviour, IProjectile
             else
                 enemy.TakeDamage(finalDamage);
         }
+   
+            // -----------------------------
+            // ICE UPGRADE SYSTEM HOOK
+            // -----------------------------
+            if (iceSystem != null)
+            {
+                bool piercingHit = isPiercingProjectile;
+                iceSystem.OnHitEnemy(enemy, piercingHit);       
+            }
+
+            // -----------------------------
+            // PIERCE LOGIC (Ice secondary)
+            // -----------------------------
+            if (isPiercingProjectile)
+            {
+                pierceCount++;
+
+                // Projectile continues infinitely
+                return;
+            }
+
+            // Destroy normal projectile
+            Destroy(gameObject);
     }
 }
-
