@@ -4,6 +4,7 @@
 // Extended by AnchorFire, AnchorIce, and AnchorWind.
 
 using UnityEngine;
+using FMODUnity;
 
 public abstract class AnchorBase : MonoBehaviour
 {
@@ -11,6 +12,11 @@ public abstract class AnchorBase : MonoBehaviour
 
     public float Damage => BaseData != null ? BaseData.Damage : 0f;
     public float TetherRange => BaseData != null ? BaseData.TetherRange : 0f;
+
+    public virtual void Activate()
+    {
+        RuntimeManager.PlayOneShot(BaseData.ActivationEvent, transform.position);
+    }
 
     private void OnDrawGizmosSelected()
     {

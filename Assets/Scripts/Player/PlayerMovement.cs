@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using FMODUnity;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerAnchor))]
@@ -28,6 +29,12 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private float dashDistance = 5f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
+
+    [Header("FMod Events")]
+    //[SerializeField] private EventReference fireAnchorEvent;
+    //[SerializeField] private EventReference iceAnchorEvent;
+    //[SerializeField] private EventReference windAnchorEvent;
+    [SerializeField] private EventReference dashActivationEvent;
 
     private PlayerInput playerInput;
 
@@ -387,6 +394,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
         isDashing = true;
         dashTimer = dashDuration;
         dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
+
+        RuntimeManager.PlayOneShot(dashActivationEvent, transform.position);
 
         Debug.Log("start dash");
         PlayerDashVFX.Instance.StartDashVFX();

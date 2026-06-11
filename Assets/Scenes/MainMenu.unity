@@ -643,6 +643,7 @@ GameObject:
   - component: {fileID: 312797650}
   - component: {fileID: 312797649}
   - component: {fileID: 312797648}
+  - component: {fileID: 312797651}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
@@ -764,6 +765,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 312797646}
   m_CullTransparentMesh: 1
+--- !u!114 &312797651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312797646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4ce4d6a23648d04e9d28c3a552aefa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSoundManager
+  hoverEvent:
+    Guid:
+      Data1: 623066548
+      Data2: 1137025033
+      Data3: -1075785795
+      Data4: 859327781
+    Path: event:/Button Hover Activation
+  clickEvent:
+    Guid:
+      Data1: 1817436377
+      Data2: 1097588408
+      Data3: 431456922
+      Data4: 351406592
+    Path: event:/Button Click Activation
 --- !u!1 &339601314
 GameObject:
   m_ObjectHideFlags: 0
@@ -1656,6 +1683,7 @@ GameObject:
   - component: {fileID: 856300318}
   - component: {fileID: 856300317}
   - component: {fileID: 856300316}
+  - component: {fileID: 856300319}
   m_Layer: 5
   m_Name: CreditsButton
   m_TagString: Untagged
@@ -1777,6 +1805,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 856300314}
   m_CullTransparentMesh: 1
+--- !u!114 &856300319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 856300314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4ce4d6a23648d04e9d28c3a552aefa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSoundManager
+  hoverEvent:
+    Guid:
+      Data1: 623066548
+      Data2: 1137025033
+      Data3: -1075785795
+      Data4: 859327781
+    Path: event:/Button Hover Activation
+  clickEvent:
+    Guid:
+      Data1: 1817436377
+      Data2: 1097588408
+      Data3: 431456922
+      Data4: 351406592
+    Path: event:/Button Click Activation
 --- !u!1 &900313082
 GameObject:
   m_ObjectHideFlags: 0
@@ -2043,6 +2097,7 @@ GameObject:
   - component: {fileID: 989797658}
   - component: {fileID: 989797657}
   - component: {fileID: 989797656}
+  - component: {fileID: 989797659}
   m_Layer: 5
   m_Name: OptionButton
   m_TagString: Untagged
@@ -2167,6 +2222,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 989797654}
   m_CullTransparentMesh: 1
+--- !u!114 &989797659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989797654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4ce4d6a23648d04e9d28c3a552aefa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSoundManager
+  hoverEvent:
+    Guid:
+      Data1: 623066548
+      Data2: 1137025033
+      Data3: -1075785795
+      Data4: 859327781
+    Path: event:/Button Hover Activation
+  clickEvent:
+    Guid:
+      Data1: 1817436377
+      Data2: 1097588408
+      Data3: 431456922
+      Data4: 351406592
+    Path: event:/Button Click Activation
 --- !u!1 &1001455485
 GameObject:
   m_ObjectHideFlags: 0
@@ -4173,6 +4254,7 @@ GameObject:
   - component: {fileID: 2085843851}
   - component: {fileID: 2085843850}
   - component: {fileID: 2085843849}
+  - component: {fileID: 2085843852}
   m_Layer: 5
   m_Name: ExitButton
   m_TagString: Untagged
@@ -4294,6 +4376,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2085843847}
   m_CullTransparentMesh: 1
+--- !u!114 &2085843852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2085843847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4ce4d6a23648d04e9d28c3a552aefa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSoundManager
+  hoverEvent:
+    Guid:
+      Data1: 623066548
+      Data2: 1137025033
+      Data3: -1075785795
+      Data4: 859327781
+    Path: event:/Button Hover Activation
+  clickEvent:
+    Guid:
+      Data1: 1817436377
+      Data2: 1097588408
+      Data3: 431456922
+      Data4: 351406592
+    Path: event:/Button Click Activation
 --- !u!1 &2098925871
 GameObject:
   m_ObjectHideFlags: 0
