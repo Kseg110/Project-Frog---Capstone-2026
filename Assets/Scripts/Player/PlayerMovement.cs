@@ -288,7 +288,14 @@ public class PlayerMovement : MonoBehaviour, IMovement
         {
             moveVector = dashDirection * (dashDistance / dashDuration) * Time.fixedDeltaTime;
             dashTimer -= Time.fixedDeltaTime;
-            MoveWithCollision(moveVector);
+
+            CollisionUtility.MoveWithCapsuleCollision(
+                rb,
+                capsuleCollider,
+                moveVector,
+                collisionLayers
+            );
+
             if (dashTimer <= 0f)
                 EndDash();
         }
@@ -296,48 +303,18 @@ public class PlayerMovement : MonoBehaviour, IMovement
         {
             moveVector = moveInput * CurrentSpeed * Time.fixedDeltaTime;
             moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
-            MoveWithCollision(moveVector);
+
+            CollisionUtility.MoveWithCapsuleCollision(
+                rb,
+                capsuleCollider,
+                moveVector,
+                collisionLayers
+            );
 
             if (!usingGamepad && moveInput.sqrMagnitude > 0.0001f)
                 rb.MoveRotation(Quaternion.LookRotation(moveInput.normalized));
         }
     }
-
-    private void MoveWithCollision(Vector3 motion)
-    {
-        int maxIterations = 5;
-        Vector3 remaining = motion;
-
-        for (int i = 0; i < maxIterations; i++)
-        {
-            if (remaining.sqrMagnitude < 0.0001f)
-                break;
-
-            Vector3 start = rb.position + capsuleCollider.center + Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
-            Vector3 end = rb.position + capsuleCollider.center - Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
-
-            if (!Physics.CapsuleCast(start, end, capsuleCollider.radius,
-                remaining.normalized, out RaycastHit hit,
-                remaining.magnitude, collisionLayers, QueryTriggerInteraction.Ignore))
-            {
-                rb.MovePosition(rb.position + remaining);
-                break;
-            }
-
-            float skin = 0.01f;
-            float moveDist = Mathf.Max(hit.distance - skin, 0f);
-
-            if (moveDist > 0f)
-            {
-                Vector3 movePart = remaining.normalized * moveDist;
-                rb.MovePosition(rb.position + movePart);
-            }
-
-            remaining -= remaining.normalized * moveDist;
-            remaining = Vector3.ProjectOnPlane(remaining, hit.normal);
-        }
-    }
-
     private void UpdateTetherStatus()
     {
         if (playerAnchor != null)
@@ -448,5 +425,5 @@ public class PlayerMovement : MonoBehaviour, IMovement
             Gizmos.DrawWireSphere(anchorPosition, currentMaxRadius);
         }
     }
-    
+
 }

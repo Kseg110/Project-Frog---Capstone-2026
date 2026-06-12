@@ -6,6 +6,7 @@ using System.Collections;
 public class PauseManager : MonoBehaviour
 {
     [SerializeField] private GameObject pauseMenuUI;
+    [SerializeField] private GameObject PlayerHUD;
 
     private PlayerInput playerInput;
     private InputAction pauseAction;
@@ -76,6 +77,7 @@ public class PauseManager : MonoBehaviour
     public void ResumeGame()
     {
         pauseMenuUI.SetActive(false);
+        PlayerHUD.SetActive(true);
         Time.timeScale = 1f;
         isPaused = false;
 
@@ -94,6 +96,7 @@ public class PauseManager : MonoBehaviour
     private void PauseGame()
     {
         pauseMenuUI.SetActive(true);
+        PlayerHUD.SetActive(false);
         Time.timeScale = 0f;
         isPaused = true;
 
