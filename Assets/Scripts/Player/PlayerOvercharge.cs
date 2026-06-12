@@ -8,13 +8,23 @@ public class PlayerOvercharge : MonoBehaviour
     [SerializeField] private float chargedTime = 20f;
     [SerializeField] private float chargeCooldown = 15f;
     [SerializeField] private float chargeDecayRate = 1f; // Charge decay countdown when not tethered
-    [SerializeField] private float trailDamage = 5f; // temporary for testing
+
+    [Header("Fire Anchor Effect (DOT)")]
+    [SerializeField] private float fireDamage = 4f;
+    [SerializeField] private float fireDamageInterval = 3f;
+
+    [Header("Ice Anchor Effect (Slow)")]
+    [SerializeField] private float iceSlowPercent = 50f;
+
+    [Header("Wind Anchor Effect (Speed Boost)")]
+    [SerializeField] private float windSpeedBoostPercent = 35f;
 
     [Header("References")]
     [SerializeField] private PlayerAnchor playerAnchor;
     [SerializeField] private UIPlayerHUD playerHUD;
     [SerializeField] private PlayerOverchargeVFX overchargeVFX;
     [SerializeField] private OverchargeTrailCollider trailCollider;
+    [SerializeField] private PlayerMovement playerMovement;
 
     // Overcharge Events
     public event Action<float> OnChargeChanged; 
@@ -27,6 +37,7 @@ public class PlayerOvercharge : MonoBehaviour
     private bool isInCooldown;
     private bool isOvercharged;
     private AnchorBase lastTetheredAnchor;
+    private AnchorType currentAnchorType;
 
     // Overcharge Properties
     public float CurrentChargeTime => currentChargeTime;
@@ -36,6 +47,16 @@ public class PlayerOvercharge : MonoBehaviour
     public bool IsOvercharged => isOvercharged;
     public AnchorBase LastTetheredAnchor => lastTetheredAnchor;
     public bool IsTrailActive => isOvercharged || isInCooldown;
+    public AnchorType CurrentAnchorType => currentAnchorType;
+
+    // Enum for anchor types
+    public enum AnchorType
+    {
+        None,
+        Fire,
+        Ice,
+        Wind
+    }
 
     private void Awake()
     {
@@ -51,11 +72,16 @@ public class PlayerOvercharge : MonoBehaviour
         {
             trailCollider = GetComponentInChildren<OverchargeTrailCollider>();
         }
+        if (playerMovement == null)
+        {
+            playerMovement = GetComponent<PlayerMovement>();
+        }
 
         currentChargeTime = 0f;
         currentCooldownTime = 0f;
         isInCooldown = false;
         isOvercharged = false;
+        currentAnchorType = AnchorType.None;
 
         // subscribe to trail collision events
         if (trailCollider != null)
@@ -148,8 +174,14 @@ public class PlayerOvercharge : MonoBehaviour
     {
         isOvercharged = true;
 
+        // Determine anchor type
+        currentAnchorType = GetAnchorTypeFromBase(lastTetheredAnchor);
+
         // Untether Player
         playerAnchor.ReleaseTether();
+
+        // Apply anchor-specific effects
+        ApplyAnchorEffect();
 
         // Start trail effects
         StartOverchargeTrail();
@@ -160,7 +192,7 @@ public class PlayerOvercharge : MonoBehaviour
         // Notify Listeners
         OnOverchargeActivated?.Invoke();
 
-        Debug.Log($"Overcharge activated Anchor Type: {(lastTetheredAnchor != null ? lastTetheredAnchor.GetType().Name : "None")}");
+        Debug.Log($"Overcharge activated! Anchor Type: {currentAnchorType}");
     }
 
     private void StartCooldown()
@@ -195,15 +227,109 @@ public class PlayerOvercharge : MonoBehaviour
         {
             trailCollider.DisableCollider();
         }
+
+
+        RemoveAnchorEffect();
+
+        currentAnchorType = AnchorType.None;
+    }
+
+    private void ApplyAnchorEffect()
+    {
+        switch (currentAnchorType)
+        {
+            case AnchorType.Wind:
+                ApplyWindSpeedBoost();
+                break;
+ 
+        }
+    }
+
+    private void RemoveAnchorEffect()
+    {
+        switch (currentAnchorType)
+        {
+            case AnchorType.Wind:
+                RemoveWindSpeedBoost();
+                break;
+        }
     }
 
     private void HandleEnemyHit(GameObject enemy)
     {
-        Health enemyHealth = enemy.GetComponent<Health>();
-        if (enemyHealth != null)
+        switch (currentAnchorType)
         {
-            enemyHealth.TakeDmg(trailDamage);
+            case AnchorType.Fire:
+                ApplyFireEffect(enemy);
+                break;
+            case AnchorType.Ice:
+                ApplyIceEffect(enemy);
+                break;
+
         }
+    }
+
+    #region Fire Effect (DOT)
+    private void ApplyFireEffect(GameObject enemy)
+    {
+        // Check if enemy already has OverchargeBurnEffect component
+        OverchargeBurnEffect burnEffect = enemy.GetComponent<OverchargeBurnEffect>();
+        if (burnEffect == null)
+        {
+            burnEffect = enemy.AddComponent<OverchargeBurnEffect>();
+        }
+
+        // Apply/refresh burn
+        burnEffect.ApplyBurn(fireDamage, fireDamageInterval, chargeCooldown);
+    }
+    #endregion
+
+    #region Ice Effect (Slow)
+    private void ApplyIceEffect(GameObject enemy)
+    {
+        // Check if enemy already has OverchargeSlowEffect component
+        OverchargeSlowEffect slowEffect = enemy.GetComponent<OverchargeSlowEffect>();
+        if (slowEffect == null)
+        {
+            slowEffect = enemy.AddComponent<OverchargeSlowEffect>();
+        }
+
+        // Apply/refresh slow
+        slowEffect.ApplySlow(iceSlowPercent, chargeCooldown);
+    }
+    #endregion
+
+    #region Wind Effect (Player Speed Boost)
+    private void ApplyWindSpeedBoost()
+    {
+        if (playerMovement != null)
+        {
+            float speedMultiplier = 1f + (windSpeedBoostPercent / 100f);
+            playerMovement.AddSpeedModifier(this, speedMultiplier);
+        }
+    }
+
+    private void RemoveWindSpeedBoost()
+    {
+        if (playerMovement != null)
+        {
+            playerMovement.RemoveSpeedModifier(this);
+        }
+    }
+    #endregion
+
+    private AnchorType GetAnchorTypeFromBase(AnchorBase anchor)
+    {
+        if (anchor == null) return AnchorType.None;
+
+        if (anchor is AnchorFire)
+            return AnchorType.Fire;
+        else if (anchor is AnchorIce)
+            return AnchorType.Ice;
+        else if (anchor is AnchorWind)
+            return AnchorType.Wind;
+        
+        return AnchorType.None;
     }
 
     // Returns true if the player can tether (Not in cooldown state)
