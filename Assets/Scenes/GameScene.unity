@@ -11668,11 +11668,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1334797496}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &465890330 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7555014404437206304, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-  m_PrefabInstance: {fileID: 1933949835}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &466215989
 GameObject:
   m_ObjectHideFlags: 0
@@ -44434,38 +44429,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 531424311684605953, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7555014404437206304, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-      insertIndex: 11
-      addedObject: {fileID: 1933949848}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
 --- !u!114 &1933949836 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7481143701210063934, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
   m_PrefabInstance: {fileID: 1933949835}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 465890330}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dcc43d964d9107046b540ebaae6a0a3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGrapple
---- !u!114 &1933949848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 465890330}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c02f34c0f763e04eb380fe38cf5ecf3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerShieldController
 --- !u!1 &1943047084
 GameObject:
   m_ObjectHideFlags: 0
