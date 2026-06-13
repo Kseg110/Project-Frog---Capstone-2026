@@ -111,8 +111,30 @@ public class Projectile : MonoBehaviour, IProjectile
     // ============================
     private void OnTriggerEnter(Collider other)
     {
+        // ============================
+        // DAMAGE PLAYER IF ENEMY PROJECTILE
+        // ============================
+        if (!isPlayerProjectile && other.CompareTag("Player"))
+        {
+            var player = other.GetComponentInParent<PlayerTakeDamage>();
+            if (player != null)
+            {
+                // Knockback direction (optionnel)
+                Vector3 knockDir = (other.transform.position - transform.position).normalized;
+                knockDir.y = 0f;
+
+                player.TryApplyDamageAndKnockback(damage, knockDir, 5f);
+            }
+
+            Destroy(gameObject);
+            return;
+        }
+
+        // ============================
+        // DAMAGE ENEMY IF PLAYER PROJECTILE
+        // ============================
         var enemy = other.GetComponent<EnemyBase>();
-        if (enemy != null)
+        if (enemy != null && isPlayerProjectile)
         {
             float finalDamage = damage;
 

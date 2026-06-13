@@ -50,7 +50,7 @@ public class PlayerShieldController : MonoBehaviour
     private void TryAutoReactivateShield()
     {
         if (currentShield != ShieldType.None)
-            return; // déjà un shield actif
+            return; // Shield is active, no need to reactivate
 
         // FIRE
         if (firePending && fireReady)
