@@ -36,8 +36,6 @@ public class UpgradeEffectManager : MonoBehaviour
         {
             if (up.Element == anchor.Element)
                 up.OnElementAttached(anchor);
-            else
-                up.OnElementDetached();
         }
     }
 

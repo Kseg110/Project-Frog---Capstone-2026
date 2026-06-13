@@ -22,7 +22,6 @@ public class FireShieldUpgrade : MonoBehaviour, IElementUpgrade
 
     public void OnElementDetached()
     {
-        Debug.Log("[FireShieldUpgrade] DETACHED");
         shield.RemoveShield();
     }
 }

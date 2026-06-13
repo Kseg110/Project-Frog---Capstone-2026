@@ -102,6 +102,9 @@ public class PlayerTakeDamage : MonoBehaviour
         if (isGod)
             return;
 
+        if (Time.time < nextAllowedDamageTime)
+            return;
+
         // SHIELD ALWAYS CHECKS FIRST
         if (shield != null && shield.TakeDamage((int)damageAmount))
         {
@@ -111,9 +114,6 @@ public class PlayerTakeDamage : MonoBehaviour
 
         // If shield didn't absorb, check I-frames 
         if (playerImmortality.IsImmortal)
-            return;
-
-        if (Time.time < nextAllowedDamageTime)
             return;
 
         // Start i-frames
