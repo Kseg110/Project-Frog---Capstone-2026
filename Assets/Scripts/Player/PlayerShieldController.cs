@@ -75,6 +75,7 @@ public class PlayerShieldController : MonoBehaviour
             return false; // no shield → player takes damage
 
         // Shield absorbs the hit
+        Debug.Log($"[Shield] Hit absorbed by {currentShield} shield!");
         ShieldType brokenType = currentShield;
         OnShieldBroken?.Invoke(brokenType);
 

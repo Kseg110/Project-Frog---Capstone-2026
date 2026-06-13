@@ -95,16 +95,34 @@ public class PlayerAnchor : MonoBehaviour
     /// <summary>
     /// Start tethering if there is an anchor in range
     /// </summary>
+    //public void StartTether()
+    //{
+    //    if (currentAnchor == null)
+    //        return;
+
+    //    Transform anchorPoint = GetAnchorPointTransform(currentAnchor);
+
+    //    if (anchorTether != null)
+    //        anchorTether.SetEndPoint(anchorPoint, true);
+
+    //    isTethered = true;
+    //    OnTetherStarted?.Invoke(currentAnchor);
+    //    OnAnchorChanged?.Invoke(currentAnchor);
+    //}
+
     public void StartTether()
     {
         if (currentAnchor == null)
             return;
 
-        Transform anchorPoint = GetAnchorPointTransform(currentAnchor);
+        // 1. AnchorTether doit recevoir le Transform qui contient AnchorBase
+        Transform anchorBaseTransform = currentAnchor.transform;
 
+        // 2. On envoie ce Transform à AnchorTether
         if (anchorTether != null)
-            anchorTether.SetEndPoint(anchorPoint, true);
+            anchorTether.SetEndPoint(anchorBaseTransform, true);
 
+        // 3. On active le tether
         isTethered = true;
         OnTetherStarted?.Invoke(currentAnchor);
         OnAnchorChanged?.Invoke(currentAnchor);

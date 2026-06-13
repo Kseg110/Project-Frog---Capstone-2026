@@ -16,9 +16,10 @@ public class WindShieldUpgrade : MonoBehaviour, IElementUpgrade
     public void OnElementAttached(AnchorBase anchor)
     {
         if (anchor.Element != AnchorElement.Wind) return;
-        if (!UpgradeManager.Instance.HasUpgrade("Wind shield")) return;
+        if (!UpgradeManager.Instance.HasUpgrade("Wind Shield")) return;
 
         shield.GiveWindShield(charges);
+        Debug.Log("[Shield] Wind shield activated!");
     }
 
     public void OnElementDetached()

@@ -14,13 +14,15 @@ public class FireShieldUpgrade : MonoBehaviour, IElementUpgrade
     public void OnElementAttached(AnchorBase anchor)
     {
         if (anchor.Element != AnchorElement.Fire) return;
-        if (!UpgradeManager.Instance.HasUpgrade("Fire shield")) return;
+        if (!UpgradeManager.Instance.HasUpgrade("Fire Shield")) return;
 
         shield.GiveFireShield();
+        Debug.Log("[Shield] FIRE shield activated!");
     }
 
     public void OnElementDetached()
     {
+        Debug.Log("[FireShieldUpgrade] DETACHED");
         shield.RemoveShield();
     }
 }

@@ -14,9 +14,10 @@ public class IceShieldUpgrade : MonoBehaviour, IElementUpgrade
     public void OnElementAttached(AnchorBase anchor)
     {
         if (anchor.Element != AnchorElement.Ice) return;
-        if (!UpgradeManager.Instance.HasUpgrade("Ice shield")) return;
+        if (!UpgradeManager.Instance.HasUpgrade("Ice Shield")) return;
 
         shield.GiveIceShield();
+        Debug.Log("[Shield] ICE shield activated!");
     }
 
     public void OnElementDetached()
