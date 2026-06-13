@@ -172,6 +172,17 @@ public class PlayerAttacks : MonoBehaviour
             proj.Initialize(chargePercent);
             proj.damage = 2f;
         }
+
+        // ============================================================
+        // FAIL-SAFE : IGNORE PLAYER COLLISION FOR PLAYER PROJECTILES
+        // ============================================================
+        Collider projCol = projObj.GetComponent<Collider>();
+        Collider[] playerCols = GetComponentsInChildren<Collider>();
+
+        foreach (var col in playerCols)
+        {
+            Physics.IgnoreCollision(projCol, col);
+        }
     }
 
     // ============================================================

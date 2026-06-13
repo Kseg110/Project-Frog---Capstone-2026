@@ -11668,6 +11668,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1334797496}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &465890330 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7555014404437206304, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+  m_PrefabInstance: {fileID: 1933949835}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &466215989
 GameObject:
   m_ObjectHideFlags: 0
@@ -23377,9 +23382,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96435424aefb3ca448eb267d308e039a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireShieldUpgrade
-  cooldown: 10
-  explosionRadius: 6
-  explosionBaseDamage: 20
 --- !u!1 &977871942
 GameObject:
   m_ObjectHideFlags: 0
@@ -36088,81 +36090,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 842460681}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1609535701
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1609535705}
-  - component: {fileID: 1609535702}
-  - component: {fileID: 1609535703}
-  - component: {fileID: 1609535704}
-  m_Layer: 0
-  m_Name: UpgradeSystems
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1609535702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1609535701}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a438717a1e2c2a442a45df181b46ad3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FireUpgradeSystem
-  explosionRadius: 6
-  explosionBaseDamage: 20
---- !u!114 &1609535703
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1609535701}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a25fd0dca0220bc4ba1016e337f17525, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::IceUpgradeSystem
---- !u!114 &1609535704
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1609535701}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 467ce73b3138a8e468cca738f7be4ca8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WindUpgradeSystem
-  debugExtraVolley: 0
-  debugHomingEnabled: 0
-  playerAnchor: {fileID: 1933949836}
---- !u!4 &1609535705
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1609535701}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 65.48311, y: -0, z: 389.83047}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1617488456
 GameObject:
   m_ObjectHideFlags: 0
@@ -44510,19 +44437,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7555014404437206304, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      insertIndex: 11
+      addedObject: {fileID: 1933949848}
   m_SourcePrefab: {fileID: 100100000, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
 --- !u!114 &1933949836 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7481143701210063934, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
   m_PrefabInstance: {fileID: 1933949835}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 465890330}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dcc43d964d9107046b540ebaae6a0a3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGrapple
+--- !u!114 &1933949848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 465890330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c02f34c0f763e04eb380fe38cf5ecf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerShieldController
 --- !u!1 &1943047084
 GameObject:
   m_ObjectHideFlags: 0
@@ -48388,5 +48330,4 @@ SceneRoots:
   - {fileID: 1382923415}
   - {fileID: 1535729723}
   - {fileID: 1600417439}
-  - {fileID: 1609535705}
   - {fileID: 693743222}

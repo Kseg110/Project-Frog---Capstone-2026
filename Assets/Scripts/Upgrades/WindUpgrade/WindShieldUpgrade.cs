@@ -5,49 +5,24 @@ public class WindShieldUpgrade : MonoBehaviour, IElementUpgrade
     public AnchorElement Element => AnchorElement.Wind;
 
     private PlayerShieldController shield;
-    private PlayerAnchor anchor;
 
-    private int hp;
-    private int maxHP = 2;
+    private int charges = 2;
 
     private void Awake()
     {
         shield = FindFirstObjectByType<PlayerShieldController>();
-        anchor = FindFirstObjectByType<PlayerAnchor>();
     }
 
-    private void OnEnable()
+    public void OnElementAttached(AnchorBase anchor)
     {
-        shield.OnShieldBroken += HandleBreak;
-    }
+        if (anchor.Element != AnchorElement.Wind) return;
+        if (!UpgradeManager.Instance.HasUpgrade("Wind shield")) return;
 
-    private void OnDisable()
-    {
-        shield.OnShieldBroken -= HandleBreak;
-    }
-
-    public void OnElementAttached(AnchorBase a)
-    {
-        if (!UpgradeManager.Instance.HasUpgrade("Wind shield"))
-            return;
-
-        hp = maxHP;
-        shield.GiveShield();
+        shield.GiveWindShield(charges);
     }
 
     public void OnElementDetached()
     {
-        hp = 0;
         shield.RemoveShield();
-    }
-
-    private void HandleBreak()
-    {
-        if (hp > 0)
-        {
-            hp--;
-            if (hp > 0)
-                shield.GiveShield();
-        }
     }
 }

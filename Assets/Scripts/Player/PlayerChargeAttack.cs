@@ -76,6 +76,8 @@ public class PlayerChargeAttack : MonoBehaviour
                         proj.effectDuration = fireData.BurnDuration;
                         proj.effectValue = fireData.BurnTickRate;
                     }
+
+                    IgnorePlayerCollision(projObj);
                     break;
                 }
 
@@ -97,6 +99,8 @@ public class PlayerChargeAttack : MonoBehaviour
                         proj.effectValue = 1f;
                         proj.isPiercingProjectile = true;
                     }
+
+                    IgnorePlayerCollision(projObj);
                     break;
                 }
 
@@ -127,6 +131,8 @@ public class PlayerChargeAttack : MonoBehaviour
                             if (HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
                                 proj.EnableHoming();
                         }
+
+                        IgnorePlayerCollision(projObj);
                     }
                     break;
                 }
@@ -135,8 +141,24 @@ public class PlayerChargeAttack : MonoBehaviour
         CancelCharge();
     }
 
-// Helper FireProjectile method accepts all effect parameters for each anchor type
-private void FireProjectile(
+    // ============================================================
+    // FAIL-SAFE : IGNORE PLAYER COLLISION FOR CHARGED PROJECTILES
+    // ============================================================
+    private void IgnorePlayerCollision(GameObject projObj)
+    {
+        Collider projCol = projObj.GetComponent<Collider>();
+        if (projCol == null) return;
+
+        Collider[] playerCols = GetComponentsInChildren<Collider>();
+
+        foreach (var col in playerCols)
+        {
+            Physics.IgnoreCollision(projCol, col);
+        }
+    }
+
+    // Helper FireProjectile method accepts all effect parameters for each anchor type
+    private void FireProjectile(
         GameObject prefab,
         Vector3 position,
         Vector3 direction,
