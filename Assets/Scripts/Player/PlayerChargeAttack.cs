@@ -1,10 +1,9 @@
-using System;
 using UnityEngine;
 
 public class PlayerChargeAttack : MonoBehaviour
 {
     [Header("Charge Projectile Prefabs")]
-    [SerializeField] private GameObject FireChargeProjectilePrefab;    //prefab ???
+    [SerializeField] private GameObject FireChargeProjectilePrefab;
     [SerializeField] private GameObject IceChargeProjectilePrefab;
     [SerializeField] private GameObject WindChargeProjectilePrefab;
 
@@ -15,40 +14,13 @@ public class PlayerChargeAttack : MonoBehaviour
     private float ChargeTimer;
     private bool isCharging;
 
-    private FireUpgradeSystem fireSystem;
-    private IceUpgradeSystem iceSystem;
-    private WindUpgradeSystem windSystem;
-
     public bool IsCharging => isCharging;
-
 
     private void Awake()
     {
         if (FireChargeProjectilePrefab == null || IceChargeProjectilePrefab == null || WindChargeProjectilePrefab == null)
         {
-            Debug.LogError("Missing Projectile Prefab assignment within inspector", this);
-        }
-
-        //Get FireUpgradeSystem reference
-        fireSystem = FindFirstObjectByType<FireUpgradeSystem>();
-        if (fireSystem == null)
-        {
-            Debug.LogError("FireUpgradeSystem not found in scene!", this);
-        }
-
-        //Get IceUpgradeSystem reference
-        iceSystem = FindFirstObjectByType<IceUpgradeSystem>();
-        if (iceSystem == null)
-        {
-            Debug.LogError("IceUpgradeSystem not found in scene!", this);
-        }
-
-        //Get WindUpgradeSystem reference 
-        windSystem = FindFirstObjectByType<WindUpgradeSystem>();
-
-        if (windSystem == null)
-        {
-            Debug.LogError("WindUpgradeSystem not found in scene!", this);
+            Debug.LogError("[PlayerChargeAttack] Missing projectile prefab assignment!", this);
         }
     }
 
@@ -72,13 +44,11 @@ public class PlayerChargeAttack : MonoBehaviour
         ChargeTimer = Mathf.Clamp(ChargeTimer + Time.deltaTime, 0f, MaxChargeTime);
     }
 
-    public void ReleaseCharge(Vector3 FirePoint, Vector3 direction)
+    public void ReleaseCharge(Vector3 firePoint, Vector3 direction)
     {
         if (!IsCharging || CurrentAnchor == null) return;
 
         float chargePercent = Mathf.Clamp01(ChargeTimer / MaxChargeTime);
-
-        // Baseline values
         float chargedDamage = 10f + 15f * chargePercent;
 
         switch (CurrentAnchor.BaseData)
@@ -87,44 +57,44 @@ public class PlayerChargeAttack : MonoBehaviour
             // FIRE CHARGE ATTACK
             // ---------------------------------------------------------
             case AnchorFireData fireData:
-                FireProjectile(
-                    FireChargeProjectilePrefab,
-                    FirePoint,
-                    direction,
-                    chargedDamage,
-                    fireData.BurnDuration,
-                    fireData.BurnTickRate,
-                    "Burn",
-                    chargePercent
-                );
-                break;
+                {
+                    float explosionDamage = chargedDamage;
+
+                    if (PyronovaUpgrade.Instance != null)
+                    {
+                        float bonus = PyronovaUpgrade.Instance.GetExplosionBonus();
+                        explosionDamage *= 1f + bonus / 100f;
+                    }
+
+                    var projObj = Instantiate(FireChargeProjectilePrefab, firePoint, Quaternion.LookRotation(direction));
+                    var proj = projObj.GetComponent<Projectile>();
+                    if (proj != null)
+                    {
+                        proj.Initialize(chargePercent);
+                        proj.damage = explosionDamage;
+                        proj.effectType = "Burn";
+                        proj.effectDuration = fireData.BurnDuration;
+                        proj.effectValue = fireData.BurnTickRate;
+                    }
+                    break;
+                }
 
             // ---------------------------------------------------------
             // ICE CHARGE ATTACK
             // ---------------------------------------------------------
-
             case AnchorIceData iceData:
                 {
                     float iceDamage = chargedDamage * iceData.DamageMultiplier;
 
-                    var projObj = Instantiate(
-                        IceChargeProjectilePrefab,
-                        FirePoint,
-                        Quaternion.LookRotation(direction)
-                    );
-
+                    var projObj = Instantiate(IceChargeProjectilePrefab, firePoint, Quaternion.LookRotation(direction));
                     var proj = projObj.GetComponent<Projectile>();
                     if (proj != null)
                     {
                         proj.Initialize(chargePercent);
                         proj.damage = iceDamage;
-
-                        // ICE EFFECTS
                         proj.effectType = "Freeze";
-                        proj.effectDuration = 1f;       // Freeze 1s
+                        proj.effectDuration = 1f;
                         proj.effectValue = 1f;
-
-                        // IMPORTANT: ICE SECONDARY = PIERCING
                         proj.isPiercingProjectile = true;
                     }
                     break;
@@ -136,9 +106,7 @@ public class PlayerChargeAttack : MonoBehaviour
             case AnchorWindData windData:
                 {
                     int baseProjectiles = 4;
-
-                    // MULTISHOT UPGRADE
-                    int extra = windSystem != null ? windSystem.GetExtraVolley() : 0;
+                    int extra = MultishotUpgrade.Instance != null ? MultishotUpgrade.Instance.GetExtraDarts() : 0;
                     int totalProjectiles = baseProjectiles + extra;
 
                     float windDamage = chargedDamage * windData.DamageMultiplier;
@@ -149,27 +117,26 @@ public class PlayerChargeAttack : MonoBehaviour
                         float angle = spreadAngle * (i - totalProjectiles / 2f);
                         Vector3 spreadDir = Quaternion.Euler(0, angle, 0) * direction;
 
-                        var projObj = Instantiate(WindChargeProjectilePrefab, FirePoint, Quaternion.LookRotation(spreadDir));
+                        var projObj = Instantiate(WindChargeProjectilePrefab, firePoint, Quaternion.LookRotation(spreadDir));
                         var proj = projObj.GetComponent<Projectile>();
-
                         if (proj != null)
                         {
                             proj.Initialize(chargePercent);
                             proj.damage = windDamage;
 
-                            // HOMING UPGRADE
-                            if (windSystem != null && windSystem.IsHomingEnabled())
+                            if (HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
                                 proj.EnableHoming();
                         }
                     }
+                    break;
                 }
-                break;
         }
+
         CancelCharge();
     }
 
-    // Helper FireProjectile method accepts all effect parameters for each anchor type
-    private void FireProjectile(
+// Helper FireProjectile method accepts all effect parameters for each anchor type
+private void FireProjectile(
         GameObject prefab,
         Vector3 position,
         Vector3 direction,

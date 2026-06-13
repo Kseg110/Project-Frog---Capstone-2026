@@ -24,14 +24,51 @@ public class Projectile : MonoBehaviour, IProjectile
     public bool isPiercingProjectile = false;
     private int pierceCount = 0;
 
-    private IceUpgradeSystem iceSystem;
-
     private void Awake()
     {
-        iceSystem = FindFirstObjectByType<IceUpgradeSystem>();   // a chanlenger pk pas les 2 autre ? meme chose pour le private iceupgrade system
+        // If homing upgrade is active, enable homing
+        if (HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
+            EnableHoming();
     }
 
-    // Wind homing
+    public virtual void Initialize(float chargePercent)
+    {
+        // Base speed & damage scaling
+        speed = Mathf.Lerp(baseSpeed, baseSpeed * 2f, chargePercent);
+        damage = Mathf.Lerp(baseDamage, baseDamage * 3f, chargePercent);
+
+        // Frostwind (Ice primary speed)
+        if (FrostwindUpgrade.Instance != null)
+        {
+            float bonus = FrostwindUpgrade.Instance.GetBonus();
+            speed *= 1f + bonus / 100f;
+        }
+
+        // Searing Shot (Fire primary dart damage)
+        if (effectType == "Burn" && SearingShotUpgrade.Instance != null)
+        {
+            float bonus = SearingShotUpgrade.Instance.GetDartBonus();
+            damage *= 1f + bonus / 100f;
+        }
+
+        // Visual charge scaling
+        float scale = Mathf.Lerp(0.25f, maxScale, chargePercent);
+        transform.localScale = Vector3.one * scale;
+
+        Destroy(gameObject, 3f);
+    }
+
+
+    public void Init(float damage, float lifetime)
+    {
+        this.damage = damage;
+        this.speed = baseSpeed;
+        Destroy(gameObject, lifetime);
+    }
+
+    // ============================
+    // HOMING LOGIC
+    // ============================
     public void EnableHoming(float turnSpeed = 10f)
     {
         isHoming = true;
@@ -41,7 +78,7 @@ public class Projectile : MonoBehaviour, IProjectile
 
     private EnemyBase FindNearestEnemy()
     {
-        EnemyBase[] enemies = Object.FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
+        EnemyBase[] enemies = FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
         EnemyBase closest = null;
         float minDist = Mathf.Infinity;
 
@@ -57,34 +94,6 @@ public class Projectile : MonoBehaviour, IProjectile
         return closest;
     }
 
-    public virtual void Initialize(float chargePercent)
-    {
-        speed = Mathf.Lerp(baseSpeed, baseSpeed * 2f, chargePercent);
-        damage = Mathf.Lerp(baseDamage, baseDamage * 3f, chargePercent);
-
-        // FROSTWIND UPGRADE
-        float frostBonus = UpgradeManager.Instance.GetTotalStatForElement(
-            AnchorElement.Ice,
-            UpgradeStat.PrimarySpeed
-        );
-        speed *= 1f + frostBonus / 100f;
-
-        float scale = Mathf.Lerp(0.25f, maxScale, chargePercent); //Only exists to help visualize the charge's effect on the projectile in the absence of damage
-        transform.localScale = Vector3.one * scale;
-
-        Destroy(gameObject, 3f);
-    }
-
-    public void Init(float damage, float lifetime)
-    {
-        this.damage = damage;
-        this.speed = baseSpeed;
-        Destroy(gameObject, lifetime);
-    }
-
-    // -----------------------------
-    // MOVEMENT
-    // -----------------------------
     protected virtual void Update()
     {
         if (isHoming && target != null)
@@ -97,9 +106,11 @@ public class Projectile : MonoBehaviour, IProjectile
         transform.position += transform.forward * speed * Time.deltaTime;
     }
 
-    // -----------------------------
+
+
+    // ============================
     // COLLISION
-    // -----------------------------
+    // ============================
     private void OnTriggerEnter(Collider other)
     {
         var enemy = other.GetComponent<EnemyBase>();
@@ -107,45 +118,50 @@ public class Projectile : MonoBehaviour, IProjectile
         {
             float finalDamage = damage;
 
-            // POINT BLANK BONUS
+            // Point Blank Shot
             float dist = Vector3.Distance(transform.position, enemy.transform.position);
-            if (dist < pointBlankRange)
+            if (PointBlankShotUpgrade.Instance != null && dist < pointBlankRange)
             {
-                float bonus = UpgradeManager.Instance.GetTotalStatForElement(
-                    AnchorElement.Wind,
-                    UpgradeStat.PointBlankDamage
-                );
+                float bonus = PointBlankShotUpgrade.Instance.GetBonus();
                 finalDamage *= 1f + bonus / 100f;
             }
 
-            // APPLY DAMAGE
+            // Cryo Fragility (bonus if slowed)
+            if (CryoFragilityUpgrade.Instance != null && enemy.IsSlowed)
+            {
+                float bonus = CryoFragilityUpgrade.Instance.GetBonus();
+                finalDamage *= 1f + bonus / 100f;
+            }
+
+            // Apply damage + effect
             if (!string.IsNullOrEmpty(effectType))
                 enemy.TakeDamage(finalDamage, effectType, effectDuration, effectValue);
             else
                 enemy.TakeDamage(finalDamage);
+
+            // Extinguisher
+            if (ExtinguisherUpgrade.Instance != null)
+                ExtinguisherUpgrade.Instance.OnHitEnemy(enemy);
+
+            // Shatter
+            if (ShatterUpgrade.Instance != null)
+                ShatterUpgrade.Instance.OnHitEnemy(enemy);
+
+            // Lethal Piercing
+            if (isPiercingProjectile && LethalPiercingUpgrade.Instance != null)
+            {
+                float bonus = LethalPiercingUpgrade.Instance.GetBonus();
+                enemy.TakeDamagePercent(bonus);
+            }
         }
-   
-            // -----------------------------
-            // ICE UPGRADE SYSTEM HOOK
-            // -----------------------------
-            if (iceSystem != null)
-            {
-                bool piercingHit = isPiercingProjectile;
-                iceSystem.OnHitEnemy(enemy, piercingHit);       
-            }
 
-            // -----------------------------
-            // PIERCE LOGIC (Ice secondary)
-            // -----------------------------
-            if (isPiercingProjectile)
-            {
-                pierceCount++;
+        // Piercing logic
+        if (isPiercingProjectile)
+        {
+            pierceCount++;
+            return;
+        }
 
-                // Projectile continues infinitely
-                return;
-            }
-
-            // Destroy normal projectile
-            Destroy(gameObject);
+        Destroy(gameObject);
     }
 }

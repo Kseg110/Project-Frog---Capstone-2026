@@ -7,6 +7,7 @@ public class PlayerAnchor : MonoBehaviour
 {
     public event Action<AnchorBase> OnTetherStarted;
     public event Action OnTetherReleased;
+    public event Action<AnchorBase> OnAnchorChanged;
 
     private AnchorBase[] allAnchors;
     private AnchorBase currentAnchor;
@@ -106,6 +107,7 @@ public class PlayerAnchor : MonoBehaviour
 
         isTethered = true;
         OnTetherStarted?.Invoke(currentAnchor);
+        OnAnchorChanged?.Invoke(currentAnchor);
     }
 
     /// <summary>
@@ -118,6 +120,7 @@ public class PlayerAnchor : MonoBehaviour
         if (anchorTether != null)
             anchorTether.SetEndPoint(null, true);
         OnTetherReleased?.Invoke();
+        OnAnchorChanged?.Invoke(null);
     }
 
     private Transform GetAnchorPointTransform(AnchorBase anchor)

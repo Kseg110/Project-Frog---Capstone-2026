@@ -1,37 +1,36 @@
 using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Health : MonoBehaviour, IDamageable
 {
     [SerializeField] private float maxHealth = 100f;
+    public float MaxHealth => maxHealth;
     private float currentHealth;
     private Healthbar healthbar;
     private UIPlayerHUD playerHUD;
 
     public bool IsDead { get; private set; }
     public event Action<GameObject> OnDestroyed;
-    public float MaxHealth => maxHealth;
+    
+    //Burning DOT
+    private bool isBurning;
+    private Coroutine burnRoutine;
+    private EnemyBase enemy;
 
     private void Awake()
     {
         healthbar = GetComponentInChildren<Healthbar>();
+        enemy = GetComponent<EnemyBase>();
 
         if (CompareTag("Player"))
-        {
             playerHUD = FindAnyObjectByType<UIPlayerHUD>();
-        }
         else
-        {
             playerHUD = null;
-        }
-
 
         if (healthbar == null)
         {
-            Debug.LogError(
-                $"Health on {gameObject.name} requires a child HealthBar.", this);
+            Debug.LogError($"Health on {gameObject.name} requires a child HealthBar.", this);
         }
 
         currentHealth = maxHealth;
@@ -39,6 +38,9 @@ public class Health : MonoBehaviour, IDamageable
         playerHUD?.UpdateHealth(currentHealth / maxHealth);
     }
 
+    // ============================================================
+    // BASIC DAMAGE
+    // ============================================================
     public void TakeDmg(float dmg)
     {
         if (IsDead) return;
@@ -61,44 +63,45 @@ public class Health : MonoBehaviour, IDamageable
         }
     }
 
+    // ============================================================
+    // DAMAGE WITH EFFECT (Burn, Freeze, etc.)
+    // ============================================================
     public void TakeDmg(float dmg, string effectType, float effectDuration, float effectValue)
     {
         TakeDmg(dmg);
+
         if (effectType == "Burn")
-        {
             ApplyBurn(effectDuration, effectValue, dmg);
-        }
     }
 
+    // ============================================================
+    // HEALING
+    // ============================================================
     public void Heal(float amount)
     {
-        Debug.Log("heal");
         if (IsDead) return;
 
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
 
         healthbar.UpdateHealthBar(maxHealth, currentHealth);
-
         playerHUD?.UpdateHealth(currentHealth / maxHealth);
     }
 
+    // ============================================================
+    // DEATH
+    // ============================================================
     private void Die()
     {
         IsDead = true;
-        //  so that enemies dont trigger the death overlay and only the player does
+
         if (CompareTag("Player"))
         {
             UIDeathOverlay deathOverlay = FindFirstObjectByType<UIDeathOverlay>();
-
             if (deathOverlay != null)
-            {
                 deathOverlay.ShowDeathOverlay();
-            }
             else
-            {
                 Debug.LogError("No PlayerDeathOverlay found in scene.");
-            }
 
             gameObject.SetActive(false);
         }
@@ -109,24 +112,42 @@ public class Health : MonoBehaviour, IDamageable
         }
     }
 
-    #region Burn DOT
-    public void ApplyBurn(float duration, float tickRate, float totalDamage)
+    // ============================================================
+    // BURN LOGIC (Wildfire integrated)
+    // ============================================================
+    public void ApplyBurn(float duration, float tickRate, float baseDamage)
     {
-        StartCoroutine(BurnCoroutine(duration, tickRate, totalDamage));
+        if (burnRoutine != null)
+            StopCoroutine(burnRoutine);
+
+        burnRoutine = StartCoroutine(BurnRoutine(duration, tickRate, baseDamage));
     }
 
-    private IEnumerator BurnCoroutine(float duration, float tickRate, float totalDamage)
+    private IEnumerator BurnRoutine(float duration, float tickRate, float baseDamage)
     {
-        float elapsed = 0f;
-        int ticks = Mathf.CeilToInt(duration / tickRate);
-        float damagePerTick = totalDamage / ticks;
+        isBurning = true;
+        enemy?.SetBurning(true);
 
-        while (elapsed < duration)
+        float timer = 0f;
+
+        while (timer < duration)
         {
-            TakeDmg(damagePerTick);
+            float finalTickDamage = baseDamage;
+
+            // Wildfire upgrade (Fire burn damage bonus)
+            if (WildfireUpgrade.Instance != null)
+            {
+                float bonus = WildfireUpgrade.Instance.GetBurnBonus();
+                finalTickDamage *= 1f + bonus / 100f;
+            }
+
+            TakeDmg(finalTickDamage);
+
+            timer += tickRate;
             yield return new WaitForSeconds(tickRate);
-            elapsed += tickRate;
         }
+
+        isBurning = false;
+        enemy?.SetBurning(false);
     }
-    #endregion
 }
