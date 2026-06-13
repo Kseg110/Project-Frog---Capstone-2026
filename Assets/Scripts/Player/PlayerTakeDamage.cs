@@ -98,7 +98,6 @@ public class PlayerTakeDamage : MonoBehaviour
         Vector3 knockDirection,
         float knockbackDistance)
     {
-        Debug.Log("[PlayerTakeDamage] TryApplyDamageAndKnockback CALLED");
         if (isGod)
             return;
 
@@ -109,7 +108,10 @@ public class PlayerTakeDamage : MonoBehaviour
         if (shield != null && shield.TakeDamage((int)damageAmount))
         {
             Debug.Log("[Shield] Hit absorbed by shield!");
-            return; // Shield absorbed → no damage, no knockback, no flash
+
+            // Activate i-frames even if shield absorbed, to prevent multiple hits in quick succession
+            nextAllowedDamageTime = Time.time + immortalityTime;
+            return;
         }
 
         // If shield didn't absorb, check I-frames 

@@ -23,8 +23,13 @@ public class PlayerShieldController : MonoBehaviour
     private bool fireReady = true;
     private bool iceReady = true;
 
+    private bool firePending = false;
+    private bool icePending = false;
+    private bool windPending = false;
+
     private float fireCooldown = 10f;
-    private float iceCooldown = 1f;
+    private float iceCooldown = 10f;
+    private float windCooldown = 10f;
 
     private PlayerAnchor anchor;
 
@@ -36,6 +41,41 @@ public class PlayerShieldController : MonoBehaviour
     // ============================================================
     // PUBLIC API
     // ============================================================
+
+    private void Update()
+    {
+        TryAutoReactivateShield();
+    }
+
+    private void TryAutoReactivateShield()
+    {
+        if (currentShield != ShieldType.None)
+            return; // déjà un shield actif
+
+        // FIRE
+        if (firePending && fireReady)
+        {
+            GiveFireShield();
+            firePending = false;
+            return;
+        }
+
+        // ICE
+        if (icePending && iceReady)
+        {
+            GiveIceShield();
+            icePending = false;
+            return;
+        }
+
+        // WIND
+        if (windPending)
+        {
+            GiveWindShield(2);
+            windPending = false;
+            return;
+        }
+    }
 
     public void GiveFireShield()
     {
@@ -103,6 +143,7 @@ public class PlayerShieldController : MonoBehaviour
                 {
                     Debug.Log("Wind shield fully depleted.");
                     RemoveShield();
+                    StartCoroutine(WindCooldownRoutine());
                 }
                 break;
         }
@@ -155,6 +196,7 @@ public class PlayerShieldController : MonoBehaviour
         fireReady = false;
         yield return new WaitForSeconds(fireCooldown);
         fireReady = true;
+        firePending = true;
     }
 
     private IEnumerator IceCooldownRoutine()
@@ -162,5 +204,13 @@ public class PlayerShieldController : MonoBehaviour
         iceReady = false;
         yield return new WaitForSeconds(iceCooldown);
         iceReady = true;
+        icePending = true;
+    }
+
+    private IEnumerator WindCooldownRoutine()
+    {
+        windPending = false;
+        yield return new WaitForSeconds(windCooldown);
+        windPending = true;
     }
 }
