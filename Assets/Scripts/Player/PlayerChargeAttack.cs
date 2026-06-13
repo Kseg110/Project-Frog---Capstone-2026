@@ -120,8 +120,9 @@ public class PlayerChargeAttack : MonoBehaviour
                     {
                         float angle = spreadAngle * (i - totalProjectiles / 2f);
                         Vector3 spreadDir = Quaternion.Euler(0, angle, 0) * direction;
+                        Vector3 spawnPos = firePoint + spreadDir * 0.5f;
 
-                        var projObj = Instantiate(WindChargeProjectilePrefab, firePoint, Quaternion.LookRotation(spreadDir));
+                        var projObj = Instantiate(WindChargeProjectilePrefab, spawnPos, Quaternion.LookRotation(spreadDir));
                         var proj = projObj.GetComponent<Projectile>();
                         if (proj != null)
                         {

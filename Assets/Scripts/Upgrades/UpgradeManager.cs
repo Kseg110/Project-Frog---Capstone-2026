@@ -157,7 +157,7 @@ public class UpgradeManager : MonoBehaviour
             if (kvp.Key.Stat == stat)
                 total += kvp.Key.GetTotalValueUpToLevel(kvp.Value);
         }
-        Debug.Log($"[UpgradeManager] {element} stat {stat} total = {total}");
+        //Debug.Log($"[UpgradeManager] {element} stat {stat} total = {total}");
         return total;
     }
 
