@@ -176,13 +176,24 @@ public class PlayerAttacks : MonoBehaviour
         // ============================================================
         // FAIL-SAFE : IGNORE PLAYER COLLISION FOR PLAYER PROJECTILES
         // ============================================================
-        Collider projCol = projObj.GetComponent<Collider>();
+        Collider[] projCols = projObj.GetComponentsInChildren<Collider>();
         Collider[] playerCols = GetComponentsInChildren<Collider>();
 
-        foreach (var col in playerCols)
-        {
-            Physics.IgnoreCollision(projCol, col);
-        }
+        foreach (var pCol in projCols)
+            foreach (var col in playerCols)
+                Physics.IgnoreCollision(pCol, col);
+    }
+
+    private void IgnorePlayerCollision(GameObject projObj)
+    {
+        Collider[] projCols = projObj.GetComponentsInChildren<Collider>();
+        if (projCols.Length == 0) return;
+
+        Collider[] playerCols = GetComponentsInChildren<Collider>();
+
+        foreach (var pCol in projCols)
+            foreach (var col in playerCols)
+                Physics.IgnoreCollision(pCol, col);
     }
 
     // ============================================================

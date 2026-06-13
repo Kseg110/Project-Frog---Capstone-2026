@@ -58,7 +58,6 @@ public class Projectile : MonoBehaviour, IProjectile
         Destroy(gameObject, 3f);
     }
 
-
     public void Init(float damage, float lifetime)
     {
         this.damage = damage;
@@ -105,8 +104,6 @@ public class Projectile : MonoBehaviour, IProjectile
 
         transform.position += transform.forward * speed * Time.deltaTime;
     }
-
-
 
     // ============================
     // COLLISION

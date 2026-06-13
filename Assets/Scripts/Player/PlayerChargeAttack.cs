@@ -146,15 +146,12 @@ public class PlayerChargeAttack : MonoBehaviour
     // ============================================================
     private void IgnorePlayerCollision(GameObject projObj)
     {
-        Collider projCol = projObj.GetComponent<Collider>();
-        if (projCol == null) return;
-
+        Collider[] projCols = projObj.GetComponentsInChildren<Collider>();
         Collider[] playerCols = GetComponentsInChildren<Collider>();
 
-        foreach (var col in playerCols)
-        {
-            Physics.IgnoreCollision(projCol, col);
-        }
+        foreach (var pCol in projCols)
+            foreach (var col in playerCols)
+                Physics.IgnoreCollision(pCol, col);
     }
 
     // Helper FireProjectile method accepts all effect parameters for each anchor type
