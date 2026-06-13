@@ -13,6 +13,7 @@ public class Projectile : MonoBehaviour, IProjectile
     public string effectType;
     public float effectDuration;
     public float effectValue;
+    public bool isPlayerProjectile = false;
 
     // Wind Upgrade
     private bool isHoming = false;

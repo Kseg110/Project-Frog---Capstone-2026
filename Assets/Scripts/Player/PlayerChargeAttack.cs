@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerChargeAttack : MonoBehaviour
@@ -75,6 +76,7 @@ public class PlayerChargeAttack : MonoBehaviour
                         proj.effectType = "Burn";
                         proj.effectDuration = fireData.BurnDuration;
                         proj.effectValue = fireData.BurnTickRate;
+                        proj.isPlayerProjectile = true;
                     }
 
                     IgnorePlayerCollision(projObj);
@@ -98,6 +100,7 @@ public class PlayerChargeAttack : MonoBehaviour
                         proj.effectDuration = 1f;
                         proj.effectValue = 1f;
                         proj.isPiercingProjectile = true;
+                        proj.isPlayerProjectile = true;
                     }
 
                     IgnorePlayerCollision(projObj);
@@ -116,6 +119,8 @@ public class PlayerChargeAttack : MonoBehaviour
                     float windDamage = chargedDamage * windData.DamageMultiplier;
                     float spreadAngle = 5f;
 
+                    List<GameObject> spawnedProjectiles = new List<GameObject>();
+
                     for (int i = 0; i < totalProjectiles; i++)
                     {
                         float angle = spreadAngle * (i - totalProjectiles / 2f);
@@ -124,16 +129,29 @@ public class PlayerChargeAttack : MonoBehaviour
 
                         var projObj = Instantiate(WindChargeProjectilePrefab, spawnPos, Quaternion.LookRotation(spreadDir));
                         var proj = projObj.GetComponent<Projectile>();
+                        
                         if (proj != null)
                         {
                             proj.Initialize(chargePercent);
                             proj.damage = windDamage;
+                            proj.isPlayerProjectile = true;
 
                             if (HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
                                 proj.EnableHoming();
                         }
 
                         IgnorePlayerCollision(projObj);
+
+                        Collider[] projCols = projObj.GetComponentsInChildren<Collider>();
+                        foreach (var other in spawnedProjectiles)
+                        {
+                            Collider[] otherCols = other.GetComponentsInChildren<Collider>();
+                            foreach (var c1 in projCols)
+                                foreach (var c2 in otherCols)
+                                    Physics.IgnoreCollision(c1, c2);
+                        }
+
+                        spawnedProjectiles.Add(projObj);
                     }
                     break;
                 }
@@ -147,6 +165,10 @@ public class PlayerChargeAttack : MonoBehaviour
     // ============================================================
     private void IgnorePlayerCollision(GameObject projObj)
     {
+        var proj = projObj.GetComponent<Projectile>();
+        if (proj == null || !proj.isPlayerProjectile)
+            return;
+
         Collider[] projCols = projObj.GetComponentsInChildren<Collider>();
         Collider[] playerCols = GetComponentsInChildren<Collider>();
 

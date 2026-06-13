@@ -16,10 +16,18 @@ public class RangedAttack : AttackBaseSO
     protected override void PerformAttack(Transform target, Transform enemy)
     {
         Vector3 direction = (target.position - enemy.position).normalized;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
 
-        GameObject projectile = Instantiate(ProjectilePrefab, enemy.position, rotation);
-        Debug.Log("Attacked");
+        GameObject projectile = Instantiate(ProjectilePrefab, enemy.position + direction * 1f, Quaternion.LookRotation(direction));
+
+        Rigidbody rb = projectile.GetComponent<Rigidbody>();
+        if (rb != null)
+            rb.linearVelocity = direction * 10f;
+
+        Projectile proj = projectile.GetComponent<Projectile>();
+        if (proj != null)
+        {
+            proj.Init(damage, 3f);
+            proj.isPlayerProjectile = false;
+        }
     }
 }

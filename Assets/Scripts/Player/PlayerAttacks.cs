@@ -171,17 +171,23 @@ public class PlayerAttacks : MonoBehaviour
         {
             proj.Initialize(chargePercent);
             proj.damage = 2f;
+
+            // Mark the projectile as a player projectile for collision handling
+            proj.isPlayerProjectile = true;
         }
 
         // ============================================================
-        // FAIL-SAFE : IGNORE PLAYER COLLISION FOR PLAYER PROJECTILES
+        // FAIL-SAFE : IGNORE COLLISION UNIQUEMENT POUR PROJECTILES JOUEUR
         // ============================================================
-        Collider[] projCols = projObj.GetComponentsInChildren<Collider>();
-        Collider[] playerCols = GetComponentsInChildren<Collider>();
+        if (proj != null && proj.isPlayerProjectile)
+        {
+            Collider[] projCols = projObj.GetComponentsInChildren<Collider>();
+            Collider[] playerCols = GetComponentsInChildren<Collider>();
 
-        foreach (var pCol in projCols)
-            foreach (var col in playerCols)
-                Physics.IgnoreCollision(pCol, col);
+            foreach (var pCol in projCols)
+                foreach (var col in playerCols)
+                    Physics.IgnoreCollision(pCol, col);
+        }
     }
 
     private void IgnorePlayerCollision(GameObject projObj)
