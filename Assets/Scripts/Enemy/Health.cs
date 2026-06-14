@@ -1,9 +1,13 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using FMODUnity;
 
 public class Health : MonoBehaviour, IDamageable
 {
+    [Header("FMod Events")]
+    [SerializeField] private EventReference damageTakenEvent;
+
     public float maxHealth = 100f;
 
     private float _currentHealth = 100f;
@@ -42,6 +46,8 @@ public class Health : MonoBehaviour, IDamageable
 
         // Subtract CurrentHealth by damageAmmount
         CurrentHealth -= dmg;
+
+        RuntimeManager.PlayOneShot(damageTakenEvent, transform.position);
 
         if (CurrentHealth == 0f)
         {

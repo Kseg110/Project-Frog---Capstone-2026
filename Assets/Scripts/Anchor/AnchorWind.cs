@@ -10,4 +10,9 @@ public class AnchorWind : AnchorBase
 
     public AnchorWindData Data => data;
     public override AnchorData BaseData => data;
+
+    public override void Activate()
+    {
+        base.Activate();
+    }
 }

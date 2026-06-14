@@ -1,9 +1,13 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using FMODUnity;
 
 public class PlayerAnchor : MonoBehaviour
 {
+    [Header("FMod Events")]
+    [SerializeField] private EventReference tetherAttachEvent;
+
     private AnchorBase[] allAnchors;
     private AnchorBase currentAnchor;
     private bool isTethered;
@@ -117,6 +121,9 @@ public class PlayerAnchor : MonoBehaviour
             anchorTether.SetEndPoint(anchorPoint, true);
 
         isTethered = true;
+
+        RuntimeManager.PlayOneShot(tetherAttachEvent, transform.position);
+        currentAnchor.Activate();
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
 using UnityEngine;
+using FMODUnity;
 
 /// <summary>
 /// SpikeTrap: Attach to a trap parent object. The script finds a child GameObject tagged
@@ -29,6 +30,9 @@ public class SpikeTrap : MonoBehaviour
     [Header("Trigger")]
     [Tooltip("Child object tag to use as the trigger that activates this spike trap.")]
     [SerializeField] private string triggerTag = "trap";
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference trapActivateEvent;
 
     private GameObject triggerChild;
 
@@ -68,12 +72,15 @@ public class SpikeTrap : MonoBehaviour
     // Called by the trigger forwarder when something enters the child trigger
     internal void OnChildTriggerEnter(Collider other)
     {
+        bool hitSomething = false;
+
         // If trap should damage player (or both), check for player
         if (targetMode == TargetMode.Player || targetMode == TargetMode.Both)
         {
             if (other.gameObject.CompareTag("Player"))
             {
                 HandlePlayerHit(other);
+                hitSomething = true;
             }
         }
 
@@ -84,6 +91,7 @@ public class SpikeTrap : MonoBehaviour
             if (other.TryGetComponent<EnemyBase>(out var enemyBase))
             {
                 HandleEnemyHit(other, enemyBase);
+                hitSomething = true;
             }
             else
             {
@@ -92,6 +100,7 @@ public class SpikeTrap : MonoBehaviour
                 if (parentEnemyBase != null)
                 {
                     HandleEnemyHit(other, parentEnemyBase);
+                    hitSomething = true;
                 }
                 else
                 {
@@ -100,6 +109,7 @@ public class SpikeTrap : MonoBehaviour
                     {
                         ApplyDamageToIDamageable(dmgable);
                         ApplyKnockbackToCollider(other);
+                        hitSomething = true;
                     }
                     else
                     {
@@ -108,6 +118,7 @@ public class SpikeTrap : MonoBehaviour
                         {
                             enemyHealth.TakeDamage(damageAmount);
                             ApplyKnockbackToCollider(other);
+                            hitSomething = true;
                         }
                         else if (other.gameObject.CompareTag("Enemy"))
                         {
@@ -117,11 +128,17 @@ public class SpikeTrap : MonoBehaviour
                             {
                                 fallback.TakeDmg(damageAmount);
                                 ApplyKnockbackToCollider(other);
+                                hitSomething = true;
                             }
                         }
                     }
                 }
             }
+        }
+
+        if (hitSomething)
+        {
+            RuntimeManager.PlayOneShot(trapActivateEvent, transform.position);
         }
     }
 
