@@ -7,6 +7,7 @@ public class EnemyFly : MonoBehaviour
     [SerializeField] private float roamRadius = 5;
     [SerializeField] private float minMoveInterval = 1f;
     [SerializeField] private float maxMoveInterval = 3f;
+    [SerializeField] private float flyHeight = 7f;
 
     private NavMeshAgent agent;
     private Vector3 centerPoint;
@@ -21,7 +22,7 @@ public class EnemyFly : MonoBehaviour
             agent.Warp(transform.position);
        
         }
-        agent.baseOffset = 1f;
+        agent.baseOffset = flyHeight;
         centerPoint = transform.position;
 
         SetNextMoveTime();
