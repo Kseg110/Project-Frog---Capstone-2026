@@ -2,10 +2,18 @@
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using FMODUnity;
 
 public class PauseManager : MonoBehaviour
 {
+    [Header("FMod Events")]
+    [SerializeField] private EventReference openPauseEvent;
+    [SerializeField] private EventReference closePauseEvent;
+    //[SerializeField] private EventReference buttonClickEvent;
+    //[SerializeField] private EventReference buttonHoverEvent;
+
     [SerializeField] private GameObject pauseMenuUI;
+    [SerializeField] private GameObject PlayerHUD;
 
     private PlayerInput playerInput;
     private InputAction pauseAction;
@@ -69,13 +77,17 @@ public class PauseManager : MonoBehaviour
     {
         if (isPaused)
             ResumeGame();
+
         else
             PauseGame();
     }
 
     public void ResumeGame()
     {
+        RuntimeManager.PlayOneShot(closePauseEvent, transform.position);
+
         pauseMenuUI.SetActive(false);
+        PlayerHUD.SetActive(true);
         Time.timeScale = 1f;
         isPaused = false;
 
@@ -93,7 +105,10 @@ public class PauseManager : MonoBehaviour
 
     private void PauseGame()
     {
+        RuntimeManager.PlayOneShot(openPauseEvent, transform.position);
+
         pauseMenuUI.SetActive(true);
+        PlayerHUD.SetActive(false);
         Time.timeScale = 0f;
         isPaused = true;
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using FMODUnity;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerAnchor))]
@@ -28,6 +29,12 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private float dashDistance = 5f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
+
+    [Header("FMod Events")]
+    //[SerializeField] private EventReference fireAnchorEvent;
+    //[SerializeField] private EventReference iceAnchorEvent;
+    //[SerializeField] private EventReference windAnchorEvent;
+    [SerializeField] private EventReference dashActivationEvent;
 
     private PlayerInput playerInput;
 
@@ -288,7 +295,14 @@ public class PlayerMovement : MonoBehaviour, IMovement
         {
             moveVector = dashDirection * (dashDistance / dashDuration) * Time.fixedDeltaTime;
             dashTimer -= Time.fixedDeltaTime;
-            MoveWithCollision(moveVector);
+
+            CollisionUtility.MoveWithCapsuleCollision(
+                rb,
+                capsuleCollider,
+                moveVector,
+                collisionLayers
+            );
+
             if (dashTimer <= 0f)
                 EndDash();
         }
@@ -296,48 +310,18 @@ public class PlayerMovement : MonoBehaviour, IMovement
         {
             moveVector = moveInput * CurrentSpeed * Time.fixedDeltaTime;
             moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
-            MoveWithCollision(moveVector);
+
+            CollisionUtility.MoveWithCapsuleCollision(
+                rb,
+                capsuleCollider,
+                moveVector,
+                collisionLayers
+            );
 
             if (!usingGamepad && moveInput.sqrMagnitude > 0.0001f)
                 rb.MoveRotation(Quaternion.LookRotation(moveInput.normalized));
         }
     }
-
-    private void MoveWithCollision(Vector3 motion)
-    {
-        int maxIterations = 5;
-        Vector3 remaining = motion;
-
-        for (int i = 0; i < maxIterations; i++)
-        {
-            if (remaining.sqrMagnitude < 0.0001f)
-                break;
-
-            Vector3 start = rb.position + capsuleCollider.center + Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
-            Vector3 end = rb.position + capsuleCollider.center - Vector3.up * (capsuleCollider.height / 2 - capsuleCollider.radius);
-
-            if (!Physics.CapsuleCast(start, end, capsuleCollider.radius,
-                remaining.normalized, out RaycastHit hit,
-                remaining.magnitude, collisionLayers, QueryTriggerInteraction.Ignore))
-            {
-                rb.MovePosition(rb.position + remaining);
-                break;
-            }
-
-            float skin = 0.01f;
-            float moveDist = Mathf.Max(hit.distance - skin, 0f);
-
-            if (moveDist > 0f)
-            {
-                Vector3 movePart = remaining.normalized * moveDist;
-                rb.MovePosition(rb.position + movePart);
-            }
-
-            remaining -= remaining.normalized * moveDist;
-            remaining = Vector3.ProjectOnPlane(remaining, hit.normal);
-        }
-    }
-
     private void UpdateTetherStatus()
     {
         if (playerAnchor != null)
@@ -411,6 +395,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
         dashTimer = dashDuration;
         dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
 
+        RuntimeManager.PlayOneShot(dashActivationEvent, transform.position);
+
         Debug.Log("start dash");
         PlayerDashVFX.Instance.StartDashVFX();
     }
@@ -448,5 +434,5 @@ public class PlayerMovement : MonoBehaviour, IMovement
             Gizmos.DrawWireSphere(anchorPosition, currentMaxRadius);
         }
     }
-    
+
 }

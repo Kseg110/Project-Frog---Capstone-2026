@@ -1,9 +1,13 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using FMODUnity;
 
 public class PlayerAnchor : MonoBehaviour
 {
+    [Header("FMod Events")]
+    [SerializeField] private EventReference tetherAttachEvent;
+
     private AnchorBase[] allAnchors;
     private AnchorBase currentAnchor;
     private bool isTethered;
@@ -12,6 +16,7 @@ public class PlayerAnchor : MonoBehaviour
     private PlayerInput playerInput;
     private string currentActionMapName;
     [SerializeField] private AnchorTether anchorTether;
+    [SerializeField] private PlayerOvercharge playerOvercharge;
 
     public bool IsTethered => isTethered;
     public AnchorBase CurrentAnchor => currentAnchor;
@@ -22,6 +27,11 @@ public class PlayerAnchor : MonoBehaviour
 
         playerInput = GetComponent<PlayerInput>();
         Debug.Assert(playerInput != null, $"[{gameObject.name}] missing PlayerInput!", this);
+
+        if (playerOvercharge == null)
+        {
+            playerOvercharge = GetComponent<PlayerOvercharge>();
+        }
 
         RebindTetherActionFromCurrentMap();
     }
@@ -95,6 +105,13 @@ public class PlayerAnchor : MonoBehaviour
     /// </summary>
     public void StartTether()
     {
+        // Check for overcharge preventing tethering 
+        if (playerOvercharge != null && !playerOvercharge.CanTether())
+        {
+            Debug.Log("Cannot tether: Overcharge in cooldown");
+            return;
+        }
+
         if (currentAnchor == null)
             return;
 
@@ -104,6 +121,9 @@ public class PlayerAnchor : MonoBehaviour
             anchorTether.SetEndPoint(anchorPoint, true);
 
         isTethered = true;
+
+        RuntimeManager.PlayOneShot(tetherAttachEvent, transform.position);
+        currentAnchor.Activate();
     }
 
     /// <summary>

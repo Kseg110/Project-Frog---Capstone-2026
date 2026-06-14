@@ -1,66 +1,79 @@
 using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
+using FMODUnity;
 
-public class Health : MonoBehaviour
+public class Health : MonoBehaviour, IDamageable
 {
-    [SerializeField] private float maxHealth = 100f;
-    private float currentHealth;
-    private Healthbar healthbar;
-    private UIPlayerHUD playerHUD;
+    [Header("FMod Events")]
+    [SerializeField] private EventReference damageTakenEvent;
+
+    public float maxHealth = 100f;
+
+    private float _currentHealth = 100f;
 
     public bool IsDead { get; private set; }
     public event Action<GameObject> OnDestroyed;
 
+    public event Action<float> OnHealthChanged;
+
+    public float CurrentHealth 
+    {
+        get => _currentHealth;
+        private set
+        {
+            // Clamp value to valid HP
+            float clampedValue = Mathf.Clamp(value, 0, maxHealth);
+
+            // Do nothing if health doesn't change
+            if (_currentHealth == clampedValue) return;
+
+            
+            _currentHealth = clampedValue;
+
+            OnHealthChanged?.Invoke(_currentHealth);
+        }
+    }
     private void Awake()
     {
-        healthbar = GetComponentInChildren<Healthbar>();
-        playerHUD = FindAnyObjectByType<UIPlayerHUD>();
-
-        if (healthbar == null)
-        {
-            Debug.LogError(
-                $"Health on {gameObject.name} requires a child HealthBar.", this);
-        }
-
-        currentHealth = maxHealth;
+        CurrentHealth = maxHealth;
         IsDead = false;
-        playerHUD?.UpdateHealth(currentHealth / maxHealth);
     }
 
     public void TakeDmg(float dmg)
     {
         if (IsDead) return;
 
-        // Subtract currentHealth by damageAmmount
-        currentHealth -= dmg;
+        // Subtract CurrentHealth by damageAmmount
+        CurrentHealth -= dmg;
 
-        // Ensure currentHealth stays between 0 and maxHealth
-        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+        RuntimeManager.PlayOneShot(damageTakenEvent, transform.position);
 
-        // Update healthbar visual
-        healthbar.UpdateHealthBar(maxHealth, currentHealth);
-
-        // Update player HUD if this is the player's health
-        playerHUD?.UpdateHealth(currentHealth / maxHealth);
-
-        if (currentHealth == 0f)
+        if (CurrentHealth == 0f)
         {
             Die();
         }
     }
+
+    public bool IsMaxHP()
+    {
+        return CurrentHealth >= maxHealth;
+    }
+
+    public void TakeDmg(float dmg, string effectType, float effectDuration, float effectValue)
+    {
+        TakeDmg(dmg);
+        if (effectType == "Burn")
+        {
+            ApplyBurn(effectDuration, effectValue, dmg);
+        }
+    }
+
     public void Heal(float amount)
     {
-        Debug.Log("heal");
         if (IsDead) return;
 
-        currentHealth += amount;
-        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
-
-        healthbar.UpdateHealthBar(maxHealth, currentHealth);
-
-        playerHUD?.UpdateHealth(currentHealth / maxHealth);
+        CurrentHealth += amount;
     }
 
     private void Die()

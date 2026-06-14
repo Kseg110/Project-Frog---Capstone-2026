@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using FMODUnity;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerMovement))]
@@ -13,6 +14,10 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private float attacksPerSecond = 2f;
     [SerializeField] private float attackWindowDuration = 0.5f;
     [SerializeField] private float maxChargeTime = 2f;
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference basicShotEvent;
+    [SerializeField] private EventReference chargeShotEvent;
 
     //public bool isTethered;
     public float LastChargeValue { get; private set; }
@@ -143,6 +148,7 @@ public class PlayerAttacks : MonoBehaviour
         // Basic shot — held LMB / Right Trigger (rate-limited inside TryBasicShot)
         if (attackHeld)
             TryBasicShot();
+            
 
         // Secondary — tether / charge / tongue logic
         if (playerAnchor.IsTethered)
@@ -164,6 +170,9 @@ public class PlayerAttacks : MonoBehaviour
             if (secondaryReleasedThisFrame)
             {
                 playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+
+                RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
+
                 playerMovement.ResumeMovement();
             }
         }
@@ -202,6 +211,8 @@ public class PlayerAttacks : MonoBehaviour
         playerMovement.StopMovement(aimDirection);
         Shoot(0f, aimDirection);
         lastFireTime = Time.time;
+
+        RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
     }
 
     private void TryTongue()
