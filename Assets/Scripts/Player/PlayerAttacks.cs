@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using FMODUnity;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerMovement))]
@@ -13,6 +14,10 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] public float attacksPerSecond = 2f;
     [SerializeField] private float attackWindowDuration = 0.5f;
     [SerializeField] private float maxChargeTime = 2f;
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference basicShotEvent;
+    [SerializeField] private EventReference chargeShotEvent;
 
     //public bool isTethered;
     public float LastChargeValue { get; private set; }
@@ -104,6 +109,7 @@ public class PlayerAttacks : MonoBehaviour
         // PRIMARY ATTACK
         if (attackHeld)
             TryBasicShot();
+            
 
         // SECONDARY ATTACK
         if (playerAnchor.IsTethered)
@@ -120,6 +126,9 @@ public class PlayerAttacks : MonoBehaviour
             if (secondaryReleased)
             {
                 playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+
+                RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
+
                 playerMovement.ResumeMovement();
             }
         }
@@ -156,6 +165,8 @@ public class PlayerAttacks : MonoBehaviour
         playerMovement.StopMovement(aimDirection);
         Shoot(0f, aimDirection);
         lastFireTime = Time.time;
+
+        RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
     }
 
     private void Shoot(float chargePercent, Vector3? direction = null)

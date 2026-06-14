@@ -5,8 +5,9 @@ public class Healthbar: MonoBehaviour
 {
     [SerializeField] private Image foregroundImage;
     [SerializeField] private Transform uiContainer;
-    private Camera mainCamera;
 
+    private Camera mainCamera;
+    [SerializeField] private Health health;
     public void UpdateHealthBar(float maxHealth, float curHealth)
     {
         // Change the fill amount of the foreground to the percentage of health left
@@ -15,7 +16,17 @@ public class Healthbar: MonoBehaviour
 
     private void Start()
     {
+        if (health == null)
+        {
+            Debug.LogError($"Object {this} has no health component!");
+        }
         mainCamera = Camera.main;
+        health.OnHealthChanged += Health_OnHealthChanged;
+    }
+
+    private void Health_OnHealthChanged(float newHealth)
+    {
+        UpdateHealthBar(health.maxHealth, newHealth);
     }
 
     private void LateUpdate()

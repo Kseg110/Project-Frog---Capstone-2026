@@ -15,17 +15,37 @@ public class UIPlayerHUD : MonoBehaviour
     [SerializeField] private Color WarningColor = Color.yellow;
     [SerializeField] private Color CriticalColor = Color.red;
 
-    [Header("Dash Wheel")]
+    [Header("Dash Box")]
     [SerializeField] private Image DashFillImage;
 
+    [Header("Overcharge Wheel")]
+    [SerializeField] private Image OverchargeFillImage;
+    [SerializeField] private float OverChargeLerpSpeed = 3f;
+
     private float targetHealthFill = 1f;
+    private float targetOverchargeFill = 0f;
+
+    [SerializeField] private Health playerHealth;
+
+    private void Awake()
+    {
+        UpdateHealth(playerHealth.maxHealth);
+        playerHealth.OnHealthChanged += PlayerHealth_OnHealthChanged;
+    }
+
+    private void PlayerHealth_OnHealthChanged(float newHealth)
+    {
+        Debug.Log(newHealth);
+        UpdateHealth(newHealth);
+    }
 
     //[Header("Overcharge Bar")]
     //[SerializeField] private Image OverchargeFillImage;
 
     // Calls from the health system whenever HP changes.
-    public void UpdateHealth(float normalized)
+    public void UpdateHealth(float newHealth)
     {
+        float normalized = newHealth / playerHealth.maxHealth;
         targetHealthFill = Mathf.Clamp01(normalized);
         healthFillImage.color = healthGradient.Evaluate(normalized);
 
@@ -47,6 +67,16 @@ public class UIPlayerHUD : MonoBehaviour
             targetHealthFill,
             Time.deltaTime * healthLerpSpeed
         );
+
+        // Smoothly Lerp overchage fill
+        if (OverchargeFillImage != null)
+        {
+            OverchargeFillImage.fillAmount = Mathf.Lerp(
+                OverchargeFillImage.fillAmount,
+                targetOverchargeFill,
+                Time.deltaTime * OverChargeLerpSpeed
+                );
+        }
     }
 
     // Calls from the dash system every frame (or whenever the cooldown ticks).
@@ -60,4 +90,9 @@ public class UIPlayerHUD : MonoBehaviour
     //{
     //    OverchargeFillImage.fillAmount = Mathf.Clamp01(normalized);
     //}
+
+    public void UpdateOverchargeWheel(float normalized)
+    {
+        targetOverchargeFill = Mathf.Clamp01(normalized);
+    }
 }

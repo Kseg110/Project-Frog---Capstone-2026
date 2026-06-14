@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: -2192016579821232293}
   m_Layer: 0
   m_Name: RockGolem
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -175,6 +175,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a860fdbe827944e4fb4c367744d9ebe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
+  damageTakenEvent:
+    Guid:
+      Data1: -1924487788
+      Data2: 1194671974
+      Data3: -1751493203
+      Data4: -336415060
+    Path: event:/Damage Taken Activation
   maxHealth: 100
 --- !u!54 &-2192016579821232293
 Rigidbody:
@@ -215,6 +222,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Healthbar
       objectReference: {fileID: 0}
+    - target: {fileID: 468123468717275831, guid: 879b2298185f1c541990b2c47bf42bed, type: 3}
+      propertyPath: health
+      value: 
+      objectReference: {fileID: 1038714202013857735}
     - target: {fileID: 638977865760132493, guid: 879b2298185f1c541990b2c47bf42bed, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

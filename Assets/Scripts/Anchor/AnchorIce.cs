@@ -11,4 +11,10 @@ public class AnchorIce : AnchorBase
     public AnchorIceData Data => data;
     public override AnchorData BaseData => data;
     public override AnchorElement Element => AnchorElement.Ice;
+
+    public override void Activate()
+    {
+        base.Activate();
+    }
+    
 }
