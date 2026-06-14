@@ -60,13 +60,4 @@ public class UIPlayerHUD : MonoBehaviour
     //{
     //    OverchargeFillImage.fillAmount = Mathf.Clamp01(normalized);
     //}
-    public void ShowHUD()
-    {
-        gameObject.SetActive(true);
-    }
-
-    public void HideHUD()
-    {
-        gameObject.SetActive(false);
-    }
 }

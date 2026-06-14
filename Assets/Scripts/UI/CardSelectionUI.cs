@@ -9,7 +9,6 @@ public class CardSelectionUI : MonoBehaviour
     [SerializeField] private Transform cardContainer;
     [SerializeField] private CardUI cardUIPrefab;
     [SerializeField] private UpgradeManager upgradeManager;
-    [SerializeField] private UIPlayerHUD playerHUD;
 
     private CanvasGroup canvasGroup;
 
@@ -53,7 +52,6 @@ public class CardSelectionUI : MonoBehaviour
         Time.timeScale = 0f;
 
         ShowUI();
-        playerHUD.HideHUD();
 
         // Ask the upgrade manager to pick 3 random cards for the player to choose from
         List<UpgradeDataSO> selectedCards = upgradeManager.GetRandomCards(3);
@@ -87,8 +85,6 @@ public class CardSelectionUI : MonoBehaviour
 
         // Unfreeze game
         Time.timeScale = 1f;
-
-        playerHUD.ShowHUD();
 
         //call next wave
         waveSpawner.StartNextWaveAfterCard();
