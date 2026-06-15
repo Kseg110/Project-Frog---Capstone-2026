@@ -10,9 +10,11 @@ public class AnchorFire : AnchorBase
 
     public AnchorFireData Data => data;
     public override AnchorData BaseData => data;
+    public override AnchorElement Element => AnchorElement.Fire;
 
     public override void Activate()
     {
         base.Activate();
     }
+    
 }

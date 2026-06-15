@@ -1,12 +1,18 @@
 ﻿using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using FMODUnity;
+
 
 public class PlayerAnchor : MonoBehaviour
 {
     [Header("FMod Events")]
     [SerializeField] private EventReference tetherAttachEvent;
+
+    public event Action <AnchorBase> OnTetherStarted;
+    public event Action OnTetherReleased;
+    public event Action <AnchorBase> OnAnchorChanged;
 
     private AnchorBase[] allAnchors;
     private AnchorBase currentAnchor;
@@ -65,15 +71,12 @@ public class PlayerAnchor : MonoBehaviour
 
     private void HandleInput()
     {
-        if (tetherAction != null)
+        if (tetherAction != null && tetherAction.WasPressedThisFrame())
         {
-            if (tetherAction.WasPressedThisFrame())
-            {
-                if (isTethered)
-                    ReleaseTether();
-                else
-                    StartTether();
-            }
+            if (isTethered)
+                ReleaseTether();
+            else
+                StartTether();
         }
     }
 
@@ -115,15 +118,20 @@ public class PlayerAnchor : MonoBehaviour
         if (currentAnchor == null)
             return;
 
-        Transform anchorPoint = GetAnchorPointTransform(currentAnchor);
+        // AnchorTether must receive the Transform of the AnchorPoint child of the current anchor (or the anchor itself if no child exists)
+        Transform anchorBaseTransform = GetAnchorPointTransform(currentAnchor);
 
+        // Sent Transform to AnchorTether
         if (anchorTether != null)
-            anchorTether.SetEndPoint(anchorPoint, true);
+            anchorTether.SetEndPoint(anchorBaseTransform, true);
 
+        // Activate the tether
         isTethered = true;
 
         RuntimeManager.PlayOneShot(tetherAttachEvent, transform.position);
         currentAnchor.Activate();
+        OnTetherStarted?.Invoke(currentAnchor);
+        OnAnchorChanged?.Invoke(currentAnchor);
     }
 
     /// <summary>
@@ -135,6 +143,8 @@ public class PlayerAnchor : MonoBehaviour
 
         if (anchorTether != null)
             anchorTether.SetEndPoint(null, true);
+        OnTetherReleased?.Invoke();
+        OnAnchorChanged?.Invoke(null);
     }
 
     private Transform GetAnchorPointTransform(AnchorBase anchor)

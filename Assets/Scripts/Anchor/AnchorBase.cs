@@ -9,6 +9,7 @@ using FMODUnity;
 public abstract class AnchorBase : MonoBehaviour
 {
     public abstract AnchorData BaseData { get; }
+    public abstract AnchorElement Element { get; }
 
     public float Damage => BaseData != null ? BaseData.Damage : 0f;
     public float TetherRange => BaseData != null ? BaseData.TetherRange : 0f;

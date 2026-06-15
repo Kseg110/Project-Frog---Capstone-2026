@@ -11,7 +11,7 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private Transform firePoint;
 
     [Header("Attack Settings")]
-    [SerializeField] private float attacksPerSecond = 2f;
+    [SerializeField] public float attacksPerSecond = 2f;
     [SerializeField] private float attackWindowDuration = 0.5f;
     [SerializeField] private float maxChargeTime = 2f;
 
@@ -71,6 +71,9 @@ public class PlayerAttacks : MonoBehaviour
             playerTongueAttack.OnTongueFinished -= playerMovement.ResumeMovement;
     }
 
+    // ============================================================
+    // INPUT HANDLING
+    // ============================================================
     private void RebindActionsFromCurrentMap()
     {
         if (playerInput == null || playerInput.currentActionMap == null)
@@ -93,81 +96,34 @@ public class PlayerAttacks : MonoBehaviour
 
     private void Update()
     {
-        // if the PlayerInput map changed at runtime, rebind to the active map
-        if (playerInput != null && playerInput.currentActionMap != null && playerInput.currentActionMap.name != currentActionMapName)
+        if (playerInput != null &&
+            playerInput.currentActionMap != null &&
+            playerInput.currentActionMap.name != currentActionMapName)
+        {
             RebindActionsFromCurrentMap();
-
-        // READ ATTACK INPUTS WITH FALLBACKS FOR TRIGGERS
-        bool attackHeld = false;
-        bool attackPressedThisFrame = false;
-
-        if (attackAction != null)
-        {
-            // prefer built-in checks which work when the action is configured as a Button
-            attackHeld = attackAction.IsPressed();
-            attackPressedThisFrame = attackAction.WasPressedThisFrame();
-
-            // fallback for trigger/axis bindings: treat float values >= threshold as "pressed"
-            float val = 0f;
-            try { val = attackAction.ReadValue<float>(); } catch { /* ignore if not float */ }
-
-            if (!attackHeld && val >= triggerThreshold)
-                attackHeld = true;
-
-            if (!attackPressedThisFrame && val >= triggerThreshold && prevAttackValue < triggerThreshold)
-                attackPressedThisFrame = true;
-
-            prevAttackValue = val;
         }
 
-        bool secondaryHeld = false;
-        bool secondaryPressedThisFrame = false;
-        bool secondaryReleasedThisFrame = false;
+        bool attackHeld = ReadButton(attackAction, ref prevAttackValue, out bool attackPressed);
+        bool secondaryHeld = ReadButton(secondaryAttackAction, ref prevSecondaryValue, out bool secondaryPressed, out bool secondaryReleased);
 
-        if (secondaryAttackAction != null)
-        {
-            secondaryHeld = secondaryAttackAction.IsPressed();
-            secondaryPressedThisFrame = secondaryAttackAction.WasPressedThisFrame();
-            secondaryReleasedThisFrame = secondaryAttackAction.WasReleasedThisFrame();
-
-            float val = 0f;
-            try { val = secondaryAttackAction.ReadValue<float>(); } catch { /* ignore if not float */ }
-
-            if (!secondaryHeld && val >= triggerThreshold)
-                secondaryHeld = true;
-
-            if (!secondaryPressedThisFrame && val >= triggerThreshold && prevSecondaryValue < triggerThreshold)
-                secondaryPressedThisFrame = true;
-
-            if (!secondaryReleasedThisFrame && val < triggerThreshold && prevSecondaryValue >= triggerThreshold)
-                secondaryReleasedThisFrame = true;
-
-            prevSecondaryValue = val;
-        }
-
-        // Basic shot — held LMB / Right Trigger (rate-limited inside TryBasicShot)
+        // PRIMARY ATTACK
         if (attackHeld)
             TryBasicShot();
             
 
-        // Secondary — tether / charge / tongue logic
+        // SECONDARY ATTACK
         if (playerAnchor.IsTethered)
         {
-            if (secondaryPressedThisFrame)
+            if (secondaryPressed && !playerChargeAttack.IsCharging)
             {
-                if (!playerChargeAttack.IsCharging)
-                {
-                    playerMovement.StopMovement(GetAimDirection());
-                    playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
-                }
+                playerMovement.StopMovement(GetAimDirection());
+                playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
             }
 
             if (secondaryHeld)
-            {
                 playerChargeAttack.UpdateCharge();
-            }
 
-            if (secondaryReleasedThisFrame)
+            if (secondaryReleased)
             {
                 playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
 
@@ -178,21 +134,16 @@ public class PlayerAttacks : MonoBehaviour
         }
         else
         {
-            if (secondaryPressedThisFrame)
-            {
+            if (secondaryPressed)
                 TryTongue();
-            }
 
-            if (secondaryReleasedThisFrame)
-            {
+            if (secondaryReleased)
                 playerTongueAttack.BeginTongueRetract();
-            }
         }
 
         if (isCharging)
             chargeTimer = Mathf.Clamp(chargeTimer + Time.deltaTime, 0f, maxChargeTime);
 
-        // Count down attack window, resume movement when it expires
         if (attackWindowTimer > 0f)
         {
             attackWindowTimer = Mathf.Max(0f, attackWindowTimer - Time.deltaTime);
@@ -201,6 +152,9 @@ public class PlayerAttacks : MonoBehaviour
         }
     }
 
+    // ============================================================
+    // PRIMARY ATTACK
+    // ============================================================
     private void TryBasicShot()
     {
         if (playerTongueAttack.IsActive) return;
@@ -215,6 +169,44 @@ public class PlayerAttacks : MonoBehaviour
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
     }
 
+    private void Shoot(float chargePercent, Vector3? direction = null)
+    {
+        Quaternion rotation = direction.HasValue && direction.Value != Vector3.zero
+            ? Quaternion.LookRotation(direction.Value)
+            : firePoint.rotation;
+
+        GameObject projObj = Instantiate(projectilePrefab, firePoint.position, rotation);
+
+        var proj = projObj.GetComponent<Projectile>();
+        if (proj != null)
+        {
+            // CRITICAL: Set isPlayerProjectile FIRST before anything else
+            proj.isPlayerProjectile = true;
+            proj.Initialize(chargePercent);
+            proj.damage = 2f;
+        }
+
+        // Always ignore collision with player, regardless of Projectile component
+        IgnorePlayerCollision(projObj);
+    }
+
+    private void IgnorePlayerCollision(GameObject projObj)
+    {
+        Collider[] projCols = projObj.GetComponentsInChildren<Collider>();
+        Collider[] playerCols = GetComponentsInChildren<Collider>();
+
+        foreach (var pCol in projCols)
+        {
+            foreach (var col in playerCols)
+            {
+                Physics.IgnoreCollision(pCol, col);
+            }
+        }
+    }
+
+    // ============================================================
+    // TONGUE ATTACK
+    // ============================================================
     private void TryTongue()
     {
         if (isCharging) return;
@@ -222,68 +214,71 @@ public class PlayerAttacks : MonoBehaviour
         playerTongueAttack.BeginTongueExtend();
     }
 
-    public void StartCharging()
+    // ============================================================
+    // INPUT HELPERS
+    // ============================================================
+    private bool ReadButton(InputAction action, ref float prevValue, out bool pressed)
     {
-        if (playerTongueAttack.IsActive) return;
-        playerMovement.StopMovement(GetAimDirection());
-        isCharging = true;
-        chargeTimer = 0f;
+        return ReadButton(action, ref prevValue, out pressed, out _);
     }
 
-    public void ReleaseCharging()
+    private bool ReadButton(InputAction action, ref float prevValue, out bool pressed, out bool released)
     {
-        if (!isCharging) return;
-        isCharging = false;
-        if (playerTongueAttack.IsActive) return;
-        if (Time.time < lastFireTime + fireCooldown) return;
+        pressed = false;
+        released = false;
 
-        LastChargeValue = Mathf.Clamp01(chargeTimer / maxChargeTime);
-        OnChargeShotFired?.Invoke(LastChargeValue);
-        Shoot(LastChargeValue);
-        playerMovement.ResumeMovement();
-        lastFireTime = Time.time;
+        if (action == null)
+            return false;
+
+        bool held = action.IsPressed();
+        pressed = action.WasPressedThisFrame();
+        released = action.WasReleasedThisFrame();
+
+        float val = 0f;
+        try { val = action.ReadValue<float>(); } catch { }
+
+        if (!held && val >= triggerThreshold)
+            held = true;
+
+        if (!pressed && val >= triggerThreshold && prevValue < triggerThreshold)
+            pressed = true;
+
+        if (!released && val < triggerThreshold && prevValue >= triggerThreshold)
+            released = true;
+
+        prevValue = val;
+        return held;
     }
 
-    private void Shoot(float chargePercent, Vector3? direction = null)
-    {
-        Quaternion rotation = direction.HasValue && direction.Value != Vector3.zero
-            ? Quaternion.LookRotation(direction.Value)
-            : firePoint.rotation;
-
-        GameObject proj = Instantiate(projectilePrefab, firePoint.position, rotation);
-        proj.GetComponent<Projectile>()?.Initialize(chargePercent);
-        proj.GetComponent<Projectile>().damage = 2f;
-    }
-
+    // ============================================================
+    // AIMING
+    // ============================================================
     private Vector3 GetAimDirection()
     {
-        // Determine if the gamepad stick is actively aiming
         Vector2 aimValue = aimAction != null ? aimAction.ReadValue<Vector2>() : Vector2.zero;
         var lastControl = aimAction != null ? aimAction.activeControl : null;
-        bool gamepadActive = lastControl != null
-                          && lastControl.device is Gamepad
-                          && aimValue.sqrMagnitude > 0.01f;
+
+        bool gamepadActive =
+            lastControl != null &&
+            lastControl.device is Gamepad &&
+            aimValue.sqrMagnitude > 0.01f;
 
         if (gamepadActive)
-        {
-            // Twin-stick: stick (x, y) → world (x, z)
             return new Vector3(aimValue.x, 0f, aimValue.y).normalized;
-        }
 
-        // Mouse path
         if (Mouse.current == null)
             return transform.forward;
 
-        Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
-        Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
+        Vector2 mousePos = Mouse.current.position.ReadValue();
+        Ray ray = mainCamera.ScreenPointToRay(mousePos);
         Plane plane = new Plane(Vector3.up, transform.position);
 
-        if (plane.Raycast(ray, out float distance))
+        if (plane.Raycast(ray, out float dist))
         {
-            Vector3 direction = ray.GetPoint(distance) - transform.position;
-            direction.y = 0f;
-            if (direction.sqrMagnitude > 0.001f)
-                return direction.normalized;
+            Vector3 dir = ray.GetPoint(dist) - transform.position;
+            dir.y = 0f;
+            if (dir.sqrMagnitude > 0.001f)
+                return dir.normalized;
         }
 
         return transform.forward;
