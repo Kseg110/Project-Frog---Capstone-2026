@@ -176,7 +176,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (health == null) return;
 
         // Exemple : percent = 50 → inflige 50% de la vie max
-        float damageAmount = (percent / 100f) * health.MaxHealth;
+        float damageAmount = (percent / 100f) * health.maxHealth;
 
         health.TakeDmg(damageAmount);
     }

@@ -1,11 +1,10 @@
-
 using UnityEngine;
 
 public class Projectile : MonoBehaviour, IProjectile
 {
-    [SerializeField] protected float baseSpeed = 10f; //Adjust as nessisary 
-    [SerializeField] protected float baseDamage = 10f; //Adjust as nessisary 
-    [SerializeField] protected float maxScale = 2f; //Adjust as nessisary 
+    [SerializeField] protected float baseSpeed = 10f;
+    [SerializeField] protected float baseDamage = 10f;
+    [SerializeField] protected float maxScale = 2f;
 
     public float speed;
     public float damage;
@@ -17,7 +16,7 @@ public class Projectile : MonoBehaviour, IProjectile
 
     // Wind Upgrade
     private bool isHoming = false;
-    private float turnSpeed = 10f; // Adjust as necessary
+    private float turnSpeed = 10f;
     private EnemyBase target;
     private float pointBlankRange = 10f;
 
@@ -111,6 +110,10 @@ public class Projectile : MonoBehaviour, IProjectile
     // ============================
     private void OnTriggerEnter(Collider other)
     {
+        // Ignore trigger colliders that aren't enemies or player
+        if (other.isTrigger && !other.CompareTag("Enemy") && !other.CompareTag("Player"))
+            return;
+
         // ============================
         // DAMAGE PLAYER IF ENEMY PROJECTILE
         // ============================
@@ -119,10 +122,8 @@ public class Projectile : MonoBehaviour, IProjectile
             var player = other.GetComponentInParent<PlayerTakeDamage>();
             if (player != null)
             {
-                // Knockback direction (optionnel)
                 Vector3 knockDir = (other.transform.position - transform.position).normalized;
                 knockDir.y = 0f;
-
                 player.TryApplyDamageAndKnockback(damage, knockDir, 5f);
             }
 
@@ -131,9 +132,18 @@ public class Projectile : MonoBehaviour, IProjectile
         }
 
         // ============================
+        // IGNORE PLAYER IF PLAYER PROJECTILE
+        // ============================
+        if (isPlayerProjectile && other.CompareTag("Player"))
+            return;
+
+        // ============================
         // DAMAGE ENEMY IF PLAYER PROJECTILE
         // ============================
         var enemy = other.GetComponent<EnemyBase>();
+        if (enemy == null)
+            enemy = other.GetComponentInParent<EnemyBase>();
+
         if (enemy != null && isPlayerProjectile)
         {
             float finalDamage = damage;
@@ -173,15 +183,19 @@ public class Projectile : MonoBehaviour, IProjectile
                 float bonus = LethalPiercingUpgrade.Instance.GetBonus();
                 enemy.TakeDamagePercent(bonus);
             }
-        }
 
-        // Piercing logic
-        if (isPiercingProjectile)
-        {
-            pierceCount++;
+            // Piercing logic
+            if (isPiercingProjectile)
+            {
+                pierceCount++;
+                return;
+            }
+
+            Destroy(gameObject);
             return;
         }
 
+        // Destroy on hitting walls or other objects
         Destroy(gameObject);
     }
 }

@@ -33478,6 +33478,67 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1469710943}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &1472603674
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3886364771522279681, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: playerAnchor
+      value: 
+      objectReference: {fileID: 1637515296}
+    - target: {fileID: 5010640828691484305, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: m_Name
+      value: UpgradeEffectManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8420744155324700455, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 198.77538
+      objectReference: {fileID: 0}
+    - target: {fileID: 8420744155324700455, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.17195
+      objectReference: {fileID: 0}
+    - target: {fileID: 8420744155324700455, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 289.66476
+      objectReference: {fileID: 0}
+    - target: {fileID: 8420744155324700455, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8420744155324700455, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8420744155324700455, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8420744155324700455, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8420744155324700455, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8420744155324700455, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8420744155324700455, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bdf1d4a5e5bc04b47b2faed035c5b7b5, type: 3}
 --- !u!1 &1476661539
 GameObject:
   m_ObjectHideFlags: 0
@@ -36717,6 +36778,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a860fdbe827944e4fb4c367744d9ebe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
+--- !u!114 &1637515296 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7481143701210063934, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+  m_PrefabInstance: {fileID: 1933949835}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201730561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcc43d964d9107046b540ebaae6a0a3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGrapple
 --- !u!1 &1637992144
 GameObject:
   m_ObjectHideFlags: 0
@@ -37545,7 +37617,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4094776375660702646, guid: 341889f7661c84a4eadf491db210611d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -44802,6 +44874,10 @@ PrefabInstance:
       propertyPath: damageTakenEvent.Guid.Data4
       value: -336415060
       objectReference: {fileID: 0}
+    - target: {fileID: 7342988453639927308, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7481143701210063934, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: tetherAttachEvent.Path
       value: event:/Player Tether Activation
@@ -47932,6 +48008,8 @@ MonoBehaviour:
   WarningColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   CriticalColor: {r: 1, g: 0, b: 0, a: 1}
   DashFillImage: {fileID: 1010908115}
+  OverchargeFillImage: {fileID: 0}
+  OverChargeLerpSpeed: 3
   playerHealth: {fileID: 1637515288}
 --- !u!114 &2094065751
 MonoBehaviour:
@@ -48758,4 +48836,5 @@ SceneRoots:
   - {fileID: 1382923415}
   - {fileID: 1535729723}
   - {fileID: 1600417439}
+  - {fileID: 1472603674}
   - {fileID: 1493890175}

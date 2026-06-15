@@ -1,16 +1,18 @@
 ﻿using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using FMODUnity;
+
 
 public class PlayerAnchor : MonoBehaviour
 {
     [Header("FMod Events")]
     [SerializeField] private EventReference tetherAttachEvent;
 
-    public event Action<AnchorBase> OnTetherStarted;
+    public event Action <AnchorBase> OnTetherStarted;
     public event Action OnTetherReleased;
-    public event Action<AnchorBase> OnAnchorChanged;
+    public event Action <AnchorBase> OnAnchorChanged;
 
     private AnchorBase[] allAnchors;
     private AnchorBase currentAnchor;
@@ -117,7 +119,7 @@ public class PlayerAnchor : MonoBehaviour
             return;
 
         // AnchorTether must receive the Transform of the AnchorPoint child of the current anchor (or the anchor itself if no child exists)
-        Transform anchorBaseTransform = currentAnchor.transform;
+        Transform anchorBaseTransform = GetAnchorPointTransform(currentAnchor);
 
         // Sent Transform to AnchorTether
         if (anchorTether != null)

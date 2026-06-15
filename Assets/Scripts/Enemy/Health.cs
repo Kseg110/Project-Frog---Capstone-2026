@@ -28,6 +28,13 @@ public class Health : MonoBehaviour, IDamageable
         healthbar = GetComponentInChildren<Healthbar>();
         enemy = GetComponent<EnemyBase>();
 
+        if (CompareTag("Player"))
+            playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+
+        _currentHealth = maxHealth;
+        IsDead = false;
+    }
+
     public event Action<float> OnHealthChanged;
 
     public float CurrentHealth 
@@ -37,30 +44,21 @@ public class Health : MonoBehaviour, IDamageable
         {
             // Clamp value to valid HP
             float clampedValue = Mathf.Clamp(value, 0, maxHealth);
-        if (CompareTag("Player"))
-            playerHUD = FindAnyObjectByType<UIPlayerHUD>();
-        else
-            playerHUD = null;
 
             // Do nothing if health doesn't change
             if (_currentHealth == clampedValue) return;
 
-            
             _currentHealth = clampedValue;
+
+            // Update UI
+            if (healthbar != null)
+                healthbar.UpdateHealthBar(maxHealth, _currentHealth);
+
+            if (playerHUD != null)
+                playerHUD.UpdateHealth(_currentHealth / maxHealth);
 
             OnHealthChanged?.Invoke(_currentHealth);
         }
-    }
-    private void Awake()
-    {
-        CurrentHealth = maxHealth;
-        if (healthbar == null)
-        {
-            Debug.LogError($"Health on {gameObject.name} requires a child HealthBar.", this);
-        }
-
-        currentHealth = maxHealth;
-        IsDead = false;
     }
 
     // ============================================================
@@ -70,12 +68,15 @@ public class Health : MonoBehaviour, IDamageable
     {
         if (IsDead) return;
 
+
         // Subtract CurrentHealth by damageAmmount
         CurrentHealth -= dmg;
 
         RuntimeManager.PlayOneShot(damageTakenEvent, transform.position);
 
-        if (CurrentHealth == 0f)
+
+
+        if (CurrentHealth <= 0f)
         {
             Die();
         }
@@ -95,6 +96,16 @@ public class Health : MonoBehaviour, IDamageable
 
         if (effectType == "Burn")
             ApplyBurn(effectDuration, effectValue, dmg);
+        else if (effectType == "Freeze")
+        {
+            if (enemy != null)
+                enemy.Freeze(effectDuration);
+        }
+        else if (effectType == "Slow")
+        {
+            if (enemy != null)
+                enemy.ApplySlow(effectDuration);
+        }
     }
 
     // ============================================================
@@ -105,10 +116,10 @@ public class Health : MonoBehaviour, IDamageable
         if (IsDead) return;
 
         CurrentHealth += amount;
-        CurrentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+        CurrentHealth = Mathf.Clamp(CurrentHealth, 0f, maxHealth);
 
-        healthbar.UpdateHealthBar(maxHealth, currentHealth);
-        playerHUD?.UpdateHealth(currentHealth / maxHealth);
+        healthbar.UpdateHealthBar(maxHealth, CurrentHealth);
+        playerHUD?.UpdateHealth(CurrentHealth / maxHealth);
     }
 
     // ============================================================
@@ -117,6 +128,8 @@ public class Health : MonoBehaviour, IDamageable
     private void Die()
     {
         IsDead = true;
+
+
 
         if (CompareTag("Player"))
         {
