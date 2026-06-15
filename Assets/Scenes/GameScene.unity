@@ -1473,11 +1473,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 82415516}
   m_CullTransparentMesh: 1
---- !u!1 &84602152 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4562977346548932041, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &95422465
 GameObject:
   m_ObjectHideFlags: 0
@@ -1786,11 +1781,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 96005947}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &106787943 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7548336351776659956, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &108171031
 GameObject:
   m_ObjectHideFlags: 0
@@ -2267,11 +2257,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 117230102}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &118254390 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8177441032956222799, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &119699167
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3545,11 +3530,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &188368350
 GameObject:
   m_ObjectHideFlags: 0
@@ -6568,6 +6548,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 304089673}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &304901428 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7555014404437206304, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+  m_PrefabInstance: {fileID: 1933949835}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &305945201
 GameObject:
   m_ObjectHideFlags: 0
@@ -6842,49 +6827,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 274f958e1f5ce604981a6afe48d4d14e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FOGactivationtimer
-  Currentround: 1
-  rounds:
-  - fromRound: 1
-    toRound: 2
-    timeeachenables: 5
-    enableList:
-    - {fileID: 106787943}
-    - {fileID: 2059917464}
-    - {fileID: 2071163910}
-    - {fileID: 1773193065}
-    - {fileID: 1947842847}
-    - {fileID: 609266204}
-    - {fileID: 799471554}
-    - {fileID: 1371873683}
-    - {fileID: 1495882054}
-    - {fileID: 1994409941}
-    - {fileID: 1627901987}
-    - {fileID: 1976752320}
-    - {fileID: 1289886315}
-    - {fileID: 1330044947}
-    - {fileID: 879633394}
-    - {fileID: 1352081251}
-    - {fileID: 1285508385}
-    - {fileID: 534219689}
-    - {fileID: 1408224028}
-    - {fileID: 1696310711}
-    - {fileID: 1976389070}
-    - {fileID: 1339918484}
-    - {fileID: 2026568652}
-    - {fileID: 2110147753}
-    - {fileID: 883742770}
-    - {fileID: 1312114688}
-    - {fileID: 528332890}
-    - {fileID: 84602152}
-    - {fileID: 774214318}
-    - {fileID: 1543338919}
-    - {fileID: 1057999203}
-    - {fileID: 118254390}
-    disableList: []
-    started: 0
-    timer: 0
-    index: 0
-    disabled: 0
 --- !u!4 &307810842
 Transform:
   m_ObjectHideFlags: 0
@@ -10995,11 +10937,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &431018593
 GameObject:
   m_ObjectHideFlags: 0
@@ -12517,11 +12454,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &513677802
 GameObject:
   m_ObjectHideFlags: 0
@@ -12736,11 +12668,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &519439720
 GameObject:
   m_ObjectHideFlags: 0
@@ -12853,16 +12780,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519439720}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &528332890 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1912975081494466224, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &534219689 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2857322122136219350, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &536060290
 GameObject:
   m_ObjectHideFlags: 0
@@ -14830,11 +14747,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 608981997}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &609266204 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3576636988804155383, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &612258090
 GameObject:
   m_ObjectHideFlags: 0
@@ -18864,11 +18776,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1334797496}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &774214318 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8537617462423939087, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &776649162
 GameObject:
   m_ObjectHideFlags: 0
@@ -19662,11 +19569,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 797894304}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &799471554 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8136375009550054981, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &801765272
 GameObject:
   m_ObjectHideFlags: 0
@@ -20433,11 +20335,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &841983876
 GameObject:
   m_ObjectHideFlags: 0
@@ -20519,11 +20416,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &843901470
 GameObject:
   m_ObjectHideFlags: 0
@@ -21411,16 +21303,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 876635173}
   m_CullTransparentMesh: 1
---- !u!1 &879633394 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 18781890926341630, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &883742770 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8933292779803960330, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &884198480
 GameObject:
   m_ObjectHideFlags: 0
@@ -22113,11 +21995,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &917949604
 GameObject:
   m_ObjectHideFlags: 0
@@ -22983,11 +22860,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &947607135 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7033012939392727117, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
@@ -23005,11 +22877,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &948489475
 GameObject:
   m_ObjectHideFlags: 0
@@ -23517,11 +23384,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &996590019 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6007788469264657019, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
@@ -23539,11 +23401,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &1001954894
 GameObject:
   m_ObjectHideFlags: 0
@@ -24415,11 +24272,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &1057346082
 GameObject:
   m_ObjectHideFlags: 0
@@ -24455,11 +24307,6 @@ Transform:
   - {fileID: 841983877}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1057999203 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9200438746647854827, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1058393905
 GameObject:
   m_ObjectHideFlags: 0
@@ -29609,11 +29456,6 @@ Transform:
   - {fileID: 960467125}
   m_Father: {fileID: 1412653286}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1285508385 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 64008612782307674, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1288905478
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29788,11 +29630,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1289360261}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1289886315 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2712088192820275805, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1290250189
 GameObject:
   m_ObjectHideFlags: 0
@@ -29959,11 +29796,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1312114688 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1609214383269008404, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1312555368
 GameObject:
   m_ObjectHideFlags: 0
@@ -30300,11 +30132,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1327273102}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1330044947 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6853108319842797645, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1330479575
 GameObject:
   m_ObjectHideFlags: 0
@@ -30898,11 +30725,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &1337189706
 GameObject:
   m_ObjectHideFlags: 0
@@ -31017,11 +30839,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1337189706}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1339918484 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1347666014598980849, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1343220241
 GameObject:
   m_ObjectHideFlags: 0
@@ -31246,11 +31063,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1346560972}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1352081251 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5542842478584317485, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1355343716
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31863,11 +31675,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1368179427}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1371873683 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6263648901069922111, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1380347408
 GameObject:
   m_ObjectHideFlags: 0
@@ -32195,11 +32002,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1408224028 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5816429320328066506, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1412653285
 GameObject:
   m_ObjectHideFlags: 0
@@ -34107,11 +33909,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1057346083}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1495882054 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1785430098046011322, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1498060256
 GameObject:
   m_ObjectHideFlags: 0
@@ -35114,11 +34911,6 @@ MonoBehaviour:
     doorAnimator: {fileID: 0}
     reopenCooldown: 1
   waveRoundSystem: {fileID: 748017592}
---- !u!1 &1543338919 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2622332094830099692, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1544593171
 GameObject:
   m_ObjectHideFlags: 0
@@ -36459,11 +36251,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1621620681}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1627901987 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2837174787902024094, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1628761708
 GameObject:
   m_ObjectHideFlags: 0
@@ -36746,6 +36533,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 900614694835417969, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
   m_PrefabInstance: {fileID: 1933949835}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1637515281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304901428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68e49e72c72343240bed44e29272797a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatStatistics
+  playerSpeed: 6
+  tongueMaxLength: 10
+  tongueExtendSpeed: 20
+  tongueRetractSpeed: 25
+  enemyDamage: 25
+  tongueHealAmount: 20
+  arrowSpeed: 40
+  attackSpeed: 1
+--- !u!114 &1637515292 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8197622151103158488, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+  m_PrefabInstance: {fileID: 1933949835}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304901428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 411511ef63e0fb34580d06d268375fc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerTakeDamage
 --- !u!1 &1637992144
 GameObject:
   m_ObjectHideFlags: 0
@@ -37520,11 +37338,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1692897237}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1696310711 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1976114229382322702, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1697089759
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -37715,11 +37528,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &1711506076
 GameObject:
   m_ObjectHideFlags: 0
@@ -39642,11 +39450,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1771026192}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1773193065 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6339559823716441113, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1773428959
 GameObject:
   m_ObjectHideFlags: 0
@@ -44506,7 +44309,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7555014404437206304, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1637515281}
   m_SourcePrefab: {fileID: 100100000, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
 --- !u!1 &1943047084
 GameObject:
@@ -44737,11 +44543,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1943074303}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1947842847 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8668970018130998477, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1952040567
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -45270,16 +45071,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!1 &1976389070 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1284147953328383967, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1976752320 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6916855897213350656, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1981205470 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2007398421071485481, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
@@ -45297,11 +45088,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1 &1986617531
 GameObject:
   m_ObjectHideFlags: 0
@@ -45942,11 +45728,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1991458941}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1994409941 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3700043372831910106, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1998249342
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46345,11 +46126,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2024135493}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &2026568652 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5879265633991568234, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2035594626
 GameObject:
   m_ObjectHideFlags: 0
@@ -46694,11 +46470,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2049384763}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &2059917464 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7817971408759747718, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2061065412
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46935,11 +46706,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5038428049936320934, guid: 59eda26e254ff314fbf2b54325803bea, type: 3}
   m_PrefabInstance: {fileID: 2068797442}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2071163910 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 161087098073436713, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2077263871
 GameObject:
   m_ObjectHideFlags: 0
@@ -47164,6 +46930,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2079051821}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2079481454
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2079481456}
+  - component: {fileID: 2079481455}
+  m_Layer: 0
+  m_Name: DebugMenu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2079481455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079481454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c692d109b505e344b0f8890a59cfeaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DebugMenu
+  statistics: {fileID: 1637515281}
+  playerTakeDamage: {fileID: 1637515292}
+  waveRoundSystem: {fileID: 748017592}
+  skin: {fileID: 0}
+  menuPosition: {x: 10, y: 10}
+  menuSize: {x: 420, y: 420}
+  debugCategories:
+  - {fileID: 11400000, guid: 7557228bd92a97e42a1ac42c0eb28ea8, type: 2}
+  - {fileID: 11400000, guid: 982844f8c7532704e8a28638aae752dc, type: 2}
+  - {fileID: 11400000, guid: e7bae7418894287489c38481ad182847, type: 2}
+--- !u!4 &2079481456
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079481454}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2081511465
 GameObject:
   m_ObjectHideFlags: 0
@@ -47561,6 +47381,9 @@ MonoBehaviour:
   WarningColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   CriticalColor: {r: 1, g: 0, b: 0, a: 1}
   DashFillImage: {fileID: 1010908115}
+  OverchargeFillImage: {fileID: 0}
+  OverChargeLerpSpeed: 3
+  playerHealth: {fileID: 0}
 --- !u!114 &2094065751
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47772,11 +47595,6 @@ MonoBehaviour:
   shakeMagnitudeY: 0
   shakeFrequencyY: 5
   shakePhaseY: 0
---- !u!1 &2110147753 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3223408031028179399, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
-  m_PrefabInstance: {fileID: 854581655524531388}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2126812101
 GameObject:
   m_ObjectHideFlags: 0
@@ -47906,11 +47724,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d52cbc8d1d3aec4090f1a091e38e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogStrengthDecay
-  minSecondSpeed: 0.15
-  decayRate: 0.01
-  startSimulationSpeed: 2
-  minSimulationSpeed: 0.5
-  simulationDecayRate: 0.5
 --- !u!1001 &2129852791
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -49373,3 +49186,4 @@ SceneRoots:
   - {fileID: 756901292}
   - {fileID: 307810842}
   - {fileID: 854581655524531388}
+  - {fileID: 2079481456}

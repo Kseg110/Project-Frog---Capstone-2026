@@ -831,6 +831,7 @@ GameObject:
   - component: {fileID: -4889873046943597826}
   - component: {fileID: -5455150326957673816}
   - component: {fileID: 7342988453639927308}
+  - component: {fileID: 4008079097091048613}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1035,11 +1036,15 @@ MonoBehaviour:
   chargedTime: 20
   chargeCooldown: 15
   chargeDecayRate: 1
-  trailDamage: 5
+  fireDamage: 4
+  fireDamageInterval: 3
+  iceSlowPercent: 50
+  windSpeedBoostPercent: 35
   playerAnchor: {fileID: 7481143701210063934}
   playerHUD: {fileID: 0}
   overchargeVFX: {fileID: 1866820753286131010}
   trailCollider: {fileID: 461726596801835861}
+  playerMovement: {fileID: 0}
 --- !u!114 &-4889873046943597826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1261,6 +1266,26 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4008079097091048613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68e49e72c72343240bed44e29272797a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatStatistics
+  playerSpeed: 6
+  tongueMaxLength: 10
+  tongueExtendSpeed: 20
+  tongueRetractSpeed: 25
+  enemyDamage: 25
+  tongueHealAmount: 20
+  arrowSpeed: 40
+  attackSpeed: 1
 --- !u!1 &8300862678990091245
 GameObject:
   m_ObjectHideFlags: 0
