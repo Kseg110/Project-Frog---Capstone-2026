@@ -1,12 +1,16 @@
-using UnityEngine;
 using System;
-
+using System.Collections;
+using UnityEngine;
 
 [ExecuteAlways]
 [RequireComponent(typeof(LineRenderer))]
 public class AnchorTether : MonoBehaviour
 {
     public event Action OnPointsChanged;
+
+    // These events are for external systems (like upgrades) to react to tethering changes.
+    public event Action<AnchorBase> OnAnchorAttached;
+    public event Action OnAnchorDetached;
 
     [Header("Tether Transforms")]
     [SerializeField] private Transform startPoint;
@@ -44,6 +48,10 @@ public class AnchorTether : MonoBehaviour
     private Vector3 prevEndPos;
     private float prevMidPos;
     private float prevWeight;
+
+    private AnchorBase currentAnchor;
+    [SerializeField] private float tetherCooldown = 1.0f;
+    private bool canTether = true;
 
     private void Awake()
     {
@@ -249,7 +257,41 @@ public class AnchorTether : MonoBehaviour
 
     public void SetEndPoint(Transform t, bool instantAssign = false)
     {
+        Debug.Log("<color=orange>[AnchorTether]</color> SetEndPoint called with: " + (t ? t.name : "NULL"));
+
+        if (!canTether && t != endPoint && t != null)
+        {
+            Debug.Log("<color=red>[AnchorTether]</color> BLOCKED by cooldown");
+            return;
+        }
+
         endPoint = t;
+
+        AnchorBase newAnchor = null;
+        if (endPoint != null)
+            newAnchor = endPoint.GetComponent<AnchorBase>();
+
+        Debug.Log("<color=yellow>[AnchorTether]</color> newAnchor = " + (newAnchor ? newAnchor.name : "NULL"));
+
+        if (newAnchor != currentAnchor)
+        {
+            Debug.Log("<color=cyan>[AnchorTether]</color> Anchor changed!");
+
+            if (currentAnchor != null && newAnchor == null)
+            {
+                Debug.Log("<color=magenta>[AnchorTether]</color> OnAnchorDetached invoked");
+                OnAnchorDetached?.Invoke();
+            }
+            else if (newAnchor != null)
+            {
+                Debug.Log("<color=green>[AnchorTether]</color> OnAnchorAttached invoked");
+                OnAnchorAttached?.Invoke(newAnchor);
+                StartCoroutine(TetherCooldownRoutine());
+            }
+
+            currentAnchor = newAnchor;
+        }
+
         if (instantAssign)
         {
             if (AreEndPointsValid())
@@ -263,7 +305,15 @@ public class AnchorTether : MonoBehaviour
                 if (lr) lr.positionCount = 0;
             }
         }
+
         NotifyPointsChanged();
+    }
+
+    private IEnumerator TetherCooldownRoutine()
+    {
+        canTether = false;
+        yield return new WaitForSeconds(tetherCooldown);
+        canTether = true;
     }
 
     public Vector3 GetPointAt(float t)
@@ -271,4 +321,5 @@ public class AnchorTether : MonoBehaviour
         if (!AreEndPointsValid()) return Vector3.zero;
         return GetRationalBezierPoint(startPoint.position, animatedMid, endPoint.position, Mathf.Clamp01(t), StartWeight, midPointWeight, EndWeight);
     }
+
 }

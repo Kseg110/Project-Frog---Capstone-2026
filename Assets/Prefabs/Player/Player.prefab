@@ -408,6 +408,7 @@ MonoBehaviour:
   damping: 15
   midPointPosition: 0.5
   midPointWeight: 1
+  tetherCooldown: 1
 --- !u!1 &3469857485663395449
 GameObject:
   m_ObjectHideFlags: 0
@@ -829,6 +830,7 @@ GameObject:
   - component: {fileID: 4281862109518123148}
   - component: {fileID: 3953045122372634609}
   - component: {fileID: -4889873046943597826}
+  - component: {fileID: 531424311684605953}
   - component: {fileID: -5455150326957673816}
   - component: {fileID: 7342988453639927308}
   m_Layer: 0
@@ -1056,6 +1058,18 @@ MonoBehaviour:
   IceChargeProjectilePrefab: {fileID: 1850782377406893800, guid: db44afe42fb077d4283580623fd413fd, type: 3}
   WindChargeProjectilePrefab: {fileID: 1850782377406893800, guid: db44afe42fb077d4283580623fd413fd, type: 3}
   MaxChargeTime: 1
+--- !u!114 &531424311684605953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c02f34c0f763e04eb380fe38cf5ecf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerShieldController
 --- !u!114 &-5455150326957673816
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,12 +8,14 @@ using UnityEngine;
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerImmortality))]
+[RequireComponent(typeof(PlayerShieldController))]
 public class PlayerTakeDamage : MonoBehaviour
 {
     [Header("Damage Settings")]
     [Tooltip("How long after taking damage until the player can be damaged again (i-frames/cooldown).")]
     [SerializeField] private float immortalityTime = 1f;
 
+    [Header("Knockback")]
     [Tooltip("Knockback speed in meters per second.")]
     [SerializeField] private float knockbackSpeed = 20f;
 
@@ -36,6 +38,7 @@ public class PlayerTakeDamage : MonoBehaviour
     private Health playerHealth;
     private PlayerMovement playerMovement;
     private PlayerImmortality playerImmortality;
+    private PlayerShieldController shield;
 
     private Rigidbody rb;
     private CapsuleCollider hitbox;
@@ -56,7 +59,7 @@ public class PlayerTakeDamage : MonoBehaviour
         playerHealth = GetComponent<Health>();
         playerMovement = GetComponent<PlayerMovement>();
         playerImmortality = GetComponent<PlayerImmortality>();
-
+        shield = GetComponent<PlayerShieldController>();
         rb = GetComponent<Rigidbody>();
 
         // Get hitbox collider from child object
@@ -98,16 +101,27 @@ public class PlayerTakeDamage : MonoBehaviour
         if (isGod)
             return;
 
-        if (playerImmortality.IsImmortal)
+        if (Time.time < nextAllowedDamageTime)
             return;
 
-        if (Time.time < nextAllowedDamageTime)
+        // SHIELD ALWAYS CHECKS FIRST
+        if (shield != null && shield.TakeDamage((int)damageAmount))
+        {
+            Debug.Log("[Shield] Hit absorbed by shield!");
+
+            // Activate i-frames even if shield absorbed, to prevent multiple hits in quick succession
+            nextAllowedDamageTime = Time.time + immortalityTime;
+            return;
+        }
+
+        // If shield didn't absorb, check I-frames 
+        if (playerImmortality.IsImmortal)
             return;
 
         // Start i-frames
         nextAllowedDamageTime = Time.time + Mathf.Max(0f, immortalityTime);
 
-        // Damage
+        // Otherwise → real damage
         playerHealth.TakeDmg(damageAmount);
 
         // Effects
