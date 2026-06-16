@@ -181,7 +181,7 @@ public class WaveRoundSystem : MonoBehaviour
 
     private void KillAllEnemiesInWave()
     {
-        foreach (GameObject enemy in activeEnemies)
+        foreach (GameObject enemy in new List<GameObject>(activeEnemies))
         {
             if (enemy != null)
             {

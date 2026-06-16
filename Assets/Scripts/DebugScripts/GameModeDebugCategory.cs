@@ -54,7 +54,6 @@ public class GameModeDebugCategory : DebugCategory
         GUILayout.EndHorizontal();
 
         GUILayout.Space(6);
-        GUILayout.Label($"WaveRoundSystem: {waveRoundSystem.name}", GUI.skin.label);
     }
 
     bool AutoFindWaveRoundSystem()
