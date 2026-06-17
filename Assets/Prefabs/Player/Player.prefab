@@ -833,6 +833,8 @@ GameObject:
   - component: {fileID: 531424311684605953}
   - component: {fileID: -5455150326957673816}
   - component: {fileID: 7342988453639927308}
+  - component: {fileID: 833077249816884151}
+  - component: {fileID: 274812574016943818}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -910,6 +912,13 @@ MonoBehaviour:
   dashDistance: 5
   dashDuration: 0.15
   dashCooldown: 0.5
+  dashActivationEvent:
+    Guid:
+      Data1: 1888212263
+      Data2: 1246272287
+      Data3: -310768964
+      Data4: 550454283
+    Path: event:/Dash Activation
 --- !u!114 &8197622151103158488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -959,6 +968,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a860fdbe827944e4fb4c367744d9ebe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
+  damageTakenEvent:
+    Guid:
+      Data1: -1924487788
+      Data2: 1194671974
+      Data3: -1751493203
+      Data4: -336415060
+    Path: event:/Damage Taken Activation
   maxHealth: 100
 --- !u!114 &1102886415016949637
 MonoBehaviour:
@@ -989,8 +1005,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc43d964d9107046b540ebaae6a0a3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGrapple
+  tetherAttachEvent:
+    Guid:
+      Data1: 439330042
+      Data2: 1240938150
+      Data3: 606943411
+      Data4: 2116090157
+    Path: event:/Player Tether Activation
   anchorTether: {fileID: 5289892553675338067}
-  playerOvercharge: {fileID: 0}
+  playerOvercharge: {fileID: 3953045122372634609}
 --- !u!114 &583013283057882193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1005,6 +1028,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackScript
   healAmountPerFly: 15
   inventoryManager: {fileID: 0}
+  flyGatherEvent:
+    Guid:
+      Data1: 2093426210
+      Data2: 1210008492
+      Data3: 314477988
+      Data4: 552488886
+    Path: event:/Fly Gather Activation
 --- !u!114 &4281862109518123148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1022,6 +1052,20 @@ MonoBehaviour:
   attacksPerSecond: 2
   attackWindowDuration: 0.5
   maxChargeTime: 2
+  basicShotEvent:
+    Guid:
+      Data1: -125861613
+      Data2: 1220588128
+      Data3: -1644195430
+      Data4: 1569811927
+    Path: event:/Player Basic Shot Activation
+  chargeShotEvent:
+    Guid:
+      Data1: -2051708376
+      Data2: 1102804627
+      Data3: -1778522690
+      Data4: 597843026
+    Path: event:/Player Charge Shot Activation
 --- !u!114 &3953045122372634609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1037,11 +1081,15 @@ MonoBehaviour:
   chargedTime: 20
   chargeCooldown: 15
   chargeDecayRate: 1
-  trailDamage: 5
+  fireDamage: 4
+  fireDamageInterval: 3
+  iceSlowPercent: 50
+  windSpeedBoostPercent: 35
   playerAnchor: {fileID: 7481143701210063934}
   playerHUD: {fileID: 0}
   overchargeVFX: {fileID: 1866820753286131010}
   trailCollider: {fileID: 461726596801835861}
+  playerMovement: {fileID: -4393449127589004673}
 --- !u!114 &-4889873046943597826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1275,6 +1323,43 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &833077249816884151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68e49e72c72343240bed44e29272797a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatStatistics
+  playerSpeed: 6
+  tongueMaxLength: 10
+  tongueExtendSpeed: 20
+  tongueRetractSpeed: 25
+  enemyDamage: 25
+  tongueHealAmount: 20
+  arrowSpeed: 40
+  attackSpeed: 1
+--- !u!114 &274812574016943818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4555f368afc274d4ead1b16b74b4e10c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
+  flyInventoryUIPrefab: {fileID: 0}
+  playerTongueHealing: {fileID: 583013283057882193}
+  flyConsumeActionRef: {fileID: 7074314213272551088, guid: 5b61a60e25ce86a40840fa02c1292f12, type: 3}
+  maximumInventorySize: 3
+  flyInventoryUIPrefabList: []
 --- !u!1 &8300862678990091245
 GameObject:
   m_ObjectHideFlags: 0
