@@ -118,7 +118,9 @@ public class Health : MonoBehaviour, IDamageable
         CurrentHealth += amount;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0f, maxHealth);
 
+        if (healthbar != null)
         healthbar.UpdateHealthBar(maxHealth, CurrentHealth);
+        if (playerHUD != null)
         playerHUD?.UpdateHealth(CurrentHealth / maxHealth);
     }
 

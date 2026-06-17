@@ -1,28 +1,24 @@
 using UnityEngine;
-using UnityEngine.AI;
 
 public class EnemyFly : MonoBehaviour
 {
-
     [SerializeField] private float roamRadius = 5;
     [SerializeField] private float minMoveInterval = 1f;
     [SerializeField] private float maxMoveInterval = 3f;
     [SerializeField] private float flyHeight = 7f;
+    [SerializeField] private float moveSpeed = 3.5f;
+    [SerializeField] private float rotationSpeed = 5f;
+    [SerializeField] private float stoppingDistance = 0.5f;
 
-    private NavMeshAgent agent;
     private Vector3 centerPoint;
+    private Vector3 targetPosition;
     private float moveTimer;
     private float nextMoveTime;
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        if (!agent.isOnNavMesh)
-        {
-            agent.Warp(transform.position);
-       
-        }
-        agent.baseOffset = flyHeight;
+        // Set initial position with flyHeight
+        transform.position = new Vector3(transform.position.x, flyHeight, transform.position.z);
         centerPoint = transform.position;
 
         SetNextMoveTime();
@@ -31,7 +27,9 @@ public class EnemyFly : MonoBehaviour
 
     void Update()
     {
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 1)
+        float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
+
+        if (distanceToTarget <= stoppingDistance)
         {
             moveTimer += Time.deltaTime;
 
@@ -41,6 +39,20 @@ public class EnemyFly : MonoBehaviour
                 SetNextMoveTime();
             }
         }
+        else
+        {
+            // Move towards target
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+
+            // Rotate towards target
+            Vector3 direction = (targetPosition - transform.position).normalized;
+            direction.y = 0; // Keep rotation horizontal only
+            if (direction != Vector3.zero)
+            {
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotationSpeed * Time.deltaTime);
+            }
+        }
     }
 
     void SetNextMoveTime()
@@ -48,22 +60,16 @@ public class EnemyFly : MonoBehaviour
         moveTimer = 0f;
         nextMoveTime = Random.Range(minMoveInterval, maxMoveInterval);
     }
+
     void PickNewDestination()
     {
         Vector2 randomCircle = Random.insideUnitCircle * roamRadius;
 
-        Vector3 randomPoint = centerPoint + new Vector3(
+        targetPosition = centerPoint + new Vector3(
             randomCircle.x,
             0f,
             randomCircle.y
         );
-
-        NavMeshHit hit;
-
-        if (NavMesh.SamplePosition(randomPoint, out hit, roamRadius, NavMesh.AllAreas))
-        {
-            agent.SetDestination(hit.position);
-        }
     }
 
     // add visual of the roam area //
@@ -71,5 +77,12 @@ public class EnemyFly : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(Application.isPlaying ? centerPoint : transform.position, roamRadius);
+        
+        // Draw target position
+        if (Application.isPlaying)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(targetPosition, 0.3f);
+        }
     }
 }
