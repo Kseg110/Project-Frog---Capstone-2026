@@ -834,7 +834,6 @@ GameObject:
   - component: {fileID: -5455150326957673816}
   - component: {fileID: 7342988453639927308}
   - component: {fileID: 833077249816884151}
-  - component: {fileID: 274812574016943818}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -952,8 +951,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 576901950fbd0a646a2f8525ad748856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerImmortality
-  glowMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  glowMaterial: {fileID: 2100000, guid: bfa71111225aa1843bec2f997fe5f5d8, type: 2}
+  glowColor: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
   glowIntensity: 5
   isImmortal: 0
 --- !u!114 &5146856041539489363
@@ -1343,23 +1342,6 @@ MonoBehaviour:
   tongueHealAmount: 20
   arrowSpeed: 40
   attackSpeed: 1
---- !u!114 &274812574016943818
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7555014404437206304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4555f368afc274d4ead1b16b74b4e10c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
-  flyInventoryUIPrefab: {fileID: 0}
-  playerTongueHealing: {fileID: 583013283057882193}
-  flyConsumeActionRef: {fileID: 7074314213272551088, guid: 5b61a60e25ce86a40840fa02c1292f12, type: 3}
-  maximumInventorySize: 3
-  flyInventoryUIPrefabList: []
 --- !u!1 &8300862678990091245
 GameObject:
   m_ObjectHideFlags: 0

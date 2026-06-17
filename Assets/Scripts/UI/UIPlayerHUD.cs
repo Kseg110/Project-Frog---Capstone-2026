@@ -96,4 +96,14 @@ public class UIPlayerHUD : MonoBehaviour
     {
         targetOverchargeFill = Mathf.Clamp01(normalized);
     }
+
+    public void ShowHUD()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void HideHUD()
+    {
+        gameObject.SetActive(false);
+    }
 }

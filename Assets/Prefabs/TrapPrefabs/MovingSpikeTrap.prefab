@@ -188,7 +188,7 @@ MonoBehaviour:
   - {fileID: 6574503791373018394}
   disableTrapsOnStart: 1
   stayActiveOnce: 1
-  damageAmount: 20
+  damageAmount: 0
   knockbackDistance: 8
 --- !u!1 &2390915587331600022
 GameObject:
@@ -315,8 +315,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbd11506f10e25a458d4049b39be56c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeTrapMovement
-  moveDistance: 2
-  speed: 0.5
+  moveDistance: 1
+  speed: 0.6
   moveAxis: {x: 0, y: 0, z: -0.0001}
   startDelay: 0
   pauseAtEnds: 1
