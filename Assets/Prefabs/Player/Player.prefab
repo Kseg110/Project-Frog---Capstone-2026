@@ -408,6 +408,7 @@ MonoBehaviour:
   damping: 15
   midPointPosition: 0.5
   midPointWeight: 1
+  tetherCooldown: 1
 --- !u!1 &3469857485663395449
 GameObject:
   m_ObjectHideFlags: 0
@@ -829,9 +830,10 @@ GameObject:
   - component: {fileID: 4281862109518123148}
   - component: {fileID: 3953045122372634609}
   - component: {fileID: -4889873046943597826}
+  - component: {fileID: 531424311684605953}
   - component: {fileID: -5455150326957673816}
   - component: {fileID: 7342988453639927308}
-  - component: {fileID: 4008079097091048613}
+  - component: {fileID: 833077249816884151}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -909,6 +911,13 @@ MonoBehaviour:
   dashDistance: 5
   dashDuration: 0.15
   dashCooldown: 0.5
+  dashActivationEvent:
+    Guid:
+      Data1: 1888212263
+      Data2: 1246272287
+      Data3: -310768964
+      Data4: 550454283
+    Path: event:/Dash Activation
 --- !u!114 &8197622151103158488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -942,8 +951,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 576901950fbd0a646a2f8525ad748856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerImmortality
-  glowMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  glowMaterial: {fileID: 2100000, guid: bfa71111225aa1843bec2f997fe5f5d8, type: 2}
+  glowColor: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
   glowIntensity: 5
   isImmortal: 0
 --- !u!114 &5146856041539489363
@@ -958,6 +967,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a860fdbe827944e4fb4c367744d9ebe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
+  damageTakenEvent:
+    Guid:
+      Data1: -1924487788
+      Data2: 1194671974
+      Data3: -1751493203
+      Data4: -336415060
+    Path: event:/Damage Taken Activation
   maxHealth: 100
 --- !u!114 &1102886415016949637
 MonoBehaviour:
@@ -988,8 +1004,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc43d964d9107046b540ebaae6a0a3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGrapple
+  tetherAttachEvent:
+    Guid:
+      Data1: 439330042
+      Data2: 1240938150
+      Data3: 606943411
+      Data4: 2116090157
+    Path: event:/Player Tether Activation
   anchorTether: {fileID: 5289892553675338067}
-  playerOvercharge: {fileID: 0}
+  playerOvercharge: {fileID: 3953045122372634609}
 --- !u!114 &583013283057882193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1004,6 +1027,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackScript
   healAmountPerFly: 15
   inventoryManager: {fileID: 0}
+  flyGatherEvent:
+    Guid:
+      Data1: 2093426210
+      Data2: 1210008492
+      Data3: 314477988
+      Data4: 552488886
+    Path: event:/Fly Gather Activation
 --- !u!114 &4281862109518123148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1021,6 +1051,20 @@ MonoBehaviour:
   attacksPerSecond: 2
   attackWindowDuration: 0.5
   maxChargeTime: 2
+  basicShotEvent:
+    Guid:
+      Data1: -125861613
+      Data2: 1220588128
+      Data3: -1644195430
+      Data4: 1569811927
+    Path: event:/Player Basic Shot Activation
+  chargeShotEvent:
+    Guid:
+      Data1: -2051708376
+      Data2: 1102804627
+      Data3: -1778522690
+      Data4: 597843026
+    Path: event:/Player Charge Shot Activation
 --- !u!114 &3953045122372634609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1044,7 +1088,7 @@ MonoBehaviour:
   playerHUD: {fileID: 0}
   overchargeVFX: {fileID: 1866820753286131010}
   trailCollider: {fileID: 461726596801835861}
-  playerMovement: {fileID: 0}
+  playerMovement: {fileID: -4393449127589004673}
 --- !u!114 &-4889873046943597826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1061,6 +1105,18 @@ MonoBehaviour:
   IceChargeProjectilePrefab: {fileID: 1850782377406893800, guid: db44afe42fb077d4283580623fd413fd, type: 3}
   WindChargeProjectilePrefab: {fileID: 1850782377406893800, guid: db44afe42fb077d4283580623fd413fd, type: 3}
   MaxChargeTime: 1
+--- !u!114 &531424311684605953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c02f34c0f763e04eb380fe38cf5ecf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerShieldController
 --- !u!114 &-5455150326957673816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1266,7 +1322,7 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4008079097091048613
+--- !u!114 &833077249816884151
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

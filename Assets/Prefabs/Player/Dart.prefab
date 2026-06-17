@@ -56,6 +56,8 @@ MonoBehaviour:
   effectType: 
   effectDuration: 0
   effectValue: 0
+  isPlayerProjectile: 0
+  isPiercingProjectile: 0
 --- !u!33 &8847850907498326296
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -123,7 +125,7 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0

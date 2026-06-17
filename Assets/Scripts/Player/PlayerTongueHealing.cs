@@ -1,4 +1,5 @@
 using UnityEngine;
+using FMODUnity;
 
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(PlayerTongueAttack))]
@@ -9,6 +10,9 @@ public class PlayerTongueHealing : MonoBehaviour
     [SerializeField] private InventoryManager inventoryManager;
     private PlayerTongueAttack playerTongueAttack;
     private Health playerHealth;
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference flyGatherEvent;
 
     private int numberOfFliesAttached = 0; // Fly counter for how many times the player heals when retracting
 
@@ -33,6 +37,8 @@ public class PlayerTongueHealing : MonoBehaviour
         {
             AttachFly();
             Destroy(other.gameObject);
+
+            RuntimeManager.PlayOneShot(flyGatherEvent, transform.position);
         }
     }
 
