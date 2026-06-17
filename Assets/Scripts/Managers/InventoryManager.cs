@@ -8,6 +8,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private PlayerTongueHealing playerTongueHealing;
     [SerializeField] private InputActionReference flyConsumeActionRef;
     [SerializeField] private int maximumInventorySize = 3;
+    [SerializeField] private Vector2 flyIconSize = new Vector2(50f, 50f);
 
     public List<GameObject> flyInventoryUIPrefabList;
 
@@ -19,6 +20,13 @@ public class InventoryManager : MonoBehaviour
             if (flyInventoryUIPrefabList.Count < maximumInventorySize)
             {
                 GameObject newFly = Instantiate(flyInventoryUIPrefab, transform);
+                
+                RectTransform rectTransform = newFly.GetComponent<RectTransform>();
+                if (rectTransform != null)
+                {
+                    rectTransform.sizeDelta = flyIconSize;
+                }
+                
                 flyInventoryUIPrefabList.Add(newFly);
             }
             numberOfFlies--;
@@ -47,6 +55,11 @@ public class InventoryManager : MonoBehaviour
 
     private void ConsumeFly()
     {
+        if (flyInventoryUIPrefabList == null || flyInventoryUIPrefabList.Count == 0)
+        {
+            return;
+        }
+
         Destroy(flyInventoryUIPrefabList[^1]);
         flyInventoryUIPrefabList.RemoveAt(flyInventoryUIPrefabList.Count - 1);
         playerTongueHealing.HealPlayer(1);

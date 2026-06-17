@@ -29,25 +29,26 @@ public class UIPlayerHUD : MonoBehaviour
 
     private void Awake()
     {
-        UpdateHealth(playerHealth.maxHealth);
+        UpdateHealth(1f);
         playerHealth.OnHealthChanged += PlayerHealth_OnHealthChanged;
     }
 
     private void PlayerHealth_OnHealthChanged(float newHealth)
     {
         Debug.Log(newHealth);
-        UpdateHealth(newHealth);
+        float normalized = newHealth / playerHealth.maxHealth;
+        UpdateHealth(normalized);
     }
 
     //[Header("Overcharge Bar")]
     //[SerializeField] private Image OverchargeFillImage;
 
     // Calls from the health system whenever HP changes.
-    public void UpdateHealth(float newHealth)
+    public void UpdateHealth(float normalizedHealth)
     {
-        float normalized = newHealth / playerHealth.maxHealth;
-        targetHealthFill = Mathf.Clamp01(normalized);
-        healthFillImage.color = healthGradient.Evaluate(normalized);
+        //float normalized = newHealth / playerHealth.maxHealth;
+        targetHealthFill = Mathf.Clamp01(normalizedHealth);
+        healthFillImage.color = healthGradient.Evaluate(normalizedHealth);
 
         //if (normalized > 0.5f)
         //    healthFillImage.color = HealthyColor;

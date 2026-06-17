@@ -203,7 +203,6 @@ GameObject:
   - component: {fileID: 1580755156842887748}
   - component: {fileID: 8194962763310957027}
   - component: {fileID: 6574503791373018394}
-  - component: {fileID: 7808785584602372497}
   m_Layer: 0
   m_Name: DamageTrigger
   m_TagString: trap
@@ -322,17 +321,3 @@ MonoBehaviour:
   startDelay: 0
   pauseAtEnds: 1
   smoothMotion: 1
---- !u!114 &7808785584602372497
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2390915587331600022}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dec38341ad6d353458e61dec4ae1d12c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TESTEnemyDamageOnCollision
-  damageAmount: 0
-  knockbackDistance: 3
