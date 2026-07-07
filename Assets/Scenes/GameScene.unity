@@ -46481,6 +46481,8 @@ GameObject:
   - component: {fileID: 1975171509}
   - component: {fileID: 1975171508}
   - component: {fileID: 1975171507}
+  - component: {fileID: 1975171510}
+  - component: {fileID: 1975171511}
   m_Layer: 5
   m_Name: DeathOverlay
   m_TagString: Untagged
@@ -46573,6 +46575,36 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1975171510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975171505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74d59820bd7b67244b6aa9c517e8aeb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UINavigator
+  selectedScale: 1.1
+  scaleSpeed: 10
+--- !u!114 &1975171511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975171505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6162a1f158346c4dab3f6e3f81e610c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIDeathOverlay
+  deathOverlayPanel: {fileID: 893726090}
+  playerHUD: {fileID: 0}
+  RestartButton: {fileID: 305945203}
+  MenuButton: {fileID: 1926651200}
 --- !u!1 &1986617531
 GameObject:
   m_ObjectHideFlags: 0
