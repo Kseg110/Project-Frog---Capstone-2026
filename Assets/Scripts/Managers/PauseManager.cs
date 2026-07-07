@@ -117,9 +117,15 @@ public class PauseManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
+        // Set the first button in the pause menu as selected for controller navigation
         var firstButton = pauseMenuUI.GetComponentInChildren<Selectable>();
         if (firstButton != null)
             EventSystem.current.SetSelectedGameObject(firstButton.gameObject);
+
+        // Refresh the card icons in the pause menu
+        var iconManager = pauseMenuUI.GetComponentInChildren<CardIconManager>(true);
+        if (iconManager != null)
+            iconManager.RefreshIcons();
     }
 
     public void QuitGame()
