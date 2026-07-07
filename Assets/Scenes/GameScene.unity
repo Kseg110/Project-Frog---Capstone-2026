@@ -23311,6 +23311,7 @@ GameObject:
   - component: {fileID: 966966524}
   - component: {fileID: 966966523}
   - component: {fileID: 966966528}
+  - component: {fileID: 966966529}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -23449,6 +23450,20 @@ MonoBehaviour:
   playerHUD: {fileID: 1909730380}
   RestartButton: {fileID: 305945203}
   MenuButton: {fileID: 1926651200}
+--- !u!114 &966966529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966966522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74d59820bd7b67244b6aa9c517e8aeb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UINavigator
+  selectedScale: 1.1
+  scaleSpeed: 10
 --- !u!1 &977871942
 GameObject:
   m_ObjectHideFlags: 0
@@ -38097,6 +38112,7 @@ GameObject:
   - component: {fileID: 1702440852}
   - component: {fileID: 1702440851}
   - component: {fileID: 1702440850}
+  - component: {fileID: 1702440854}
   m_Layer: 5
   m_Name: PauseMenu
   m_TagString: Untagged
@@ -38192,6 +38208,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1702440854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702440849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74d59820bd7b67244b6aa9c517e8aeb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UINavigator
+  selectedScale: 1.1
+  scaleSpeed: 10
 --- !u!1 &1711506076
 GameObject:
   m_ObjectHideFlags: 0
@@ -43743,6 +43773,7 @@ GameObject:
   - component: {fileID: 1870631986}
   - component: {fileID: 1870631985}
   - component: {fileID: 1870631984}
+  - component: {fileID: 1870631989}
   m_Layer: 5
   m_Name: CardSelectionUI
   m_TagString: Untagged
@@ -43838,6 +43869,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1870631989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1870631983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74d59820bd7b67244b6aa9c517e8aeb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UINavigator
+  selectedScale: 1.05
+  scaleSpeed: 10
 --- !u!1 &1871980688
 GameObject:
   m_ObjectHideFlags: 0
