@@ -12,6 +12,7 @@ public class MovementComponent : MonoBehaviour
     [Header("Target")]
     [SerializeField] private Transform target;
 
+
     [Header("Movement Settings")]
     [SerializeField] private float stopDistance = 3f;
     [SerializeField] private float movementSpeed = 1f;
@@ -22,7 +23,8 @@ public class MovementComponent : MonoBehaviour
 
     private void Awake()
     { 
-        agent = GetComponent<NavMeshAgent>(); 
+        agent = GetComponent<NavMeshAgent>();
+        target = TargetManager.Instance.RequestSlot(this);
     }
 
     private void Start()
@@ -90,4 +92,10 @@ public class MovementComponent : MonoBehaviour
             Stop();
     }
 
+
+    //remove self from movement target slot// CALL ON DEATH
+    public void ReleaseTargetSlot()
+    {
+        TargetManager.Instance.ReleaseSlot(this);
+    }
 }
