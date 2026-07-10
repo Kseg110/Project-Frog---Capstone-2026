@@ -29701,6 +29701,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1933949837}
     - target: {fileID: 1679932692687790455, guid: 5c89eb009213dba449496e39c1cc25d5, type: 3}
+      propertyPath: menuPosition.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1679932692687790455, guid: 5c89eb009213dba449496e39c1cc25d5, type: 3}
+      propertyPath: menuPosition.y
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 1679932692687790455, guid: 5c89eb009213dba449496e39c1cc25d5, type: 3}
       propertyPath: waveRoundSystem
       value: 
       objectReference: {fileID: 748017592}
@@ -35482,7 +35490,7 @@ MonoBehaviour:
     openTrigger: {fileID: 0}
     closeTrigger: {fileID: 1631326451}
     minWave: 5
-    maxWave: 10
+    maxWave: 20
     destroyDoor: 0
     doorAnimator: {fileID: 0}
     reopenCooldown: 1
@@ -35490,7 +35498,7 @@ MonoBehaviour:
     openTrigger: {fileID: 0}
     closeTrigger: {fileID: 690929250}
     minWave: 10
-    maxWave: 15
+    maxWave: 20
     destroyDoor: 0
     doorAnimator: {fileID: 0}
     reopenCooldown: 1

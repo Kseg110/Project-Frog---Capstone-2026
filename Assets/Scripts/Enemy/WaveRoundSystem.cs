@@ -205,13 +205,17 @@ public class WaveRoundSystem : MonoBehaviour
         KillAllEnemiesInWave();
     }
 
-    public void SkipToWave(int waveNumber)
+    public void SkipToWave(int waveNumber) //Skips waves for debug purposes.
     {
+        Debug.Log($"Skipping to wave {waveNumber}");
         if (waveNumber < 1 || waveNumber > waves.Length)
         {
             Debug.LogError($"Invalid Wave Number: {waveNumber}");
             return;
         }
+        currentWaveIndex = waveNumber - 1;
+
+        Debug.Log($"Setting currentWaveTindex to {currentWaveIndex}");
 
         KillAllEnemiesInWave();
 
@@ -220,8 +224,6 @@ public class WaveRoundSystem : MonoBehaviour
         activeEnemies.Clear();
         waitingForCardSelection = false;
         waveInProgress = false;
-
-        currentWaveIndex = waveNumber - 1;
 
         StartWave(currentWaveIndex);
     }
