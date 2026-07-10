@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8135013119406045061}
   - component: {fileID: 1401022787646104557}
   - component: {fileID: 3574255279237135700}
+  - component: {fileID: -780641605675704576}
   - component: {fileID: 2873713759039743146}
   - component: {fileID: 5962536139291589849}
   - component: {fileID: 3793819314933414442}
@@ -136,8 +137,21 @@ MonoBehaviour:
   attackHitbox: {fileID: 7265194758862469610, guid: 53f6e5ae24fb383409cd36a8cb582420, type: 3}
   health: {fileID: 2873713759039743146}
   attackRange: 2
+--- !u!114 &-780641605675704576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4397625788936971336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a9e5bb5b09c19048a9921b62e402500, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
+  attackHitBox: {fileID: 7265194758862469610, guid: 53f6e5ae24fb383409cd36a8cb582420, type: 3}
   attackPoint: {fileID: 2938892953658481572}
-  hitboxLifetime: 1
+  hitBoxLifeTime: 0.1
 --- !u!114 &2873713759039743146
 MonoBehaviour:
   m_ObjectHideFlags: 0
