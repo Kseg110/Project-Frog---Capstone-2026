@@ -149,9 +149,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a9e5bb5b09c19048a9921b62e402500, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
+  attackType: 0
   attackHitBox: {fileID: 7265194758862469610, guid: 53f6e5ae24fb383409cd36a8cb582420, type: 3}
   attackPoint: {fileID: 2938892953658481572}
   hitBoxLifeTime: 0.1
+  previewPrefab: {fileID: 9090229426103979086, guid: eab4b670b6215fc4c881c46324463cde, type: 3}
+  attackCylinderPrefab: {fileID: 3449643467730253744, guid: 52cb8c935dc2f744e98dcdcfb7d79ff5, type: 3}
+  windupTime: 2
+  riseHeight: 3
+  riseSpeed: 6
+  lingeringDuration: 1
 --- !u!114 &2873713759039743146
 MonoBehaviour:
   m_ObjectHideFlags: 0
