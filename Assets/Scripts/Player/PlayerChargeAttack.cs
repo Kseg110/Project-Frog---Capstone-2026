@@ -10,12 +10,21 @@ public class PlayerChargeAttack : MonoBehaviour
 
     [Header("Charge Settings")]
     [SerializeField] private float MaxChargeTime = 1f;
+    [SerializeField] private float CooldownTime = 1f;
+
+    [Header("Damage Settings")]
+    [SerializeField] private float MinDamage = 12.5f; // half damage on quick release
+    [SerializeField] private float MaxDamage = 25f; // full damage on max charge held-release
 
     private AnchorBase CurrentAnchor;
     private float ChargeTimer;
     private bool isCharging;
+    private float cooldownTimer;
+    private UIPlayerHUD playerHUD;
 
     public bool IsCharging => isCharging;
+    public bool IsOnCooldown => cooldownTimer > 0f;
+    public float CooldownProgress => Mathf.Clamp01(1f - (cooldownTimer / CooldownTime));
 
     private void Awake()
     {
@@ -23,13 +32,32 @@ public class PlayerChargeAttack : MonoBehaviour
         {
             Debug.LogError("[PlayerChargeAttack] Missing projectile prefab assignment!", this);
         }
+        playerHUD = FindAnyObjectByType<UIPlayerHUD>();
     }
 
-    public void BeginCharge(AnchorBase anchor)
+    private void Update()
     {
+        if (cooldownTimer > 0f)
+        {
+            cooldownTimer -= Time.deltaTime;
+        }
+        playerHUD?.UpdateChargeAttackCooldown(CooldownProgress);
+    }
+
+    public bool CanBeginCharge()
+    {
+        return !IsOnCooldown && !isCharging;
+    }
+
+    public bool BeginCharge(AnchorBase anchor)
+    {
+        if (!CanBeginCharge())
+            return false;
+
         CurrentAnchor = anchor;
         isCharging = true;
         ChargeTimer = 0f;
+        return true;
     }
 
     public void CancelCharge()
@@ -50,7 +78,7 @@ public class PlayerChargeAttack : MonoBehaviour
         if (!IsCharging || CurrentAnchor == null) return;
 
         float chargePercent = Mathf.Clamp01(ChargeTimer / MaxChargeTime);
-        float chargedDamage = 10f + 15f * chargePercent;
+        float chargedDamage = Mathf.Lerp(MinDamage, MaxDamage, chargePercent);
 
         switch (CurrentAnchor.BaseData)
         {
@@ -156,7 +184,8 @@ public class PlayerChargeAttack : MonoBehaviour
                     break;
                 }
         }
-
+        // Start cooldown timer after releasing charge
+        cooldownTimer = CooldownTime;
         CancelCharge();
     }
 

@@ -247,6 +247,8 @@ GameObject:
   - component: {fileID: 7861819589242136595}
   - component: {fileID: 2230821827976972090}
   - component: {fileID: 5289892553675338067}
+  - component: {fileID: 1437986667445852762}
+  - component: {fileID: 2280907441491126881}
   m_Layer: 0
   m_Name: TetherPoint
   m_TagString: Untagged
@@ -401,14 +403,56 @@ MonoBehaviour:
   startPoint: {fileID: 7861819589242136595}
   midPoint: {fileID: 0}
   endPoint: {fileID: 0}
-  linePoints: 10
+  particleCount: 60
   tetherWidth: 0.1
   tetherLength: 4.5
-  stiffness: 350
-  damping: 15
-  midPointPosition: 0.5
-  midPointWeight: 1
+  rope:
+    gravity: -9.81
+    damping: 0.02
+    constraintIterations: 20
+    collisionRadius: 0.08
+    collisionMask:
+      serializedVersion: 2
+      m_Bits: 4294967295
   tetherCooldown: 1
+--- !u!114 &1437986667445852762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166762862184597052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a47c76e661ab2ec449f7bdabeb0f81ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TetherHitboxRider
+  tether: {fileID: 5289892553675338067}
+  hitboxPrefab: {fileID: 5948033876199092692, guid: ee2f65ebb6c61be4fb4c55e3a38551c8, type: 3}
+  hitboxCount: 12
+  onlyWhileAttached: 1
+--- !u!114 &2280907441491126881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166762862184597052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8d8911ca050d59429526241f99da7f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TetherPlayerRestraint
+  tether: {fileID: 5289892553675338067}
+  playerBody: {fileID: 4346447341780550031}
+  playerHitbox: {fileID: 8373491071249081965}
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  pullStrength: 0.1
+  maxPullSpeed: 25
+  deadzone: 0.02
+  onlyWhileAttached: 1
 --- !u!1 &3469857485663395449
 GameObject:
   m_ObjectHideFlags: 0
