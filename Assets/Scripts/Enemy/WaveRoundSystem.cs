@@ -63,6 +63,7 @@ public class WaveRoundSystem : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             KillAllEnemiesInWave();
+            Debug.Log("Skill issue detected");
         }
 
         if (waveInProgress &&
