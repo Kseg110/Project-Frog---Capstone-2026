@@ -200,9 +200,30 @@ public class WaveRoundSystem : MonoBehaviour
         activeEnemies.Clear();
     }
 
-    public void KillAllEnemiesInWaveDebug() //allows Debug menu to touch it. will likely remove later (unless it's already later)
+    public void KillAllEnemiesInWaveDebug() 
     {
         KillAllEnemiesInWave();
+    }
+
+    public void SkipToWave(int waveNumber)
+    {
+        if (waveNumber < 1 || waveNumber > waves.Length)
+        {
+            Debug.LogError($"Invalid Wave Number: {waveNumber}");
+            return;
+        }
+
+        KillAllEnemiesInWave();
+
+        StopAllCoroutines();
+
+        activeEnemies.Clear();
+        waitingForCardSelection = false;
+        waveInProgress = false;
+
+        currentWaveIndex = waveNumber - 1;
+
+        StartWave(currentWaveIndex);
     }
 
 
