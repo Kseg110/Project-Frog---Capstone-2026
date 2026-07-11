@@ -1,13 +1,17 @@
+using System.Collections;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using System.Collections;
 
 public class UINavigator : MonoBehaviour
 {
     [Header("Selection Visuals")]
     [SerializeField] private float selectedScale = 1.1f;
     [SerializeField] private float scaleSpeed = 10f;
+
+    [Header("Default Selection")]
+    [SerializeField] private Selectable defaultButton;
 
     private GameObject lastSelected;
 
@@ -19,9 +23,9 @@ public class UINavigator : MonoBehaviour
     IEnumerator WaitAndSelectFirstButton()
     {
         yield return null; // wait one frame for the UI to initialize
-        yield return new WaitForSeconds(0.05f); // snall delay to ensure the UI is ready
+        yield return new WaitForSeconds(0.05f); // small delay to ensure the UI is ready
 
-        Selectable first = GetComponentInChildren<Selectable>();
+        Selectable first = defaultButton != null ? defaultButton : GetComponentInChildren<Selectable>();
         if (first != null)
             EventSystem.current.SetSelectedGameObject(first.gameObject);
     }
