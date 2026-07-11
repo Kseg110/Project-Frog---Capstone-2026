@@ -18,6 +18,9 @@ public class UIPlayerHUD : MonoBehaviour
     [Header("Dash Box")]
     [SerializeField] private Image DashFillImage;
 
+    [Header("Charge Attack Cooldown box")]
+    [SerializeField] private Image ChargeAttackFillImage;
+
     [Header("Overcharge Wheel")]
     [SerializeField] private Image OverchargeFillImage;
     [SerializeField] private float OverChargeLerpSpeed = 3f;
@@ -84,6 +87,11 @@ public class UIPlayerHUD : MonoBehaviour
     public void UpdateDashCooldown(float normalized)
     {
         DashFillImage.fillAmount = Mathf.Clamp01(normalized);
+    }
+
+    public void UpdateChargeAttackCooldown(float normalized)
+    {
+        ChargeAttackFillImage.fillAmount = Mathf.Clamp01(normalized);
     }
 
     // Calls from the overcharge system (once merged into main).
