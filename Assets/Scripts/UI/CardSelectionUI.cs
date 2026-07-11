@@ -73,7 +73,14 @@ public class CardSelectionUI : MonoBehaviour
             ui.PlaySpawnAnimation();
             yield return new WaitForSecondsRealtime(0.35f);
         }
+
+        // After all cards are spawned, set the first card as the selected button for controller/keyboard navigation
+        yield return null; // wait one frame for the EventSystem to recognize the buttons
+        var firstButton = cardContainer.GetComponentInChildren<UnityEngine.UI.Selectable>();
+        if (firstButton != null)
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(firstButton.gameObject);
     }
+
 
     private void OnCardChosen(UpgradeDataSO chosenCard)
     {

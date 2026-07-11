@@ -247,6 +247,10 @@ GameObject:
   - component: {fileID: 7861819589242136595}
   - component: {fileID: 2230821827976972090}
   - component: {fileID: 5289892553675338067}
+  - component: {fileID: 1437986667445852762}
+  - component: {fileID: 2280907441491126881}
+  - component: {fileID: 4333163172545244430}
+  - component: {fileID: 695283957806314990}
   m_Layer: 0
   m_Name: TetherPoint
   m_TagString: Untagged
@@ -401,14 +405,94 @@ MonoBehaviour:
   startPoint: {fileID: 7861819589242136595}
   midPoint: {fileID: 0}
   endPoint: {fileID: 0}
-  linePoints: 10
+  particleCount: 60
   tetherWidth: 0.1
   tetherLength: 4.5
-  stiffness: 350
-  damping: 15
-  midPointPosition: 0.5
-  midPointWeight: 1
+  rope:
+    gravity: -9.81
+    damping: 0.02
+    constraintIterations: 20
+    collisionRadius: 0.08
+    collisionMask:
+      serializedVersion: 2
+      m_Bits: 4294967295
   tetherCooldown: 1
+--- !u!114 &1437986667445852762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166762862184597052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a47c76e661ab2ec449f7bdabeb0f81ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TetherHitboxRider
+  tether: {fileID: 5289892553675338067}
+  hitboxPrefab: {fileID: 5948033876199092692, guid: ee2f65ebb6c61be4fb4c55e3a38551c8, type: 3}
+  hitboxCount: 12
+  onlyWhileAttached: 1
+--- !u!114 &2280907441491126881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166762862184597052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8d8911ca050d59429526241f99da7f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TetherPlayerRestraint
+  tether: {fileID: 5289892553675338067}
+  playerBody: {fileID: 4346447341780550031}
+  playerHitbox: {fileID: 8373491071249081965}
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  pullStrength: 0.1
+  maxPullSpeed: 25
+  deadzone: 0.02
+  onlyWhileAttached: 1
+--- !u!114 &4333163172545244430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166762862184597052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a47c76e661ab2ec449f7bdabeb0f81ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TetherHitboxRider
+  tether: {fileID: 5289892553675338067}
+  hitboxPrefab: {fileID: 5948033876199092692, guid: ee2f65ebb6c61be4fb4c55e3a38551c8, type: 3}
+  hitboxCount: 12
+  onlyWhileAttached: 1
+--- !u!114 &695283957806314990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166762862184597052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8d8911ca050d59429526241f99da7f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TetherPlayerRestraint
+  tether: {fileID: 5289892553675338067}
+  playerBody: {fileID: 4346447341780550031}
+  playerHitbox: {fileID: 8373491071249081965}
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  pullStrength: 0.1
+  maxPullSpeed: 25
+  deadzone: 0.02
+  onlyWhileAttached: 1
 --- !u!1 &3469857485663395449
 GameObject:
   m_ObjectHideFlags: 0
@@ -1051,6 +1135,8 @@ MonoBehaviour:
   attacksPerSecond: 2
   attackWindowDuration: 0.5
   maxChargeTime: 2
+  aimCorrectionStrength: 1
+  targetHeightOffset: 0
   basicShotEvent:
     Guid:
       Data1: -125861613
@@ -1105,6 +1191,9 @@ MonoBehaviour:
   IceChargeProjectilePrefab: {fileID: 1850782377406893800, guid: db44afe42fb077d4283580623fd413fd, type: 3}
   WindChargeProjectilePrefab: {fileID: 1850782377406893800, guid: db44afe42fb077d4283580623fd413fd, type: 3}
   MaxChargeTime: 1
+  CooldownTime: 1
+  MinDamage: 12.5
+  MaxDamage: 25
 --- !u!114 &531424311684605953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1744,6 +1833,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 900614694835417969}
     m_Modifications:
+    - target: {fileID: 1100224260570580950, guid: 92832ebd29a457b4280baf7ca94e73bd, type: 3}
+      propertyPath: targetYHeight
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1100224260570580950, guid: 92832ebd29a457b4280baf7ca94e73bd, type: 3}
+      propertyPath: groundLayer.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 1100224260570580950, guid: 92832ebd29a457b4280baf7ca94e73bd, type: 3}
+      propertyPath: CrosshairSmoothSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1100224260570580950, guid: 92832ebd29a457b4280baf7ca94e73bd, type: 3}
+      propertyPath: constrainToGroundLevel
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2569642620308297434, guid: 92832ebd29a457b4280baf7ca94e73bd, type: 3}
       propertyPath: m_Name
       value: Crosshair
