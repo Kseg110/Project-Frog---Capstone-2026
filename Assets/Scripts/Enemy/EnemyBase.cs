@@ -10,6 +10,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
     [Header("References")]
     [SerializeField] protected Transform player;
+  
 
     protected bool enableNav = true;
     protected NavMeshAgent agent;
@@ -70,6 +71,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             }
         }
         enableNav = true;
+
     }
 
     protected virtual void Update()
