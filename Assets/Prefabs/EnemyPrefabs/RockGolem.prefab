@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 9167962021729212447}
   - component: {fileID: 6193369510899100733}
   - component: {fileID: 4456900721603793363}
+  - component: {fileID: 4548612270063906903}
   - component: {fileID: 8753553548209394756}
   - component: {fileID: 1038714202013857735}
   - component: {fileID: -2192016579821232293}
@@ -135,13 +136,30 @@ MonoBehaviour:
   player: {fileID: 0}
   attackHitbox: {fileID: 5833809153833045461, guid: d3147fe45c46e7149ae8be3b6377a9d6, type: 3}
   health: {fileID: 0}
-  AttackRange: 10
-  AttackCooldown: 5
-  WindupTime: 2
-  RiseHeight: 3
-  RiseSpeed: 6
-  PreviewPrefab: {fileID: 9090229426103979086, guid: eab4b670b6215fc4c881c46324463cde, type: 3}
-  AttackCylinderPrefab: {fileID: 5833809153833045461, guid: d3147fe45c46e7149ae8be3b6377a9d6, type: 3}
+  attackRange: 5
+--- !u!114 &4548612270063906903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3449643467730253744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a9e5bb5b09c19048a9921b62e402500, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
+  attackType: 1
+  attackCooldown: 5
+  attackHitBox: {fileID: 0}
+  attackPoint: {fileID: 0}
+  hitBoxLifeTime: 0.1
+  previewPrefab: {fileID: 9090229426103979086, guid: eab4b670b6215fc4c881c46324463cde, type: 3}
+  attackCylinderPrefab: {fileID: 5833809153833045461, guid: d3147fe45c46e7149ae8be3b6377a9d6, type: 3}
+  windupTime: 2
+  riseHeight: 3
+  riseSpeed: 6
+  lingeringDuration: 1
 --- !u!195 &8753553548209394756
 NavMeshAgent:
   m_ObjectHideFlags: 0
