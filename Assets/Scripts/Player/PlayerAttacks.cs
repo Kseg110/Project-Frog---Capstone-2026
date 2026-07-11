@@ -15,6 +15,10 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private float attackWindowDuration = 0.5f;
     [SerializeField] private float maxChargeTime = 2f;
 
+    [Header("Aiming Correction")]
+    [SerializeField] private float aimCorrectionStrength = 1.0f;
+    [SerializeField] private float targetHeightOffset = 1.0f;
+
     [Header("FMod Events")]
     [SerializeField] private EventReference basicShotEvent;
     [SerializeField] private EventReference chargeShotEvent;
@@ -35,6 +39,7 @@ public class PlayerAttacks : MonoBehaviour
     private PlayerChargeAttack playerChargeAttack;
     private PlayerAnchor playerAnchor;
     private PlayerInput playerInput;
+    private PlayerCrosshair playerCrosshair;
 
     // Input actions
     private InputAction attackAction;          // Fire1 → LMB / Right Trigger
@@ -56,6 +61,7 @@ public class PlayerAttacks : MonoBehaviour
         playerTongueAttack = GetComponentInChildren<PlayerTongueAttack>();
         playerChargeAttack = GetComponent<PlayerChargeAttack>();
         playerAnchor = GetComponent<PlayerAnchor>();
+        playerCrosshair = FindAnyObjectByType<PlayerCrosshair>();
 
         playerTongueAttack.OnTongueFinished += playerMovement.ResumeMovement;
 
@@ -171,10 +177,21 @@ public class PlayerAttacks : MonoBehaviour
 
     private void Shoot(float chargePercent, Vector3? direction = null)
     {
-        Quaternion rotation = direction.HasValue && direction.Value != Vector3.zero
-            ? Quaternion.LookRotation(direction.Value)
-            : firePoint.rotation;
+        Vector3 finalDirection;
+        
+        if (direction.HasValue && direction.Value != Vector3.zero)
+        {
+            finalDirection = direction.Value;
+        }
+        else
+        {
+            finalDirection = GetAimDirection();
+        }
 
+        // Apply perspective correction
+        finalDirection = ApplyPerspectiveCorrection(finalDirection);
+
+        Quaternion rotation = Quaternion.LookRotation(finalDirection);
         GameObject projObj = Instantiate(projectilePrefab, firePoint.position, rotation);
 
         var proj = projObj.GetComponent<Projectile>();
@@ -188,6 +205,27 @@ public class PlayerAttacks : MonoBehaviour
 
         // Always ignore collision with player, regardless of Projectile component
         IgnorePlayerCollision(projObj);
+    }
+
+
+    private Vector3 ApplyPerspectiveCorrection(Vector3 baseDirection)
+    {
+        if (playerCrosshair == null || !playerCrosshair.HasValidWorldTarget())
+            return baseDirection;
+
+        Vector3 worldTarget = playerCrosshair.GetWorldTargetPosition();
+        
+        // Add height offset to aim at enemy center mass instead of feet
+        worldTarget.y += targetHeightOffset;
+
+        // Calculate corrected direction from fire point to adjusted target
+        Vector3 correctedDirection = (worldTarget - firePoint.position).normalized;
+
+        // Blend between base direction and corrected direction
+        Vector3 finalDirection = Vector3.Lerp(baseDirection, correctedDirection, aimCorrectionStrength);
+
+
+        return finalDirection;
     }
 
     private void IgnorePlayerCollision(GameObject projObj)
@@ -255,6 +293,15 @@ public class PlayerAttacks : MonoBehaviour
     // ============================================================
     private Vector3 GetAimDirection()
     {
+        if (playerCrosshair != null && playerCrosshair.HasValidWorldTarget())
+        {
+            Vector3 targetPos = playerCrosshair.GetWorldTargetPosition();
+            Vector3 direction = targetPos - firePoint.position;
+            direction.y = 0f;
+
+            if (direction.sqrMagnitude > 0.001f)
+                return direction.normalized;
+        }
         Vector2 aimValue = aimAction != null ? aimAction.ReadValue<Vector2>() : Vector2.zero;
         var lastControl = aimAction != null ? aimAction.activeControl : null;
 
