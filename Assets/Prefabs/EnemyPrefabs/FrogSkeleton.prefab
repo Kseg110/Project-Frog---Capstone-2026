@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 5962536139291589849}
   - component: {fileID: 3793819314933414442}
   - component: {fileID: 8127335728827812192}
+  - component: {fileID: 3071640110403620277}
   m_Layer: 7
   m_Name: FrogSkeleton
   m_TagString: Enemy
@@ -137,8 +138,6 @@ MonoBehaviour:
   attackHitbox: {fileID: 7265194758862469610, guid: 53f6e5ae24fb383409cd36a8cb582420, type: 3}
   health: {fileID: 2873713759039743146}
   attackRange: 2
-  attackPoint: {fileID: 2938892953658481572}
-  hitboxLifetime: 0.25
 --- !u!114 &2873713759039743146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,6 +226,29 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   capsule: {fileID: 1401022787646104557}
+--- !u!114 &3071640110403620277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4397625788936971336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a9e5bb5b09c19048a9921b62e402500, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
+  attackType: 0
+  attackCooldown: 5
+  attackHitBox: {fileID: 7265194758862469610, guid: 53f6e5ae24fb383409cd36a8cb582420, type: 3}
+  attackPoint: {fileID: 1799770198944427075, guid: 53f6e5ae24fb383409cd36a8cb582420, type: 3}
+  hitBoxLifeTime: 0.1
+  previewPrefab: {fileID: 0}
+  attackCylinderPrefab: {fileID: 0}
+  windupTime: 2
+  riseHeight: 3
+  riseSpeed: 6
+  lingeringDuration: 1
 --- !u!1 &6635335732944538325
 GameObject:
   m_ObjectHideFlags: 0
