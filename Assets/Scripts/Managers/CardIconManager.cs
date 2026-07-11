@@ -1,9 +1,11 @@
+using TMPro;
 using UnityEngine;
 
 public class CardIconManager : MonoBehaviour
 {
     public Transform container; // GridLayoutGroup
     public GameObject iconPrefab;
+    public TextMeshProUGUI descriptionText;
 
     public void RefreshIcons()
     {
@@ -22,7 +24,8 @@ public class CardIconManager : MonoBehaviour
             GameObject iconGO = Instantiate(iconPrefab, container);
 
             CardIconUI ui = iconGO.GetComponent<CardIconUI>();
-            ui.Setup(entry.Icon, level);
+            ui.descriptionText = descriptionText;
+            ui.Setup(entry, level);
         }
     }
 }
