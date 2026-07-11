@@ -135,8 +135,7 @@ MonoBehaviour:
   player: {fileID: 0}
   attackHitbox: {fileID: 5833809153833045461, guid: d3147fe45c46e7149ae8be3b6377a9d6, type: 3}
   health: {fileID: 0}
-  attackRange: 2
-  attackCooldown: 5
+  attackRange: 5
 --- !u!114 &4548612270063906903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,11 +149,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
   attackType: 1
+  attackCooldown: 5
   attackHitBox: {fileID: 0}
   attackPoint: {fileID: 0}
   hitBoxLifeTime: 0.1
   previewPrefab: {fileID: 9090229426103979086, guid: eab4b670b6215fc4c881c46324463cde, type: 3}
-  attackCylinderPrefab: {fileID: 3449643467730253744}
+  attackCylinderPrefab: {fileID: 5833809153833045461, guid: d3147fe45c46e7149ae8be3b6377a9d6, type: 3}
   windupTime: 2
   riseHeight: 3
   riseSpeed: 6

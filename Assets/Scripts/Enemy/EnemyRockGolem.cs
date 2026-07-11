@@ -21,7 +21,7 @@ public class EnemyRockGolem : EnemyBase
 
     [Header("Attack Settings")]
     [SerializeField] private float attackRange = 2f;
-    [SerializeField] private float attackCooldown = 5f;
+    // [SerializeField] private float attackCooldown = 5f;
 
     private EnemyAttack enemyAttack;
 
@@ -70,8 +70,9 @@ public class EnemyRockGolem : EnemyBase
     {
         StopMovement();
 
-        if (canAttack)
+        if (enemyAttack.CanAttack)
         {
+            Debug.Log("[Golem] Calling TriggerAttack");
             enemyAttack.TriggerAttack(player.position);
         }
     }
