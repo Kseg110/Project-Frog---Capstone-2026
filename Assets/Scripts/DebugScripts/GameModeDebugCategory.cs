@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "GameModeDebugCategory", menuName = "Scriptable Objects/GameModeDebugCategory")]
 public class GameModeDebugCategory : DebugCategory
@@ -7,6 +8,9 @@ public class GameModeDebugCategory : DebugCategory
     [Header("References")]
     [Tooltip("Automatically resolved to the WaveRoundSystem in the active scene if left empty.")]
     public WaveRoundSystem waveRoundSystem;
+
+    [Header("Wave Skip")]
+    [SerializeField] private int skipToWaveNumber = 1;
 
     private void OnEnable()
     {
@@ -49,6 +53,25 @@ public class GameModeDebugCategory : DebugCategory
             if (waveRoundSystem != null)
             {
                 waveRoundSystem.KillAllEnemiesInWaveDebug();
+            }
+        }
+        GUILayout.EndHorizontal();
+        GUILayout.Space(6);
+
+        //Skip wave
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Skip To Wave", GUILayout.Width(140));
+        string waveText = GUILayout.TextField(skipToWaveNumber.ToString(), GUILayout.Width(80));
+        if (int.TryParse(waveText, out int parsedWave))
+        {
+            skipToWaveNumber = Mathf.Max(1, parsedWave);
+        }
+
+        if (GUILayout.Button("Skip", GUILayout.Width(100)))
+        {
+            if (waveRoundSystem != null)
+            {
+                waveRoundSystem.SkipToWave(skipToWaveNumber);
             }
         }
         GUILayout.EndHorizontal();

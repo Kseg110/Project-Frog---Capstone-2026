@@ -63,6 +63,7 @@ public class WaveRoundSystem : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             KillAllEnemiesInWave();
+            Debug.Log("Skill issue detected");
         }
 
         if (waveInProgress &&
@@ -200,9 +201,32 @@ public class WaveRoundSystem : MonoBehaviour
         activeEnemies.Clear();
     }
 
-    public void KillAllEnemiesInWaveDebug() //allows Debug menu to touch it. will likely remove later (unless it's already later)
+    public void KillAllEnemiesInWaveDebug() 
     {
         KillAllEnemiesInWave();
+    }
+
+    public void SkipToWave(int waveNumber) //Skips waves for debug purposes.
+    {
+        Debug.Log($"Skipping to wave {waveNumber}");
+        if (waveNumber < 1 || waveNumber > waves.Length)
+        {
+            Debug.LogError($"Invalid Wave Number: {waveNumber}");
+            return;
+        }
+        currentWaveIndex = waveNumber - 1;
+
+        Debug.Log($"Setting currentWaveTindex to {currentWaveIndex}");
+
+        KillAllEnemiesInWave();
+
+        StopAllCoroutines();
+
+        activeEnemies.Clear();
+        waitingForCardSelection = false;
+        waveInProgress = false;
+
+        StartWave(currentWaveIndex);
     }
 
 

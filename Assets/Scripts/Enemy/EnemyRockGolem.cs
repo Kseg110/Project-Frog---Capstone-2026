@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class EnemyRockGolem : EnemyBase
 {
+    /*
     [Header("Attacks settings")]
     [SerializeField] private float AttackRange = 2f;
     [SerializeField] private float AttackCooldown = 5f;
@@ -16,15 +17,18 @@ public class EnemyRockGolem : EnemyBase
     
     protected bool CanAttack = true;
     private GameObject ActivePreview;
+    */
+
+    [Header("Attack Settings")]
+    [SerializeField] private float attackRange = 2f;
+    // [SerializeField] private float attackCooldown = 5f;
+
+    private EnemyAttack enemyAttack;
 
     protected override void Awake()
     {
         base.Awake();
-   
-    }
-    private void Start()
-    {
-        // place additional initialization here if needed in the future.
+        enemyAttack = GetComponent<EnemyAttack>();
     }
 
     protected override void Update()
@@ -33,6 +37,12 @@ public class EnemyRockGolem : EnemyBase
 
         if (player == null) return;
 
+        if (enemyAttack.IsAttacking)
+        {
+            StopMovement();
+            return;
+        }
+
         HandleBehaviour();
     }
 
@@ -40,7 +50,7 @@ public class EnemyRockGolem : EnemyBase
     {
         float distance = Vector3.Distance(transform.position, player.position);
 
-        if (distance > AttackRange)
+        if (distance > attackRange)
         {
             ChasePlayer();
         }
@@ -49,6 +59,7 @@ public class EnemyRockGolem : EnemyBase
             AttackPlayer();
         }
     }
+
     #region Behaviours
     protected void ChasePlayer()
     {
@@ -59,15 +70,16 @@ public class EnemyRockGolem : EnemyBase
     {
         StopMovement();
 
-        if (CanAttack)
+        if (enemyAttack.CanAttack)
         {
-            StartCoroutine(AttackRoutine());
+            Debug.Log("[Golem] Calling TriggerAttack");
+            enemyAttack.TriggerAttack(player.position);
         }
     }
     #endregion
 
+    /*
     #region attack coroutine
-
     private IEnumerator AttackRoutine()
     {
         CanAttack = false;
@@ -112,4 +124,5 @@ public class EnemyRockGolem : EnemyBase
         CanAttack = true;
     }
     #endregion
+    */
 }
