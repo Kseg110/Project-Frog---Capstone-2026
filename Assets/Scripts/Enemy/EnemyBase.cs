@@ -6,28 +6,26 @@ using UnityEngine.AI;
 using UnityEngine.InputSystem.Processors;
 
 // Enemy BaseClass
+
+[RequireComponent (typeof(MovementComponent))]
 public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
     [Header("References")]
     [SerializeField] protected Transform player;
-  
-
-    protected bool enableNav = true;
-    protected NavMeshAgent agent;
-
-    protected bool canAttack = true;
-
-    [Header("References")]
+    [SerializeField] protected MovementComponent movement;
     [SerializeField] protected GameObject attackHitbox;
     [SerializeField] private protected Health health;
+    private Rigidbody rb;
+
+    protected bool enableNav = true;
+
+    protected bool canAttack = true;
 
     protected bool isAttacking;
     public bool IsAttacking => isAttacking;
 
-
-
     private bool isActive;
-    private Rigidbody rb;
+
 
     public void Activate(Transform playerTransform)
     {
@@ -37,8 +35,13 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     }
     protected virtual void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
+        movement = GetComponent<MovementComponent>();
+
+        if (movement == null)
+        {
+            Debug.LogError($"{name} is missing a MovementComponent.");
+        }
 
         // Initialize health component
         if (health == null)
@@ -72,6 +75,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         }
         enableNav = true;
 
+        movement.RequestSlot();
     }
 
     protected virtual void Update()
@@ -103,21 +107,19 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     public virtual void MoveTo(Vector3 destination)
     {
-        if (!enableNav) return;
+        if (!enableNav || movement == null) return;
 
-        agent.isStopped = false;
-        agent.SetDestination(destination);
-
+        movement.MoveTo(destination);
     }
     public virtual void StopMovement()
     {
-        if (!enableNav) return;
-        agent.isStopped = true;
+        if (!enableNav || movement == null) return;
+        movement.Stop();
     }
     public virtual void ResumeMovement()
     {
-        if (!enableNav) return;
-        agent.isStopped = false;
+        if (!enableNav || movement == null) return;
+        movement.SetMovementEnabled(true);
     }
     #endregion
 
@@ -193,5 +195,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         if (health != null)
             health.TakeDmg(dmg, effectType, effectDuration, effectValue);
+    }
+
+    public void ReleaseSlot()
+    {
+        movement.ReleaseTargetSlot();
     }
 }

@@ -11,6 +11,7 @@ public class MovementComponent : MonoBehaviour
 
     [Header("Target")]
     [SerializeField] private Transform target;
+    public Transform Target => target;
 
 
     [Header("Movement Settings")]
@@ -97,5 +98,11 @@ public class MovementComponent : MonoBehaviour
     public void ReleaseTargetSlot()
     {
         TargetManager.Instance.ReleaseSlot(this);
+        Debug.Log("Slot released");
+    }
+    public void RequestSlot()
+    {
+        target = TargetManager.Instance.RequestSlot(this);
+        Debug.Log($"target set to :{target.name}");
     }
 }
