@@ -143,6 +143,12 @@ public class WaveRoundSystem : MonoBehaviour
         GameObject enemy = Instantiate(enemyPrefab, zone.position, Quaternion.identity);
         activeEnemies.Add(enemy);
 
+        //UnityEngine.AI.NavMeshAgent agent = enemy.GetComponent<UnityEngine.AI.NavMeshAgent>();
+        //if (agent != null)
+        //{
+        //    agent.Warp(zone.position);
+        //}
+
         Health hp = enemy.GetComponent<Health>();
         if (hp != null)
             hp.OnDestroyed += (deadEnemy) => HandleEnemyDeath(deadEnemy);
