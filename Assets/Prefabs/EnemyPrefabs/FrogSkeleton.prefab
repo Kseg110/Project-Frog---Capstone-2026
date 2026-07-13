@@ -190,7 +190,7 @@ Rigidbody:
   m_GameObject: {fileID: 4397625788936971336}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 0.005
+  m_LinearDamping: 0.05
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockback
   knockbackSpeed: 20
-  knockbackEasePower: 2
+  knockbackEasePower: 3
   knockbackResistance: 1
   collisionLayers:
     serializedVersion: 2
