@@ -309,7 +309,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         else
         {
             moveVector = moveInput * CurrentSpeed * Time.fixedDeltaTime;
-            moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
+            //moveVector = ClampToShrinkingAnchorWall(rb.position, moveVector);
 
             CollisionUtility.MoveWithCapsuleCollision(
                 rb,
@@ -340,35 +340,35 @@ public class PlayerMovement : MonoBehaviour, IMovement
         }
     }
 
-    private Vector3 ClampToShrinkingAnchorWall(Vector3 currentPos, Vector3 moveVector)
-    {
-        if (!isTethered)
-            return moveVector;
+    //private Vector3 ClampToShrinkingAnchorWall(Vector3 currentPos, Vector3 moveVector)
+    //{
+    //    if (!isTethered)
+    //        return moveVector;
 
-        Vector3 proposedPos = currentPos + moveVector;
-        Vector3 offset = proposedPos - anchorPosition;
-        float distance = offset.magnitude;
+    //    Vector3 proposedPos = currentPos + moveVector;
+    //    Vector3 offset = proposedPos - anchorPosition;
+    //    float distance = offset.magnitude;
 
-        if (distance > currentMaxRadius)
-        {
-            Vector3 toCenter = offset.normalized;
-            Vector3 tangentMove = moveVector - Vector3.Dot(moveVector, toCenter) * toCenter;
-            float overshoot = distance - currentMaxRadius;
-            tangentMove *= Mathf.Clamp01(1f - overshoot / moveVector.magnitude);
-            return tangentMove;
-        }
+    //    if (distance > currentMaxRadius)
+    //    {
+    //        Vector3 toCenter = offset.normalized;
+    //        Vector3 tangentMove = moveVector - Vector3.Dot(moveVector, toCenter) * toCenter;
+    //        float overshoot = distance - currentMaxRadius;
+    //        tangentMove *= Mathf.Clamp01(1f - overshoot / moveVector.magnitude);
+    //        return tangentMove;
+    //    }
 
-        Vector3 currentOffset = currentPos - anchorPosition;
-        bool insideMinRadius = currentOffset.magnitude < currentMinRadius;
+    //    Vector3 currentOffset = currentPos - anchorPosition;
+    //    bool insideMinRadius = currentOffset.magnitude < currentMinRadius;
 
-        if (insideMinRadius && distance > currentMinRadius)
-        {
-            Vector3 toCenter = offset.normalized;
-            return moveVector - Vector3.Dot(moveVector, toCenter) * toCenter;
-        }
+    //    if (insideMinRadius && distance > currentMinRadius)
+    //    {
+    //        Vector3 toCenter = offset.normalized;
+    //        return moveVector - Vector3.Dot(moveVector, toCenter) * toCenter;
+    //    }
 
-        return moveVector;
-    }
+    //    return moveVector;
+    //}
 
     // Stops player movement. Intended to be called externally.
     public void StopMovement(Vector3? forward = null)

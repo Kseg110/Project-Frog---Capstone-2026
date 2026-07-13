@@ -9,16 +9,20 @@ public class UIDeathOverlay : MonoBehaviour
     [SerializeField] private GameObject playerHUD;
     [SerializeField] private Button RestartButton;
     [SerializeField] private Button MenuButton;
+
     private string mainMenuSceneName = "MainMenu";
 
 
     private void Start()
     {
-        Time.timeScale = 1f;
+        gameObject.SetActive(true);
 
         if (deathOverlayPanel != null)
             deathOverlayPanel.SetActive(false);
 
+        Time.timeScale = 1f;
+
+        // Set up button listeners
         if (RestartButton != null)
         {
             RestartButton.onClick.RemoveAllListeners();

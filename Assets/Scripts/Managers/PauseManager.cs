@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using FMODUnity;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PauseManager : MonoBehaviour
 {
@@ -12,8 +14,11 @@ public class PauseManager : MonoBehaviour
     //[SerializeField] private EventReference buttonClickEvent;
     //[SerializeField] private EventReference buttonHoverEvent;
 
-    [SerializeField] private GameObject pauseMenuUI;
-    [SerializeField] private GameObject PlayerHUD;
+    [Header("UI References")]
+    [SerializeField] private GameObject pauseOverlayPanel;
+    [SerializeField] private GameObject playerHUD;
+    [SerializeField] private GameObject deathOverlay;
+    [SerializeField] private CardSelectionUI cardSelectionUI;
 
     private PlayerInput playerInput;
     private InputAction pauseAction;
@@ -25,6 +30,9 @@ public class PauseManager : MonoBehaviour
     {
         playerInput = FindAnyObjectByType<PlayerInput>();
         RebindActionsFromCurrentMap();
+
+        if (pauseOverlayPanel != null)
+            pauseOverlayPanel.SetActive(false);
     }
 
     private void OnEnable()
@@ -84,10 +92,22 @@ public class PauseManager : MonoBehaviour
 
     public void ResumeGame()
     {
+        Debug.Log("ResumeGame triggered");
+        if (pauseOverlayPanel != null)
+        {
+            pauseOverlayPanel.SetActive(false);
+            Debug.Log($"Panel active: {pauseOverlayPanel.activeSelf}");
+        }
+
+
         RuntimeManager.PlayOneShot(closePauseEvent, transform.position);
 
-        pauseMenuUI.SetActive(false);
-        PlayerHUD.SetActive(true);
+        if (pauseOverlayPanel != null)
+            pauseOverlayPanel.SetActive(false);
+
+        if (playerHUD != null)
+            playerHUD.SetActive(true);
+
         Time.timeScale = 1f;
         isPaused = false;
 
@@ -105,19 +125,46 @@ public class PauseManager : MonoBehaviour
 
     private void PauseGame()
     {
+        // Don't allow pausing if the death overlay is active
+        if (deathOverlay != null && deathOverlay.activeInHierarchy)
+        {
+            return;
+        }
+
+        // Don't allow pausing if the card selection UI is active
+        if (cardSelectionUI != null && cardSelectionUI.IsCardSelectionActive)
+        {
+            return;
+        }
+
         RuntimeManager.PlayOneShot(openPauseEvent, transform.position);
 
-        pauseMenuUI.SetActive(true);
-        PlayerHUD.SetActive(false);
+        if (pauseOverlayPanel != null)
+            pauseOverlayPanel.SetActive(true);
+
+        if (playerHUD != null)
+            playerHUD.SetActive(false);
+
         Time.timeScale = 0f;
         isPaused = true;
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        // Set the first button in the pause menu as selected for controller navigation
+        var firstButton = pauseOverlayPanel.GetComponentInChildren<Selectable>();
+        if (firstButton != null)
+            EventSystem.current.SetSelectedGameObject(firstButton.gameObject);
+
+        // Refresh the card icons in the pause menu
+        var iconManager = pauseOverlayPanel.GetComponentInChildren<CardIconManager>(true);
+        if (iconManager != null)
+            iconManager.RefreshIcons();
     }
 
     public void QuitGame()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
     }
 }

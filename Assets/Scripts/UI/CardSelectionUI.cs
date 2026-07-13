@@ -13,6 +13,7 @@ public class CardSelectionUI : MonoBehaviour
     [SerializeField] private UIPlayerHUD playerHUD;
 
     private CanvasGroup canvasGroup;
+    public bool IsCardSelectionActive { get; private set; }
 
     private void Awake()
     {
@@ -49,14 +50,14 @@ public class CardSelectionUI : MonoBehaviour
 
     private void ShowCardSelection()
     {
-        var manager = UpgradeManager.Instance;
-        // Make Player unable to move while selecting card
+        IsCardSelectionActive = true;
         Time.timeScale = 0f;
-
         ShowUI();
         playerHUD.HideHUD();
         Cursor.visible = true;
 
+        var manager = UpgradeManager.Instance;
+       
         // Ask the upgrade manager to pick 3 random cards for the player to choose from
         List<UpgradeDataSO> selectedCards = upgradeManager.GetRandomCards(3);
         StartCoroutine(SpawnCardsSequentially(selectedCards));
@@ -73,10 +74,19 @@ public class CardSelectionUI : MonoBehaviour
             ui.PlaySpawnAnimation();
             yield return new WaitForSecondsRealtime(0.35f);
         }
+
+        // After all cards are spawned, set the first card as the selected button for controller/keyboard navigation
+        yield return null; // wait one frame for the EventSystem to recognize the buttons
+        var firstButton = cardContainer.GetComponentInChildren<UnityEngine.UI.Selectable>();
+        if (firstButton != null)
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(firstButton.gameObject);
     }
+
 
     private void OnCardChosen(UpgradeDataSO chosenCard)
     {
+        IsCardSelectionActive = false;
+
         // Tell the upgrade manager which card the player picked so it can apply the upgrade
         upgradeManager.OnCardChosen(chosenCard);
 

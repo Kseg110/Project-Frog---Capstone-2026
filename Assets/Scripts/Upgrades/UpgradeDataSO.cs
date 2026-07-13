@@ -128,6 +128,28 @@ public class UpgradeDataSO : ScriptableObject
         return $"{cardName} {oldValue}{unit} → {newValue}{unit}";
     }
 
+    public string GetCurrentDescription(int level)
+    {
+        // Ability card (no stat)
+        if (stat == UpgradeStat.None)
+        {
+            // If a designer wrote a custom description for this card, use it
+            if (!string.IsNullOrEmpty(descriptionTemplate))
+                return $"{cardName}: {descriptionTemplate}";
+
+            // Otherwise fallback
+            return $"{cardName}: Ability unlocked";
+        }
+
+        // Stat card (normal numeric upgrade)
+        float currentValue = GetTotalValueUpToLevel(level);
+
+        // Format proper name of the stat
+        string statName = Stat.ToString().Replace("Damage", " Damage");
+
+        return $"{cardName}: {statName} +{currentValue}{unit}";
+    }
+
     /// <summary>
     /// Returns the bonus granted by the very first pick of this card — used to preview base strength before any levels are applied.
     /// </summary>
