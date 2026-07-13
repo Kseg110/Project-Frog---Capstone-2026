@@ -55,10 +55,12 @@ public class PlayerCrosshair : MonoBehaviour
     {
         // Ensure cursor is not locked by other systems
         Cursor.lockState = CursorLockMode.None;
+        if (worldTargetIndicator != null)
+            worldTargetIndicator.SetActive(true);
         cam = Camera.main;
 
         GameObject p = GameObject.FindGameObjectWithTag("Player");
-
+        
         if (p != null)
             player = p.transform;
 
@@ -202,15 +204,20 @@ public class PlayerCrosshair : MonoBehaviour
             // Update debug indicator
             if (worldTargetIndicator != null)
             {
-                worldTargetIndicator.SetActive(true);
+                if (!worldTargetIndicator.activeSelf)
+                {
+                    Debug.Log("[PlayerCrosshair] Re-activating indicator");
+                    worldTargetIndicator.SetActive(true);
+                }
                 worldTargetIndicator.transform.position = worldTargetPosition;
             }
         }
         else
         {
             hasValidWorldTarget = false;
-            if (worldTargetPosition != null)
+            if (worldTargetIndicator != null && worldTargetIndicator.activeSelf)
             {
+                Debug.Log("[PlayerCrosshair] Deactivating indicator - no raycast hit");
                 worldTargetIndicator.SetActive(false);
             }
         }
@@ -219,7 +226,7 @@ public class PlayerCrosshair : MonoBehaviour
     void SetupCanvasAndCrosshair()
     {
         // Try to find an existing overlay canvas first
-        uiCanvas = Object.FindFirstObjectByType<Canvas>();
+        //uiCanvas = Object.FindFirstObjectByType<Canvas>();
         if (uiCanvas == null || uiCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
         {
             var canvasGo = new GameObject("CrosshairCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
