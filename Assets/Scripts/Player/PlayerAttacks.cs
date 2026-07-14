@@ -102,6 +102,10 @@ public class PlayerAttacks : MonoBehaviour
 
     private void Update()
     {
+        // return early to prevent projectile firing in UI
+        if (Time.timeScale == 0f)
+            return;
+
         if (playerInput != null &&
             playerInput.currentActionMap != null &&
             playerInput.currentActionMap.name != currentActionMapName)
