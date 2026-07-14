@@ -1,5 +1,6 @@
 ﻿using FMODUnity;
 using UnityEngine;
+using System.Collections;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerMovement))]
@@ -14,6 +15,9 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] public float attacksPerSecond = 2f;
     [SerializeField] private float attackWindowDuration = 0.5f;
     [SerializeField] private float maxChargeTime = 2f;
+    [SerializeField] private float tongueAutoAimRange = 10f;
+    [SerializeField] private float basicShotSlowMultiplier = 0.5f;
+    [SerializeField] private float basicShotSlowDuration = 0.5f;
 
     [Header("Aiming Correction")]
     [SerializeField] private float aimCorrectionStrength = 1.0f;
@@ -168,11 +172,23 @@ public class PlayerAttacks : MonoBehaviour
 
         Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
-        playerMovement.StopMovement(aimDirection);
+        ApplyBasicShotSlow();
         Shoot(0f, aimDirection);
         lastFireTime = Time.time;
 
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+    }
+
+    private void ApplyBasicShotSlow()
+    {
+        playerMovement.AddSpeedModifier(this, basicShotSlowMultiplier);
+        StartCoroutine(RemoveSlowAfterDelay());
+    }
+
+    private IEnumerator RemoveSlowAfterDelay()
+    {
+        yield return new WaitForSeconds(basicShotSlowDuration);
+        playerMovement.RemoveSpeedModifier(this);
     }
 
     private void Shoot(float chargePercent, Vector3? direction = null)
@@ -248,8 +264,52 @@ public class PlayerAttacks : MonoBehaviour
     private void TryTongue()
     {
         if (isCharging) return;
-        playerMovement.StopMovement(GetAimDirection());
+
+        Vector3 aimDirection = GetTongueAimDirection();
+        playerMovement.StopMovement(aimDirection);
+        transform.rotation = Quaternion.LookRotation(aimDirection);
         playerTongueAttack.BeginTongueExtend();
+    }
+
+    private Vector3 GetTongueAimDirection()
+    {
+        GameObject[] flies = GameObject.FindGameObjectsWithTag("Fly");
+
+        Transform closestFly = null;
+        float closestDistSqr = float.MaxValue;
+
+        foreach (var flyObj in flies)
+        {
+            Vector3 toFly = flyObj.transform.position - transform.position;
+
+            // ignore height difference
+            toFly.y = 0f;
+
+            float distSqr = toFly.sqrMagnitude;
+
+            // must be inside auto-aim range
+            if (distSqr > tongueAutoAimRange * tongueAutoAimRange)
+                continue;
+
+            if (distSqr < closestDistSqr)
+            {
+                closestDistSqr = distSqr;
+                closestFly = flyObj.transform;
+            }
+        }
+
+        // If a fly is found → aim at it
+        if (closestFly != null)
+        {
+            Vector3 dir = closestFly.position - transform.position;
+            dir.y = 0f;
+
+            if (dir.sqrMagnitude > 0.001f)
+                return dir.normalized;
+        }
+
+        // fallback
+        return GetAimDirection();
     }
 
     // ============================================================

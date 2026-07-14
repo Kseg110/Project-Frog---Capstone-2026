@@ -58357,6 +58357,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1621620681}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1625595292 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 482374301654626333, guid: 1451198868cc9a54986920296dd69a5d, type: 3}
+  m_PrefabInstance: {fileID: 1809352730}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1 &1631326451
 GameObject:
   m_ObjectHideFlags: 0
@@ -62710,6 +62721,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7890102449420656671, guid: 1451198868cc9a54986920296dd69a5d, type: 3}
+      propertyPath: defaultButton
+      value: 
+      objectReference: {fileID: 1625595292}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
