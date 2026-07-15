@@ -116,39 +116,42 @@ public class PlayerAttacks : MonoBehaviour
         bool attackHeld = ReadButton(attackAction, ref prevAttackValue, out bool attackPressed);
         bool secondaryHeld = ReadButton(secondaryAttackAction, ref prevSecondaryValue, out bool secondaryPressed, out bool secondaryReleased);
 
-        // PRIMARY ATTACK
-        if (attackHeld)
+        // PRIMARY ATTACK - Block if dashing
+        if (attackHeld && !playerMovement.IsDashing)
             TryBasicShot();
-            
 
-        // SECONDARY ATTACK
-        if (playerAnchor.IsTethered)
+
+        // SECONDARY ATTACK - Block if dashing
+        if (!playerMovement.IsDashing)
         {
-            if (secondaryPressed && !playerChargeAttack.IsCharging)
+            if (playerAnchor.IsTethered)
             {
-                playerMovement.StopMovement(GetAimDirection());
-                playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
+                if (secondaryPressed && !playerChargeAttack.IsCharging)
+                {
+                    playerMovement.StopMovement(GetAimDirection());
+                    playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
+                }
+
+                if (secondaryHeld)
+                    playerChargeAttack.UpdateCharge();
+
+                if (secondaryReleased)
+                {
+                    playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+
+                    RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
+
+                    playerMovement.ResumeMovement();
+                }
             }
-
-            if (secondaryHeld)
-                playerChargeAttack.UpdateCharge();
-
-            if (secondaryReleased)
+            else
             {
-                playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+                if (secondaryPressed)
+                    TryTongue();
 
-                RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
-
-                playerMovement.ResumeMovement();
+                if (secondaryReleased)
+                    playerTongueAttack.BeginTongueRetract();
             }
-        }
-        else
-        {
-            if (secondaryPressed)
-                TryTongue();
-
-            if (secondaryReleased)
-                playerTongueAttack.BeginTongueRetract();
         }
 
         if (isCharging)
