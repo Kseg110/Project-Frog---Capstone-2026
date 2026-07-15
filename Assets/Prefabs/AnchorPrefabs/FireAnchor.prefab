@@ -104,8 +104,7 @@ GameObject:
   - component: {fileID: 5323031320560320621}
   - component: {fileID: 5343022913514592130}
   - component: {fileID: 4841448948749723779}
-  - component: {fileID: 752691008464443410}
-  - component: {fileID: 7483520562780782412}
+  - component: {fileID: -5907844099691676864}
   m_Layer: 0
   m_Name: FireAnchor
   m_TagString: Untagged
@@ -202,8 +201,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f78a4289e20a13d4293deac5d48bd033, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnchorVFX
-  idleParticles: {fileID: 2745841838890988542}
-  activationParticles: {fileID: 8722496825728700260}
+  idleParticles: {fileID: 3233335712392650892, guid: 8d2d2b6d50809df40a1b70199801f44f, type: 3}
+  activationParticles: {fileID: 4604330345929747474, guid: 53806754d82410b4197f4424a6d0e1ff, type: 3}
 --- !u!65 &5343022913514592130
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -237,7 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feccdfd16b465e94fb416f8388c95dc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnchorUpgradeController
---- !u!114 &752691008464443410
+--- !u!114 &-5907844099691676864
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -246,22 +245,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6911843594789955862}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9360c50b4d322f8429500b9e989aa76b, type: 3}
+  m_Script: {fileID: 11500000, guid: 7277e73f9db5673409faf0a07aea6fe7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AnchorIce
-  data: {fileID: 11400000, guid: 2f31fb0e8ea9c91458af544eecf718d2, type: 2}
---- !u!114 &7483520562780782412
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6911843594789955862}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: feccdfd16b465e94fb416f8388c95dc9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AnchorUpgradeController
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorFire
+  data: {fileID: 11400000, guid: 7398ef3d6d02c5b49998e446532c8419, type: 2}
 --- !u!1 &7164860429683319075
 GameObject:
   m_ObjectHideFlags: 0
@@ -430,7 +417,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6780589512944548904, guid: 6ec76b2c0cfd5f14687a400cbdb9b8ea, type: 3}
       propertyPath: m_Name
-      value: AnchorIdleIceVFX
+      value: AnchorIdleFireVFX
       objectReference: {fileID: 0}
     - target: {fileID: 8403520120608848373, guid: 6ec76b2c0cfd5f14687a400cbdb9b8ea, type: 3}
       propertyPath: m_LocalPosition.x
@@ -489,11 +476,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ec76b2c0cfd5f14687a400cbdb9b8ea, type: 3}
---- !u!198 &2745841838890988542 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 9029744681502062076, guid: 6ec76b2c0cfd5f14687a400cbdb9b8ea, type: 3}
-  m_PrefabInstance: {fileID: 6578396110025885186}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3446491138542501879 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8403520120608848373, guid: 6ec76b2c0cfd5f14687a400cbdb9b8ea, type: 3}
@@ -509,7 +491,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2531620929154299599, guid: 82424795768bf1c4a8f14faf456b6f27, type: 3}
       propertyPath: m_Name
-      value: AnchorActiveIceVFX
+      value: AnchorActiveFireVFX
       objectReference: {fileID: 0}
     - target: {fileID: 2793581424019418211, guid: 82424795768bf1c4a8f14faf456b6f27, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
@@ -571,10 +553,5 @@ PrefabInstance:
 --- !u!4 &1897019946432475631 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5015834263886926568, guid: 82424795768bf1c4a8f14faf456b6f27, type: 3}
-  m_PrefabInstance: {fileID: 6901840264697389831}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &8722496825728700260 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 2793581424019418211, guid: 82424795768bf1c4a8f14faf456b6f27, type: 3}
   m_PrefabInstance: {fileID: 6901840264697389831}
   m_PrefabAsset: {fileID: 0}
