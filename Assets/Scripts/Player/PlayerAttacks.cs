@@ -17,7 +17,6 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private float maxChargeTime = 2f;
     [SerializeField] private float tongueAutoAimRange = 10f;
     [SerializeField] private float basicShotSlowMultiplier = 0.5f;
-    [SerializeField] private float basicShotSlowDuration = 0.5f;
 
     [Header("Aiming Correction")]
     [SerializeField] private float aimCorrectionStrength = 1.0f;
@@ -56,6 +55,7 @@ public class PlayerAttacks : MonoBehaviour
     private float prevSecondaryValue;
     private const float triggerThreshold = 0.5f;
 
+    private bool isBasicShotSlowed = false;
     public bool IsAttacking => isCharging || playerTongueAttack.IsActive || attackWindowTimer > 0f;
 
     private void Awake()
@@ -119,7 +119,13 @@ public class PlayerAttacks : MonoBehaviour
         // PRIMARY ATTACK
         if (attackHeld)
             TryBasicShot();
-            
+
+        // Remove slow when player stops shooting
+        if (!attackHeld && isBasicShotSlowed)
+        {
+            isBasicShotSlowed = false;
+            playerMovement.RemoveSpeedModifier(this);
+        }
 
         // SECONDARY ATTACK
         if (playerAnchor.IsTethered)
@@ -172,7 +178,9 @@ public class PlayerAttacks : MonoBehaviour
 
         Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
+
         ApplyBasicShotSlow();
+
         Shoot(0f, aimDirection);
         lastFireTime = Time.time;
 
@@ -181,14 +189,11 @@ public class PlayerAttacks : MonoBehaviour
 
     private void ApplyBasicShotSlow()
     {
-        playerMovement.AddSpeedModifier(this, basicShotSlowMultiplier);
-        StartCoroutine(RemoveSlowAfterDelay());
-    }
-
-    private IEnumerator RemoveSlowAfterDelay()
-    {
-        yield return new WaitForSeconds(basicShotSlowDuration);
-        playerMovement.RemoveSpeedModifier(this);
+        if (!isBasicShotSlowed)
+        {
+            isBasicShotSlowed = true;
+            playerMovement.AddSpeedModifier(this, basicShotSlowMultiplier);
+        }
     }
 
     private void Shoot(float chargePercent, Vector3? direction = null)
