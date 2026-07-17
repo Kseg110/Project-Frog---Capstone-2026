@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Water
+  m_Name: M_Water3
   m_Shader: {fileID: -6465566751694194690, guid: 756909bbbf722974ba5e0bf4f1640062, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -68,15 +68,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Triplanar_0a68f6e288084cb8bbec4f82e4c1efcd_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 87eeb2ec22aebc5438256c92dfced74c, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _UVDistortion_5f617f9ee03f4ec2a7ad128934490bcd_NoiseMap_647888222_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 698121c7fa8d54b99a6b3e199767a89c, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _UVDistortion_8c447b56e8b346228d0a5bc8c75d71d9_NoiseMap_647888222_Texture2D:
         m_Texture: {fileID: 2800000, guid: 698121c7fa8d54b99a6b3e199767a89c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -97,7 +89,7 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _AngleOffset: 9.08
+    - _AngleOffset: 7.5
     - _AngleOffset_1: 8
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
@@ -106,7 +98,7 @@ Material:
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
-    - _Density: 9.08
+    - _Density: 10
     - _Density_1: 10
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
@@ -126,26 +118,25 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _Speed: 0
-    - _Speed_1: 0
+    - _Speed_1: 0.03
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
     - _Thickness: 4.8
-    - _Thickness_1: 8
-    - _VoronoiSpeed: 0.5
+    - _VoronoiSpeed: 0.0188
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _BaseColour: {r: 0.25551796, g: 0.31613538, b: 0.5471698, a: 1}
+    - _BaseColour: {r: 0.007861626, g: 0.18867916, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FoamColour: {r: 0.5536223, g: 0.8154686, b: 0.8207547, a: 1}
+    - _FoamColour: {r: 0, g: 1, b: 0.7149543, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &8086064646046104042
+--- !u!114 &804035722155043018
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
