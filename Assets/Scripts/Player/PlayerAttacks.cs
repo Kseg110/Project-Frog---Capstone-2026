@@ -309,30 +309,35 @@ public class PlayerAttacks : MonoBehaviour
             if (direction.sqrMagnitude > 0.001f)
                 return direction.normalized;
         }
+
         Vector2 aimValue = aimAction != null ? aimAction.ReadValue<Vector2>() : Vector2.zero;
-        var lastControl = aimAction != null ? aimAction.activeControl : null;
-
-        bool gamepadActive =
-            lastControl != null &&
-            lastControl.device is Gamepad &&
-            aimValue.sqrMagnitude > 0.01f;
-
-        if (gamepadActive)
-            return new Vector3(aimValue.x, 0f, aimValue.y).normalized;
-
-        if (Mouse.current == null)
-            return transform.forward;
-
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        Ray ray = mainCamera.ScreenPointToRay(mousePos);
-        Plane plane = new Plane(Vector3.up, transform.position);
-
-        if (plane.Raycast(ray, out float dist))
+        
+        if (InputManager.Instance != null && InputManager.Instance.IsUsingGamepad())
         {
-            Vector3 dir = ray.GetPoint(dist) - transform.position;
-            dir.y = 0f;
-            if (dir.sqrMagnitude > 0.001f)
-                return dir.normalized;
+            if (aimValue.sqrMagnitude > 0.01f)
+            {
+                if (playerCrosshair != null)
+                    playerCrosshair.UpdateControllerLook(aimValue);
+                return new Vector3(aimValue.x, 0f, aimValue.y).normalized;
+            }
+        }
+
+        else
+        {
+            if (Mouse.current == null)
+                return transform.forward;
+
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            Ray ray = mainCamera.ScreenPointToRay(mousePos);
+            Plane plane = new Plane(Vector3.up, transform.position);
+
+            if (plane.Raycast(ray, out float dist))
+            {
+                Vector3 dir = ray.GetPoint(dist) - transform.position;
+                dir.y = 0f;
+                if (dir.sqrMagnitude > 0.001f)
+                    return dir.normalized;
+            }
         }
 
         return transform.forward;
