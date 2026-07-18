@@ -102,6 +102,10 @@ public class PlayerAttacks : MonoBehaviour
 
     private void Update()
     {
+        // return early to prevent projectile firing in UI
+        if (Time.timeScale == 0f)
+            return;
+
         if (playerInput != null &&
             playerInput.currentActionMap != null &&
             playerInput.currentActionMap.name != currentActionMapName)
@@ -112,39 +116,42 @@ public class PlayerAttacks : MonoBehaviour
         bool attackHeld = ReadButton(attackAction, ref prevAttackValue, out bool attackPressed);
         bool secondaryHeld = ReadButton(secondaryAttackAction, ref prevSecondaryValue, out bool secondaryPressed, out bool secondaryReleased);
 
-        // PRIMARY ATTACK
-        if (attackHeld)
+        // PRIMARY ATTACK - Block if dashing
+        if (attackHeld && !playerMovement.IsDashing)
             TryBasicShot();
-            
 
-        // SECONDARY ATTACK
-        if (playerAnchor.IsTethered)
+
+        // SECONDARY ATTACK - Block if dashing
+        if (!playerMovement.IsDashing)
         {
-            if (secondaryPressed && !playerChargeAttack.IsCharging)
+            if (playerAnchor.IsTethered)
             {
-                playerMovement.StopMovement(GetAimDirection());
-                playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
+                if (secondaryPressed && !playerChargeAttack.IsCharging)
+                {
+                    playerMovement.StopMovement(GetAimDirection());
+                    playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
+                }
+
+                if (secondaryHeld)
+                    playerChargeAttack.UpdateCharge();
+
+                if (secondaryReleased)
+                {
+                    playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+
+                    RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
+
+                    playerMovement.ResumeMovement();
+                }
             }
-
-            if (secondaryHeld)
-                playerChargeAttack.UpdateCharge();
-
-            if (secondaryReleased)
+            else
             {
-                playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+                if (secondaryPressed)
+                    TryTongue();
 
-                RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
-
-                playerMovement.ResumeMovement();
+                if (secondaryReleased)
+                    playerTongueAttack.BeginTongueRetract();
             }
-        }
-        else
-        {
-            if (secondaryPressed)
-                TryTongue();
-
-            if (secondaryReleased)
-                playerTongueAttack.BeginTongueRetract();
         }
 
         if (isCharging)
@@ -302,30 +309,35 @@ public class PlayerAttacks : MonoBehaviour
             if (direction.sqrMagnitude > 0.001f)
                 return direction.normalized;
         }
+
         Vector2 aimValue = aimAction != null ? aimAction.ReadValue<Vector2>() : Vector2.zero;
-        var lastControl = aimAction != null ? aimAction.activeControl : null;
-
-        bool gamepadActive =
-            lastControl != null &&
-            lastControl.device is Gamepad &&
-            aimValue.sqrMagnitude > 0.01f;
-
-        if (gamepadActive)
-            return new Vector3(aimValue.x, 0f, aimValue.y).normalized;
-
-        if (Mouse.current == null)
-            return transform.forward;
-
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        Ray ray = mainCamera.ScreenPointToRay(mousePos);
-        Plane plane = new Plane(Vector3.up, transform.position);
-
-        if (plane.Raycast(ray, out float dist))
+        
+        if (InputManager.Instance != null && InputManager.Instance.IsUsingGamepad())
         {
-            Vector3 dir = ray.GetPoint(dist) - transform.position;
-            dir.y = 0f;
-            if (dir.sqrMagnitude > 0.001f)
-                return dir.normalized;
+            if (aimValue.sqrMagnitude > 0.01f)
+            {
+                if (playerCrosshair != null)
+                    playerCrosshair.UpdateControllerLook(aimValue);
+                return new Vector3(aimValue.x, 0f, aimValue.y).normalized;
+            }
+        }
+
+        else
+        {
+            if (Mouse.current == null)
+                return transform.forward;
+
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            Ray ray = mainCamera.ScreenPointToRay(mousePos);
+            Plane plane = new Plane(Vector3.up, transform.position);
+
+            if (plane.Raycast(ray, out float dist))
+            {
+                Vector3 dir = ray.GetPoint(dist) - transform.position;
+                dir.y = 0f;
+                if (dir.sqrMagnitude > 0.001f)
+                    return dir.normalized;
+            }
         }
 
         return transform.forward;
