@@ -24,10 +24,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     protected bool isAttacking;
     public bool IsAttacking => isAttacking;
 
-
-
     private bool isActive;
     private Rigidbody rb;
+
+    private float originalAgentSpeed;
+    private float environmentalSpeedModifier = 1f;
 
     public void Activate(Transform playerTransform)
     {
@@ -39,6 +40,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
+
+        if (agent != null)
+        {
+            originalAgentSpeed = agent.speed;
+        }
 
         // Initialize health component
         if (health == null)
@@ -194,4 +200,27 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (health != null)
             health.TakeDmg(dmg, effectType, effectDuration, effectValue);
     }
+
+    public void SetEnvironmentalSpeedModifier(float multiplier)
+    {
+        environmentalSpeedModifier = Mathf.Clamp01(multiplier);
+        UpdateActualSpeed();
+    }
+
+    private void UpdateActualSpeed()
+    {
+        if (agent == null) return;
+
+        float currentSlowFactor = IsSlowed ? 0.5f : 1.0f;
+
+        if (IsFrozen)
+        {
+            agent.speed = 0f;
+        }
+        else
+        {
+            agent.speed = originalAgentSpeed *  currentSlowFactor * environmentalSpeedModifier;
+        }
+    }
+
 }

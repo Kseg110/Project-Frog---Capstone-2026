@@ -47,4 +47,24 @@ public class MudPit : MonoBehaviour
             insideCounts.Remove(victim);
         }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        EnemyBase enemy = other.GetComponent<EnemyBase>();
+
+        if (enemy != null)
+        {
+            enemy.SetEnvironmentalSpeedModifier(speedMult);
+        }    
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        EnemyBase enemy = other.GetComponent<EnemyBase>();
+
+        if (enemy != null)
+        {
+            enemy.SetEnvironmentalSpeedModifier(1f);
+        }
+    }
 }
