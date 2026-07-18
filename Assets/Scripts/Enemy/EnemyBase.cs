@@ -62,7 +62,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         if (player == null)
         {
-            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+            GameObject playerObject = GameObject.Find("Player");
             if (playerObject != null)
             {
                 player = playerObject.transform;
@@ -75,7 +75,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         }
         enableNav = true;
 
-        movement.RequestSlot();
     }
 
     protected virtual void Update()
@@ -104,7 +103,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     #endregion
 
     #region Navigation
-
+    //Do not use, use movement component instead//
     public virtual void MoveTo(Vector3 destination)
     {
         if (!enableNav || movement == null) return;
