@@ -324,7 +324,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 526207876}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
   m_Name: 
@@ -506,7 +506,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   target: {fileID: 0}
   cameraRotation: {x: 40, y: 0, z: 0}
-  cameraPosition: {x: 0, y: 2, z: -27.5}
+  cameraPosition: {x: 0, y: 1, z: -20}
   followSpeed: 10
   cameraEffects: []
 --- !u!1001 &727508069
@@ -938,6 +938,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4393449127589004673, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: dashEffect
+      value: 
+      objectReference: {fileID: 7611360948172514216, guid: ca67dd471ecd02745af09bfa37b54c89, type: 3}
+    - target: {fileID: -4393449127589004673, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: dashEffectBackOffset
+      value: -1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: -4393449127589004673, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: dashEffectHeightOffset
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 900614694835417969, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.2311
@@ -978,6 +990,42 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1437986667445852762, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: iceVFX
+      value: 
+      objectReference: {fileID: 2785212119508678309, guid: 0e88c34dfc0e9c34f9b86f58a9891bf7, type: 3}
+    - target: {fileID: 1437986667445852762, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: fireVFX
+      value: 
+      objectReference: {fileID: 2785212119508678309, guid: 2d4809fa676d30a4680c6df7f4e0b0d5, type: 3}
+    - target: {fileID: 1437986667445852762, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: windVFX
+      value: 
+      objectReference: {fileID: 2785212119508678309, guid: 0456aa19b2662e34fa551d925cb2337c, type: 3}
+    - target: {fileID: 1437986667445852762, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: fireTetherTest
+      value: 
+      objectReference: {fileID: 2785212119508678309, guid: 2d4809fa676d30a4680c6df7f4e0b0d5, type: 3}
+    - target: {fileID: 2230821827976972090, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 8a770163cce97b047822066010551c60, type: 2}
+    - target: {fileID: 2230821827976972090, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].time
+      value: 0.0151901245
+      objectReference: {fileID: 0}
+    - target: {fileID: 2230821827976972090, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2230821827976972090, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].value
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2230821827976972090, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[1].value
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 3953045122372634609, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: playerHUD
       value: 
@@ -986,6 +1034,22 @@ PrefabInstance:
       propertyPath: windSpeedBoostPercent
       value: 35
       objectReference: {fileID: 0}
+    - target: {fileID: 5289892553675338067, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: iceMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: c914056a48bfe8442bea0be938ecf37a, type: 2}
+    - target: {fileID: 5289892553675338067, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: fireMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: c422a7cd7239689488c5dda2aa71fdfa, type: 2}
+    - target: {fileID: 5289892553675338067, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: windMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 8a770163cce97b047822066010551c60, type: 2}
+    - target: {fileID: 5289892553675338067, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: defaultMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 26d88ade74010784089a3c02ad3e6bfe, type: 2}
     - target: {fileID: 7555014404437206304, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: m_Name
       value: Player
@@ -994,7 +1058,8 @@ PrefabInstance:
       propertyPath: worldTargetIndicator
       value: 
       objectReference: {fileID: 666366270}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4333163172545244430, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

@@ -29,6 +29,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private float dashDistance = 5f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
+    [SerializeField] private ParticleSystem dashEffect;
+    [SerializeField] private float dashEffectBackOffset = 1f;
+    [SerializeField] private float dashEffectHeightOffset = 0.5f;
+    
 
     [Header("FMod Events")]
     //[SerializeField] private EventReference fireAnchorEvent;
@@ -345,6 +349,12 @@ public class PlayerMovement : MonoBehaviour, IMovement
         isDashing = true;
         dashTimer = dashDuration;
         dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
+
+        // Spawn the trail effect behind the player, facing opposite the dash direction
+        Vector3 spawnPosition = transform.position - dashDirection * dashEffectBackOffset + Vector3.up * dashEffectHeightOffset;
+        Quaternion spawnRotation = Quaternion.LookRotation(-dashDirection);
+        ParticleSystem fx = Instantiate(dashEffect, spawnPosition, spawnRotation);
+        fx.Play();
 
         RuntimeManager.PlayOneShot(dashActivationEvent, transform.position);
 
