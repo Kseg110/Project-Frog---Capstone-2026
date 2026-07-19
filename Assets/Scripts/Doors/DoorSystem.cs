@@ -151,7 +151,7 @@ public class DoorSystem : MonoBehaviour
             // Wait until this door is marked ready.
 
             if (link == null) continue;
-            if (link.opened);//|| link.destroyed) continue;
+            if (link.opened) continue;
 
             // if player manually closed the door, don't auto-open it
             if (link.playerClosed) continue;
@@ -362,10 +362,10 @@ public class DoorSystem : MonoBehaviour
         link.opened = false;
         link.lastClosedTime = Time.time;
         link.playerClosed = true;
-        Debug.LogWarning($"DoorSystem: 'move routine Door '{link.door?.name}");
-        Debug.Log(
-            $"$DoorSystem:Door '{link.door.name}' closing because player entered close trigger."
-        );
+        Debug.Log($"DoorSystem: Door '{link.door?.name}' restored (closed) after player passed.");
+
+        if (waveRoundSystem != null)
+            waveRoundSystem.OnPlayerReachedNextArea();
     }
    
     internal void OnTriggerActivated(int index)

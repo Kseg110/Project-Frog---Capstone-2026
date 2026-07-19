@@ -36276,6 +36276,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d0520017cbd923b41bff21cd9d4ce7b0, type: 2}
   - {fileID: 11400000, guid: 0a926eb0719870643b6225444b65b033, type: 2}
   delayBetweenSpawns: 0.2
+  transitionAfterWaves: 
   cardSelectionUI: {fileID: 1436747172}
   waveText: {fileID: 359992009}
 --- !u!4 &748017593
@@ -57578,7 +57579,7 @@ MonoBehaviour:
   - door: {fileID: 1357989249}
     closeTrigger: {fileID: 1449496240}
     minWave: -1
-    maxWave: 2
+    maxWave: 1
     doorAnimator: {fileID: 0}
     lowerDistance: 7
     reopenCooldown: 1
