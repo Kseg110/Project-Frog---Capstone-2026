@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Attach this to empty parent gameObject & attach helper to child with colliders
+// Attach this to an empty parent GameObject & attach the helper (MudPitTrigger) to child collider(s).
+// The Player (or any IMovement) slows while overlapping this mud pit's colliders.
+
 public class MudPit : MonoBehaviour
 {
     [Header("Slow strength")]
@@ -15,9 +17,8 @@ public class MudPit : MonoBehaviour
     [Tooltip("Colliders on the trigger children used to detect already-overlapping victims at start.")]
     [SerializeField] private Collider[] triggerColliders;
 
-    // Track the actual set of colliders per victim, not a raw count
-    private readonly Dictionary<IMovement, HashSet<Collider>> insideColliders =
-        new Dictionary<IMovement, HashSet<Collider>>();
+    // For each victim, the set of THIS mud pit's colliders they currently overlap.
+    private readonly Dictionary<IMovement, HashSet<Collider>> insideColliders = new Dictionary<IMovement, HashSet<Collider>>();
 
     private void Start()
     {
@@ -81,5 +82,6 @@ public class MudPit : MonoBehaviour
             victim.RemoveSpeedModifier(this);
             insideColliders.Remove(victim);
         }
+        insideColliders.Clear();
     }
 }

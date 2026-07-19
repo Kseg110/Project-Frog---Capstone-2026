@@ -29,6 +29,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private float dashDistance = 5f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
+    [SerializeField] private ParticleSystem dashEffect;
+    [SerializeField] private float dashEffectBackOffset = 1f;
+    [SerializeField] private float dashEffectHeightOffset = 0.5f;
+    
 
     [Header("FMod Events")]
     //[SerializeField] private EventReference fireAnchorEvent;
@@ -43,6 +47,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private InputAction dashAction;
 
     private bool usingGamepad;
+    private bool isSubToInputManager;
 
     private Rigidbody rb;
 
@@ -88,119 +93,80 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         playerInput = GetComponent<PlayerInput>();
 
-        // Desable all action maps at start, will enable the correct one based on input
+        // Enable PlayerMK by default, will switch to Gamepad if input is detected
         foreach (var map in playerInput.actions.actionMaps)
             map.Disable();
 
-        // Enable PlayerMK by default, will switch to Gamepad if input is detected
         playerInput.SwitchCurrentActionMap("PlayerMK");
         SetActionMap("PlayerMK");
-
         usingGamepad = false;
+
+        SubToInputManager();
     }
 
     private void OnEnable()
     {
-        playerInput.onActionTriggered += OnActionTriggered;
-        InputSystem.onDeviceChange += OnDeviceChange;
-        playerInput.onControlsChanged += OnControlsChanged;
+        SubToInputManager();
     }
 
     private void OnDisable()
     {
-        playerInput.onActionTriggered -= OnActionTriggered;
-        InputSystem.onDeviceChange -= OnDeviceChange;
-        playerInput.onControlsChanged -= OnControlsChanged;
+        UnsubFromInputManager();
+
     }
 
-    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
+    private void OnDestroy()
     {
-        if (!(device is Gamepad))
-            return;
+        UnsubFromInputManager();
+    }
 
-        // Gamepad connected
-        if (change == InputDeviceChange.Added || change == InputDeviceChange.Reconnected || change == InputDeviceChange.Enabled)
+    private void SubToInputManager()
+    {
+        if (InputManager.Instance != null && !isSubToInputManager)
         {
-            // Ensure PlayerInput reflects the gamepad control scheme as well as switching map
-            if (Gamepad.current != null)
-                playerInput.SwitchCurrentControlScheme("Gamepad", Gamepad.current);
-
-            playerInput.SwitchCurrentActionMap("PlayerGamepad");
-            SetActionMap("PlayerGamepad");
-            usingGamepad = true;
-            Debug.Log("Controller connected - switched to PlayerGamepad");
-        }
-
-        // Gamepad removed
-        if (change == InputDeviceChange.Removed || change == InputDeviceChange.Disconnected || change == InputDeviceChange.Disabled)
-        {
-            // Switch control scheme back to keyboard+mouse if available
-            if (Keyboard.current != null && Mouse.current != null)
-                playerInput.SwitchCurrentControlScheme("Keyboard&Mouse", Keyboard.current, Mouse.current);
-
-            playerInput.SwitchCurrentActionMap("PlayerMK");
-            SetActionMap("PlayerMK");
-            usingGamepad = false;
-            Debug.Log("Controller removed - switched to PlayerMK");
+            InputManager.Instance.OnInputDeviceChanged += OnInputDeviceChanged;
+            isSubToInputManager = true;
+            SyncWithInputManager();
         }
     }
 
-    // New handler: react to PlayerInput control-scheme changes (fires reliably)
-    private void OnControlsChanged(PlayerInput pi)
+    private void UnsubFromInputManager()
     {
-        var scheme = playerInput.currentControlScheme ?? string.Empty;
-        string s = scheme.ToLowerInvariant();
-        if (s.Contains(GamepadSchemeNameLower))
+        if (InputManager.Instance != null && isSubToInputManager)
         {
-            if (playerInput.currentActionMap == null || playerInput.currentActionMap.name != "PlayerGamepad")
-            {
-                playerInput.SwitchCurrentActionMap("PlayerGamepad");
-                SetActionMap("PlayerGamepad");
-                usingGamepad = true;
-                Debug.Log("ControlsChanged -> switched to PlayerGamepad");
-            }
-        }
-        else
-        {
-            if (playerInput.currentActionMap == null || playerInput.currentActionMap.name != "PlayerMK")
-            {
-                playerInput.SwitchCurrentActionMap("PlayerMK");
-                SetActionMap("PlayerMK");
-                usingGamepad = false;
-                Debug.Log("ControlsChanged -> switched to PlayerMK");
-            }
+            InputManager.Instance.OnInputDeviceChanged -= OnInputDeviceChanged;
+            isSubToInputManager = false;
         }
     }
 
-    private void OnActionTriggered(InputAction.CallbackContext ctx)
+    private void OnInputDeviceChanged(InputManager.InputDevice newDevice)
     {
-        // Accept Started OR Performed so we don't miss initial inputs from some devices/bindings
-        if (!(ctx.phase == InputActionPhase.Started || ctx.phase == InputActionPhase.Performed))
+        bool shouldUseGamepad = (newDevice == InputManager.InputDevice.Gamepad);
+        SwitchInputMode(shouldUseGamepad);
+        
+    }
+
+    private void SyncWithInputManager()
+    {
+        if (InputManager.Instance == null)
             return;
 
-        var device = ctx.control?.device;
+        bool shouldUseGamepad = InputManager.Instance.IsUsingGamepad();
+        SwitchInputMode(shouldUseGamepad);
+    }
 
-        if (device is Gamepad && playerInput.currentActionMap.name != "PlayerGamepad")
-        {
-            playerInput.SwitchCurrentActionMap("PlayerGamepad");
-            SetActionMap("PlayerGamepad");
-
-            usingGamepad = true;
-
-            Debug.Log("Controller detected via action");
+    private void SwitchInputMode(bool shouldUseGamepad)
+    {
+        if (shouldUseGamepad == usingGamepad)
             return;
-        }
 
-        if ((device is Keyboard || device is Mouse) && playerInput.currentActionMap.name != "PlayerMK")
-        {
-            playerInput.SwitchCurrentActionMap("PlayerMK");
-            SetActionMap("PlayerMK");
+        usingGamepad = shouldUseGamepad;
+        string targetMap = usingGamepad ? "PlayerGamepad" : "PlayerMK";
 
-            usingGamepad = false;
+        playerInput.SwitchCurrentActionMap(targetMap);
+        SetActionMap(targetMap);
 
-            Debug.Log("MK detected via action");
-            return;
-        }
+        Debug.Log($"[PlayerMovement] Switched to {targetMap}");
     }
 
     private void SetActionMap(string mapName)
@@ -214,23 +180,6 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private void Update()
     {
         UpdateTetherStatus();
-
-        // Fallback auto-switch: if a Gamepad device exists but we haven't switched yet
-        if (!usingGamepad && Gamepad.current != null && playerInput.currentActionMap.name != "PlayerGamepad")
-        {
-            playerInput.SwitchCurrentActionMap("PlayerGamepad");
-            SetActionMap("PlayerGamepad");
-            usingGamepad = true;
-            Debug.Log("Controller auto-switched (Gamepad.current != null)");
-        }
-        else if (usingGamepad && Gamepad.current == null && playerInput.currentActionMap.name != "PlayerMK")
-        {
-            // If the connected gamepad was removed, switch back to MK
-            playerInput.SwitchCurrentActionMap("PlayerMK");
-            SetActionMap("PlayerMK");
-            usingGamepad = false;
-            Debug.Log("MK auto-switched (no Gamepad.current)");
-        }
 
         // Update dash cooldown
         if (dashCooldownTimer > 0f)
@@ -340,6 +289,11 @@ public class PlayerMovement : MonoBehaviour, IMovement
         }
     }
 
+    #region OG Shrinking radius
+    //-------------------------------//
+    // Original shrinking tether radius method //
+    //------------------------------//
+
     //private Vector3 ClampToShrinkingAnchorWall(Vector3 currentPos, Vector3 moveVector)
     //{
     //    if (!isTethered)
@@ -369,6 +323,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     //    return moveVector;
     //}
+    #endregion
 
     // Stops player movement. Intended to be called externally.
     public void StopMovement(Vector3? forward = null)
@@ -394,6 +349,12 @@ public class PlayerMovement : MonoBehaviour, IMovement
         isDashing = true;
         dashTimer = dashDuration;
         dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
+
+        // Spawn the trail effect behind the player, facing opposite the dash direction
+        Vector3 spawnPosition = transform.position - dashDirection * dashEffectBackOffset + Vector3.up * dashEffectHeightOffset;
+        Quaternion spawnRotation = Quaternion.LookRotation(-dashDirection);
+        ParticleSystem fx = Instantiate(dashEffect, spawnPosition, spawnRotation);
+        fx.Play();
 
         RuntimeManager.PlayOneShot(dashActivationEvent, transform.position);
 

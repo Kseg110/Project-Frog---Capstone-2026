@@ -8,26 +8,27 @@ using UnityEngine.InputSystem.Processors;
 using UnityEngine.Rendering;
 
 // Enemy BaseClass
-public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
+
+[RequireComponent (typeof(MovementComponent))]
+public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
     [Header("References")]
     [SerializeField] protected Transform player;
-
-
-    protected bool enableNav = true;
-    protected NavMeshAgent agent;
-
-    protected bool canAttack = true;
-
-    [Header("References")]
+    [SerializeField] protected MovementComponent movement;
     [SerializeField] protected GameObject attackHitbox;
     [SerializeField] private protected Health health;
+    private Rigidbody rb;
+
+    protected NavMeshAgent agent => movement?.Agent;
+
+    protected bool enableNav = true;
+
+    protected bool canAttack = true;
 
     protected bool isAttacking;
     public bool IsAttacking => isAttacking;
 
     private bool isActive;
-    private Rigidbody rb;
 
     private float originalAgentSpeed;
     private float environmentalSpeedModifier = 1f;
@@ -46,8 +47,13 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
     }
     protected virtual void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
+        movement = GetComponent<MovementComponent>();
+
+        if (movement == null)
+        {
+            Debug.LogError($"{name} is missing a MovementComponent.");
+        }
 
         if (agent != null)
         {
@@ -73,7 +79,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
 
         if (player == null)
         {
-            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+            GameObject playerObject = GameObject.Find("Player");
             if (playerObject != null)
             {
                 player = playerObject.transform;
@@ -116,24 +122,22 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
     #endregion
 
     #region Navigation
-
+    //Do not use, use movement component instead//
     public virtual void MoveTo(Vector3 destination)
     {
-        if (!enableNav) return;
+        if (!enableNav || movement == null) return;
 
-        agent.isStopped = false;
-        agent.SetDestination(destination);
-
+        movement.MoveTo(destination);
     }
     public virtual void StopMovement()
     {
-        if (!enableNav) return;
-        agent.isStopped = true;
+        if (!enableNav || movement == null) return;
+        movement.Stop();
     }
     public virtual void ResumeMovement()
     {
-        if (!enableNav) return;
-        agent.isStopped = false;
+        if (!enableNav || movement == null) return;
+        movement.SetMovementEnabled(true);
     }
     #endregion
 
@@ -300,4 +304,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
 
         SetEnvironmentalSpeedModifier(finalMult);
     }
+
+    public void ReleaseSlot()
+    {
+        movement.ReleaseTargetSlot();
+    }
 }
+

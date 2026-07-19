@@ -40,6 +40,12 @@ public class AnchorTether : MonoBehaviour
     [SerializeField] private float tetherCooldown = 1.0f;
     private bool canTether = true;
 
+    [Header("Tether Materials")]
+    [SerializeField] private Material fireMaterial;
+    [SerializeField] private Material iceMaterial;
+    [SerializeField] private Material windMaterial;
+    [SerializeField] private Material defaultMaterial;
+
     private LineRenderer lr;
     private AnchorBase currentAnchor;
 
@@ -61,10 +67,16 @@ public class AnchorTether : MonoBehaviour
 
         EnsureCollisionProbe();
         TryInitializeRope();
+
+        OnAnchorAttached += HandleAnchorMaterial;
+        OnAnchorDetached += HandleAnchorDetachedMaterial;
     }
 
     private void OnDestroy()
     {
+        OnAnchorAttached -= HandleAnchorMaterial;
+        OnAnchorDetached -= HandleAnchorDetachedMaterial;
+
         if (collisionProbe != null)
         {
             Destroy(collisionProbe.gameObject);
@@ -175,6 +187,35 @@ public class AnchorTether : MonoBehaviour
 
     private void NotifyPointsChanged() => OnPointsChanged?.Invoke();
 
+    // Swaps the LineRenderer's material to match the element of the anchor just attached.
+    // Uses lr.material (instance) rather than sharedMaterial so we don't mutate the source asset.
+    private void HandleAnchorMaterial(AnchorBase anchor)
+    {
+        if (lr == null) return;
+
+        Material target = anchor.Element switch
+        {
+            AnchorElement.Fire => fireMaterial,
+            AnchorElement.Ice => iceMaterial,
+            AnchorElement.Wind => windMaterial,
+            _ => defaultMaterial
+        };
+
+        if (target != null)
+        {
+            lr.material = target;
+        }
+    }
+
+    // Restores the neutral material when the tether detaches.
+    private void HandleAnchorDetachedMaterial()
+    {
+        if (lr != null && defaultMaterial != null)
+        {
+            lr.material = defaultMaterial;
+        }
+    }
+
     // Public API
 
     public void SetStartPoint(Transform t, bool instantAssign = false)
@@ -256,7 +297,6 @@ public class AnchorTether : MonoBehaviour
         OnTetherBroken?.Invoke();
 
         // Detach through the normal path so all existing cleanup fires (currentAnchor cleared, OnAnchorDetached raised, cooldown started).
-        // 
         SetEndPoint(null, true);
 
         // Force the cooldown - normal SetEndPoint(null) doesn't trigger it because the cooldown is designed to gate NEW attaches, and detach isn't restricted. On a forced break, we want that grace period.

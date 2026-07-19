@@ -145,6 +145,8 @@ public class Health : MonoBehaviour, IDamageable
         }
         else
         {
+            Debug.Log("Enemy died");
+            enemy.ReleaseSlot();
             OnDestroyed?.Invoke(gameObject);
             Destroy(gameObject);
         }
