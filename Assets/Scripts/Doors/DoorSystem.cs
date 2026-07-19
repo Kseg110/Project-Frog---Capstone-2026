@@ -277,6 +277,9 @@ public class DoorSystem : MonoBehaviour
         link.lastClosedTime = Time.time;
         link.playerClosed = true;
         Debug.Log($"DoorSystem: Door '{link.door?.name}' restored (closed) after player passed.");
+
+        if (waveRoundSystem != null)
+            waveRoundSystem.OnPlayerReachedNextArea();
     }
 
     // Optional API: allow external code to re-enable automatic opening for a link (e.g., after some time)

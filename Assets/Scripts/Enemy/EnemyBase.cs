@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -11,7 +12,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
 {
     [Header("References")]
     [SerializeField] protected Transform player;
-  
+
 
     protected bool enableNav = true;
     protected NavMeshAgent agent;
@@ -30,6 +31,9 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
 
     private float originalAgentSpeed;
     private float environmentalSpeedModifier = 1f;
+
+    // Per-source speed modifiers, stacked multiplicatively (matches PlayerMovement contract)
+    private readonly Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
 
     private Coroutine slowCourotine;
     private Coroutine freezeCoroutine;
@@ -266,17 +270,34 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
         {
             agent.speed = targetSpeed;
         }
+
+        //Debug.Log($"[EnemyBase] {gameObject.name} envMod={environmentalSpeedModifier} orig={originalAgentSpeed} agent.speed={agent.speed} actualVel={agent.velocity.magnitude}");
     }
 
-    public void AddSpeedModifier(object source, float modifier)
+    // Argument is a MULTIPLIER (0.5 = half speed), stacked multiplicatively.
+    // Matches PlayerMovement so a single value behaves identically for both.
+    public void AddSpeedModifier(object source, float multiplier)
     {
-        float multiplier = 1f + modifier;
+        if (source == null) return;
 
-        SetEnvironmentalSpeedModifier(multiplier);
+        speedModifiers[source] = multiplier;
+        RecalculateEnvironmentalSpeed();
     }
 
     public void RemoveSpeedModifier(object source)
     {
-        SetEnvironmentalSpeedModifier(1f);
+        if (source == null) return;
+
+        if (speedModifiers.Remove(source))
+            RecalculateEnvironmentalSpeed();
+    }
+
+    private void RecalculateEnvironmentalSpeed()
+    {
+        float finalMult = 1f;
+        foreach (var mult in speedModifiers.Values)
+            finalMult *= mult;
+
+        SetEnvironmentalSpeedModifier(finalMult);
     }
 }

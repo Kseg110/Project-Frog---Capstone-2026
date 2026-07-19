@@ -1,63 +1,85 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-//Attach this to Empty parent gameObject & attach helper to child with colliders
+// Attach this to empty parent gameObject & attach helper to child with colliders
 public class MudPit : MonoBehaviour
 {
     [Header("Slow strength")]
-    [SerializeField] private float speedMult = -0.5f;
+    [SerializeField] private float speedMult = 0.5f;
 
-    // Use to track how many colliders of THIS mudpit each player/enemy is inside
-    //private Dictionary<IMovement, int> insideCounts = new Dictionary<IMovement, int>();
-    private Dictionary<MonoBehaviour, int> insideCounts = new Dictionary<MonoBehaviour, int>();
+    [Header("Filtering")]
+    [Tooltip("Only colliders on these layers count. Exclude transient/spawned collider layers.")]
+    [SerializeField] private LayerMask affectedLayers = ~0;
+
+    [Header("Spawn Overlap Check")]
+    [Tooltip("Colliders on the trigger children used to detect already-overlapping victims at start.")]
+    [SerializeField] private Collider[] triggerColliders;
+
+    // Track the actual set of colliders per victim, not a raw count
+    private readonly Dictionary<IMovement, HashSet<Collider>> insideColliders =
+        new Dictionary<IMovement, HashSet<Collider>>();
+
+    private void Start()
+    {
+        // Catch anything already standing inside the pit when it (or the enemy) spawns.
+        if (triggerColliders == null || triggerColliders.Length == 0) return;
+
+        foreach (var trig in triggerColliders)
+        {
+            if (trig == null) continue;
+
+            Collider[] overlaps = Physics.OverlapBox(
+                trig.bounds.center,
+                trig.bounds.extents,
+                trig.transform.rotation,
+                affectedLayers,
+                QueryTriggerInteraction.Ignore
+            );
+
+            foreach (var hit in overlaps)
+                HandleEnter(hit);
+        }
+    }
 
     public void HandleEnter(Collider other)
     {
-        Debug.Log($"[MudPit] Physics detected trigger enter from: {other.gameObject.name}", other.gameObject);
+        Debug.Log($"[MudPit] ENTER from: {other.gameObject.name}", other.gameObject);
+
+        if ((affectedLayers.value & (1 << other.gameObject.layer)) == 0) return;
 
         IMovement victim = other.GetComponentInParent<IMovement>();
-
         if (victim == null) return;
 
-        MonoBehaviour victimComponent = victim as MonoBehaviour;
-
-        if (victimComponent == null)
+        if (!insideColliders.TryGetValue(victim, out var set))
         {
-            Debug.LogWarning($"[MudPit] Found collider {other.gameObject.name}, but COULD NOT find IMovement in its parents!", other.gameObject);
-            return;
+            set = new HashSet<Collider>();
+            insideColliders[victim] = set;
         }
 
-        if (!insideCounts.ContainsKey(victimComponent))
-        {
-            insideCounts[victimComponent] = 0;
-        }
+        bool wasEmpty = set.Count == 0;
+        set.Add(other);   // HashSet ignores duplicates automatically
 
-        insideCounts[victimComponent]++;
-
-        // Only apply debuff on first collider entered
-        if (insideCounts[victimComponent] == 1)
+        if (wasEmpty && set.Count == 1)
         {
-            Debug.Log($"[MudPit] Successfully applying speed modifier to {victimComponent.gameObject.name}!", victimComponent.gameObject);
+            Debug.Log($"[MudPit] Applying speed modifier to {((MonoBehaviour)victim).gameObject.name}!", ((MonoBehaviour)victim).gameObject);
             victim.AddSpeedModifier(this, speedMult);
         }
     }
 
     public void HandleExit(Collider other)
     {
+        Debug.Log($"[MudPit] EXIT from: {other.gameObject.name}", other.gameObject);
+
         IMovement victim = other.GetComponentInParent<IMovement>();
         if (victim == null) return;
+        if (!insideColliders.TryGetValue(victim, out var set)) return;
 
-        MonoBehaviour victimComponent = victim as MonoBehaviour;
-        if (victimComponent == null || !insideCounts.ContainsKey(victimComponent)) return;
+        set.Remove(other);
 
-        insideCounts[victimComponent]--;
-
-        // Only remove debuff if not still inside another collider form same mudpit
-        if (insideCounts[victimComponent] <= 0)
+        if (set.Count == 0)
         {
             victim.RemoveSpeedModifier(this);
-            insideCounts.Remove(victimComponent);
+            insideColliders.Remove(victim);
         }
     }
 }
