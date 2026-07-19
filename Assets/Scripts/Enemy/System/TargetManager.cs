@@ -65,6 +65,11 @@ public class TargetManager : MonoBehaviour
 
     public Transform RequestSlot(MovementComponent enemy)
     {
+        Debug.Log($"Request from {enemy.name}");
+        Debug.Log($"Slots array: {slots}");
+        Debug.Log($"Enemies array: {enemies}");
+        Debug.Log($"EnemySlots dictionary: {enemySlots}");
+
         int previousSlot = -1;
     
         //if already in a slot, remove it and stop it from being selected again//
