@@ -47,7 +47,7 @@ public class EnemyFrogSkeleton : EnemyBase
         }
         else
         {
-            MoveTo(player.position);
+            movement.MoveToTarget(movement.Target.position);
         }        
     }
 /*
