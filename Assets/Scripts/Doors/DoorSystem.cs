@@ -69,15 +69,11 @@ public class DoorSystem : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private WaveRoundSystem waveRoundSystem;
-    [SerializeField] private EnemySpawnWaves enemySpawnWaves;
 
     private void Awake()
     {
         if (waveRoundSystem == null)
             waveRoundSystem = FindAnyObjectByType<WaveRoundSystem>();
-
-        if (enemySpawnWaves == null)
-            enemySpawnWaves = FindAnyObjectByType<EnemySpawnWaves>();
 
         // attach relays to any trigger colliders under both the configured trigger root and the door itself
         for (int i = 0; i < links.Length; i++)
@@ -136,10 +132,6 @@ public class DoorSystem : MonoBehaviour
     private int GetCurrentWaveSafe()
     {
         if (waveRoundSystem == null) return 0;
-
-        if (enemySpawnWaves == null) return 0;
-        // Grabs the current wave integer from EnemySpawnWaves script
-        return enemySpawnWaves.CurrentWaveNumber;
 
         try { return waveRoundSystem.CurrentWaveNumber; }
         catch { return 0; }
@@ -285,11 +277,6 @@ public class DoorSystem : MonoBehaviour
         link.lastClosedTime = Time.time;
         link.playerClosed = true;
         Debug.Log($"DoorSystem: Door '{link.door?.name}' restored (closed) after player passed.");
-
-        if (enemySpawnWaves != null)
-        {
-            enemySpawnWaves.OnDoorClosedBehindPlayer();
-        }
     }
 
     // Optional API: allow external code to re-enable automatic opening for a link (e.g., after some time)

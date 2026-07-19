@@ -9,62 +9,55 @@ public class MudPit : MonoBehaviour
     [SerializeField] private float speedMult = -0.5f;
 
     // Use to track how many colliders of THIS mudpit each player/enemy is inside
-    private Dictionary<IMovement, int> insideCounts = new Dictionary<IMovement, int>();
+    //private Dictionary<IMovement, int> insideCounts = new Dictionary<IMovement, int>();
+    private Dictionary<MonoBehaviour, int> insideCounts = new Dictionary<MonoBehaviour, int>();
 
     public void HandleEnter(Collider other)
     {
+        Debug.Log($"[MudPit] Physics detected trigger enter from: {other.gameObject.name}", other.gameObject);
+
         IMovement victim = other.GetComponentInParent<IMovement>();
+
         if (victim == null) return;
 
-        if (!insideCounts.ContainsKey(victim))
+        MonoBehaviour victimComponent = victim as MonoBehaviour;
+
+        if (victimComponent == null)
         {
-            insideCounts[victim] = 0;
+            Debug.LogWarning($"[MudPit] Found collider {other.gameObject.name}, but COULD NOT find IMovement in its parents!", other.gameObject);
+            return;
         }
 
-        insideCounts[victim]++;
+        if (!insideCounts.ContainsKey(victimComponent))
+        {
+            insideCounts[victimComponent] = 0;
+        }
+
+        insideCounts[victimComponent]++;
 
         // Only apply debuff on first collider entered
-        if (insideCounts[victim] == 1)
+        if (insideCounts[victimComponent] == 1)
         {
+            Debug.Log($"[MudPit] Successfully applying speed modifier to {victimComponent.gameObject.name}!", victimComponent.gameObject);
             victim.AddSpeedModifier(this, speedMult);
         }
     }
-
 
     public void HandleExit(Collider other)
     {
         IMovement victim = other.GetComponentInParent<IMovement>();
         if (victim == null) return;
 
-        if (!insideCounts.ContainsKey(victim)) return;
+        MonoBehaviour victimComponent = victim as MonoBehaviour;
+        if (victimComponent == null || !insideCounts.ContainsKey(victimComponent)) return;
 
-        insideCounts[victim]--;
+        insideCounts[victimComponent]--;
 
         // Only remove debuff if not still inside another collider form same mudpit
-        if (insideCounts[victim] <= 0)
+        if (insideCounts[victimComponent] <= 0)
         {
             victim.RemoveSpeedModifier(this);
-            insideCounts.Remove(victim);
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        EnemyBase enemy = other.GetComponent<EnemyBase>();
-
-        if (enemy != null)
-        {
-            enemy.SetEnvironmentalSpeedModifier(speedMult);
-        }    
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        EnemyBase enemy = other.GetComponent<EnemyBase>();
-
-        if (enemy != null)
-        {
-            enemy.SetEnvironmentalSpeedModifier(1f);
+            insideCounts.Remove(victimComponent);
         }
     }
 }

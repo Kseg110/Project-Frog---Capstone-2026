@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using System.Transactions;
 
 public class EnemySpawnWaves : MonoBehaviour
@@ -18,6 +19,10 @@ public class EnemySpawnWaves : MonoBehaviour
     [SerializeField] private float undergroundOffset = 2f;
     [SerializeField] private float timeBetweenWaves = 5f;
     [SerializeField] private int currentWave;
+
+    [Header("Area Events")]
+    [SerializeField] private UnityEvent onAreaCleared;
+    [SerializeField] private UnityEvent onWaveStarted;
 
     private bool isSpawningWave = false;
     private bool isWaitingForAreaTransition = false;
@@ -38,6 +43,9 @@ public class EnemySpawnWaves : MonoBehaviour
     public void SpawnNextWave()
     {
         aliveEnemies.Clear();
+
+        onWaveStarted?.Invoke();
+
         //Increase enemy count by wave number. Can be easily configured to set amounts
         if (currentWave <= 3)
         {
@@ -116,6 +124,7 @@ public class EnemySpawnWaves : MonoBehaviour
         Debug.Log($"Wave {currentWave} cleared!");
 
         // Door Logic ...
+        onAreaCleared?.Invoke();
     }
 
     public void CompleteAreaTransition()
@@ -149,5 +158,7 @@ public class EnemySpawnWaves : MonoBehaviour
         }
         
         SpawnNextWave();
+
+        isSpawningWave = false;
     }
 }
