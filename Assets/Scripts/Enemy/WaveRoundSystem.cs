@@ -10,23 +10,26 @@ using TMPro;
 /// - Detects when a wave is finished
 /// - Shows the card selection UI
 /// - Starts the next wave after a card is chosen
+/// - Gates transition waves behind player arrival in the next area (Flow A)
 /// </summary>
-
 public class WaveRoundSystem : MonoBehaviour
 {
     [Header("Wave Settings")]
     [SerializeField] private WaveDefinition[] waves;
-    
+
     [Header("Spawn Settings")]
     [SerializeField] private float delayBetweenSpawns = 0.2f;
-    
+
+    [Header("Area Transitions")]
+    [Tooltip("Wave numbers (1-based) after which the player must reach the next area before the following wave spawns.")]
+    [SerializeField] private int[] transitionAfterWaves;
+
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
 
     private int currentWaveIndex = -1;
 
     /// <summary>
     /// Public accessor for the current wave number (1-based). Returns 0 when no wave has started.
-    /// This mirrors what other systems (e.g., DoorSystem) expect when querying the current wave.
     /// </summary>
     public int CurrentWaveNumber
     {
@@ -35,8 +38,10 @@ public class WaveRoundSystem : MonoBehaviour
 
     // Raw zero-based index (kept for internal use)
     public int CurrentWave => currentWaveIndex;
+
     private bool waitingForCardSelection = false;
     private bool waveInProgress = false;
+    private bool awaitingAreaArrival = false;
 
     [SerializeField] private CardSelectionUI cardSelectionUI;
 
@@ -47,7 +52,6 @@ public class WaveRoundSystem : MonoBehaviour
     /// Called by WaveStartTrigger when the player enters the trigger.
     /// Starts the very first wave of the game.
     /// </summary>
-    
     public void StartFirstWave()
     {
         if (waveInProgress || currentWaveIndex >= 0) return;
@@ -67,7 +71,7 @@ public class WaveRoundSystem : MonoBehaviour
         }
 
         if (waveInProgress &&
-            !waitingForCardSelection && 
+            !waitingForCardSelection &&
             activeEnemies.Count == 0)
         {
             waitingForCardSelection = true;
@@ -81,22 +85,19 @@ public class WaveRoundSystem : MonoBehaviour
             }
 
             if (cardSelectionUI != null)
-                cardSelectionUI.ShowCardSelectionFromWave();  
+                cardSelectionUI.ShowCardSelectionFromWave();
         }
     }
 
     /// <summary>
-    /// Starts a wave by reading its WaveDefinition
-    /// and spawning all enemy groups.
+    /// Starts a wave by reading its WaveDefinition and spawning all enemy groups.
     /// </summary>
-    
     private void StartWave(int waveIndex)
     {
         if (waveIndex < 0 || waveIndex >= waves.Length)
         {
             Debug.LogError("Invalid wave index!");
             return;
-            // load victory screen or end game logic here
         }
         WaveDefinition wave = waves[waveIndex];
         activeEnemies.Clear();
@@ -113,7 +114,6 @@ public class WaveRoundSystem : MonoBehaviour
     /// <summary>
     /// Spawns all enemy groups in the wave with a delay between each enemy.
     /// </summary>
-
     private IEnumerator SpawnWaveEnemies(WaveDefinition wave)
     {
         foreach (EnemyGroup group in wave.enemyGroups)
@@ -127,10 +127,8 @@ public class WaveRoundSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// Spawns a single enemy at a random spawn zone
-    /// and registers its death callback.
+    /// Spawns a single enemy at a random spawn zone and registers its death callback.
     /// </summary>
-
     private void SpawnEnemy(GameObject enemyPrefab, Transform[] spawnZones)
     {
         if (enemyPrefab == null || spawnZones == null || spawnZones.Length == 0)
@@ -143,12 +141,6 @@ public class WaveRoundSystem : MonoBehaviour
         GameObject enemy = Instantiate(enemyPrefab, zone.position, Quaternion.identity);
         activeEnemies.Add(enemy);
 
-        //UnityEngine.AI.NavMeshAgent agent = enemy.GetComponent<UnityEngine.AI.NavMeshAgent>();
-        //if (agent != null)
-        //{
-        //    agent.Warp(zone.position);
-        //}
-
         Health hp = enemy.GetComponent<Health>();
         if (hp != null)
             hp.OnDestroyed += (deadEnemy) => HandleEnemyDeath(deadEnemy);
@@ -157,7 +149,6 @@ public class WaveRoundSystem : MonoBehaviour
     /// <summary>
     /// Removes an enemy from the active list when it dies.
     /// </summary>
-
     private void HandleEnemyDeath(GameObject enemy)
     {
         if (activeEnemies.Contains(enemy))
@@ -166,9 +157,8 @@ public class WaveRoundSystem : MonoBehaviour
 
     /// <summary>
     /// Called by CardSelectionUI after the player chooses a card.
-    /// Starts the next wave in the sequence.
+    /// Starts the next wave — OR holds it if the just-finished wave is a transition wave.
     /// </summary>
-
     public void StartNextWaveAfterCard()
     {
         currentWaveIndex++;
@@ -179,13 +169,36 @@ public class WaveRoundSystem : MonoBehaviour
             return;
         }
 
+        // At this point currentWaveIndex has been incremented, so it equals the
+        // 1-based number of the wave that was JUST finished. If that wave is a
+        // transition wave, hold the spawn until the player reaches the next area.
+        if (transitionAfterWaves != null &&
+            System.Array.IndexOf(transitionAfterWaves, currentWaveIndex) >= 0)
+        {
+            awaitingAreaArrival = true;
+            Debug.Log($"[WaveRoundSystem] Wave {currentWaveIndex} cleared — holding wave {currentWaveIndex + 1} until player reaches next area.");
+            return;   // do NOT StartWave yet
+        }
+
+        StartWave(currentWaveIndex);
+    }
+
+    /// <summary>
+    /// Called by DoorSystem when the player has passed into the next area.
+    /// Releases a held transition-wave spawn.
+    /// </summary>
+    public void OnPlayerReachedNextArea()
+    {
+        if (!awaitingAreaArrival) return;
+
+        awaitingAreaArrival = false;
+        Debug.Log($"[WaveRoundSystem] Player reached next area — spawning wave {currentWaveIndex + 1}.");
         StartWave(currentWaveIndex);
     }
 
     /// <summary>
     /// Debug tool: instantly kills all enemies in the current wave.
     /// </summary>
-
     private void KillAllEnemiesInWave()
     {
         foreach (GameObject enemy in new List<GameObject>(activeEnemies))
@@ -207,7 +220,7 @@ public class WaveRoundSystem : MonoBehaviour
         activeEnemies.Clear();
     }
 
-    public void KillAllEnemiesInWaveDebug() 
+    public void KillAllEnemiesInWaveDebug()
     {
         KillAllEnemiesInWave();
     }
@@ -222,7 +235,7 @@ public class WaveRoundSystem : MonoBehaviour
         }
         currentWaveIndex = waveNumber - 1;
 
-        Debug.Log($"Setting currentWaveTindex to {currentWaveIndex}");
+        Debug.Log($"Setting currentWaveIndex to {currentWaveIndex}");
 
         KillAllEnemiesInWave();
 
@@ -231,15 +244,14 @@ public class WaveRoundSystem : MonoBehaviour
         activeEnemies.Clear();
         waitingForCardSelection = false;
         waveInProgress = false;
+        awaitingAreaArrival = false;   // clear any pending hold when skipping
 
         StartWave(currentWaveIndex);
     }
 
-
     /// <summary>
     /// Updates the UI text to show the current wave number.
     /// </summary>
-
     private void UpdateWaveText()
     {
         if (waveText != null)
