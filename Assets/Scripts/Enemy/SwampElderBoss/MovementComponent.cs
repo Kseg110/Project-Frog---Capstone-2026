@@ -59,11 +59,11 @@ public class MovementComponent : MonoBehaviour
 
         repathTimer -= Time.deltaTime;
 
-        //if (repathTimer <= 0f)
-        //{
-        //    MoveToTarget(target.position);
-        //    repathTimer = repathRate;
-        //}
+        if (repathTimer <= 0f)
+        {
+            MoveToTarget(target.position);
+            repathTimer = repathRate;
+        }
 
         if (HasReachedDestination())
         {

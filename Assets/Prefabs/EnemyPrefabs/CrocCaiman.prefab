@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 8573468495165241422}
   - component: {fileID: 1511503074007811530}
   - component: {fileID: 8732270254385064484}
+  - component: {fileID: 9129651843082517972}
   m_Layer: 7
   m_Name: CrocCaiman
   m_TagString: Enemy
@@ -47,7 +48,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4255145973034431359}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 8077735340296549786, guid: 73126674531350342b2f4cd22cb1e0c8, type: 3}
 --- !u!23 &6021168482038359616
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -73,7 +74,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: bfa71111225aa1843bec2f997fe5f5d8, type: 2}
+  - {fileID: 3262014861157741257, guid: 56a80d2a8c77cb34e828cbfe4fbe9f57, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -119,7 +120,7 @@ CapsuleCollider:
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0, z: 1}
 --- !u!114 &3186272484596176017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,6 +176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCroc
   player: {fileID: 0}
+  movement: {fileID: 0}
   attackHitbox: {fileID: 7265194758862469610, guid: 3064ca707cde28846a2b1041992ab7ce, type: 3}
   health: {fileID: 3186272484596176017}
   preferredDistance: 10
@@ -224,10 +226,36 @@ MonoBehaviour:
   knockbackSpeed: 20
   knockbackEasePower: 3
   knockbackResistance: 1
+  projectileKnockbackDistance: 2
+  useProjectileTravelDirection: 1
   collisionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
   capsule: {fileID: 5331853941283378302}
+--- !u!114 &9129651843082517972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4255145973034431359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be22f9f649befc940a48ac6ac4662061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovementComponent
+  target: {fileID: 0}
+  player: {fileID: 0}
+  stopDistance: 3
+  movementSpeed: 1
+  repathRate: 0.2
+  rotationSpeed: 10
+  separationRadius: 5
+  separationStrength: 2
+  currentSlot: none
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1001 &5962947329762784990
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -290,7 +318,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 638977865760132493, guid: 879b2298185f1c541990b2c47bf42bed, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1.135
       objectReference: {fileID: 0}
     - target: {fileID: 638977865760132493, guid: 879b2298185f1c541990b2c47bf42bed, type: 3}
       propertyPath: m_LocalRotation.w

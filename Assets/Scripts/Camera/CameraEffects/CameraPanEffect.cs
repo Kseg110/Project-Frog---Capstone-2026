@@ -19,6 +19,7 @@ public class CameraPanEffect : CameraEffectBase
     private float currentHoldTime = 0f;
     private Vector3 startPosition;
     private Quaternion startRotation;
+    private bool allowSkipWithDash = true;
 
     private List<CameraPanRoundTrigger.PanPoint> panPoints = new List<CameraPanRoundTrigger.PanPoint>();
     private float timer;
@@ -58,6 +59,14 @@ public class CameraPanEffect : CameraEffectBase
         controller?.RemoveEffect(this);
         if (playerPaused)
             ResumePlayer();
+    }
+
+    private void Update()
+    {
+        if (allowSkipWithDash && IsPanning && Input.GetButtonDown("Dash"))
+        {
+            SkipPan();
+        }
     }
 
     public override Vector3 ApplyEffect(float deltaTime)
@@ -260,6 +269,37 @@ public class CameraPanEffect : CameraEffectBase
         holdTimer = 0f;
 
         state = State.PanningToPOI;
+    }
+
+    // Skips camera pan on dash input and returns to original position.
+    // Also marks the door as ready.
+    public void SkipPan()
+    {
+        if (state == State.Idle)
+            return;
+
+        // Mark door as ready if not triggered yet
+        if (!doorReadyTriggered)
+        {
+            MarkDoorReady();
+            doorReadyTriggered = true;
+        }
+
+        // snaps to original position and rotation
+        transform.position = originalPosition;
+        transform.rotation = originalRotation;
+
+        // Reset state
+        state = State.Idle;
+        timer = 0f;
+        holdTimer = 0f;
+        panPoints.Clear();
+
+        // Resume player movement
+        if (playerPaused)
+            ResumePlayer();
+
+        Debug.Log("Camera Pan Skipped");
     }
 
     private void SetNextPanPoint()
