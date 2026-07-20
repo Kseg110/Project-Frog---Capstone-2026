@@ -444,7 +444,8 @@ GameObject:
   - component: {fileID: 80618575}
   - component: {fileID: 80618574}
   - component: {fileID: 80618578}
-  m_Layer: 0
+  - component: {fileID: 80618579}
+  m_Layer: 14
   m_Name: SingleDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -564,6 +565,25 @@ MonoBehaviour:
   playerTag: Player
   openOnlyOnce: 1
   destroyDoorWhenOpened: 0
+  navMeshTarget: {fileID: 0}
+  navBakeDelay: 5
+  rebakeNavMeshOnOpen: 1
+--- !u!208 &80618579
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 80618573}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1001 &100923397
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1122,7 +1142,8 @@ GameObject:
   - component: {fileID: 309597599}
   - component: {fileID: 309597598}
   - component: {fileID: 309597597}
-  m_Layer: 0
+  - component: {fileID: 309597601}
+  m_Layer: 14
   m_Name: SingleDoor (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1164,6 +1185,9 @@ MonoBehaviour:
   playerTag: Player
   openOnlyOnce: 1
   destroyDoorWhenOpened: 0
+  navMeshTarget: {fileID: 0}
+  navBakeDelay: 5
+  rebakeNavMeshOnOpen: 1
 --- !u!65 &309597598
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1242,6 +1266,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 309597595}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!208 &309597601
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309597595}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1001 &327744857
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3739,7 +3779,8 @@ GameObject:
   - component: {fileID: 885703468}
   - component: {fileID: 885703467}
   - component: {fileID: 885703466}
-  m_Layer: 0
+  - component: {fileID: 885703470}
+  m_Layer: 14
   m_Name: SingleDoor (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3781,6 +3822,9 @@ MonoBehaviour:
   playerTag: Player
   openOnlyOnce: 1
   destroyDoorWhenOpened: 0
+  navMeshTarget: {fileID: 0}
+  navBakeDelay: 5
+  rebakeNavMeshOnOpen: 1
 --- !u!65 &885703467
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3859,6 +3903,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 885703464}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!208 &885703470
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 885703464}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &912506795
 GameObject:
   m_ObjectHideFlags: 0
@@ -4331,7 +4391,7 @@ GameObject:
   - component: {fileID: 1111518479}
   - component: {fileID: 1111518478}
   - component: {fileID: 1111518477}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: SingleDoorOpener
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4724,7 +4784,7 @@ GameObject:
   - component: {fileID: 1191568955}
   - component: {fileID: 1191568954}
   - component: {fileID: 1191568953}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: SingleDoorOpener
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6484,7 +6544,7 @@ GameObject:
   - component: {fileID: 1520932439}
   - component: {fileID: 1520932438}
   - component: {fileID: 1520932437}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: SingleDoorOpener
   m_TagString: Untagged
   m_Icon: {fileID: 0}
