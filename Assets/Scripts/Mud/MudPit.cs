@@ -82,6 +82,6 @@ public class MudPit : MonoBehaviour
             victim.RemoveSpeedModifier(this);
             insideColliders.Remove(victim);
         }
-        insideColliders.Clear();
+        //insideColliders.Clear();
     }
 }

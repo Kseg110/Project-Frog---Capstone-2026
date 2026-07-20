@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-6972117869929905601
+--- !u!114 &-9066275432843124943
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,106 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Button Click Activation
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Button Click Activation
-  Guid:
-    Data1: 1817436377
-    Data2: 1097588408
-    Data3: 431456922
-    Data4: 351406592
-  Banks:
-  - {fileID: -3796589021424802672}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 542
---- !u!114 &-6316491761885505144
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Open Pause Activation
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Open Pause Activation
-  Guid:
-    Data1: -938976886
-    Data2: 1103517086
-    Data3: -1213066587
-    Data4: 664204133
-  Banks:
-  - {fileID: -3796589021424802672}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 542
---- !u!114 &-6095342497332662646
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Player Tether Activation
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Player Tether Activation
-  Guid:
-    Data1: 439330042
-    Data2: 1240938150
-    Data3: 606943411
-    Data4: 2116090157
-  Banks:
-  - {fileID: -3796589021424802672}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 499
---- !u!114 &-5587925718299762976
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Dash Activation
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Dash Activation
-  Guid:
-    Data1: 1888212263
-    Data2: 1246272287
-    Data3: -310768964
-    Data4: 550454283
-  Banks:
-  - {fileID: -3796589021424802672}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 331
---- !u!114 &-4398351687085652635
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.strings.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: FMod Studio Project CAPSTONE/AnchorboundFMod/Build/Desktop/Master.strings.bank
+  Name: Master.strings
+  StudioPath: bank:/Master.strings
+  lastModified: 639172835728463595
+  FileSizes:
+  - Name: Desktop
+    Value: 1622
+  Exists: 1
+--- !u!114 &-8896138327776714729
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,7 +39,7 @@ MonoBehaviour:
     Data3: -1778522690
     Data4: 597843026
   Banks:
-  - {fileID: -3796589021424802672}
+  - {fileID: 3091241063642178539}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -135,155 +47,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 3024
---- !u!114 &-4122097720384357574
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Spike Trap Activation
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Spike Trap Activation
-  Guid:
-    Data1: 1502058319
-    Data2: 1112471900
-    Data3: 1476415107
-    Data4: -1559956932
-  Banks:
-  - {fileID: -3796589021424802672}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 1500
---- !u!114 &-3796589021424802672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.bank
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
-  Path: FMod Studio Project CAPSTONE/AnchorboundFMod/Build/Desktop/Master.bank
-  Name: Master
-  StudioPath: bank:/Master
-  lastModified: 639189268263324981
-  FileSizes:
-  - Name: Desktop
-    Value: 373632
-  Exists: 1
---- !u!114 &-1005679188266710068
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.strings.bank
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
-  Path: FMod Studio Project CAPSTONE/AnchorboundFMod/Build/Desktop/Master.strings.bank
-  Name: Master.strings
-  StudioPath: bank:/Master.strings
-  lastModified: 639189268263516719
-  FileSizes:
-  - Name: Desktop
-    Value: 1622
-  Exists: 1
---- !u!114 &-777458656608815801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Close Pause Activation
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Close Pause Activation
-  Guid:
-    Data1: 1194684842
-    Data2: 1082943092
-    Data3: -27908161
-    Data4: -1217001489
-  Banks:
-  - {fileID: -3796589021424802672}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 542
---- !u!114 &-579020219599699864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Wind Anchor Activation
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Wind Anchor Activation
-  Guid:
-    Data1: 29722263
-    Data2: 1149501748
-    Data3: 680479635
-    Data4: 536140362
-  Banks:
-  - {fileID: -3796589021424802672}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 3130
---- !u!114 &-548910611688426988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Player Basic Shot Activation
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Player Basic Shot Activation
-  Guid:
-    Data1: -125861613
-    Data2: 1220588128
-    Data3: -1644195430
-    Data4: 1569811927
-  Banks:
-  - {fileID: -3796589021424802672}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 574
---- !u!114 &-231876697836510837
+--- !u!114 &-8142246151524299408
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -302,7 +66,7 @@ MonoBehaviour:
     Data3: -1075785795
     Data4: 859327781
   Banks:
-  - {fileID: -3796589021424802672}
+  - {fileID: 3091241063642178539}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -310,79 +74,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 542
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d32cf7c32a3ed8347bac48ef5ed56d82, type: 3}
-  m_Name: FMODStudioCache
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EventCache
-  EditorBanks:
-  - {fileID: -1005679188266710068}
-  - {fileID: -3796589021424802672}
-  EditorEvents:
-  - {fileID: 1939335700634129743}
-  - {fileID: -4122097720384357574}
-  - {fileID: 7933079469704630216}
-  - {fileID: -579020219599699864}
-  - {fileID: 6673142096663869673}
-  - {fileID: 860861839488798618}
-  - {fileID: -5587925718299762976}
-  - {fileID: -6095342497332662646}
-  - {fileID: -777458656608815801}
-  - {fileID: -6316491761885505144}
-  - {fileID: -231876697836510837}
-  - {fileID: -6972117869929905601}
-  - {fileID: 6324978600815434632}
-  - {fileID: -548910611688426988}
-  - {fileID: -4398351687085652635}
-  - {fileID: 8304687839477948328}
-  EditorParameters: []
-  MasterBanks:
-  - {fileID: -3796589021424802672}
-  StringsBanks:
-  - {fileID: -1005679188266710068}
-  cacheVersion: 131859
-  cacheTime: 639189268263516719
-  SerializableEventsDict:
-  - key: event:/Fire Anchor Activation
-    index: 0
-  - key: event:/Spike Trap Activation
-    index: 1
-  - key: event:/Ice Anchor Activation
-    index: 2
-  - key: event:/Wind Anchor Activation
-    index: 3
-  - key: event:/Wind Ambience
-    index: 4
-  - key: event:/Water Ambience
-    index: 5
-  - key: event:/Dash Activation
-    index: 6
-  - key: event:/Player Tether Activation
-    index: 7
-  - key: event:/Close Pause Activation
-    index: 8
-  - key: event:/Open Pause Activation
-    index: 9
-  - key: event:/Button Hover Activation
-    index: 10
-  - key: event:/Button Click Activation
-    index: 11
-  - key: event:/Fly Gather Activation
-    index: 12
-  - key: event:/Player Basic Shot Activation
-    index: 13
-  - key: event:/Player Charge Shot Activation
-    index: 14
-  - key: event:/Damage Taken Activation
-    index: 15
---- !u!114 &860861839488798618
+--- !u!114 &-7284178584385010127
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -401,7 +93,7 @@ MonoBehaviour:
     Data3: -1687511155
     Data4: 201616089
   Banks:
-  - {fileID: -3796589021424802672}
+  - {fileID: 3091241063642178539}
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
@@ -409,7 +101,34 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 9500
---- !u!114 &1939335700634129743
+--- !u!114 &-6140359983703925896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Player Basic Shot Activation
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Player Basic Shot Activation
+  Guid:
+    Data1: -125861613
+    Data2: 1220588128
+    Data3: -1644195430
+    Data4: 1569811927
+  Banks:
+  - {fileID: 3091241063642178539}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 574
+--- !u!114 &-3613126820241229520
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -428,7 +147,7 @@ MonoBehaviour:
     Data3: -168913991
     Data4: -772232771
   Banks:
-  - {fileID: -3796589021424802672}
+  - {fileID: 3091241063642178539}
   IsStream: 0
   Is3D: 1
   IsOneShot: 1
@@ -436,7 +155,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 3130
---- !u!114 &6324978600815434632
+--- !u!114 &-3169926352927426901
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -446,24 +165,51 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Fly Gather Activation
+  m_Name: event:/Close Pause Activation
   m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Fly Gather Activation
+  Path: event:/Close Pause Activation
   Guid:
-    Data1: 2093426210
-    Data2: 1210008492
-    Data3: 314477988
-    Data4: 552488886
+    Data1: 1194684842
+    Data2: 1082943092
+    Data3: -27908161
+    Data4: -1217001489
   Banks:
-  - {fileID: -3796589021424802672}
+  - {fileID: 3091241063642178539}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 432
---- !u!114 &6673142096663869673
+  Length: 542
+--- !u!114 &-2989474789471167581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Button Click Activation
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Button Click Activation
+  Guid:
+    Data1: 1817436377
+    Data2: 1097588408
+    Data3: 431456922
+    Data4: 351406592
+  Banks:
+  - {fileID: 3091241063642178539}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 542
+--- !u!114 &-2213974611090023103
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -482,7 +228,7 @@ MonoBehaviour:
     Data3: -65072738
     Data4: -1533514521
   Banks:
-  - {fileID: -3796589021424802672}
+  - {fileID: 3091241063642178539}
   IsStream: 0
   Is3D: 0
   IsOneShot: 0
@@ -490,7 +236,79 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 5500
---- !u!114 &7933079469704630216
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d32cf7c32a3ed8347bac48ef5ed56d82, type: 3}
+  m_Name: FMODStudioCache
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EventCache
+  EditorBanks:
+  - {fileID: -9066275432843124943}
+  - {fileID: 3091241063642178539}
+  EditorEvents:
+  - {fileID: -6140359983703925896}
+  - {fileID: 2613291968240695196}
+  - {fileID: 7475879872071428854}
+  - {fileID: -8896138327776714729}
+  - {fileID: -7284178584385010127}
+  - {fileID: 2654541414826265073}
+  - {fileID: -2213974611090023103}
+  - {fileID: 5071853516575298516}
+  - {fileID: 2198748239409952491}
+  - {fileID: 4349826024473138510}
+  - {fileID: 3965956670664002515}
+  - {fileID: -3613126820241229520}
+  - {fileID: -3169926352927426901}
+  - {fileID: -8142246151524299408}
+  - {fileID: -2989474789471167581}
+  - {fileID: 3691264615163006164}
+  EditorParameters: []
+  MasterBanks:
+  - {fileID: 3091241063642178539}
+  StringsBanks:
+  - {fileID: -9066275432843124943}
+  cacheVersion: 131859
+  cacheTime: 639172835728463595
+  SerializableEventsDict:
+  - key: event:/Player Basic Shot Activation
+    index: 0
+  - key: event:/Fly Gather Activation
+    index: 1
+  - key: event:/Dash Activation
+    index: 2
+  - key: event:/Player Charge Shot Activation
+    index: 3
+  - key: event:/Water Ambience
+    index: 4
+  - key: event:/Spike Trap Activation
+    index: 5
+  - key: event:/Wind Ambience
+    index: 6
+  - key: event:/Open Pause Activation
+    index: 7
+  - key: event:/Ice Anchor Activation
+    index: 8
+  - key: event:/Damage Taken Activation
+    index: 9
+  - key: event:/Wind Anchor Activation
+    index: 10
+  - key: event:/Fire Anchor Activation
+    index: 11
+  - key: event:/Close Pause Activation
+    index: 12
+  - key: event:/Button Hover Activation
+    index: 13
+  - key: event:/Button Click Activation
+    index: 14
+  - key: event:/Player Tether Activation
+    index: 15
+--- !u!114 &2198748239409952491
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -509,7 +327,7 @@ MonoBehaviour:
     Data3: 604614311
     Data4: 796227550
   Banks:
-  - {fileID: -3796589021424802672}
+  - {fileID: 3091241063642178539}
   IsStream: 0
   Is3D: 1
   IsOneShot: 1
@@ -517,7 +335,135 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 3130
---- !u!114 &8304687839477948328
+--- !u!114 &2613291968240695196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Fly Gather Activation
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Fly Gather Activation
+  Guid:
+    Data1: 2093426210
+    Data2: 1210008492
+    Data3: 314477988
+    Data4: 552488886
+  Banks:
+  - {fileID: 3091241063642178539}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 432
+--- !u!114 &2654541414826265073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Spike Trap Activation
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Spike Trap Activation
+  Guid:
+    Data1: 1502058319
+    Data2: 1112471900
+    Data3: 1476415107
+    Data4: -1559956932
+  Banks:
+  - {fileID: 3091241063642178539}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1500
+--- !u!114 &3091241063642178539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: FMod Studio Project CAPSTONE/AnchorboundFMod/Build/Desktop/Master.bank
+  Name: Master
+  StudioPath: bank:/Master
+  lastModified: 639172835728463595
+  FileSizes:
+  - Name: Desktop
+    Value: 373632
+  Exists: 1
+--- !u!114 &3691264615163006164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Player Tether Activation
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Player Tether Activation
+  Guid:
+    Data1: 439330042
+    Data2: 1240938150
+    Data3: 606943411
+    Data4: 2116090157
+  Banks:
+  - {fileID: 3091241063642178539}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 499
+--- !u!114 &3965956670664002515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Wind Anchor Activation
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Wind Anchor Activation
+  Guid:
+    Data1: 29722263
+    Data2: 1149501748
+    Data3: 680479635
+    Data4: 536140362
+  Banks:
+  - {fileID: 3091241063642178539}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 3130
+--- !u!114 &4349826024473138510
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -536,7 +482,7 @@ MonoBehaviour:
     Data3: -1751493203
     Data4: -336415060
   Banks:
-  - {fileID: -3796589021424802672}
+  - {fileID: 3091241063642178539}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -544,3 +490,57 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 2136
+--- !u!114 &5071853516575298516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Open Pause Activation
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Open Pause Activation
+  Guid:
+    Data1: -938976886
+    Data2: 1103517086
+    Data3: -1213066587
+    Data4: 664204133
+  Banks:
+  - {fileID: 3091241063642178539}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 542
+--- !u!114 &7475879872071428854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Dash Activation
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Dash Activation
+  Guid:
+    Data1: 1888212263
+    Data2: 1246272287
+    Data3: -310768964
+    Data4: 550454283
+  Banks:
+  - {fileID: 3091241063642178539}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 331

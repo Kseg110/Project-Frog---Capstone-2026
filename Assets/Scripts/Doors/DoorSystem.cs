@@ -310,7 +310,7 @@ public class DoorSystem : MonoBehaviour
         // Stop current movement if it is opening
         if (link.moveRoutine != null)
         {
-            Debug.LogWarning($"DoorSystem: Door '{link.door?.name}'was lowering now stoped");
+            //Debug.LogWarning($"DoorSystem: Door '{link.door?.name}'was lowering now stoped");
 
             StopCoroutine(link.moveRoutine);
             link.moveRoutine = null;
