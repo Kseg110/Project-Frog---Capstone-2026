@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 5145456161819251799}
   - component: {fileID: 715019672751812269}
   - component: {fileID: -1212723482239387738}
+  - component: {fileID: 8475317366115682079}
   m_Layer: 0
   m_Name: Axolotl
   m_TagString: Enemy
@@ -153,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAxolotl
   player: {fileID: 0}
+  movement: {fileID: 0}
   attackHitbox: {fileID: 7265194758862469610, guid: cf1878b8be09d6b4790369cad2f07030, type: 3}
   health: {fileID: 438828359221505690}
   preferredDistance: 8
@@ -224,10 +226,36 @@ MonoBehaviour:
   knockbackSpeed: 20
   knockbackEasePower: 2
   knockbackResistance: 1
+  projectileKnockbackDistance: 2
+  useProjectileTravelDirection: 1
   collisionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
   capsule: {fileID: 3073096946050369883}
+--- !u!114 &8475317366115682079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4030077040595223971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be22f9f649befc940a48ac6ac4662061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovementComponent
+  target: {fileID: 0}
+  player: {fileID: 0}
+  stopDistance: 5
+  movementSpeed: 6
+  repathRate: 0.2
+  rotationSpeed: 10
+  separationRadius: 1
+  separationStrength: 1
+  currentSlot: none
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1001 &4462350323309384926
 PrefabInstance:
   m_ObjectHideFlags: 0

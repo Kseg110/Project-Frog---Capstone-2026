@@ -51,6 +51,9 @@ public class MovementComponent : MonoBehaviour
             return;
         }
         target = TargetManager.Instance.RequestSlot(this);
+
+        // initialize repath timer so we calculate path immediately
+        repathTimer = 0f;
     }
 
     private void Update()
@@ -59,11 +62,12 @@ public class MovementComponent : MonoBehaviour
 
         repathTimer -= Time.deltaTime;
 
-        //if (repathTimer <= 0f)
-        //{
-        //    MoveToTarget(target.position);
-        //    repathTimer = repathRate;
-        //}
+        // Recalculate path at the configured rate so the NavMeshAgent can avoid obstacles
+        if (repathTimer <= 0f)
+        {
+            MoveToTarget(target.position);
+            repathTimer = repathRate;
+        }
 
         if (HasReachedDestination())
         {
@@ -89,16 +93,13 @@ public class MovementComponent : MonoBehaviour
     {
         if (!agent.enabled || target == null) return;
 
-        Vector3 targetDirection = movementTarget - transform.position;
-        targetDirection.y = 0f;
+        // Use NavMeshAgent pathfinding instead of manual agent.Move(...) so the agent avoids obstacles.
+        // Optionally bias the destination by a small separation offset to reduce crowding.
+        Vector3 separation = GetSeparationDirection() * separationStrength;
+        Vector3 biasedTarget = movementTarget + separation;
 
-        Vector3 separation = GetSeparationDirection();
-
-        Vector3 finalDirection = targetDirection.normalized + separation * separationStrength;
-
-        finalDirection.Normalize();
-
-        agent.Move(finalDirection * movementSpeed * Time.deltaTime);
+        agent.isStopped = false;
+        agent.SetDestination(biasedTarget);
     }
 
     private void RotateTowardsPlayer()
@@ -150,7 +151,7 @@ public class MovementComponent : MonoBehaviour
             }
         }
         return separation;
-    }
+    }                           
 
     public float GetDistanceToTarget()
     {
