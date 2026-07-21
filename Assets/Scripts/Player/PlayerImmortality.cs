@@ -13,7 +13,8 @@ public class PlayerImmortality : MonoBehaviour
     public bool IsImmortal => isImmortal;
 
     private Renderer[] renderers;
-    private Material[][] originalMaterials;   // ← stores original mats
+    private Material[][] originalMaterials; // stores original mats
+    private Material glowMaterialInstance;
 
     private PlayerMovement controller;
     private bool isGlowing = false;
@@ -28,6 +29,12 @@ public class PlayerImmortality : MonoBehaviour
         for (int i = 0; i < renderers.Length; i++)
         {
             originalMaterials[i] = renderers[i].materials;
+        }
+        if (glowMaterial != null)
+        {
+            glowMaterialInstance = new Material(glowMaterial);
+            glowMaterialInstance.EnableKeyword("_EMISSION");
+            glowMaterialInstance.SetColor("_EmissionColor", glowColor * glowIntensity);
         }
     }
 
@@ -47,15 +54,12 @@ public class PlayerImmortality : MonoBehaviour
     {
         if (glowMaterial == null) return;
 
-        glowMaterial.EnableKeyword("_EMISSION");
-        glowMaterial.SetColor("_EmissionColor", glowColor * glowIntensity);
-
-        // Replace all materials with glow material
+        // Replace all materials with instanced glow material
         foreach (Renderer r in renderers)
         {
             Material[] mats = new Material[r.materials.Length];
             for (int i = 0; i < mats.Length; i++)
-                mats[i] = glowMaterial;
+                mats[i] = glowMaterialInstance;
 
             r.materials = mats;
         }
@@ -72,5 +76,13 @@ public class PlayerImmortality : MonoBehaviour
         }
 
         isGlowing = false;
+    }
+
+    private void OnDestroy()
+    {
+        if (glowMaterialInstance != null)
+        {
+            Destroy(glowMaterialInstance);
+        }
     }
 }

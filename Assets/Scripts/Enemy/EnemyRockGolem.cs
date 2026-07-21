@@ -63,7 +63,7 @@ public class EnemyRockGolem : EnemyBase
     #region Behaviours
     protected void ChasePlayer()
     {
-        MoveTo(player.position);  
+        movement.MoveToTarget(player.position);  
     }
 
     protected void AttackPlayer()
