@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.UIElements;
 
 public class PlayerOvercharge : MonoBehaviour
 {
@@ -37,6 +38,7 @@ public class PlayerOvercharge : MonoBehaviour
     private bool isInCooldown;
     private bool isOvercharged;
     private AnchorBase lastTetheredAnchor;
+    private AnchorBase previousAnchor;
     private AnchorType currentAnchorType;
 
     // Overcharge Properties
@@ -83,10 +85,16 @@ public class PlayerOvercharge : MonoBehaviour
         isOvercharged = false;
         currentAnchorType = AnchorType.None;
 
-        // subscribe to trail collision events
+        // Subscribe to trail collision events
         if (trailCollider != null)
         {
             trailCollider.OnEnemyHit += HandleEnemyHit;
+        }
+
+        // Subscrive to anchor change events
+        if (playerAnchor != null)
+        {
+            playerAnchor.OnAnchorChanged += HandleAnchorChanged;
         }
     }
 
@@ -96,6 +104,29 @@ public class PlayerOvercharge : MonoBehaviour
        if (trailCollider != null)
         {
             trailCollider.OnEnemyHit -= HandleEnemyHit;
+        }
+
+       // unsub from anchor events
+       if (playerAnchor != null)
+        {
+            playerAnchor.OnAnchorChanged -= HandleAnchorChanged;
+        }    
+    }
+
+    private void HandleAnchorChanged(AnchorBase newAnchor)
+    {
+        // reset anchor light
+        if (previousAnchor != null)
+        {
+            previousAnchor.ResetOverchargeVisual();
+        }
+
+        previousAnchor = newAnchor;
+
+        // Update new anchor's light with current progress if switched
+        if (newAnchor != null && !isInCooldown)
+        {
+            newAnchor.UpdateOverchargeVisual(ChargeProgress);
         }
     }
 
@@ -127,6 +158,11 @@ public class PlayerOvercharge : MonoBehaviour
                 currentChargeTime = chargedTime;
                 ActivateOvercharge();
             }
+            // Update current anchor's light intensity
+            if (lastTetheredAnchor != null)
+            {
+                lastTetheredAnchor.UpdateOverchargeVisual(ChargeProgress);
+            }
         }
         else
         {
@@ -141,11 +177,12 @@ public class PlayerOvercharge : MonoBehaviour
         // Tell listeneres of charge change
         OnChargeChanged?.Invoke(ChargeProgress);
 
-        // Update Player HUD
+        // Update Player HUD (can be removed in the future if desired)
         if (playerHUD != null)
         {
             playerHUD.UpdateOverchargeWheel(ChargeProgress);
         }
+        //------------------------------------------------------------
     }
 
     private void UpdateCooldown()
@@ -176,6 +213,12 @@ public class PlayerOvercharge : MonoBehaviour
 
         // Determine anchor type
         currentAnchorType = GetAnchorTypeFromBase(lastTetheredAnchor);
+
+        // Reset anchor's light before untethering
+        if (lastTetheredAnchor != null)
+        {
+            lastTetheredAnchor.ResetOverchargeVisual();
+        }
 
         // Untether Player
         playerAnchor.ReleaseTether();
@@ -347,11 +390,22 @@ public class PlayerOvercharge : MonoBehaviour
     // use method below for respawn/ death of player or debugging
     public void ResetOvercharge()
     {
+        // Reset anchor light before clearing references
+        if (lastTetheredAnchor != null)
+        {
+            lastTetheredAnchor.ResetOverchargeVisual();
+        }
+        if (previousAnchor != null)
+        {
+            previousAnchor.ResetOverchargeVisual();
+        }
+
         currentChargeTime = 0f;
         currentCooldownTime = 0f;
         isInCooldown = false;
         isOvercharged = false;
         lastTetheredAnchor = null;
+        previousAnchor = null;
 
         // Stop trail Effects
         EndOverchargeTrail();

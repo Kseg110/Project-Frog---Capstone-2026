@@ -248,6 +248,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7277e73f9db5673409faf0a07aea6fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnchorFire
+  pointLight: {fileID: 4935234711728926343}
+  baseIntensity: 10
+  maxOverchargeIntensity: 100
   data: {fileID: 11400000, guid: 7398ef3d6d02c5b49998e446532c8419, type: 2}
 --- !u!1 &7164860429683319075
 GameObject:
@@ -307,7 +310,7 @@ Transform:
   m_GameObject: {fileID: 8595756831218754168}
   serializedVersion: 2
   m_LocalRotation: {x: 0.68610275, y: -0.1710646, z: 0.1710646, w: 0.68610275}
-  m_LocalPosition: {x: 0.05, y: 2.04, z: -0.37}
+  m_LocalPosition: {x: -0.007, y: 2.503, z: -0.005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -324,13 +327,13 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 1, g: 0, b: 0.1030879, a: 1}
-  m_Intensity: 30
+  m_Intensity: 10
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
