@@ -1,13 +1,17 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// PoisionTrap: Deals damage-over-time to Player, Enemy, or Both inside a radius.
-/// - Automatically ensures a trigger SphereCollider is present and sized to `radius`.
+/// PoisonTrap: Deals damage-over-time to Player, Enemy, or Both inside a radius.
+/// - Ensures a trigger SphereCollider is present and sized to `radius`.
 /// - Tracks occupants and applies damage every `tickInterval` seconds.
-/// - Can toggle a child ParticleSystem on/off (assign `particleRoot` or it will find the first child ParticleSystem).
+/// - Can toggle child ParticleSystem(s).
+/// - Implements IDamageable so player projectiles that hit the plant will damage it and
+///   trigger the plant to emit poison for `poisonDurationOnShot` seconds.
+/// - Contains a physics fallback to detect fast projectiles that pass through triggers.
 /// </summary>
-public class PoisonTrapPlant : MonoBehaviour
+public class PoisonTrapPlant : MonoBehaviour, IDamageable
 {
     public enum TargetMode
     {
@@ -27,7 +31,7 @@ public class PoisonTrapPlant : MonoBehaviour
     [Tooltip("Radius of effect (meters). A SphereCollider trigger will be created/adjusted to this size.")]
     public float radius = 3f;
 
-    [Tooltip("Optional layer mask to restrict which colliders are considered (helps performance). Leave all layers to affect everything.")]
+    [Tooltip("Optional layer mask to restrict which colliders are considered (helps performance). Leave all layers to affect everything).")]
     public LayerMask affectLayer = ~0;
 
     [Header("Targets")]
@@ -48,25 +52,86 @@ public class PoisonTrapPlant : MonoBehaviour
     [Tooltip("Delay in seconds before destroying the trap when triggered by collision/enter.")]
     public float destroyDelay = 0f;
 
+    [Header("Health (shootable)")]
+    [Tooltip("Maximum health of the trap. When reduced to 0 the trap will be disabled/destroyed.")]
+    public float maxHealth = 50f;
+
+    [Tooltip("If true the trap GameObject will be destroyed when health reaches zero.")]
+    public bool destroyOnDeath = true;
+
+    [Tooltip("Delay in seconds before destroying the trap after health reaches zero.")]
+    public float destroyDelayOnDeath = 0.0f;
+
+    [Header("Poison-on-shot")]
+    [Tooltip("Duration (seconds) the plant will emit poison when shot.")]
+    public float poisonDurationOnShot = 5f;
+
+    [Header("Projectile detection fallback")]
+    [Tooltip("If true use an OverlapSphere to detect player projectiles that pass through the collider.")]
+    public bool enableProjectileOverlapDetection = true;
+
+    [Tooltip("Radius used by the overlap detection for projectiles (set roughly to your visual hit area).")]
+    public float projectileDetectRadius = 0.5f;
+
+    [Tooltip("How many colliders to allocate buffer for when doing OverlapSphereNonAlloc.")]
+    public int overlapBufferSize = 8;
+
+    [Header("Debug")]
+    [Tooltip("Enable/disable debug gizmos for poison area.")]
+    public bool showGizmos = true;
+
+    [Tooltip("Show the poison area (outer radius) gizmo.")]
+    public bool showPoisonAreaGizmo = true;
+
     // Internal: track occupants and next time they should take damage
     readonly Dictionary<GameObject, float> occupantsNextTick = new Dictionary<GameObject, float>();
 
     SphereCollider triggerCollider;
     ParticleSystem[] particleSystems;
 
-    // Preserve trivial Start/Update lifecycle comments as in original file.
+    // Health
+    private float currentHealth;
+    private bool isDestroyed = false;
+
+    // Overlap detection buffer
+    private Collider[] overlapBuffer;
+
+    // Poison active flag started by shot
+    private bool poisonActiveFromShot = false;
+    private Coroutine poisonCoroutine;
+
     void Start()
     {
         EnsureTriggerCollider();
         CacheParticleSystems();
+
+        // Initialize health
+        currentHealth = maxHealth;
+
+        // Prepare overlap buffer
+        overlapBuffer = new Collider[Mathf.Max(1, overlapBufferSize)];
 
         // By default disable particles until trap is explicitly toggled on (if enabled in inspector).
         if (particleSystems != null && particleSystems.Length > 0)
             SetParticlesActive(false);
     }
 
+    void FixedUpdate()
+    {
+        // Use FixedUpdate for physics-related manual detection
+        if (enableProjectileOverlapDetection && !isDestroyed)
+            DetectProjectilesManually();
+    }
+
     void Update()
     {
+        if (isDestroyed) return;
+
+        // While the plant is actively emitting poison due to being shot, skip the occupant tick processing
+        // because the shot-poison coroutine is handling periodic damage to all targets inside the radius.
+        if (poisonActiveFromShot)
+            return;
+
         // Apply periodic damage to tracked occupants.
         if (occupantsNextTick.Count == 0) return;
 
@@ -102,7 +167,6 @@ public class PoisonTrapPlant : MonoBehaviour
 
         triggerCollider.isTrigger = true;
         triggerCollider.radius = Mathf.Max(0.01f, radius);
-        // If object uses scaling, we keep the collider radius as-is; inspector radius is the local radius used.
     }
 
     void CacheParticleSystems()
@@ -110,10 +174,7 @@ public class PoisonTrapPlant : MonoBehaviour
         if (particleRoot != null)
             particleSystems = particleRoot.GetComponentsInChildren<ParticleSystem>(true);
         else
-        {
             particleSystems = GetComponentsInChildren<ParticleSystem>(true);
-            // If parent has multiple particle systems and you want a specific child, assign particleRoot in inspector.
-        }
     }
 
     // Public API to toggle the particle visual (and whether trap is considered "active" by visuals)
@@ -131,7 +192,6 @@ public class PoisonTrapPlant : MonoBehaviour
             else
             {
                 if (ps.isPlaying) ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-                // keep the GameObject enabled so designer can toggle root; to fully hide call SetActive(false)
                 go.SetActive(false);
             }
         }
@@ -140,6 +200,7 @@ public class PoisonTrapPlant : MonoBehaviour
     // Called by Unity when something enters the trigger
     void OnTriggerEnter(Collider other)
     {
+        if (isDestroyed) return;
         if (!IsInAffectLayer(other.gameObject)) return;
         if (!IsValidTarget(other)) return;
 
@@ -158,7 +219,6 @@ public class PoisonTrapPlant : MonoBehaviour
         // Optionally destroy trap on collision/enter
         if (destroyOnCollision)
         {
-            // Schedule destruction after delay (0 = immediate end of frame)
             Destroy(gameObject, Mathf.Max(0f, destroyDelay));
         }
     }
@@ -166,7 +226,7 @@ public class PoisonTrapPlant : MonoBehaviour
     // Support non-trigger collisions as well (forward to trigger handling)
     void OnCollisionEnter(Collision collision)
     {
-        // Forward to trigger-like handling for convenience. Collision.collider will be evaluated by same logic.
+        if (isDestroyed) return;
         OnTriggerEnter(collision.collider);
     }
 
@@ -206,6 +266,7 @@ public class PoisonTrapPlant : MonoBehaviour
 
     void ApplyDamageToTarget(GameObject targetRoot)
     {
+        if (isDestroyed) return;
         if (targetRoot == null) return;
 
         // If target is player, prefer Health on PlayerMovement root
@@ -273,12 +334,151 @@ public class PoisonTrapPlant : MonoBehaviour
         }
     }
 
-    // Editor gizmo to show radius
-    void OnDrawGizmosSelected()
+    // ============================================================
+    // IDamageable implementation - allow projectiles / player to damage plant directly.
+    // When shot, the plant will activate its poison for `poisonDurationOnShot`.
+    // ============================================================
+    public void TakeDmg(float dmg)
     {
-        Gizmos.color = new Color(0.2f, 0.8f, 0.2f, 0.15f);
-        Gizmos.DrawSphere(transform.position, radius);
-        Gizmos.color = new Color(0.2f, 1f, 0.2f, 1f);
-        Gizmos.DrawWireSphere(transform.position, radius);
+        if (isDestroyed) return;
+
+        currentHealth -= dmg;
+        // Activate poison emission when shot
+        ActivatePoison(poisonDurationOnShot);
+
+        if (currentHealth <= 0f)
+            HandleDeath();
+    }
+
+    public void TakeDmg(float dmg, string effectTytpe, float effectDuration, float effectValue)
+    {
+        // Default: just take the numeric damage. Effects can be handled here if desired.
+        TakeDmg(dmg);
+    }
+
+    private void HandleDeath()
+    {
+        if (isDestroyed) return;
+        isDestroyed = true;
+
+        // Stop doing DOT logic and visuals
+        occupantsNextTick.Clear();
+        if (triggerCollider != null) triggerCollider.enabled = false;
+        if (particleSystems != null && particleSystems.Length > 0)
+            SetParticlesActive(false);
+
+        // Stop any active poison coroutine
+        if (poisonCoroutine != null)
+        {
+            StopCoroutine(poisonCoroutine);
+            poisonCoroutine = null;
+            poisonActiveFromShot = false;
+        }
+
+        // Optionally destroy the GameObject or just disable it
+        if (destroyOnDeath)
+        {
+            Destroy(gameObject, Mathf.Max(0f, destroyDelayOnDeath));
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    // Manual detection fallback: detect player projectiles overlapping a small radius and apply damage.
+    void DetectProjectilesManually()
+    {
+        if (projectileDetectRadius <= 0f) return;
+
+        int hitCount = Physics.OverlapSphereNonAlloc(transform.position, projectileDetectRadius, overlapBuffer);
+        for (int i = 0; i < hitCount; i++)
+        {
+            var col = overlapBuffer[i];
+            if (col == null) continue;
+
+            // Try to find a Projectile component on the collider or its parents
+            var proj = col.GetComponent<Projectile>() ?? col.GetComponentInParent<Projectile>();
+            if (proj != null && proj.isPlayerProjectile)
+            {
+                // Apply damage and destroy projectile to mimic normal projectile behavior
+                TakeDmg(proj.damage);
+                Destroy(proj.gameObject);
+            }
+
+            // Clear buffer entry to avoid stale references
+            overlapBuffer[i] = null;
+        }
+    }
+
+    // Activates the poison emission for `duration` seconds. While active the coroutine will
+    // periodically apply `damagePerTick` to all valid targets inside `radius`.
+    public void ActivatePoison(float duration)
+    {
+        if (isDestroyed) return;
+        if (duration <= 0f) return;
+
+        if (poisonCoroutine != null)
+            StopCoroutine(poisonCoroutine);
+        poisonCoroutine = StartCoroutine(PoisonBurstCoroutine(duration));
+    }
+
+    private IEnumerator PoisonBurstCoroutine(float duration)
+    {
+        poisonActiveFromShot = true;
+
+        if (enableParticlesWhenActive && particleSystems != null && particleSystems.Length > 0)
+            SetParticlesActive(true);
+
+        float elapsed = 0f;
+        while (elapsed < duration && !isDestroyed)
+        {
+            // Find all colliders in radius, apply damage to unique roots that are valid targets
+            Collider[] cols = Physics.OverlapSphere(transform.position, radius);
+            var hitRoots = new HashSet<GameObject>();
+            foreach (var col in cols)
+            {
+                if (col == null) continue;
+                var root = col.transform.root.gameObject;
+                if (root == null) continue;
+                if (!hitRoots.Add(root)) continue;
+                if (!IsInAffectLayer(root)) continue;
+                if (!IsValidTarget(col)) continue;
+
+                ApplyDamageToTarget(root);
+            }
+
+            yield return new WaitForSeconds(Mathf.Max(0.01f, tickInterval));
+            elapsed += tickInterval;
+        }
+
+        poisonActiveFromShot = false;
+
+        if (enableParticlesWhenActive && particleSystems != null && particleSystems.Length > 0)
+            SetParticlesActive(false);
+
+        poisonCoroutine = null;
+    }
+
+    // Draw debug gizmos when enabled in inspector
+    void OnDrawGizmos()
+    {
+        if (!showGizmos) return;
+
+        if (showPoisonAreaGizmo)
+        {
+            Gizmos.color = new Color(0.2f, 0.8f, 0.2f, 0.15f);
+            Gizmos.DrawSphere(transform.position, Mathf.Max(0.01f, radius));
+            Gizmos.color = new Color(0.2f, 1f, 0.2f, 1f);
+            Gizmos.DrawWireSphere(transform.position, Mathf.Max(0.01f, radius));
+        }
+
+        if (enableProjectileOverlapDetection && projectileDetectRadius > 0f)
+        {
+            Gizmos.color = new Color(1f, 0.3f, 0.3f, 0.15f);
+            Gizmos.DrawSphere(transform.position, projectileDetectRadius);
+            Gizmos.color = new Color(1f, 0.5f, 0.2f, 1f);
+            Gizmos.DrawWireSphere(transform.position, projectileDetectRadius);
+        }
     }
 }

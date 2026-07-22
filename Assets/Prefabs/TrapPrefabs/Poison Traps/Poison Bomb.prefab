@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1732794983459668912}
   - component: {fileID: 686777736955831722}
   - component: {fileID: 8244967123032174804}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Cylinder (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 1196432290639454895}
   - component: {fileID: 5073634211905946432}
   - component: {fileID: 8940855536295232458}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: TempSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4962,7 +4962,7 @@ GameObject:
   - component: {fileID: 9112672349521203025}
   - component: {fileID: 4620306252006302598}
   - component: {fileID: 4854470014900732735}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5076,7 +5076,7 @@ GameObject:
   - component: {fileID: 4193257285346851314}
   - component: {fileID: 634407146214498816}
   - component: {fileID: 8776693052175043}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Cylinder (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5190,7 +5190,7 @@ GameObject:
   - component: {fileID: 3347930337272062376}
   - component: {fileID: 3504108152868726766}
   - component: {fileID: 3874475859621545973}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Cylinder (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5305,7 +5305,8 @@ GameObject:
   - component: {fileID: 5387300867475429312}
   - component: {fileID: 8210606714468778837}
   - component: {fileID: 5188294446571515992}
-  m_Layer: 0
+  - component: {fileID: 8734530201853527329}
+  m_Layer: 14
   m_Name: Poison Bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5432,15 +5433,31 @@ MonoBehaviour:
   damagePerTick: 4
   tickInterval: 1
   dotDuration: 6
-  targetMode: 0
+  targetMode: 2
   applyKnockback: 1
   knockbackDistance: 5
   triggerChild: {fileID: 6153997887962464448}
-  triggerChildRadius: 1.07
+  triggerChildRadius: 1
   particleRoot: {fileID: 1196432290639454895}
   playParticlesOnExplode: 1
   destroyOnExplode: 1
   destroyDelay: 0.1
+--- !u!208 &8734530201853527329
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4965714070357030617}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &5073366000124218699
 GameObject:
   m_ObjectHideFlags: 0
@@ -5453,7 +5470,7 @@ GameObject:
   - component: {fileID: 3840518098911119787}
   - component: {fileID: 6247083864575703780}
   - component: {fileID: 8148707559067900609}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Cylinder (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5567,7 +5584,7 @@ GameObject:
   - component: {fileID: 135257548575116405}
   - component: {fileID: 5127968181081257813}
   - component: {fileID: 4179244181259221534}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Cylinder (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5681,7 +5698,7 @@ GameObject:
   - component: {fileID: 8579308001263150138}
   - component: {fileID: 1443282389620415623}
   - component: {fileID: 3925431213652842789}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Cylinder (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
