@@ -17,56 +17,14 @@ public class PlayerCrosshair : MonoBehaviour
     [Tooltip("If true, hides the system cursor while playing.")]
     [SerializeField] private bool hideSystemCursor = true;
 
-    [Header("Controller Mode")]
-    [SerializeField] private float controllerRadius = 200f;
-
-    [Header("World Position Settings")]
-    [Tooltip("Layer mask for the ground to raycast against")]
-    [SerializeField] private LayerMask groundLayer = ~0;
-
-    [Tooltip("Visualizer for world target position with debug object")]
-    [SerializeField] private GameObject worldTargetIndicator;
-
-    [Tooltip("Constrain Y height for target position")]
-    [SerializeField] private float targetYHeight = 0f;
-
-    [Tooltip("True forces target position to stay at targetYHeight")]
-    [SerializeField] private bool constrainToGroundLevel = true;
-
-    [Header("Visual Alignment")]
-    [Tooltip("Moves UI crosshair to match where projectiles will hit")]
-    [SerializeField] private bool alignCrosshairToWorldTarget = true;
-    [SerializeField] private float CrosshairSmoothSpeed = 15f;
-
-
     private Canvas uiCanvas;
     private Image crosshairImage;
     private RectTransform crosshairRect;
-    private Transform player;
-    private Camera cam;
-
-    private bool usingController = false;
-    private Vector2 initialControllerDirection = Vector2.up;
-    private Vector2 controllerLookInput;
-    private Vector2 lastControllerDirection;
-    private Vector3 worldTargetPosition;
-    private bool hasValidWorldTarget = false;
-
 
     void Awake()
     {
         // Ensure cursor is not locked by other systems
         Cursor.lockState = CursorLockMode.None;
-        if (worldTargetIndicator != null)
-            worldTargetIndicator.SetActive(true);
-        cam = Camera.main;
-
-        GameObject p = GameObject.FindGameObjectWithTag("Player");
-        
-        if (p != null)
-            player = p.transform;
-
-        lastControllerDirection = initialControllerDirection.normalized;
 
         SetupCanvasAndCrosshair();
     }
@@ -83,136 +41,24 @@ public class PlayerCrosshair : MonoBehaviour
         Cursor.visible = true;
     }
 
-    public void SetControllerMode(bool active)
-    {
-        usingController = active;
-    }
-
-    public void UpdateControllerLook(Vector2 lookInput)
-    {
-        controllerLookInput = lookInput;
-        if (lookInput.sqrMagnitude > 0.01f)
-        {
-            lastControllerDirection = lookInput.normalized;   
-        }
-    }
-
-    public Vector3 GetLookDirection()
-    {
-        // return direction from player to world target position
-        if (hasValidWorldTarget && player != null)
-        {
-            Vector3 dir = worldTargetPosition - player.position;
-            dir.y = 0;
-            return dir.normalized;
-        }
-        // controller fallback
-        Vector3 fallbackDir = new Vector3(controllerLookInput.x, 0, controllerLookInput.y);
-        return fallbackDir.normalized;
-    }
-    
-    // Get world position where the crosshair is actually pointing on the ground
-    public Vector3 GetWorldTargetPosition()
-    {
-        return worldTargetPosition;
-    }
-
-    // Returns true if there is a valid world target position
-    public bool HasValidWorldTarget()
-    {
-        return hasValidWorldTarget;
-    }
-
     void LateUpdate()
     {
-        if (crosshairRect == null)
-            return;
-        Vector3 inputScreenPos;
-
-        if (usingController)
+        // Move crosshair to mouse position every frame (works with Screen Space - Overlay canvas).
+        if (crosshairRect != null)
         {
-            if (player == null)
-                return;
-
-            Vector3 playerScreenPos = cam.WorldToScreenPoint(player.position);
-            Vector2 stickDir = lastControllerDirection;
-            Vector2 offset = stickDir * controllerRadius;
-            inputScreenPos = playerScreenPos + (Vector3)offset;
-        }
-        else
-        {
-            inputScreenPos = Input.mousePosition;
-        }
-        //Raycast from camera through crosshair position to find world position
-        UpdateWorldTargetPosition(inputScreenPos);
-
-        // Position crosshair based on alignment settings
-        if (alignCrosshairToWorldTarget && hasValidWorldTarget)
-        {
-            // Converts world target to screenspace
-            Vector3 targetScreenPos = cam.WorldToScreenPoint(worldTargetPosition);
-
-            if (CrosshairSmoothSpeed > 0f)
-            {
-                crosshairRect.position = Vector3.Lerp(
-                    crosshairRect.position,
-                    targetScreenPos,
-                    Time.deltaTime * CrosshairSmoothSpeed
-                    );
-            }
-            else
-            {
-                crosshairRect.position = targetScreenPos;
-            }
-        }
-        else
-        {
-            crosshairRect.position = inputScreenPos;
+            Vector2 mousePos = Input.mousePosition;
+            crosshairRect.position = mousePos;
         }
 
+        // Defensive: keep cursor unlocked while the game runs (in case other code sets it)
         if (Cursor.lockState != CursorLockMode.None)
             Cursor.lockState = CursorLockMode.None;
-    }
-
-    void UpdateWorldTargetPosition(Vector3 screenPosition)
-    {
-        Ray ray = cam.ScreenPointToRay(screenPosition);
-        RaycastHit hit;
-        
-        if (Physics.Raycast(ray, out hit, 1000f, groundLayer))
-        {
-            worldTargetPosition = hit.point;
-            if (constrainToGroundLevel)
-            {
-                worldTargetPosition.y = targetYHeight;
-            }
-            hasValidWorldTarget = true;
-            // Update debug indicator
-            if (worldTargetIndicator != null)
-            {
-                if (!worldTargetIndicator.activeSelf)
-                {
-                    Debug.Log("[PlayerCrosshair] Re-activating indicator");
-                    worldTargetIndicator.SetActive(true);
-                }
-                worldTargetIndicator.transform.position = worldTargetPosition;
-            }
-        }
-        else
-        {
-            hasValidWorldTarget = false;
-            if (worldTargetIndicator != null && worldTargetIndicator.activeSelf)
-            {
-                Debug.Log("[PlayerCrosshair] Deactivating indicator - no raycast hit");
-                worldTargetIndicator.SetActive(false);
-            }
-        }
     }
 
     void SetupCanvasAndCrosshair()
     {
         // Try to find an existing overlay canvas first
-        //uiCanvas = Object.FindFirstObjectByType<Canvas>();
+        uiCanvas = Object.FindFirstObjectByType<Canvas>();
         if (uiCanvas == null || uiCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
         {
             var canvasGo = new GameObject("CrosshairCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));

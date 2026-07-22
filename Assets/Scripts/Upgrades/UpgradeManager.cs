@@ -3,7 +3,6 @@ using UnityEngine;
 
 /// <summary>
 /// Stores runtime card levels and handles random draws.
-/// Support upgrades per anchors, player stats, and other card types in the future.
 /// </summary>
 public class UpgradeManager : MonoBehaviour
 {
@@ -17,9 +16,6 @@ public class UpgradeManager : MonoBehaviour
 
     // Runtime state: UpgradeDataSO -> level
     private Dictionary<UpgradeDataSO, int> cardLevels = new Dictionary<UpgradeDataSO, int>();
-    private Dictionary<AnchorElement, Dictionary<UpgradeDataSO, int>> elementLevels;
-
-    public event System.Action OnUpgradesChanged;
 
     // Singleton
     public static UpgradeManager Instance { get; private set; }
@@ -30,38 +26,19 @@ public class UpgradeManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        InitializeElementDictionaries();
         ResetAllCards();
-    }
-
-    private void InitializeElementDictionaries()
-    {
-        elementLevels = new Dictionary<AnchorElement, Dictionary<UpgradeDataSO, int>>
-        {
-            { AnchorElement.Fire, new Dictionary<UpgradeDataSO, int>() },
-            { AnchorElement.Ice, new Dictionary<UpgradeDataSO, int>() },
-            { AnchorElement.Wind, new Dictionary<UpgradeDataSO, int>() }
-        };
     }
 
     public void ResetAllCards()
     {
-        // Reset UI-levels
+        // Reset all card levels to 0
         cardLevels.Clear();
-
-        // Reset element-levels
-        foreach (var element in elementLevels.Keys)
-            elementLevels[element].Clear();
-
         foreach (var card in allCards)
         {
             cardLevels[card] = 0;
-
-            // Initialize per-element dictionary
-            elementLevels[card.Element][card] = 0;
         }
 
-        // Reset deck
+        // Reset the deck to be a copy of allCards
         deck = new List<UpgradeDataSO>(allCards);
     }
 
@@ -127,38 +104,15 @@ public class UpgradeManager : MonoBehaviour
         if (!cardLevels.ContainsKey(card)) cardLevels[card] = 0;
 
         // Increment the card's level
-        cardLevels[card]++;
+        cardLevels[card]++;   
 
-        // Element tracking
-        var element = card.Element;
-        elementLevels[element][card]++;
-        Debug.Log($"[UpgradeManager] {card.CardName} level = {cardLevels[card]}");
-        // Remove the card from the pool if it reaches max level
+        //remove the card from the pool if it reaches max level
         if (cardLevels[card] >= card.MaxLevel -1)
         {
             deck.Remove(card);
         }
 
-        // Notify Anchors
-        OnUpgradesChanged?.Invoke();
-
         FindFirstObjectByType<CardIconManager>().RefreshIcons();
-    }
-
-    /// <summary>
-    /// Returns the total accumulated stat value for a given element.
-    /// </summary>
-    public float GetTotalStatForElement(AnchorElement element, UpgradeStat stat)
-    {
-        float total = 0f;
-
-        foreach (var kvp in elementLevels[element])
-        {
-            if (kvp.Key.Stat == stat)
-                total += kvp.Key.GetTotalValueUpToLevel(kvp.Value);
-        }
-        //Debug.Log($"[UpgradeManager] {element} stat {stat} total = {total}");
-        return total;
     }
 
     /// <summary>
@@ -167,15 +121,5 @@ public class UpgradeManager : MonoBehaviour
     public List<UpgradeDataSO> GetAllCards()
     {
         return allCards;
-    }
-
-    public bool HasUpgrade(string cardName)
-    {
-        foreach (var kvp in cardLevels)
-        {
-            if (kvp.Key.CardName == cardName && kvp.Value > 0)
-                return true;
-        }
-        return false;
     }
 }

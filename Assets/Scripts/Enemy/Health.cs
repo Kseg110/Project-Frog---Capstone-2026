@@ -1,193 +1,89 @@
-using System;
-using System.Collections;
 using UnityEngine;
-using FMODUnity;
+using System.Collections;
 
-public class Health : MonoBehaviour, IDamageable
+public class Health : MonoBehaviour
 {
-    [Header("FMod Events")]
-    [SerializeField] private EventReference damageTakenEvent;
-
+    [SerializeField] private float maxHealth = 100f;
+    private float currentHealth;
     private Healthbar healthbar;
     private UIPlayerHUD playerHUD;
 
-    public float maxHealth = 100f;
-
-    private float _currentHealth = 100f;
-
     public bool IsDead { get; private set; }
-    public event Action<GameObject> OnDestroyed;
-    
-    //Burning DOT
-    private bool isBurning;
-    private Coroutine burnRoutine;
-    private EnemyBase enemy;
 
     private void Awake()
     {
         healthbar = GetComponentInChildren<Healthbar>();
-        enemy = GetComponent<EnemyBase>();
+        playerHUD = FindAnyObjectByType<UIPlayerHUD>();
 
-        if (CompareTag("Player"))
-            playerHUD = FindAnyObjectByType<UIPlayerHUD>();
-
-        _currentHealth = maxHealth;
-        IsDead = false;
-    }
-
-    public event Action<float> OnHealthChanged;
-
-    public float CurrentHealth 
-    {
-        get => _currentHealth;
-        private set
+        if (healthbar == null)
         {
-            // Clamp value to valid HP
-            float clampedValue = Mathf.Clamp(value, 0, maxHealth);
-
-            // Do nothing if health doesn't change
-            if (_currentHealth == clampedValue) return;
-
-            _currentHealth = clampedValue;
-
-            // Update UI
-            if (healthbar != null)
-                healthbar.UpdateHealthBar(maxHealth, _currentHealth);
-
-            if (playerHUD != null)
-                playerHUD.UpdateHealth(_currentHealth / maxHealth);
-
-            OnHealthChanged?.Invoke(_currentHealth);
+            Debug.LogError(
+                $"Health on {gameObject.name} requires a child HealthBar.", this);
         }
+
+        currentHealth = maxHealth;
+        IsDead = false;
+        playerHUD?.UpdateHealth(currentHealth / maxHealth);
     }
 
-    // ============================================================
-    // BASIC DAMAGE
-    // ============================================================
     public void TakeDmg(float dmg)
     {
         if (IsDead) return;
 
+        // Subtract currentHealth by damageAmmount
+        currentHealth -= dmg;
 
-        // Subtract CurrentHealth by damageAmmount
-        CurrentHealth -= dmg;
+        // Ensure currentHealth stays between 0 and maxHealth
+        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
 
-        RuntimeManager.PlayOneShot(damageTakenEvent, transform.position);
+        // Update healthbar visual
+        healthbar.UpdateHealthBar(maxHealth, currentHealth);
 
+        // Update player HUD if this is the player's health
+        playerHUD?.UpdateHealth(currentHealth / maxHealth);
 
-
-        if (CurrentHealth <= 0f)
+        if (currentHealth == 0f)
         {
             Die();
         }
     }
-
-    public bool IsMaxHP()
-    {
-        return CurrentHealth >= maxHealth;
-    }
-
-    // ============================================================
-    // DAMAGE WITH EFFECT (Burn, Freeze, etc.)
-    // ============================================================
-    public void TakeDmg(float dmg, string effectType, float effectDuration, float effectValue)
-    {
-        TakeDmg(dmg);
-
-        if (effectType == "Burn")
-            ApplyBurn(effectDuration, effectValue, dmg);
-        else if (effectType == "Freeze")
-        {
-            if (enemy != null)
-                enemy.Freeze(effectDuration);
-        }
-        else if (effectType == "Slow")
-        {
-            if (enemy != null)
-                enemy.ApplySlow(effectDuration);
-        }
-    }
-
-    // ============================================================
-    // HEALING
-    // ============================================================
     public void Heal(float amount)
     {
+        Debug.Log("heal");
         if (IsDead) return;
 
-        CurrentHealth += amount;
-        CurrentHealth = Mathf.Clamp(CurrentHealth, 0f, maxHealth);
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
 
-        if (healthbar != null)
-        healthbar.UpdateHealthBar(maxHealth, CurrentHealth);
-        if (playerHUD != null)
-        playerHUD?.UpdateHealth(CurrentHealth / maxHealth);
+        healthbar.UpdateHealthBar(maxHealth, currentHealth);
+
+        playerHUD?.UpdateHealth(currentHealth / maxHealth);
     }
 
-    // ============================================================
-    // DEATH
-    // ============================================================
     private void Die()
     {
         IsDead = true;
-
-
-
-        if (CompareTag("Player"))
-        {
-            UIDeathOverlay deathOverlay = FindFirstObjectByType<UIDeathOverlay>();
-            if (deathOverlay != null)
-                deathOverlay.ShowDeathOverlay();
-            else
-                Debug.LogError("No PlayerDeathOverlay found in scene.");
-
-            gameObject.SetActive(false);
-        }
-        else
-        {
-            Debug.Log("Enemy died");
-            enemy.ReleaseSlot();
-            OnDestroyed?.Invoke(gameObject);
-            Destroy(gameObject);
-        }
+        Destroy(gameObject);
     }
 
-    // ============================================================
-    // BURN LOGIC (Wildfire integrated)
-    // ============================================================
-    public void ApplyBurn(float duration, float tickRate, float baseDamage)
+    #region Burn DOT
+    public void ApplyBurn(float duration, float tickRate, float totalDamage)
     {
-        if (burnRoutine != null)
-            StopCoroutine(burnRoutine);
-
-        burnRoutine = StartCoroutine(BurnRoutine(duration, tickRate, baseDamage));
+        StartCoroutine(BurnCoroutine(duration, tickRate, totalDamage));
     }
 
-    private IEnumerator BurnRoutine(float duration, float tickRate, float baseDamage)
+    private IEnumerator BurnCoroutine(float duration, float tickRate, float totalDamage)
     {
-        isBurning = true;
-        enemy?.SetBurning(true);
+        float elapsed = 0f;
+        int ticks = Mathf.CeilToInt(duration / tickRate);
+        float damagePerTick = totalDamage / ticks;
 
-        float timer = 0f;
-
-        while (timer < duration)
+        while (elapsed < duration)
         {
-            float finalTickDamage = baseDamage;
-
-            // Wildfire upgrade (Fire burn damage bonus)
-            if (WildfireUpgrade.Instance != null)
-            {
-                float bonus = WildfireUpgrade.Instance.GetBurnBonus();
-                finalTickDamage *= 1f + bonus / 100f;
-            }
-
-            TakeDmg(finalTickDamage);
-
-            timer += tickRate;
+            TakeDmg(damagePerTick);
             yield return new WaitForSeconds(tickRate);
+            elapsed += tickRate;
         }
-
-        isBurning = false;
-        enemy?.SetBurning(false);
     }
+    #endregion
 }

@@ -31,9 +31,6 @@ public class WaveStartTrigger : MonoBehaviour
 
         triggered = true;
 
-        // Reset deck
-        UpgradeManager.Instance.ResetAllCards();
-
         // Start the first wave through the WaveRoundSystem
         waveSystem.StartFirstWave();
 

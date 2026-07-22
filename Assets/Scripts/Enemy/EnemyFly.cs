@@ -1,88 +1,55 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyFly : MonoBehaviour
 {
-    [SerializeField] private float roamRadius = 5;
-    [SerializeField] private float minMoveInterval = 1f;
-    [SerializeField] private float maxMoveInterval = 3f;
-    [SerializeField] private float flyHeight = 7f;
-    [SerializeField] private float moveSpeed = 3.5f;
-    [SerializeField] private float rotationSpeed = 5f;
-    [SerializeField] private float stoppingDistance = 0.5f;
+    public Transform[] patrolPoints;
+    public float waitTime = 2f;
 
-    private Vector3 centerPoint;
-    private Vector3 targetPosition;
-    private float moveTimer;
-    private float nextMoveTime;
+    private NavMeshAgent agent;
+    private int currentPointIndex = 0;
+    private float waitTimer;
+    private bool waiting;
 
     void Start()
     {
-        // Set initial position with flyHeight
-        transform.position = new Vector3(transform.position.x, flyHeight, transform.position.z);
-        centerPoint = transform.position;
-
-        SetNextMoveTime();
-        PickNewDestination();
+        agent = GetComponent<NavMeshAgent>();
+        if (!agent.isOnNavMesh)
+        {
+            agent.Warp(transform.position);
+       
+        }
+        agent.baseOffset = 1f;
+        GoToNextPoint();
     }
 
     void Update()
     {
-        float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
-
-        if (distanceToTarget <= stoppingDistance)
+        if (waiting)
         {
-            moveTimer += Time.deltaTime;
-
-            if (moveTimer >= nextMoveTime)
+            waitTimer += Time.deltaTime;
+            if (waitTimer >= waitTime)
             {
-                PickNewDestination();
-                SetNextMoveTime();
+                waiting = false;
+                GoToNextPoint();
             }
+            return;
         }
-        else
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
-            // Move towards target
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-
-            // Rotate towards target
-            Vector3 direction = (targetPosition - transform.position).normalized;
-            direction.y = 0; // Keep rotation horizontal only
-            if (direction != Vector3.zero)
-            {
-                Quaternion lookRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotationSpeed * Time.deltaTime);
-            }
+            waiting = true;
+            waitTimer = 0f;
         }
     }
 
-    void SetNextMoveTime()
+    void GoToNextPoint()
     {
-        moveTimer = 0f;
-        nextMoveTime = Random.Range(minMoveInterval, maxMoveInterval);
-    }
+        if (patrolPoints.Length == 0) return;
 
-    void PickNewDestination()
-    {
-        Vector2 randomCircle = Random.insideUnitCircle * roamRadius;
+        agent.SetDestination(patrolPoints[currentPointIndex].position);
 
-        targetPosition = centerPoint + new Vector3(
-            randomCircle.x,
-            0f,
-            randomCircle.y
-        );
-    }
-
-    // add visual of the roam area //
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(Application.isPlaying ? centerPoint : transform.position, roamRadius);
-        
-        // Draw target position
-        if (Application.isPlaying)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(targetPosition, 0.3f);
-        }
+        currentPointIndex = (currentPointIndex + 1) % patrolPoints.Length;
+        Debug.Log("Setting destination: " + patrolPoints[currentPointIndex].position);
     }
 }

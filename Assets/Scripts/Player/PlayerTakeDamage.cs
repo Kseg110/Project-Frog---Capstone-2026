@@ -8,14 +8,12 @@ using UnityEngine;
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerImmortality))]
-[RequireComponent(typeof(PlayerShieldController))]
 public class PlayerTakeDamage : MonoBehaviour
 {
     [Header("Damage Settings")]
     [Tooltip("How long after taking damage until the player can be damaged again (i-frames/cooldown).")]
     [SerializeField] private float immortalityTime = 1f;
 
-    [Header("Knockback")]
     [Tooltip("Knockback speed in meters per second.")]
     [SerializeField] private float knockbackSpeed = 20f;
 
@@ -26,188 +24,141 @@ public class PlayerTakeDamage : MonoBehaviour
     [Tooltip("Red flashes per second during immortality time.")]
     [SerializeField] private float flashFrequency = 10f;
 
-    [Header("Collision")]
-    [SerializeField] private LayerMask collisionLayers;
-
-    [Tooltip("Child object name containing the capsule collider hitbox.")]
-    [SerializeField] private string hitBoxName = "Hitbox";
-
-    public bool isGod;
+    public bool isGod; //used for debug purposes, keep public so debug menu can control this plz.
 
     // References
     private Health playerHealth;
     private PlayerMovement playerMovement;
     private PlayerImmortality playerImmortality;
-    private PlayerShieldController shield;
-
     private Rigidbody rb;
-    private CapsuleCollider hitbox;
-
     private Renderer[] cachedRenderers;
     private Color[] originalColors;
 
     // I-frame timing
     private float nextAllowedDamageTime = 0f;
 
-    // Coroutine handles
-    private Coroutine flashCoroutine;
+    // Coroutine handles to safely stop overlapping effects
+    private Coroutine flashCorountine;
     private Coroutine knockbackCoroutine;
+
+    private CameraController cameraController;
+    private CameraShakeEffect directCameraShake; // fallback if controller not present
 
     private void Awake()
     {
         // Cache references
         playerHealth = GetComponent<Health>();
         playerMovement = GetComponent<PlayerMovement>();
-        playerImmortality = GetComponent<PlayerImmortality>();
-        shield = GetComponent<PlayerShieldController>();
         rb = GetComponent<Rigidbody>();
+        playerImmortality = GetComponent<PlayerImmortality>();
 
-        // Get hitbox collider from child object
-        Transform hit = transform.Find(hitBoxName);
-
-        if (hit == null)
-        {
-            Debug.LogError($"Hitbox child '{hitBoxName}' not found on {gameObject.name}");
-            return;
-        }
-
-        hitbox = hit.GetComponent<CapsuleCollider>();
-
-        if (hitbox == null)
-        {
-            Debug.LogError($"No CapsuleCollider found on hitbox object '{hitBoxName}'");
-            return;
-        }
-
-        // Cache renderers
+        // Cache all renderers to flash all parts of the player
         cachedRenderers = GetComponentsInChildren<Renderer>();
         originalColors = new Color[cachedRenderers.Length];
-
         for (int i = 0; i < cachedRenderers.Length; i++)
             originalColors[i] = cachedRenderers[i].material.color;
-
-        // Rigidbody handled manually
-        rb.isKinematic = true;
     }
 
     /// <summary>
-    /// Attempts to apply damage and knockback.
+    /// Attempts to apply damage and knockback. Will not apply if within i-frames.
     /// </summary>
-    public void TryApplyDamageAndKnockback(
-        float damageAmount,
-        Vector3 knockDirection,
-        float knockbackDistance)
+    /// <param name="damageAmount">Amount of damage to apply.</param>
+    /// <param name="knockDirection">Direction to knock the player.</param>
+    /// <param name="knockbackDistance">Distance the player should be knocked back.</param>
+    public void TryApplyDamageAndKnockback(float damageAmount, Vector3 knockDirection, float knockbackDistance)
     {
         if (isGod)
             return;
 
-        if (Time.time < nextAllowedDamageTime)
-            return;
-
-        // SHIELD ALWAYS CHECKS FIRST
-        if (shield != null && shield.TakeDamage((int)damageAmount))
-        {
-            Debug.Log("[Shield] Hit absorbed by shield!");
-
-            // Activate i-frames even if shield absorbed, to prevent multiple hits in quick succession
-            nextAllowedDamageTime = Time.time + immortalityTime;
-            return;
-        }
-
-        // If shield didn't absorb, check I-frames 
+        // Check player immortality
         if (playerImmortality.IsImmortal)
+            return;
+
+        // Check i-frame
+        if (Time.time < nextAllowedDamageTime)
             return;
 
         // Start i-frames
         nextAllowedDamageTime = Time.time + Mathf.Max(0f, immortalityTime);
 
-        // Otherwise → real damage
+        // Apply health damage
         playerHealth.TakeDmg(damageAmount);
 
-        // Effects
+        // Start knockback and flash coroutines
         StartKnockback(knockDirection, knockbackDistance);
         StartFlash();
     }
 
     /// <summary>
-    /// Starts knockback coroutine.
+    /// Starts knockback coroutine, stopping any existing knockback.
     /// </summary>
     private void StartKnockback(Vector3 direction, float distance)
     {
         if (knockbackCoroutine != null)
             StopCoroutine(knockbackCoroutine);
 
-        knockbackCoroutine =
-            StartCoroutine(KnockbackRoutine(direction.normalized, distance));
+        knockbackCoroutine = StartCoroutine(KnockbackRoutine(direction.normalized, distance));
     }
 
-    /// <summary>
-    /// Collision-safe knockback movement.
-    /// </summary>
-    private IEnumerator KnockbackRoutine(Vector3 dir, float distance)
-    {
-        playerMovement.StopMovement();
+     /// <summary>
+     /// Moves the player using Rigidbody.MovePosition with ease-out, based on distance and knockback speed.
+     /// Runs in FixedUpdate for physics consistency.
+     /// </summary>
+     private IEnumerator KnockbackRoutine(Vector3 dir, float distance)
+     {
+         // Prevent player movement during knockback
+         playerMovement.StopMovement();
 
-        Vector3 start = rb.position;
+         Vector3 start = rb.position;
+         Vector3 target = start + dir * distance;
 
-        float duration = Mathf.Max(0.01f, distance / knockbackSpeed);
-        float elapsed = 0f;
+         // Duration is based on distance and speed
+         float duration = Mathf.Max(0.01f, distance / knockbackSpeed);
+       float elapsed = 0f;
 
-        while (elapsed < duration)
-        {
-            float t = elapsed / duration;
+       while (elapsed < duration)
+       {
+           float t = elapsed / duration;
 
-            // Ease-out interpolation
-            float easedT =
-                1f - Mathf.Pow(1f - t, knockbackEasePower);
+           // Ease-out interpolation (fast start, slow end)
+           float easedT = 1f - Mathf.Pow(1f - t, knockbackEasePower);
 
-            Vector3 targetOffset =
-                Vector3.Lerp(Vector3.zero, dir * distance, easedT);
+           // Move Rigidbody to interpolated position
+           rb.MovePosition(Vector3.Lerp(start, target, easedT));
 
-            Vector3 desiredPosition = start + targetOffset;
+           elapsed += Time.fixedDeltaTime;
 
-            Vector3 motion = desiredPosition - rb.position;
+           // Wait for the next physics step
+           yield return new WaitForFixedUpdate();
+       }
 
-            // Collision-safe movement using HITBOX collider
-            CollisionUtility.MoveWithCapsuleCollision(
-                rb,
-                hitbox,
-                motion,
-                collisionLayers
-            );
+       // Snap exactly to target to prevent drift
+       rb.MovePosition(target);
 
-            elapsed += Time.fixedDeltaTime;
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        playerMovement.ResumeMovement();
-
-        knockbackCoroutine = null;
-    }
+       // Resume player movement
+       playerMovement.ResumeMovement();
+   }
 
     /// <summary>
-    /// Starts flashing visuals.
+    /// Starts flashing the player’s renderers. Stops existing flash coroutine if running.
     /// </summary>
     private void StartFlash()
     {
         if (cachedRenderers.Length == 0 || flashFrequency <= 0f)
             return;
 
-        if (flashCoroutine != null)
-        {
-            StopCoroutine(flashCoroutine);
-            RestoreOriginalColors();
-        }
+        if (flashCorountine != null)
+            StopCoroutine(flashCorountine);
 
-        flashCoroutine = StartCoroutine(FlashRoutine());
+        flashCorountine = StartCoroutine(FlashRoutine());
     }
 
     /// <summary>
-    /// Flashes player renderers during i-frames.
+    /// Flashes all cached renderers red/normal during i-frame period.
     /// </summary>
     private IEnumerator FlashRoutine()
     {
+        // Time between color toggles
         float interval = 1f / flashFrequency / 2f;
         bool isRed = false;
 
@@ -216,32 +167,15 @@ public class PlayerTakeDamage : MonoBehaviour
             isRed = !isRed;
 
             for (int i = 0; i < cachedRenderers.Length; i++)
-            {
-                cachedRenderers[i].material.color =
-                    isRed ? Color.red : originalColors[i];
-            }
+                cachedRenderers[i].material.color = isRed ? Color.red : originalColors[i];
 
             yield return new WaitForSeconds(interval);
         }
 
-        RestoreOriginalColors();
-        flashCoroutine = null;
-    }
-
-    private void RestoreOriginalColors()
-    {
+        // Ensure colors are restored at the end
         for (int i = 0; i < cachedRenderers.Length; i++)
             cachedRenderers[i].material.color = originalColors[i];
-    }
 
-    private void OnDisable()
-    {
-        if (flashCoroutine != null)
-        {
-            StopCoroutine(flashCoroutine);
-            flashCoroutine = null;
-        }
-
-        RestoreOriginalColors();
+        flashCorountine = null;
     }
 }

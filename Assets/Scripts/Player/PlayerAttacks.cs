@@ -1,6 +1,4 @@
-﻿using FMODUnity;
-using UnityEngine;
-using System.Collections;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerMovement))]
@@ -12,19 +10,9 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private Transform firePoint;
 
     [Header("Attack Settings")]
-    [SerializeField] public float attacksPerSecond = 2f;
+    [SerializeField] private float attacksPerSecond = 2f;
     [SerializeField] private float attackWindowDuration = 0.5f;
     [SerializeField] private float maxChargeTime = 2f;
-    [SerializeField] private float tongueAutoAimRange = 10f;
-    [SerializeField] private float basicShotSlowMultiplier = 0.5f;
-
-    [Header("Aiming Correction")]
-    [SerializeField] private float aimCorrectionStrength = 1.0f;
-    [SerializeField] private float targetHeightOffset = 1.0f;
-
-    [Header("FMod Events")]
-    [SerializeField] private EventReference basicShotEvent;
-    [SerializeField] private EventReference chargeShotEvent;
 
     //public bool isTethered;
     public float LastChargeValue { get; private set; }
@@ -41,21 +29,12 @@ public class PlayerAttacks : MonoBehaviour
     private PlayerTongueAttack playerTongueAttack;
     private PlayerChargeAttack playerChargeAttack;
     private PlayerAnchor playerAnchor;
-    private PlayerInput playerInput;
-    private PlayerCrosshair playerCrosshair;
 
     // Input actions
     private InputAction attackAction;          // Fire1 → LMB / Right Trigger
     private InputAction secondaryAttackAction; // Fire2 → RMB / Left Trigger
     private InputAction aimAction;             // Mouse position / Right Stick
 
-    // map tracking + trigger fallbacks
-    private string currentActionMapName;
-    private float prevAttackValue;
-    private float prevSecondaryValue;
-    private const float triggerThreshold = 0.5f;
-
-    private bool isBasicShotSlowed = false;
     public bool IsAttacking => isCharging || playerTongueAttack.IsActive || attackWindowTimer > 0f;
 
     private void Awake()
@@ -65,14 +44,16 @@ public class PlayerAttacks : MonoBehaviour
         playerTongueAttack = GetComponentInChildren<PlayerTongueAttack>();
         playerChargeAttack = GetComponent<PlayerChargeAttack>();
         playerAnchor = GetComponent<PlayerAnchor>();
-        playerCrosshair = FindAnyObjectByType<PlayerCrosshair>();
+
 
         playerTongueAttack.OnTongueFinished += playerMovement.ResumeMovement;
 
-        playerInput = GetComponent<PlayerInput>();
-        Debug.Assert(playerInput != null, $"[{gameObject.name}] missing PlayerInput!", this);
+        // Cache input actions
+        attackAction = InputSystem.actions.FindAction("Attack");
+        secondaryAttackAction = InputSystem.actions.FindAction("SecondaryAttack");
+        aimAction = InputSystem.actions.FindAction("Look"); // or "Aim" if you renamed it
 
-        RebindActionsFromCurrentMap();
+        Debug.Assert(playerTongueAttack != null, $"[{gameObject.name}] missing PlayerTongueAttack!", this);
     }
 
     private void OnDestroy()
@@ -81,92 +62,52 @@ public class PlayerAttacks : MonoBehaviour
             playerTongueAttack.OnTongueFinished -= playerMovement.ResumeMovement;
     }
 
-    // ============================================================
-    // INPUT HANDLING
-    // ============================================================
-    private void RebindActionsFromCurrentMap()
-    {
-        if (playerInput == null || playerInput.currentActionMap == null)
-            return;
-
-        currentActionMapName = playerInput.currentActionMap.name;
-
-        attackAction = playerInput.currentActionMap.FindAction("Attack");
-        secondaryAttackAction = playerInput.currentActionMap.FindAction("SecondaryAttack");
-        aimAction = playerInput.currentActionMap.FindAction("Look");
-
-        Debug.Assert(attackAction != null, $"[{gameObject.name}] Attack action not found on map {currentActionMapName}!", this);
-        Debug.Assert(secondaryAttackAction != null, $"[{gameObject.name}] SecondaryAttack action not found on map {currentActionMapName}!", this);
-        Debug.Assert(aimAction != null, $"[{gameObject.name}] Look action not found on map {currentActionMapName}!", this);
-
-        // reset previous values for trigger fallbacks
-        prevAttackValue = 0f;
-        prevSecondaryValue = 0f;
-    }
-
     private void Update()
     {
-        // return early to prevent projectile firing in UI
-        if (Time.timeScale == 0f)
-            return;
+        // Basic shot — held LMB / Right Trigger (rate-limited inside TryBasicShot)
+        if (attackAction.IsPressed()) TryBasicShot();
 
-        if (playerInput != null &&
-            playerInput.currentActionMap != null &&
-            playerInput.currentActionMap.name != currentActionMapName)
+        // Secondary — RMB / Left Trigger
+        if (playerAnchor.IsTethered)
         {
-            RebindActionsFromCurrentMap();
-        }
-
-        bool attackHeld = ReadButton(attackAction, ref prevAttackValue, out bool attackPressed);
-        bool secondaryHeld = ReadButton(secondaryAttackAction, ref prevSecondaryValue, out bool secondaryPressed, out bool secondaryReleased);
-
-        // PRIMARY ATTACK - Block if dashing
-        if (attackHeld && !playerMovement.IsDashing)
-            TryBasicShot();
-
-        // Remove slow when player stops shooting
-        if (!attackHeld && isBasicShotSlowed)
-        {
-            isBasicShotSlowed = false;
-            playerMovement.RemoveSpeedModifier(this);
-        }
-
-        // SECONDARY ATTACK - Block if dashing
-        if (!playerMovement.IsDashing)
-        {
-            if (playerAnchor.IsTethered)
+            if (secondaryAttackAction.WasPressedThisFrame())
             {
-                if (secondaryPressed && !playerChargeAttack.IsCharging)
+                if (!playerChargeAttack.IsCharging)
                 {
                     playerMovement.StopMovement(GetAimDirection());
                     playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
                 }
-
-                if (secondaryHeld)
-                    playerChargeAttack.UpdateCharge();
-
-                if (secondaryReleased)
-                {
-                    playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
-
-                    RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
-
-                    playerMovement.ResumeMovement();
-                }
             }
-            else
-            {
-                if (secondaryPressed)
-                    TryTongue();
 
-                if (secondaryReleased)
-                    playerTongueAttack.BeginTongueRetract();
+            if (secondaryAttackAction.IsPressed())
+            {
+                playerChargeAttack.UpdateCharge();
+            }
+
+            if (secondaryAttackAction.WasReleasedThisFrame())
+            {
+                playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+                playerMovement.ResumeMovement();
+            }
+        }
+        // not tethered use tongue attack
+        else
+        {
+            if (secondaryAttackAction.WasPressedThisFrame())
+            {
+                TryTongue();
+            }
+
+            if (secondaryAttackAction.WasReleasedThisFrame())
+            {
+                playerTongueAttack.BeginTongueRetract();
             }
         }
 
         if (isCharging)
             chargeTimer = Mathf.Clamp(chargeTimer + Time.deltaTime, 0f, maxChargeTime);
 
+        // Count down attack window, resume movement when it expires
         if (attackWindowTimer > 0f)
         {
             attackWindowTimer = Mathf.Max(0f, attackWindowTimer - Time.deltaTime);
@@ -175,9 +116,6 @@ public class PlayerAttacks : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // PRIMARY ATTACK
-    // ============================================================
     private void TryBasicShot()
     {
         if (playerTongueAttack.IsActive) return;
@@ -185,224 +123,80 @@ public class PlayerAttacks : MonoBehaviour
 
         Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
-
-        ApplyBasicShotSlow();
-
+        playerMovement.StopMovement(aimDirection);
         Shoot(0f, aimDirection);
         lastFireTime = Time.time;
-
-        RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
     }
 
-    private void ApplyBasicShotSlow()
+    private void TryTongue()
     {
-        if (!isBasicShotSlowed)
-        {
-            isBasicShotSlowed = true;
-            playerMovement.AddSpeedModifier(this, basicShotSlowMultiplier);
-        }
+        if (isCharging) return;
+        playerMovement.StopMovement(GetAimDirection());
+        playerTongueAttack.BeginTongueExtend();
+    }
+
+    public void StartCharging()
+    {
+        if (playerTongueAttack.IsActive) return;
+        playerMovement.StopMovement(GetAimDirection());
+        isCharging = true;
+        chargeTimer = 0f;
+    }
+
+    public void ReleaseCharging()
+    {
+        if (!isCharging) return;
+        isCharging = false;
+        if (playerTongueAttack.IsActive) return;
+        if (Time.time < lastFireTime + fireCooldown) return;
+
+        LastChargeValue = Mathf.Clamp01(chargeTimer / maxChargeTime);
+        OnChargeShotFired?.Invoke(LastChargeValue);
+        Shoot(LastChargeValue);
+        playerMovement.ResumeMovement();
+        lastFireTime = Time.time;
     }
 
     private void Shoot(float chargePercent, Vector3? direction = null)
     {
-        Vector3 finalDirection;
-        
-        if (direction.HasValue && direction.Value != Vector3.zero)
-        {
-            finalDirection = direction.Value;
-        }
-        else
-        {
-            finalDirection = GetAimDirection();
-        }
+        Quaternion rotation = direction.HasValue && direction.Value != Vector3.zero
+            ? Quaternion.LookRotation(direction.Value)
+            : firePoint.rotation;
 
-        // Apply perspective correction
-        finalDirection = ApplyPerspectiveCorrection(finalDirection);
-
-        Quaternion rotation = Quaternion.LookRotation(finalDirection);
-        GameObject projObj = Instantiate(projectilePrefab, firePoint.position, rotation);
-
-        var proj = projObj.GetComponent<Projectile>();
-        if (proj != null)
-        {
-            // CRITICAL: Set isPlayerProjectile FIRST before anything else
-            proj.isPlayerProjectile = true;
-            proj.Initialize(chargePercent);
-            proj.damage = 2f;
-        }
-
-        // Always ignore collision with player, regardless of Projectile component
-        IgnorePlayerCollision(projObj);
+        GameObject proj = Instantiate(projectilePrefab, firePoint.position, rotation);
+        proj.GetComponent<Projectile>()?.Initialize(chargePercent);
+        proj.GetComponent<Projectile>().damage = 2f;
     }
 
-
-    private Vector3 ApplyPerspectiveCorrection(Vector3 baseDirection)
-    {
-        if (playerCrosshair == null || !playerCrosshair.HasValidWorldTarget())
-            return baseDirection;
-
-        Vector3 worldTarget = playerCrosshair.GetWorldTargetPosition();
-        
-        // Add height offset to aim at enemy center mass instead of feet
-        worldTarget.y += targetHeightOffset;
-
-        // Calculate corrected direction from fire point to adjusted target
-        Vector3 correctedDirection = (worldTarget - firePoint.position).normalized;
-
-        // Blend between base direction and corrected direction
-        Vector3 finalDirection = Vector3.Lerp(baseDirection, correctedDirection, aimCorrectionStrength);
-
-
-        return finalDirection;
-    }
-
-    private void IgnorePlayerCollision(GameObject projObj)
-    {
-        Collider[] projCols = projObj.GetComponentsInChildren<Collider>();
-        Collider[] playerCols = GetComponentsInChildren<Collider>();
-
-        foreach (var pCol in projCols)
-        {
-            foreach (var col in playerCols)
-            {
-                Physics.IgnoreCollision(pCol, col);
-            }
-        }
-    }
-
-    // ============================================================
-    // TONGUE ATTACK
-    // ============================================================
-    private void TryTongue()
-    {
-        if (isCharging) return;
-
-        Vector3 aimDirection = GetTongueAimDirection();
-        playerMovement.StopMovement(aimDirection);
-        transform.rotation = Quaternion.LookRotation(aimDirection);
-        playerTongueAttack.BeginTongueExtend();
-    }
-
-    private Vector3 GetTongueAimDirection()
-    {
-        GameObject[] flies = GameObject.FindGameObjectsWithTag("Fly");
-
-        Transform closestFly = null;
-        float closestDistSqr = float.MaxValue;
-
-        foreach (var flyObj in flies)
-        {
-            Vector3 toFly = flyObj.transform.position - transform.position;
-
-            // ignore height difference
-            toFly.y = 0f;
-
-            float distSqr = toFly.sqrMagnitude;
-
-            // must be inside auto-aim range
-            if (distSqr > tongueAutoAimRange * tongueAutoAimRange)
-                continue;
-
-            if (distSqr < closestDistSqr)
-            {
-                closestDistSqr = distSqr;
-                closestFly = flyObj.transform;
-            }
-        }
-
-        // If a fly is found → aim at it
-        if (closestFly != null)
-        {
-            Vector3 dir = closestFly.position - transform.position;
-            dir.y = 0f;
-
-            if (dir.sqrMagnitude > 0.001f)
-                return dir.normalized;
-        }
-
-        // fallback
-        return GetAimDirection();
-    }
-
-    // ============================================================
-    // INPUT HELPERS
-    // ============================================================
-    private bool ReadButton(InputAction action, ref float prevValue, out bool pressed)
-    {
-        return ReadButton(action, ref prevValue, out pressed, out _);
-    }
-
-    private bool ReadButton(InputAction action, ref float prevValue, out bool pressed, out bool released)
-    {
-        pressed = false;
-        released = false;
-
-        if (action == null)
-            return false;
-
-        bool held = action.IsPressed();
-        pressed = action.WasPressedThisFrame();
-        released = action.WasReleasedThisFrame();
-
-        float val = 0f;
-        try { val = action.ReadValue<float>(); } catch { }
-
-        if (!held && val >= triggerThreshold)
-            held = true;
-
-        if (!pressed && val >= triggerThreshold && prevValue < triggerThreshold)
-            pressed = true;
-
-        if (!released && val < triggerThreshold && prevValue >= triggerThreshold)
-            released = true;
-
-        prevValue = val;
-        return held;
-    }
-
-    // ============================================================
-    // AIMING
-    // ============================================================
     private Vector3 GetAimDirection()
     {
-        if (playerCrosshair != null && playerCrosshair.HasValidWorldTarget())
-        {
-            Vector3 targetPos = playerCrosshair.GetWorldTargetPosition();
-            Vector3 direction = targetPos - firePoint.position;
-            direction.y = 0f;
+        // Determine if the gamepad stick is actively aiming
+        Vector2 aimValue = aimAction.ReadValue<Vector2>();
+        var lastControl = aimAction.activeControl;
+        bool gamepadActive = lastControl != null
+                          && lastControl.device is Gamepad
+                          && aimValue.sqrMagnitude > 0.01f;
 
+        if (gamepadActive)
+        {
+            // Twin-stick: stick (x, y) → world (x, z)
+            return new Vector3(aimValue.x, 0f, aimValue.y).normalized;
+        }
+
+        // Mouse path
+        if (Mouse.current == null)
+            return transform.forward;
+
+        Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
+        Ray ray = mainCamera.ScreenPointToRay(mouseScreenPos);
+        Plane plane = new Plane(Vector3.up, transform.position);
+
+        if (plane.Raycast(ray, out float distance))
+        {
+            Vector3 direction = ray.GetPoint(distance) - transform.position;
+            direction.y = 0f;
             if (direction.sqrMagnitude > 0.001f)
                 return direction.normalized;
-        }
-
-        Vector2 aimValue = aimAction != null ? aimAction.ReadValue<Vector2>() : Vector2.zero;
-        
-        if (InputManager.Instance != null && InputManager.Instance.IsUsingGamepad())
-        {
-            if (aimValue.sqrMagnitude > 0.01f)
-            {
-                if (playerCrosshair != null)
-                    playerCrosshair.UpdateControllerLook(aimValue);
-                return new Vector3(aimValue.x, 0f, aimValue.y).normalized;
-            }
-        }
-
-        else
-        {
-            if (Mouse.current == null)
-                return transform.forward;
-
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-            Ray ray = mainCamera.ScreenPointToRay(mousePos);
-            Plane plane = new Plane(Vector3.up, transform.position);
-
-            if (plane.Raycast(ray, out float dist))
-            {
-                Vector3 dir = ray.GetPoint(dist) - transform.position;
-                dir.y = 0f;
-                if (dir.sqrMagnitude > 0.001f)
-                    return dir.normalized;
-            }
         }
 
         return transform.forward;

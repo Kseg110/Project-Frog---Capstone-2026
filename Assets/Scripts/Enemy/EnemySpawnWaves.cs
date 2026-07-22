@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
-using System.Transactions;
 
 public class EnemySpawnWaves : MonoBehaviour
 {
@@ -11,7 +9,6 @@ public class EnemySpawnWaves : MonoBehaviour
     [SerializeField] private GameObject enemyPrefab;
 
     public Transform PlayerTransform => player;
-    public int CurrentWaveNumber => currentWave;
 
     [Header("Wave Settings")]
     [SerializeField] private int enemiesPerWave = 8;
@@ -19,13 +16,8 @@ public class EnemySpawnWaves : MonoBehaviour
     [SerializeField] private float undergroundOffset = 2f;
     [SerializeField] private float timeBetweenWaves = 5f;
     [SerializeField] private int currentWave;
-
-    [Header("Area Events")]
-    [SerializeField] private UnityEvent onAreaCleared;
-    [SerializeField] private UnityEvent onWaveStarted;
-
     private bool isSpawningWave = false;
-    private bool isWaitingForAreaTransition = false;
+
 
     private readonly List<GameObject> aliveEnemies = new List<GameObject>();
 
@@ -35,17 +27,9 @@ public class EnemySpawnWaves : MonoBehaviour
         SpawnNextWave();
     }
 
-    public void StartSpawning()
-    {
-        StartCoroutine(WaitAndSpawnNextWave(true));
-    }
-
     public void SpawnNextWave()
     {
         aliveEnemies.Clear();
-
-        onWaveStarted?.Invoke();
-
         //Increase enemy count by wave number. Can be easily configured to set amounts
         if (currentWave <= 3)
         {
@@ -88,77 +72,17 @@ public class EnemySpawnWaves : MonoBehaviour
 
     public void OnEnemyKilled(GameObject enemy)
     {
-        /*
         aliveEnemies.Remove(enemy);
 
         if (aliveEnemies.Count == 0)
         {
             StartCoroutine(WaitAndSpawnNextWave());
-        }   
-        */
-
-        if (aliveEnemies.Contains(enemy))
-        {
-            aliveEnemies.Remove(enemy);
-        }
-
-        aliveEnemies.RemoveAll(item => item == null);
-
-        if (aliveEnemies.Count == 0 && !isSpawningWave)
-        {
-            // Check if the eave that just finished 
-            if (currentWave == 5  || currentWave == 6 || currentWave == 10 || currentWave == 11 || currentWave == 15 || currentWave == 16)
-            {
-                PrepareAreaTransition();
-            }
-            else
-            {
-                StartCoroutine(WaitAndSpawnNextWave(false));
-            }
-        }
+        }    
     }
-
-    private void PrepareAreaTransition()
-    {
-        isWaitingForAreaTransition = true;
-        Debug.Log($"Wave {currentWave} cleared!");
-
-        // Door Logic ...
-        onAreaCleared?.Invoke();
-    }
-
-    public void CompleteAreaTransition()
-    {
-        if (!isWaitingForAreaTransition) return;
-
-        isWaitingForAreaTransition = false;
-        Debug.Log("Player reached new area!");
-
-        StartCoroutine(WaitAndSpawnNextWave(false));
-    }
-
-    public void OnDoorClosedBehindPlayer()
-    {
-        if (isWaitingForAreaTransition)
+    private IEnumerator WaitAndSpawnNextWave()
         {
-            isWaitingForAreaTransition = false;
+            yield return new WaitForSeconds(timeBetweenWaves);
             currentWave++;
-            StartCoroutine(WaitAndSpawnNextWave(true));   
+            SpawnNextWave();
         }
-    }
-
-    private IEnumerator WaitAndSpawnNextWave(bool isFirstWaveOfArea)
-    {
-        isSpawningWave = true;
-        yield return new WaitForSeconds(timeBetweenWaves);
-
-        if (!isFirstWaveOfArea)
-        {
-            currentWave++;
-        }
-        
-        SpawnNextWave();
-
-        isSpawningWave = false;
-    }
 }

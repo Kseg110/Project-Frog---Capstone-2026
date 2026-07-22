@@ -15,43 +15,19 @@ public class UIPlayerHUD : MonoBehaviour
     [SerializeField] private Color WarningColor = Color.yellow;
     [SerializeField] private Color CriticalColor = Color.red;
 
-    [Header("Dash Box")]
+    [Header("Dash Wheel")]
     [SerializeField] private Image DashFillImage;
 
-    [Header("Charge Attack Cooldown box")]
-    [SerializeField] private Image ChargeAttackFillImage;
-
-    [Header("Overcharge Wheel")]
-    [SerializeField] private Image OverchargeFillImage;
-    [SerializeField] private float OverChargeLerpSpeed = 3f;
-
     private float targetHealthFill = 1f;
-    private float targetOverchargeFill = 0f;
-
-    [SerializeField] private Health playerHealth;
-
-    private void Awake()
-    {
-        UpdateHealth(1f);
-        playerHealth.OnHealthChanged += PlayerHealth_OnHealthChanged;
-    }
-
-    private void PlayerHealth_OnHealthChanged(float newHealth)
-    {
-        Debug.Log(newHealth);
-        float normalized = newHealth / playerHealth.maxHealth;
-        UpdateHealth(normalized);
-    }
 
     //[Header("Overcharge Bar")]
     //[SerializeField] private Image OverchargeFillImage;
 
     // Calls from the health system whenever HP changes.
-    public void UpdateHealth(float normalizedHealth)
+    public void UpdateHealth(float normalized)
     {
-        //float normalized = newHealth / playerHealth.maxHealth;
-        targetHealthFill = Mathf.Clamp01(normalizedHealth);
-        healthFillImage.color = healthGradient.Evaluate(normalizedHealth);
+        targetHealthFill = Mathf.Clamp01(normalized);
+        healthFillImage.color = healthGradient.Evaluate(normalized);
 
         //if (normalized > 0.5f)
         //    healthFillImage.color = HealthyColor;
@@ -71,16 +47,6 @@ public class UIPlayerHUD : MonoBehaviour
             targetHealthFill,
             Time.deltaTime * healthLerpSpeed
         );
-
-        // Smoothly Lerp overchage fill
-        if (OverchargeFillImage != null)
-        {
-            OverchargeFillImage.fillAmount = Mathf.Lerp(
-                OverchargeFillImage.fillAmount,
-                targetOverchargeFill,
-                Time.deltaTime * OverChargeLerpSpeed
-                );
-        }
     }
 
     // Calls from the dash system every frame (or whenever the cooldown ticks).
@@ -89,29 +55,9 @@ public class UIPlayerHUD : MonoBehaviour
         DashFillImage.fillAmount = Mathf.Clamp01(normalized);
     }
 
-    public void UpdateChargeAttackCooldown(float normalized)
-    {
-        ChargeAttackFillImage.fillAmount = Mathf.Clamp01(normalized);
-    }
-
     // Calls from the overcharge system (once merged into main).
     //public void UpdateOverchargeBar(float normalized)
     //{
     //    OverchargeFillImage.fillAmount = Mathf.Clamp01(normalized);
     //}
-
-    public void UpdateOverchargeWheel(float normalized)
-    {
-        targetOverchargeFill = Mathf.Clamp01(normalized);
-    }
-
-    public void ShowHUD()
-    {
-        gameObject.SetActive(true);
-    }
-
-    public void HideHUD()
-    {
-        gameObject.SetActive(false);
-    }
 }

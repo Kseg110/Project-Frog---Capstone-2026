@@ -4,17 +4,12 @@
 // Extended by FireAnchorData, IceAnchorData, and WindAnchorData.
 
 using UnityEngine;
-using FMODUnity;
 
 public abstract class AnchorData : ScriptableObject
 {
     [Header("Base Settings")]
     [SerializeField] private float damage = 10f;
     [SerializeField] private float tetherRange = 15f;
-
-    [Header("FMod Events")]
-    [SerializeField] private EventReference activationEvent;
-    public EventReference ActivationEvent => activationEvent;
 
     public float Damage
     {

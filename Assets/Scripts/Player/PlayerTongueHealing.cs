@@ -1,18 +1,13 @@
 using UnityEngine;
-using FMODUnity;
 
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(PlayerTongueAttack))]
 public class PlayerTongueHealing : MonoBehaviour
 {
     [SerializeField] private float healAmountPerFly;
-
-    [SerializeField] private InventoryManager inventoryManager;
+    
     private PlayerTongueAttack playerTongueAttack;
     private Health playerHealth;
-
-    [Header("FMod Events")]
-    [SerializeField] private EventReference flyGatherEvent;
 
     private int numberOfFliesAttached = 0; // Fly counter for how many times the player heals when retracting
 
@@ -22,13 +17,13 @@ public class PlayerTongueHealing : MonoBehaviour
         playerHealth = GetComponent<Health>();
 
         // Subscribe to the playerTongueAttack's finish event so we can heal after retraction
-        playerTongueAttack.OnTongueFinished += GainFly;
+        playerTongueAttack.OnTongueFinished += HealPlayer;
     }
 
     private void OnDestroy()
     {
         // Unsubscribe from event to prevent memory leaks
-        playerTongueAttack.OnTongueFinished -= GainFly;
+        playerTongueAttack.OnTongueFinished -= HealPlayer;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -37,8 +32,6 @@ public class PlayerTongueHealing : MonoBehaviour
         {
             AttachFly();
             Destroy(other.gameObject);
-
-            RuntimeManager.PlayOneShot(flyGatherEvent, transform.position);
         }
     }
 
@@ -47,22 +40,11 @@ public class PlayerTongueHealing : MonoBehaviour
         numberOfFliesAttached++;
     }
 
-    private void GainFly()
+    private void HealPlayer()
     {
-        if (playerHealth.IsMaxHP())
-        {
-            inventoryManager.GainFlyInInventory(numberOfFliesAttached);
-        }
-        else
-        {
-            HealPlayer(numberOfFliesAttached);
-        }
+        playerHealth.Heal(healAmountPerFly * numberOfFliesAttached);
 
+        // Reset fly counter
         numberOfFliesAttached = 0;
-    }
-
-    public void HealPlayer(int numberOfFlies)
-    {
-        playerHealth.Heal(healAmountPerFly * numberOfFlies);
     }
 }
