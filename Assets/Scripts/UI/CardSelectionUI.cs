@@ -20,6 +20,7 @@ public class CardSelectionUI : MonoBehaviour
     {
         canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
         upgradeManager = UpgradeManager.Instance;
+        playerCrosshair = FindFirstObjectByType<PlayerCrosshair>();
     }
 
     private void Start()
