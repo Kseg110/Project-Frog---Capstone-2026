@@ -5,7 +5,10 @@ public class AnchorVisual : MonoBehaviour
     [Header("Meshes To Activate Based On Upgrade Level")]
     [SerializeField] private GameObject meshLevel5;
     [SerializeField] private GameObject meshLevel10;
-    [SerializeField] private GameObject meshLevel15;
+
+    [Header("Gold Material Settings")]
+    [SerializeField] private Material goldMaterial;
+    [SerializeField] private Renderer[] PIMPMyAnchor;
 
     private AnchorBase anchor;
     private bool isSubscribed = false;
@@ -42,24 +45,27 @@ public class AnchorVisual : MonoBehaviour
         {
             UpgradeManager.Instance.OnUpgradesChanged += UpdateVisuals;
             isSubscribed = true;
-            Debug.Log($"[AnchorVisual] Subscribed for {anchor.Element} on {name}");
         }
     }
 
     private void UpdateVisuals()
     {
         if (anchor == null || UpgradeManager.Instance == null)
-        {
-            Debug.LogWarning($"[AnchorVisual] Missing anchor or UpgradeManager on {name}");
-            return;
-        }
+            return;    
 
         int totalUpgrades = GetUpgradeCountForElement(anchor.Element);
-        Debug.Log($"[AnchorVisual] {anchor.Element} total upgrades = {totalUpgrades} on {name}");
 
         meshLevel5?.SetActive(totalUpgrades >= 5);
         meshLevel10?.SetActive(totalUpgrades >= 10);
-        meshLevel15?.SetActive(totalUpgrades >= 15);
+
+        if (totalUpgrades >= 15 && goldMaterial != null)
+        {
+            foreach (var r in PIMPMyAnchor)
+            {
+                if (r != null)
+                    r.material = goldMaterial;
+            }
+        }
     }
 
     private int GetUpgradeCountForElement(AnchorElement element)
