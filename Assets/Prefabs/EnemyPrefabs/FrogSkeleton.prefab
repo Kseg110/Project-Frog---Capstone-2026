@@ -17,7 +17,8 @@ GameObject:
   - component: {fileID: 5962536139291589849}
   - component: {fileID: 3793819314933414442}
   - component: {fileID: 8127335728827812192}
-  - component: {fileID: 3071640110403620277}
+  - component: {fileID: 3565466398929363023}
+  - component: {fileID: 891113178075101608}
   m_Layer: 7
   m_Name: FrogSkeleton
   m_TagString: Enemy
@@ -136,6 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFrogSkeleton
   player: {fileID: 0}
+  movement: {fileID: 0}
   attackHitbox: {fileID: 7265194758862469610, guid: 53f6e5ae24fb383409cd36a8cb582420, type: 3}
   health: {fileID: 2873713759039743146}
   attackRange: 2
@@ -229,7 +231,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   capsule: {fileID: 1401022787646104557}
---- !u!114 &3071640110403620277
+--- !u!114 &3565466398929363023
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -238,20 +240,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 4397625788936971336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a9e5bb5b09c19048a9921b62e402500, type: 3}
+  m_Script: {fileID: 11500000, guid: be22f9f649befc940a48ac6ac4662061, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
-  attackType: 0
-  attackCooldown: 5
+  m_EditorClassIdentifier: Assembly-CSharp::MovementComponent
+  target: {fileID: 0}
+  player: {fileID: 0}
+  stopDistance: 3
+  movementSpeed: 1
+  repathRate: 0.2
+  rotationSpeed: 10
+  separationRadius: 5
+  separationStrength: 2
+  currentSlot: none
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
+--- !u!114 &891113178075101608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4397625788936971336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a20aea0ee3c5084f994e5a8ea1b1ad6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FrogMeleeAttack
+  attackCoolDown: 5
   attackHitBox: {fileID: 7265194758862469610, guid: 53f6e5ae24fb383409cd36a8cb582420, type: 3}
   attackPoint: {fileID: 2938892953658481572}
   hitBoxLifeTime: 0.1
-  previewPrefab: {fileID: 0}
-  attackCylinderPrefab: {fileID: 0}
-  windupTime: 2
-  riseHeight: 3
-  riseSpeed: 6
-  lingeringDuration: 1
 --- !u!1 &5650343039611556545
 GameObject:
   m_ObjectHideFlags: 0

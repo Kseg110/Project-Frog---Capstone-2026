@@ -39,7 +39,7 @@ public class EnemyFrogSkeleton : EnemyBase
         {
             StopMovement();
 
-            if (canAttack)
+            if (CanAttack)
             {
                 enemyAttack.TriggerAttack();
             }
