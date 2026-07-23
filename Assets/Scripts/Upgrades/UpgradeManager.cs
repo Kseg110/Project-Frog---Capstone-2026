@@ -151,13 +151,7 @@ public class UpgradeManager : MonoBehaviour
         else
         {
             // Temporary removal for next wave
-            if (card.Rarity == CardRarity.Common)
-            {
-                if (deck.Contains(card))
-                    deck.Remove(card);
-
-                temporaryBlacklist.Add(card);
-            }
+            temporaryBlacklist.Add(card);  
         }
 
         // Notify Anchors
