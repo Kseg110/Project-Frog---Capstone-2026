@@ -17,7 +17,7 @@ public class Health : MonoBehaviour, IDamageable
 
     public bool IsDead { get; private set; }
     public event Action<GameObject> OnDestroyed;
-    
+
     //Burning DOT
     private bool isBurning;
     private Coroutine burnRoutine;
@@ -37,7 +37,7 @@ public class Health : MonoBehaviour, IDamageable
 
     public event Action<float> OnHealthChanged;
 
-    public float CurrentHealth 
+    public float CurrentHealth
     {
         get => _currentHealth;
         private set
@@ -119,9 +119,9 @@ public class Health : MonoBehaviour, IDamageable
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0f, maxHealth);
 
         if (healthbar != null)
-        healthbar.UpdateHealthBar(maxHealth, CurrentHealth);
+            healthbar.UpdateHealthBar(maxHealth, CurrentHealth);
         if (playerHUD != null)
-        playerHUD?.UpdateHealth(CurrentHealth / maxHealth);
+            playerHUD?.UpdateHealth(CurrentHealth / maxHealth);
     }
 
     // ============================================================
@@ -148,7 +148,14 @@ public class Health : MonoBehaviour, IDamageable
             Debug.Log("Enemy died");
             enemy.ReleaseSlot();
             OnDestroyed?.Invoke(gameObject);
-            Destroy(gameObject);
+
+            // Hand off to the fade-out component, which fades opacity then destroys.
+            // Fallback: if the prefab is missing the component, destroy immediately so a dead enemy can't linger as an invisible, immortal obstacle.
+            var fade = GetComponent<EnemyFadeOut>();
+            if (fade != null)
+                fade.BeginFade();
+            else
+                Destroy(gameObject);
         }
     }
 
