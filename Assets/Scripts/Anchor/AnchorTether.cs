@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-// Improved Tether using Verlet Rope Simulation to allow for true physics interactions on the Tether - draping around objects, affecting Enemies with collisions, etc. -E.M
+// Improved Tether built upon original system created by Kyle and myself by using a Verlet Rope Simulation to allow for true physics interactions on the Tether - draping around objects, affecting Enemies with collisions, etc. -E.M
 
 [ExecuteAlways]
 [RequireComponent(typeof(LineRenderer))]
@@ -36,6 +36,12 @@ public class AnchorTether : MonoBehaviour
     [Header("Verlet Simulation")]
     [SerializeField] private VerletRope rope = new VerletRope();
 
+    [Header("Throw Animation")]
+    [Tooltip("How long the rope takes to fly from the player out to the anchor on attach.")]
+    [SerializeField] private float throwDuration = 0.5f;
+    [Tooltip("Eases the tip's travel from start (0) to anchor (1). Linear is fine; EaseInOut gives a snappier launch + settle.")]
+    [SerializeField] private AnimationCurve throwEase = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
     [Header("Cooldown")]
     [SerializeField] private float tetherCooldown = 1.0f;
     private bool canTether = true;
@@ -53,6 +59,15 @@ public class AnchorTether : MonoBehaviour
     private SphereCollider collisionProbe;
 
     private bool ropeInitialized;
+
+    // Throw animation state.
+    private bool isThrowing;
+    private Vector3 throwTipPosition;   // current virtual end position while throwing
+    private Coroutine throwRoutine;
+
+    // True while the rope is animating its throw from the player out to the anchor.
+    // Downstream systems (hitbox rider, restraint, VFX) can gate on this if they want to ignore the rope until it physically lands.
+    public bool IsThrowing => isThrowing;
 
     // Lifecycle
     private void Awake()
@@ -136,7 +151,8 @@ public class AnchorTether : MonoBehaviour
             if (!ropeInitialized) return;
         }
 
-        Vector3? pinnedEnd = endPoint != null ? endPoint.position : (Vector3?)null;
+        // While throwing, pin the rope's end to the moving virtual tip instead of the real anchor.
+        Vector3? pinnedEnd = GetActivePinnedEnd();
         rope.Simulate(Time.fixedDeltaTime, startPoint.position, pinnedEnd, collisionProbe);
 
         BuildLineFromParticles();
@@ -146,6 +162,13 @@ public class AnchorTether : MonoBehaviour
 
     private bool AreEndPointsValid() => startPoint != null && endPoint != null;
     private bool IsPrefab => gameObject.scene.rootCount == 0;
+
+    // The world position the sim should pin its end particle to this step: the moving virtual tip while throwing, otherwise the real end point (or null when dangling).
+    private Vector3? GetActivePinnedEnd()
+    {
+        if (isThrowing) return throwTipPosition;
+        return endPoint != null ? endPoint.position : (Vector3?)null;
+    }
 
     private void EnsureCollisionProbe()
     {
@@ -267,11 +290,22 @@ public class AnchorTether : MonoBehaviour
 
             currentAnchor = newAnchor;
 
-            // New attachment target: rebuild the chain along the new span so the rope doesn't whip from its previous shape.
-            if (Application.isPlaying) TryInitializeRope();
+            // New attachment target: launch the throw so the rope flies out to the anchor.
+            // Detach / dangling falls back to the normal rebuild.
+            if (Application.isPlaying)
+            {
+                if (newAnchor != null && endPoint != null)
+                    StartThrow(endPoint.position);
+                else
+                {
+                    StopThrow();
+                    TryInitializeRope();
+                }
+            }
         }
 
-        if (instantAssign && Application.isPlaying)
+        // Guard the instant-rebuild so it doesn't stomp a throw started this same frame (PlayerAnchor.StartTether calls SetEndPoint with instantAssign: true).
+        if (instantAssign && Application.isPlaying && !isThrowing)
         {
             TryInitializeRope();
         }
@@ -284,6 +318,55 @@ public class AnchorTether : MonoBehaviour
         canTether = false;
         yield return new WaitForSeconds(tetherCooldown);
         canTether = true;
+    }
+
+    // Launches (or restarts) the throw animation toward a target world position.
+    // Cancels any in-flight throw so rapid re-attaches don't stack coroutines.
+    private void StartThrow(Vector3 targetWorldPos)
+    {
+        if (throwRoutine != null) StopCoroutine(throwRoutine);
+        throwRoutine = StartCoroutine(ThrowRoutine(targetWorldPos));
+    }
+
+    // Immediately cancels any active throw (e.g. on detach mid-flight) so the rope doesn't keep flying toward a stale target.
+    private void StopThrow()
+    {
+        if (throwRoutine != null)
+        {
+            StopCoroutine(throwRoutine);
+            throwRoutine = null;
+        }
+        isThrowing = false;
+    }
+
+    // Animates the rope's end from the player out to the anchor over throwDuration.
+    // Seeds the chain collapsed at the start so the rope visibly extends outward rather than popping in fully formed.
+    private IEnumerator ThrowRoutine(Vector3 targetWorldPos)
+    {
+        isThrowing = true;
+
+        // Collapse the whole chain onto the start point so the rope launches from the player.
+        Vector3 startPos = startPoint.position;
+        rope.Initialize(startPos, startPos, particleCount, tetherLength);
+        ropeInitialized = true;
+        throwTipPosition = startPos;
+
+        float t = 0f;
+        while (t < throwDuration)
+        {
+            t += Time.deltaTime;
+            float k = throwEase.Evaluate(Mathf.Clamp01(t / throwDuration));
+
+            // Track the live anchor position so a moving anchor is still hit correctly.
+            Vector3 liveTarget = endPoint != null ? endPoint.position : targetWorldPos;
+            throwTipPosition = Vector3.Lerp(startPoint.position, liveTarget, k);
+            yield return null;
+        }
+
+        // Arrived: pin exactly to the anchor and let the normal sim take over.
+        throwTipPosition = endPoint != null ? endPoint.position : targetWorldPos;
+        isThrowing = false;
+        throwRoutine = null;
     }
 
     // Forcibly severs the tether. Detaches the end point, fires OnTetherBroken (for VFX/SFX/gameplay reactions), then the normal OnAnchorDetached chain so downstream systems (rider, restraint) clean up automatically.
