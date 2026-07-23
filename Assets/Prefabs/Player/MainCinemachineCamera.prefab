@@ -48,6 +48,79 @@ MonoBehaviour:
   usePlayerOffset: 1
   doorSystem: {fileID: 0}
   pausePlayerDuringPan: 1
+--- !u!1 &908429537415091973
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5460714836251572676}
+  - component: {fileID: 8442230571507782438}
+  - component: {fileID: 6895841359072298437}
+  m_Layer: 0
+  m_Name: VignetteEffect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5460714836251572676
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908429537415091973}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4997265718896820422}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8442230571507782438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908429537415091973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 05396b538b637bd4996972666e40dca8, type: 2}
+--- !u!114 &6895841359072298437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908429537415091973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccb94574a65f6974ebc17d942c454788, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OverchargeVignetteEffect
+  fireColor: {r: 1, g: 0.3, b: 0, a: 1}
+  iceColor: {r: 0, g: 0.7, b: 1, a: 1}
+  windColor: {r: 0, g: 1, b: 0.3, a: 1}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  baseIntensity: 0
+  maxOverchargeIntensity: 0.5
+  lerpSpeed: 6
+  smoothness: 0.4
+  postProcessVolume: {fileID: 8442230571507782438}
+  playerOvercharge: {fileID: 0}
+  playerAnchor: {fileID: 0}
 --- !u!1 &3809013917271411098
 GameObject:
   m_ObjectHideFlags: 0
@@ -77,13 +150,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3809013917271411098}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.16112807, y: 0.121014625, z: -0.032617446, w: -0.978943}
+  m_LocalRotation: {x: 0.16113165, y: -0.12101619, z: 0.03262122, w: 0.9789421}
   m_LocalPosition: {x: 65.83, y: 27.84, z: 248.07}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2973362614577386409}
   - {fileID: 5454897685938972209}
+  - {fileID: 5460714836251572676}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 18.867, y: -13.844, z: 1.506}
 --- !u!114 &121857069020496494
@@ -203,7 +277,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
