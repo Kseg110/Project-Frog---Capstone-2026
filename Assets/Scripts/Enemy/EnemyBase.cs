@@ -1,11 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.InputSystem.Processors;
-using UnityEngine.Rendering;
 
 // Enemy BaseClass
 
@@ -15,23 +11,25 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     [Header("References")]
     [SerializeField] protected Transform player;
     [SerializeField] protected MovementComponent movement;
+    [SerializeField] protected EnemyAttack attackComponent;
     [SerializeField] protected GameObject attackHitbox;
     [SerializeField] private protected Health health;
-    private Rigidbody rb;
 
+    private Rigidbody rb;
     protected NavMeshAgent agent => movement?.Agent;
 
     protected bool enableNav = true;
 
-    protected bool canAttack = true;
+    public bool IsAttacking => attackComponent != null && attackComponent.IsAttacking;
+    public bool CanAttack => attackComponent != null && attackComponent.CanAttack;
 
-    protected bool isAttacking;
-    public bool IsAttacking => isAttacking;
+    //protected bool canAttack = true;
+    //public bool IsAttacking => isAttacking;
 
     private bool isActive;
-
     private float originalAgentSpeed;
     private float environmentalSpeedModifier = 1f;
+    private float statusSlowMultiplier = 1f;
 
     // Per-source speed modifiers, stacked multiplicatively (matches PlayerMovement contract)
     private readonly Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
@@ -39,20 +37,23 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     private Coroutine slowCourotine;
     private Coroutine freezeCoroutine;
 
-    public void Activate(Transform playerTransform)
-    {
-        player = playerTransform;
-        isActive = true;
-        rb.isKinematic = false;
-    }
+    public bool IsBurning { get; private set; }
+    public bool IsFrozen { get; private set; }
+    public bool IsSlowed { get; private set; }
+
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody>();
         movement = GetComponent<MovementComponent>();
 
+        if (attackComponent == null)
+        {
+            attackComponent = GetComponent<EnemyAttack>();
+        }
+
         if (movement == null)
         {
-            Debug.LogError($"{name} is missing a MovementComponent.");
+            Debug.LogError($"{name} is missing a MovementComponent.", this);
         }
 
         if (agent != null)
@@ -68,18 +69,14 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             {
                 Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
                 health = gameObject.AddComponent<Health>();
-
-                //// Add Healthbar if missing (required by Health)
-                //if (GetComponent<Healthbar>() == null)
-                //{
-                //    gameObject.AddComponent<Healthbar>();
-                //}
             }
         }
 
         if (player == null)
         {
-            GameObject playerObject = GameObject.Find("Player");
+            GameObject playerObject = GameObject.FindWithTag("Player");
+            if (playerObject == null) playerObject = GameObject.Find("Player");
+
             if (playerObject != null)
             {
                 player = playerObject.transform;
@@ -91,7 +88,13 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             }
         }
         enableNav = true;
+    }
 
+    public void Activate(Transform playerTransform)
+    {
+        player = playerTransform;
+        isActive = true;
+        if (rb != null) rb.isKinematic = false;
     }
 
     protected virtual void Update()
@@ -101,14 +104,50 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         UpdateActualSpeed();
     }
 
+    // Execute an Attack (Skeleton Frog Melee)
+    public virtual void TryExecuteAttack()
+    {
+        if (health != null && health.IsDead) return;
+        if (IsFrozen) return;
+
+        if (attackComponent != null)
+        {
+            attackComponent.TriggerAttack();
+        }
+    }
+
+    // Execute a Targeted Attack (Rock Golem)
+    public virtual void TryExecuteAttack(Vector3 targetPosition)
+    {
+        if (health != null && health.IsDead) return;
+        if (IsFrozen) return;
+
+        if (attackComponent != null)
+        {
+            attackComponent.TriggerAttack(targetPosition);
+        }
+    }
+
     #region Health
     void IDamageable.TakeDmg(float dmg)
     {
-        if (health != null)
-            health.TakeDmg(dmg);
+        TakeDamage(dmg);
     }
-    // Overload for status effects
+
     void IDamageable.TakeDmg(float dmg, string effectType, float effectDuration, float effectValue)
+    {
+        TakeDamage(dmg, effectType, effectDuration, effectValue);
+    }
+
+    public void TakeDamage(float dmg)
+    {
+        if (health != null)
+        {
+            health.TakeDmg(dmg);
+        }
+    }
+
+    public void TakeDamage(float dmg, string effectType, float effectDuration, float effectValue)
     {
         if (health != null)
             health.TakeDmg(dmg);
@@ -117,7 +156,14 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         {
             health.ApplyBurn(effectDuration, effectValue, dmg);
         }
-        // Add other effects here if needed
+    }
+
+    public void TakeDamagePercent(float percent)
+    {
+        if (health == null) return;
+
+        float damageAmount = (percent / 100f) * health.maxHealth;
+        health.TakeDmg(damageAmount);
     }
     #endregion
 
@@ -125,7 +171,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     //Do not use, use movement component instead//
     public virtual void MoveTo(Vector3 destination)
     {
-        if (!enableNav || movement == null) return;
+        if (!enableNav || movement == null || IsFrozen || (health != null && health.IsDead)) return;
 
         movement.MoveTo(destination);
     }
@@ -136,7 +182,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     }
     public virtual void ResumeMovement()
     {
-        if (!enableNav || movement == null) return;
+        if (!enableNav || movement == null || IsFrozen || (health != null && health.IsDead)) return;
         movement.SetMovementEnabled(true);
     }
     #endregion
@@ -145,23 +191,14 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     // STATUS EFFECTS FOR UPGRADES
     // ===============================
 
-    public bool IsBurning { get; private set; }
-    public bool IsFrozen { get; private set; }
-    public bool IsSlowed { get; private set; }
-
     // Apply a slow effect
-    public void ApplySlow(float duration)
+    public void ApplySlow(float duration, float slowMultiplier = 0.5f)
     {
-        /*
-        if (IsSlowed) return;
-        StartCoroutine(SlowRoutine(duration));
-        */
-
         if (slowCourotine != null) StopCoroutine(slowCourotine);
-        slowCourotine = StartCoroutine(SlowRoutine(duration));
+        slowCourotine = StartCoroutine(SlowRoutine(duration, slowMultiplier));
     }
 
-    private IEnumerator SlowRoutine(float duration)
+    private IEnumerator SlowRoutine(float duration, float slowMultiplier)
     {
         IsSlowed = true;
         UpdateActualSpeed();
@@ -169,6 +206,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(duration);
 
         IsSlowed = false;
+        statusSlowMultiplier = 1f;
         UpdateActualSpeed();
         slowCourotine = null;
     }
@@ -198,7 +236,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         IsFrozen = false;
         UpdateActualSpeed();
 
-        if (!isAttacking)
+        if (!IsAttacking && (health == null || !health.IsDead))
         {
             ResumeMovement();
         }
@@ -226,56 +264,17 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         freezeCoroutine = null;
 
         UpdateActualSpeed();
-        ResumeMovement();
-    }
 
-    public void TakeDamagePercent(float percent)
-    {
-        if (health == null) return;
-
-        // Exemple : percent = 50 → inflige 50% de la vie max
-        float damageAmount = (percent / 100f) * health.maxHealth;
-
-        health.TakeDmg(damageAmount);
-    }
-
-    public void TakeDamage(float dmg)
-    {
-        if (health != null)
-            health.TakeDmg(dmg);
-    }
-
-    public void TakeDamage(float dmg, string effectType, float effectDuration, float effectValue)
-    {
-        if (health != null)
-            health.TakeDmg(dmg, effectType, effectDuration, effectValue);
+        if (health == null || !health.IsDead)
+        {
+            ResumeMovement();
+        }
     }
 
     public void SetEnvironmentalSpeedModifier(float multiplier)
     {
         environmentalSpeedModifier = Mathf.Max(0f, multiplier);
         UpdateActualSpeed();
-    }
-
-    private void UpdateActualSpeed()
-    {
-        if (agent == null) return;
-
-        if (IsFrozen)
-        {
-            agent.speed = 0f;
-            return;
-        }
-
-        float currentSlowFactor = IsSlowed ? 0.5f : 1.0f;
-        float targetSpeed = originalAgentSpeed * currentSlowFactor * environmentalSpeedModifier;
-
-        if (!Mathf.Approximately(agent.speed, targetSpeed))
-        {
-            agent.speed = targetSpeed;
-        }
-
-        //Debug.Log($"[EnemyBase] {gameObject.name} envMod={environmentalSpeedModifier} orig={originalAgentSpeed} agent.speed={agent.speed} actualVel={agent.velocity.magnitude}");
     }
 
     // Argument is a MULTIPLIER (0.5 = half speed), stacked multiplicatively.
@@ -303,6 +302,27 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             finalMult *= mult;
 
         SetEnvironmentalSpeedModifier(finalMult);
+    }
+
+    private void UpdateActualSpeed()
+    {
+        if (agent == null) return;
+
+        if (IsFrozen)
+        {
+            agent.speed = 0f;
+            return;
+        }
+
+
+        float targetSpeed = originalAgentSpeed * statusSlowMultiplier * environmentalSpeedModifier;
+
+        if (!Mathf.Approximately(agent.speed, targetSpeed))
+        {
+            agent.speed = targetSpeed;
+        }
+
+        //Debug.Log($"[EnemyBase] {gameObject.name} envMod={environmentalSpeedModifier} orig={originalAgentSpeed} agent.speed={agent.speed} actualVel={agent.velocity.magnitude}");
     }
 
     public void ReleaseSlot()
