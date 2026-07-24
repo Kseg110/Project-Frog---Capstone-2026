@@ -261,15 +261,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RockGolemAttack
   attackCoolDown: 5
-  previewPrefab: {fileID: 9090229426103979086, guid: eab4b670b6215fc4c881c46324463cde, type: 3}
-  attackCylinderPrefab: {fileID: 5833809153833045461, guid: d3147fe45c46e7149ae8be3b6377a9d6, type: 3}
-  windupTime: 2
-  riseHeight: 3
-  riseSpeed: 6
-  lingeringDuration: 1
+  burrowDepth: 2.5
+  travelSpeed: 8
+  maxTravelDuration: 5
+  emergeSpeed: 12
+  postEmergePause: 0.5
+  golemColliders:
+  - {fileID: 6193369510899100733}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
 --- !u!1001 &1836448197354565205
 PrefabInstance:
   m_ObjectHideFlags: 0

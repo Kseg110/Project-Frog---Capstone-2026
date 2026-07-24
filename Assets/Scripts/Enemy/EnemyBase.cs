@@ -23,9 +23,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public bool IsAttacking => attackComponent != null && attackComponent.IsAttacking;
     public bool CanAttack => attackComponent != null && attackComponent.CanAttack;
 
-    //protected bool canAttack = true;
-    //public bool IsAttacking => isAttacking;
-
     private bool isActive;
     private float originalAgentSpeed;
     private float environmentalSpeedModifier = 1f;
@@ -185,6 +182,28 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (!enableNav || movement == null || IsFrozen || (health != null && health.IsDead)) return;
         movement.SetMovementEnabled(true);
     }
+
+    public virtual void DisableNavigation()
+    {
+        enableNav = false;
+
+        if (agent != null && agent.enabled)
+        {
+            agent.isStopped = true;
+            agent.enabled = false;
+        }
+    }
+
+    public virtual void EnableNavigation()
+    {
+        enableNav = true;
+
+        if (agent != null && !agent.enabled)
+        {
+            agent.enabled = true;
+        }
+    }
+
     #endregion
 
     // ===============================
