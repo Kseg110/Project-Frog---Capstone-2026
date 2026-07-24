@@ -233,6 +233,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -249,6 +269,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1096390846}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -264,6 +292,82 @@ PrefabInstance:
     - target: {fileID: 8126551912703574294, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Name
       value: Poison Plant (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
@@ -2007,6 +2111,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -2023,6 +2147,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 2114888032}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -2038,6 +2170,82 @@ PrefabInstance:
     - target: {fileID: 8126551912703574294, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Name
       value: Poison Plant (14)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
@@ -2295,6 +2503,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -2311,6 +2539,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 408783050}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -2326,6 +2562,82 @@ PrefabInstance:
     - target: {fileID: 8126551912703574294, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Name
       value: Poison Plant (22)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
@@ -2683,6 +2995,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -2699,6 +3031,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 937431958}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -2714,6 +3054,82 @@ PrefabInstance:
     - target: {fileID: 8126551912703574294, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Name
       value: Poison Plant (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
@@ -3040,6 +3456,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ea7d077d1619d0643a7128471533346a, type: 3}
+--- !u!114 &408783050 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 305628936}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1 &437830340
 GameObject:
   m_ObjectHideFlags: 0
@@ -3341,6 +3768,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -3357,6 +3804,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 474919404}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -3373,6 +3828,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -3387,6 +3918,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 474919402}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &474919404 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 474919402}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1001 &488234856
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3439,6 +3981,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -3455,6 +4017,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1087918237}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -3470,6 +4040,82 @@ PrefabInstance:
     - target: {fileID: 8126551912703574294, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Name
       value: Poison Plant (17)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
@@ -4249,6 +4895,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -4265,6 +4931,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1267264467}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -4280,6 +4954,82 @@ PrefabInstance:
     - target: {fileID: 8126551912703574294, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Name
       value: Poison Plant (21)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
@@ -4994,6 +5744,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -5010,6 +5780,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 796846925}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -5026,6 +5804,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -5040,6 +5894,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 796846923}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &796846925 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 796846923}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1 &800115053
 GameObject:
   m_ObjectHideFlags: 0
@@ -5627,6 +6492,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3229501152249821700, guid: ea7d077d1619d0643a7128471533346a, type: 3}
   m_PrefabInstance: {fileID: 915267684}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &937431958 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 342031242}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1001 &949726152
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5855,6 +6731,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -5871,6 +6767,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 972845734}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -5887,6 +6791,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -5901,6 +6881,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 972845732}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &972845734 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 972845732}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1 &973501876
 GameObject:
   m_ObjectHideFlags: 0
@@ -6396,6 +7387,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -6412,6 +7423,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1746640170}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -6427,6 +7446,82 @@ PrefabInstance:
     - target: {fileID: 8126551912703574294, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Name
       value: Poison Plant (16)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
@@ -6963,6 +8058,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -6979,6 +8094,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1527006627}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -6995,6 +8118,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -7009,6 +8208,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 1077891775}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1087918237 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 488234856}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1001 &1095873829
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7071,6 +8281,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5038428049936320934, guid: 59eda26e254ff314fbf2b54325803bea, type: 3}
   m_PrefabInstance: {fileID: 1095873829}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1096390846 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 12148234}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1 &1099598843
 GameObject:
   m_ObjectHideFlags: 0
@@ -7331,6 +8552,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -7347,6 +8588,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1104476793}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -7363,6 +8612,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (19)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -7377,6 +8702,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 1104476791}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1104476793 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 1104476791}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1 &1110360834
 GameObject:
   m_ObjectHideFlags: 0
@@ -7558,6 +8894,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -7574,6 +8930,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1130477431}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -7590,6 +8954,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (13)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -7604,6 +9044,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 1130477429}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1130477431 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 1130477429}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1001 &1132613614
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7612,6 +9063,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 262998875}
     m_Modifications:
+    - target: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: radius
+      value: 6.9
+      objectReference: {fileID: 0}
     - target: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_LocalPosition.x
       value: 259.7
@@ -7656,6 +9111,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -7672,6 +9147,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1987533292}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -7687,6 +9170,82 @@ PrefabInstance:
     - target: {fileID: 8126551912703574294, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Name
       value: Poison Plant (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 13.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 276
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 26.84825
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
@@ -8176,6 +9735,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1227571290}
   m_CullTransparentMesh: 1
+--- !u!114 &1267264467 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 592785208}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1 &1267413836
 GameObject:
   m_ObjectHideFlags: 0
@@ -8639,6 +10209,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -8655,6 +10245,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1285453283}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -8671,6 +10269,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -8685,6 +10359,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 1285453281}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1285453283 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 1285453281}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1 &1286227935
 GameObject:
   m_ObjectHideFlags: 0
@@ -9200,6 +10885,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -9216,6 +10921,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1313981170}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -9232,6 +10945,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -9246,6 +11035,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 1313981168}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1313981170 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 1313981168}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1001 &1325021297
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9907,6 +11707,17 @@ Transform:
   - {fileID: 2092111059}
   m_Father: {fileID: 406447698}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1527006627 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 1077891775}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!4 &1551887382 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3229501152249821700, guid: ea7d077d1619d0643a7128471533346a, type: 3}
@@ -9964,6 +11775,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -9980,6 +11811,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1572071083}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -9996,6 +11835,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (15)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -10010,6 +11925,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 1572071081}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1572071083 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 1572071081}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1001 &1579875733
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10184,6 +12110,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -10200,6 +12146,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1592949646}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -10216,6 +12170,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (18)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -10230,11 +12260,33 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 1592949644}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1592949646 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 1592949644}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!4 &1600301778 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 5627250234141541729}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1600301779 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 5627250234141541729}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!4 &1609673692 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3229501152249821700, guid: ea7d077d1619d0643a7128471533346a, type: 3}
@@ -10609,6 +12661,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3229501152249821700, guid: ea7d077d1619d0643a7128471533346a, type: 3}
   m_PrefabInstance: {fileID: 599589098}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1746640170 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 995271926}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1001 &1760290943
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10807,6 +12870,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -10823,6 +12906,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1840959229}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -10839,6 +12930,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (12)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -10853,6 +13020,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 1840959227}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1840959229 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 1840959227}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1001 &1918246243
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10905,6 +13083,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -10921,6 +13119,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1918246245}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -10937,6 +13143,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (20)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -10951,6 +13233,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 1918246243}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1918246245 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 1918246243}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1 &1919614629
 GameObject:
   m_ObjectHideFlags: 0
@@ -11391,6 +13684,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1981874349}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1987533292 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 1132613614}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1001 &1999953093
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11574,6 +13878,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -11590,6 +13914,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 2011734259}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -11606,6 +13938,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -11620,6 +14028,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 2011734257}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2011734259 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 2011734257}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1 &2012248366
 GameObject:
   m_ObjectHideFlags: 0
@@ -12326,6 +14745,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 57.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -12342,6 +14781,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 2089553125}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -12358,6 +14805,82 @@ PrefabInstance:
       propertyPath: m_Name
       value: Poison Plant (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 19.455254
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -12372,6 +14895,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
   m_PrefabInstance: {fileID: 2089553123}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2089553125 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 2089553123}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1 &2092111055
 GameObject:
   m_ObjectHideFlags: 0
@@ -12638,6 +15172,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &2114888032 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+  m_PrefabInstance: {fileID: 273729672}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
 --- !u!1 &2137407483
 GameObject:
   m_ObjectHideFlags: 0
@@ -12736,6 +15281,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 262998875}
     m_Modifications:
+    - target: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: radius
+      value: 5.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: particlesAlwaysActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 10106321672563621, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: enableParticlesWhenActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 825260220791743310, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_LocalPosition.x
       value: 143.38
@@ -12780,6 +15337,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.438
       objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 72780
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 3639
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 90.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731146283345960978, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 2294923864904323455, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -12796,9 +15373,37 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 3573110526790340507, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 3613403499393904032, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: radiusMultiplier
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: poisonTrap
+      value: 
+      objectReference: {fileID: 1600301779}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: particleSize
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7433295699141468553, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: particleLifetime
+      value: 90.4
+      objectReference: {fileID: 0}
     - target: {fileID: 7563698726490380962, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
       value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 7620578317598588740, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7620578317598588740, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.01
       objectReference: {fileID: 0}
     - target: {fileID: 7935048367068525711, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer
@@ -12811,6 +15416,82 @@ PrefabInstance:
     - target: {fileID: 8126551912703574294, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Name
       value: Poison Plant
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.frequency
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 11.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 236
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: NoiseModule.scrollSpeed.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 22.9572
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 10.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.8627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startSize.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8953247311254749872, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
+      propertyPath: InitialModule.startLifetime.minMaxState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9086191409370435449, guid: 14b6e9f623bac2549b98d03fb3859167, type: 3}
       propertyPath: m_Layer

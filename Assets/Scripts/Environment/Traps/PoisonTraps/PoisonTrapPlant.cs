@@ -41,6 +41,9 @@ public class PoisonTrapPlant : MonoBehaviour
     [Tooltip("If true the particle system is enabled while trap is active.")]
     public bool enableParticlesWhenActive = true;
 
+    [Tooltip("If true, particles stay on all the time and ignore enableParticlesWhenActive.")]
+    public bool particlesAlwaysActive = false;
+
     [Header("Destruction")]
     [Tooltip("If true the trap will be destroyed when a valid target collides/enters the trap.")]
     public bool destroyOnCollision = false;
@@ -67,11 +70,28 @@ public class PoisonTrapPlant : MonoBehaviour
 
     void Update()
     {
+        // Force particle state every frame.
+        if (particleSystems != null && particleSystems.Length > 0)
+        {
+            if (particlesAlwaysActive)
+            {
+                // Ignore enableParticlesWhenActive completely.
+                SetParticlesActive(true);
+            }
+            else
+            {
+                // Follow the normal setting.
+                SetParticlesActive(enableParticlesWhenActive);
+            }
+        }
+
         // Apply periodic damage to tracked occupants.
-        if (occupantsNextTick.Count == 0) return;
+        if (occupantsNextTick.Count == 0)
+            return;
 
         float now = Time.time;
         var keys = new List<GameObject>(occupantsNextTick.Keys);
+
         foreach (var go in keys)
         {
             if (go == null)
@@ -87,7 +107,6 @@ public class PoisonTrapPlant : MonoBehaviour
             }
         }
     }
-
     void OnDestroy()
     {
         occupantsNextTick.Clear();
@@ -101,7 +120,7 @@ public class PoisonTrapPlant : MonoBehaviour
             triggerCollider = gameObject.AddComponent<SphereCollider>();
 
         triggerCollider.isTrigger = true;
-        triggerCollider.radius = Mathf.Max(0.01f, radius);
+        triggerCollider.radius = Mathf.Max(0.01f, radius * 0.5f);   
         // If object uses scaling, we keep the collider radius as-is; inspector radius is the local radius used.
     }
 

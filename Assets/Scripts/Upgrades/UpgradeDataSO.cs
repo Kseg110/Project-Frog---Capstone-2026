@@ -4,7 +4,8 @@ public enum AnchorElement
 {
     Fire,
     Ice,
-    Wind
+    Wind,
+    Broken
 }
 
 public enum CardRarity
