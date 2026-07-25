@@ -46,7 +46,9 @@ public class PlayerCrosshair : MonoBehaviour
     private Camera cam;
 
     private bool usingController = false;
+    private Vector2 initialControllerDirection = Vector2.up;
     private Vector2 controllerLookInput;
+    private Vector2 lastControllerDirection;
     private Vector3 worldTargetPosition;
     private bool hasValidWorldTarget = false;
 
@@ -63,6 +65,8 @@ public class PlayerCrosshair : MonoBehaviour
         
         if (p != null)
             player = p.transform;
+
+        lastControllerDirection = initialControllerDirection.normalized;
 
         SetupCanvasAndCrosshair();
     }
@@ -87,6 +91,10 @@ public class PlayerCrosshair : MonoBehaviour
     public void UpdateControllerLook(Vector2 lookInput)
     {
         controllerLookInput = lookInput;
+        if (lookInput.sqrMagnitude > 0.01f)
+        {
+            lastControllerDirection = lookInput.normalized;   
+        }
     }
 
     public Vector3 GetLookDirection()
@@ -127,29 +135,7 @@ public class PlayerCrosshair : MonoBehaviour
                 return;
 
             Vector3 playerScreenPos = cam.WorldToScreenPoint(player.position);
-
-            Vector2 stickDir;
-
-            if (controllerLookInput.sqrMagnitude > 0.01f)
-            {
-                stickDir = controllerLookInput.normalized;
-            }
-            else
-            {
-                // keep last direction when stick released
-                stickDir = (Vector2)(crosshairRect.position - playerScreenPos);
-
-                if (stickDir.sqrMagnitude > 0.01f)
-                {
-                    stickDir.Normalize();
-                }
-                else
-                {
-                    // default start direction
-                    stickDir = Vector2.up;
-                }
-            }
-
+            Vector2 stickDir = lastControllerDirection;
             Vector2 offset = stickDir * controllerRadius;
             inputScreenPos = playerScreenPos + (Vector3)offset;
         }

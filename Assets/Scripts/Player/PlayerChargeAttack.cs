@@ -16,6 +16,9 @@ public class PlayerChargeAttack : MonoBehaviour
     [SerializeField] private float MinDamage = 12.5f; // half damage on quick release
     [SerializeField] private float MaxDamage = 25f; // full damage on max charge held-release
 
+    [Header("Charge Upgrade Settings")]
+    [SerializeField] private float WindHomingDelay = 3f; // Delay before homing activates
+
     private AnchorBase CurrentAnchor;
     private float ChargeTimer;
     private bool isCharging;
@@ -165,7 +168,7 @@ public class PlayerChargeAttack : MonoBehaviour
                             proj.isPlayerProjectile = true;
 
                             if (HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
-                                proj.EnableHoming();
+                                proj.EnableHomingDelayed(WindHomingDelay);
                         }
 
                         IgnorePlayerCollision(projObj);

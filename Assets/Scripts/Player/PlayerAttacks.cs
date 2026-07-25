@@ -1,5 +1,6 @@
 ﻿using FMODUnity;
 using UnityEngine;
+using System.Collections;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerMovement))]
@@ -14,6 +15,8 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] public float attacksPerSecond = 2f;
     [SerializeField] private float attackWindowDuration = 0.5f;
     [SerializeField] private float maxChargeTime = 2f;
+    [SerializeField] private float tongueAutoAimRange = 10f;
+    [SerializeField] private float basicShotSlowMultiplier = 0.5f;
 
     [Header("Aiming Correction")]
     [SerializeField] private float aimCorrectionStrength = 1.0f;
@@ -52,6 +55,7 @@ public class PlayerAttacks : MonoBehaviour
     private float prevSecondaryValue;
     private const float triggerThreshold = 0.5f;
 
+    private bool isBasicShotSlowed = false;
     public bool IsAttacking => isCharging || playerTongueAttack.IsActive || attackWindowTimer > 0f;
 
     private void Awake()
@@ -102,6 +106,10 @@ public class PlayerAttacks : MonoBehaviour
 
     private void Update()
     {
+        // return early to prevent projectile firing in UI
+        if (Time.timeScale == 0f)
+            return;
+
         if (playerInput != null &&
             playerInput.currentActionMap != null &&
             playerInput.currentActionMap.name != currentActionMapName)
@@ -112,39 +120,48 @@ public class PlayerAttacks : MonoBehaviour
         bool attackHeld = ReadButton(attackAction, ref prevAttackValue, out bool attackPressed);
         bool secondaryHeld = ReadButton(secondaryAttackAction, ref prevSecondaryValue, out bool secondaryPressed, out bool secondaryReleased);
 
-        // PRIMARY ATTACK
-        if (attackHeld)
+        // PRIMARY ATTACK - Block if dashing
+        if (attackHeld && !playerMovement.IsDashing)
             TryBasicShot();
-            
 
-        // SECONDARY ATTACK
-        if (playerAnchor.IsTethered)
+        // Remove slow when player stops shooting
+        if (!attackHeld && isBasicShotSlowed)
         {
-            if (secondaryPressed && !playerChargeAttack.IsCharging)
-            {
-                playerMovement.StopMovement(GetAimDirection());
-                playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
-            }
-
-            if (secondaryHeld)
-                playerChargeAttack.UpdateCharge();
-
-            if (secondaryReleased)
-            {
-                playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
-
-                RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
-
-                playerMovement.ResumeMovement();
-            }
+            isBasicShotSlowed = false;
+            playerMovement.RemoveSpeedModifier(this);
         }
-        else
-        {
-            if (secondaryPressed)
-                TryTongue();
 
-            if (secondaryReleased)
-                playerTongueAttack.BeginTongueRetract();
+        // SECONDARY ATTACK - Block if dashing
+        if (!playerMovement.IsDashing)
+        {
+            if (playerAnchor.IsTethered)
+            {
+                if (secondaryPressed && !playerChargeAttack.IsCharging)
+                {
+                    playerMovement.StopMovement(GetAimDirection());
+                    playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
+                }
+
+                if (secondaryHeld)
+                    playerChargeAttack.UpdateCharge();
+
+                if (secondaryReleased)
+                {
+                    playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+
+                    RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
+
+                    playerMovement.ResumeMovement();
+                }
+            }
+            else
+            {
+                if (secondaryPressed)
+                    TryTongue();
+
+                if (secondaryReleased)
+                    playerTongueAttack.BeginTongueRetract();
+            }
         }
 
         if (isCharging)
@@ -168,11 +185,22 @@ public class PlayerAttacks : MonoBehaviour
 
         Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
-        playerMovement.StopMovement(aimDirection);
+
+        ApplyBasicShotSlow();
+
         Shoot(0f, aimDirection);
         lastFireTime = Time.time;
 
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+    }
+
+    private void ApplyBasicShotSlow()
+    {
+        if (!isBasicShotSlowed)
+        {
+            isBasicShotSlowed = true;
+            playerMovement.AddSpeedModifier(this, basicShotSlowMultiplier);
+        }
     }
 
     private void Shoot(float chargePercent, Vector3? direction = null)
@@ -248,8 +276,52 @@ public class PlayerAttacks : MonoBehaviour
     private void TryTongue()
     {
         if (isCharging) return;
-        playerMovement.StopMovement(GetAimDirection());
+
+        Vector3 aimDirection = GetTongueAimDirection();
+        playerMovement.StopMovement(aimDirection);
+        transform.rotation = Quaternion.LookRotation(aimDirection);
         playerTongueAttack.BeginTongueExtend();
+    }
+
+    private Vector3 GetTongueAimDirection()
+    {
+        GameObject[] flies = GameObject.FindGameObjectsWithTag("Fly");
+
+        Transform closestFly = null;
+        float closestDistSqr = float.MaxValue;
+
+        foreach (var flyObj in flies)
+        {
+            Vector3 toFly = flyObj.transform.position - transform.position;
+
+            // ignore height difference
+            toFly.y = 0f;
+
+            float distSqr = toFly.sqrMagnitude;
+
+            // must be inside auto-aim range
+            if (distSqr > tongueAutoAimRange * tongueAutoAimRange)
+                continue;
+
+            if (distSqr < closestDistSqr)
+            {
+                closestDistSqr = distSqr;
+                closestFly = flyObj.transform;
+            }
+        }
+
+        // If a fly is found → aim at it
+        if (closestFly != null)
+        {
+            Vector3 dir = closestFly.position - transform.position;
+            dir.y = 0f;
+
+            if (dir.sqrMagnitude > 0.001f)
+                return dir.normalized;
+        }
+
+        // fallback
+        return GetAimDirection();
     }
 
     // ============================================================
@@ -302,30 +374,35 @@ public class PlayerAttacks : MonoBehaviour
             if (direction.sqrMagnitude > 0.001f)
                 return direction.normalized;
         }
+
         Vector2 aimValue = aimAction != null ? aimAction.ReadValue<Vector2>() : Vector2.zero;
-        var lastControl = aimAction != null ? aimAction.activeControl : null;
-
-        bool gamepadActive =
-            lastControl != null &&
-            lastControl.device is Gamepad &&
-            aimValue.sqrMagnitude > 0.01f;
-
-        if (gamepadActive)
-            return new Vector3(aimValue.x, 0f, aimValue.y).normalized;
-
-        if (Mouse.current == null)
-            return transform.forward;
-
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        Ray ray = mainCamera.ScreenPointToRay(mousePos);
-        Plane plane = new Plane(Vector3.up, transform.position);
-
-        if (plane.Raycast(ray, out float dist))
+        
+        if (InputManager.Instance != null && InputManager.Instance.IsUsingGamepad())
         {
-            Vector3 dir = ray.GetPoint(dist) - transform.position;
-            dir.y = 0f;
-            if (dir.sqrMagnitude > 0.001f)
-                return dir.normalized;
+            if (aimValue.sqrMagnitude > 0.01f)
+            {
+                if (playerCrosshair != null)
+                    playerCrosshair.UpdateControllerLook(aimValue);
+                return new Vector3(aimValue.x, 0f, aimValue.y).normalized;
+            }
+        }
+
+        else
+        {
+            if (Mouse.current == null)
+                return transform.forward;
+
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            Ray ray = mainCamera.ScreenPointToRay(mousePos);
+            Plane plane = new Plane(Vector3.up, transform.position);
+
+            if (plane.Raycast(ray, out float dist))
+            {
+                Vector3 dir = ray.GetPoint(dist) - transform.position;
+                dir.y = 0f;
+                if (dir.sqrMagnitude > 0.001f)
+                    return dir.normalized;
+            }
         }
 
         return transform.forward;

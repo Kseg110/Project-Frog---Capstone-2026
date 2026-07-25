@@ -1,30 +1,40 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraPanEffect : CameraEffectBase
 {
+
     [Header("Pan Settings")]
     [SerializeField] private float panTime = 1.0f;
-    [SerializeField] private float holdTime = 0.5f;
     [SerializeField] private bool usePlayerOffset = true;
-
+    [SerializeField] private DoorSystem doorSystem;
     [Header("Player Control")]
     [SerializeField] private bool pausePlayerDuringPan = true;
 
     private enum State { Idle, PanningToPOI, Holding, Returning }
     private State state = State.Idle;
 
-    private Transform pointOfInterest;
+
+    private int currentPanIndex = 0;
+    private float currentHoldTime = 0f;
+    private Vector3 startPosition;
+    private Quaternion startRotation;
+    private bool allowSkipWithDash = true;
+
+    private List<CameraPanRoundTrigger.PanPoint> panPoints = new List<CameraPanRoundTrigger.PanPoint>();
     private float timer;
+    private float holdTimer;
     private Vector3 originalPosition;
     private Quaternion originalRotation;
     private Vector3 targetPosition;
     private Quaternion targetRotation;
     private Vector3 offsetFromPlayer;
     private Transform playerTransform;
-
+    private int doorIndexToReady = -1;
     private CameraController controller;
     private PlayerMovement playerMovement;
     private bool playerPaused;
+    private bool doorReadyTriggered = false;
 
     private void Awake()
     {
@@ -32,6 +42,8 @@ public class CameraPanEffect : CameraEffectBase
         // cache player transform
         playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
         playerMovement = playerTransform != null ? playerTransform.GetComponent<PlayerMovement>() : null;
+        if (doorSystem == null)
+            doorSystem = FindAnyObjectByType<DoorSystem>();
     }
 
     private void OnEnable()
@@ -49,85 +61,190 @@ public class CameraPanEffect : CameraEffectBase
             ResumePlayer();
     }
 
+    private void Update()
+    {
+        if (allowSkipWithDash && IsPanning && Input.GetButtonDown("Dash"))
+        {
+            SkipPan();
+        }
+    }
+
     public override Vector3 ApplyEffect(float deltaTime)
     {
-        if (state == State.Idle || pointOfInterest == null)
+        if (state == State.Idle || panPoints.Count == 0)
             return Vector3.zero;
-
-        timer += deltaTime;
 
         Vector3 desiredPosition = originalPosition;
         Quaternion desiredRotation = originalRotation;
 
+
         if (state == State.PanningToPOI)
         {
-            float t = Mathf.Clamp01(timer / Mathf.Max(0.0001f, panTime));
-            t = EaseInOutQuad(t);
+            timer += deltaTime;
 
-            desiredPosition = Vector3.Lerp(originalPosition, targetPosition, t);
-            desiredRotation = Quaternion.Slerp(originalRotation, targetRotation, t);
+            float t = Mathf.Clamp01(timer / panTime);
 
-            if (t >= 1f)
+            desiredPosition = Vector3.Lerp(
+                startPosition,
+                targetPosition,
+                t
+            );
+
+            desiredRotation = Quaternion.Slerp(
+                startRotation,
+                targetRotation,
+                t
+            );
+
+
+            // reached point of interest
+            if (timer >= panTime)
             {
-                state = holdTime > 0f ? State.Holding : State.Returning;
                 timer = 0f;
+                holdTimer = 0f;
+
+                // snap exactly to point
+                desiredPosition = targetPosition;
+                desiredRotation = targetRotation;
+
+                // Mark door ready when reaching last point (before holding)
+                if (currentPanIndex == panPoints.Count - 1 && !doorReadyTriggered)
+                {
+                    MarkDoorReady();
+                    doorReadyTriggered = true;
+                }
+
+                // ONLY stop if this point has hold time
+                if (currentHoldTime > 0f)
+                {
+                    state = State.Holding;
+                }
+                else
+                {
+                    // No hold = immediately continue
+                    if (currentPanIndex < panPoints.Count - 1)
+                    {
+                        currentPanIndex++;
+
+                        startPosition = targetPosition;
+                        startRotation = targetRotation;
+
+                        SetNextPanPoint();
+
+                        state = State.PanningToPOI;
+                    }
+                    else
+                    {
+                        // Last point, start return
+                        startPosition = targetPosition;
+                        startRotation = targetRotation;
+
+                        state = State.Returning;
+                    }
+                }
             }
         }
+
+
         else if (state == State.Holding)
         {
             desiredPosition = targetPosition;
             desiredRotation = targetRotation;
 
-            if (timer >= holdTime)
+            holdTimer += deltaTime;
+
+            if (currentHoldTime <= 0f || holdTimer >= currentHoldTime)
             {
-                state = State.Returning;
+                holdTimer = 0f;
                 timer = 0f;
+
+                if (currentPanIndex == panPoints.Count - 1)
+                {
+                    startPosition = targetPosition;
+                    startRotation = targetRotation;
+
+                    state = State.Returning;
+                }
+                else
+                {
+                    currentPanIndex++;
+
+                    startPosition = targetPosition;
+                    startRotation = targetRotation;
+
+                    SetNextPanPoint();
+
+                    state = State.PanningToPOI;
+                }
             }
         }
+
         else if (state == State.Returning)
         {
-            float t = Mathf.Clamp01(timer / Mathf.Max(0.0001f, panTime));
+            timer += deltaTime;
+
+            float t = Mathf.Clamp01(timer / panTime);
             t = EaseInOutQuad(t);
 
-            desiredPosition = Vector3.Lerp(targetPosition, originalPosition, t);
-            desiredRotation = Quaternion.Slerp(targetRotation, originalRotation, t);
+            desiredPosition = Vector3.Lerp(
+                startPosition,
+                originalPosition,
+                t
+            );
 
-            if (t >= 1f)
+            desiredRotation = Quaternion.Slerp(
+                startRotation,
+                originalRotation,
+                t
+            );
+
+            if (timer >= panTime)
             {
-                state = State.Idle;
                 timer = 0f;
-                pointOfInterest = null;
+                state = State.Idle;
             }
         }
+
 
         transform.rotation = desiredRotation;
 
-        Vector3 effectOffset = (controller != null)
+
+        Vector3 effectOffset = controller != null
             ? desiredPosition - controller.GetBasePosition()
             : desiredPosition - transform.position;
+
 
         if (state == State.Idle && playerPaused)
             ResumePlayer();
 
+
         return effectOffset;
     }
 
-    public void TriggerPan(Transform poi, float time)
+    public void TriggerPan(
+        List<CameraPanRoundTrigger.PanPoint> points,
+        float time,
+        int doorIndex)
     {
-        if (poi == null || time <= 0f)
+        if (points == null || points.Count == 0)
         {
-            Debug.LogWarning("CameraPanEffect.TriggerPan: invalid parameters.");
+            Debug.LogWarning("CameraPanEffect: No pan points.");
             return;
         }
 
-        pointOfInterest = poi;
+        panPoints = points;
+        currentPanIndex = 0;
+        doorIndexToReady = doorIndex;
+        doorReadyTriggered = false; // Reset flag
         panTime = time;
 
-        // ensure player references are available
+
         if (playerTransform == null)
         {
             playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
-            playerMovement = playerTransform != null ? playerTransform.GetComponent<PlayerMovement>() : null;
+            playerMovement = playerTransform != null
+                ? playerTransform.GetComponent<PlayerMovement>()
+                : null;
         }
 
         if (controller == null)
@@ -136,18 +253,10 @@ public class CameraPanEffect : CameraEffectBase
         originalPosition = transform.position;
         originalRotation = transform.rotation;
 
-        if (usePlayerOffset && playerTransform != null)
-        {
-            offsetFromPlayer = originalPosition - playerTransform.position;
-            targetPosition = pointOfInterest.position + offsetFromPlayer;
-        }
-        else
-        {
-            targetPosition = pointOfInterest.position + (originalPosition - (playerTransform != null ? playerTransform.position : Vector3.zero));
-        }
+        startPosition = originalPosition;
+        startRotation = originalRotation;
 
-        Vector3 lookDir = pointOfInterest.position - targetPosition;
-        targetRotation = (lookDir.sqrMagnitude <= 0.0001f) ? originalRotation : Quaternion.LookRotation(lookDir.normalized, Vector3.up);
+        SetNextPanPoint();
 
         if (pausePlayerDuringPan && !playerPaused && playerMovement != null)
         {
@@ -155,8 +264,93 @@ public class CameraPanEffect : CameraEffectBase
             playerPaused = true;
         }
 
+
         timer = 0f;
+        holdTimer = 0f;
+
         state = State.PanningToPOI;
+    }
+
+    // Skips camera pan on dash input and returns to original position.
+    // Also marks the door as ready.
+    public void SkipPan()
+    {
+        if (state == State.Idle)
+            return;
+
+        // Mark door as ready if not triggered yet
+        if (!doorReadyTriggered)
+        {
+            MarkDoorReady();
+            doorReadyTriggered = true;
+        }
+
+        // snaps to original position and rotation
+        transform.position = originalPosition;
+        transform.rotation = originalRotation;
+
+        // Reset state
+        state = State.Idle;
+        timer = 0f;
+        holdTimer = 0f;
+        panPoints.Clear();
+
+        // Resume player movement
+        if (playerPaused)
+            ResumePlayer();
+
+        Debug.Log("Camera Pan Skipped");
+    }
+
+    private void SetNextPanPoint()
+    {
+        if (currentPanIndex < 0 || currentPanIndex >= panPoints.Count)
+            return;
+
+
+        CameraPanRoundTrigger.PanPoint point = panPoints[currentPanIndex];
+
+
+        // Each point has its own hold time
+        currentHoldTime = point.holdTime;
+
+
+        Vector3 current = point.pointOfInterest.position;
+
+        if (currentPanIndex < panPoints.Count - 1)
+        {
+            Vector3 next = panPoints[currentPanIndex + 1].pointOfInterest.position;
+
+            // Pull the target toward the next point for smoother turns.
+            current = Vector3.Lerp(current, next, 0.15f);
+        }
+
+        if (usePlayerOffset && playerTransform != null)
+        {
+            offsetFromPlayer = originalPosition - playerTransform.position;
+            targetPosition = current + offsetFromPlayer;
+        }
+        else
+        {
+            targetPosition = current;
+        }
+
+
+        Vector3 lookDir = point.pointOfInterest.position - targetPosition;
+
+        targetRotation = lookDir.sqrMagnitude <= 0.0001f
+            ? originalRotation
+            : Quaternion.LookRotation(lookDir.normalized, Vector3.up);
+    }
+
+    private void MarkDoorReady()
+    {
+        if (doorSystem != null && doorIndexToReady >= 0)
+        {
+            doorSystem.SetDoorReady(doorIndexToReady);
+            Debug.Log($"CameraPanEffect: Door index {doorIndexToReady} marked as ready.");
+            doorIndexToReady = -1;
+        }
     }
 
     private void ResumePlayer()
