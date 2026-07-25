@@ -1,12 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// PoisionTrap: Deals damage-over-time to Player, Enemy, or Both inside a radius.
-/// - Automatically ensures a trigger SphereCollider is present and sized to `radius`.
-/// - Tracks occupants and applies damage every `tickInterval` seconds.
-/// - Can toggle a child ParticleSystem on/off (assign `particleRoot` or it will find the first child ParticleSystem).
-/// </summary>
 public class PoisonTrapPlant : MonoBehaviour
 {
     public enum TargetMode
@@ -16,209 +10,429 @@ public class PoisonTrapPlant : MonoBehaviour
         Both
     }
 
-    [Header("DOT Settings")]
-    [Tooltip("Damage applied per tick.")]
-    public float damagePerTick = 5f;
 
-    [Tooltip("Seconds between damage ticks.")]
+    [Header("Projectile Activation")]
+    [SerializeField] private Collider targetCollider;
+    [SerializeField] private LayerMask projectileLayers;
+    [SerializeField] private float projectileActivationDistance = 5f;
+
+
+
+    [Header("Activation")]
+    [SerializeField] private float activeDuration = 60f;
+    [SerializeField] private bool active;
+
+    private bool trapActive;
+    private float activeTimer;
+
+
+
+    [Header("Cooldown")]
+    [SerializeField] private float cooldownDuration = 180f;
+
+    private bool coolingDown;
+    private float cooldownTimer;
+
+
+
+    [Header("DOT Settings")]
+    public float damagePerTick = 5f;
     public float tickInterval = 1f;
 
-    [Header("Area")]
-    [Tooltip("Radius of effect (meters). A SphereCollider trigger will be created/adjusted to this size.")]
-    public float radius = 3f;
 
-    [Tooltip("Optional layer mask to restrict which colliders are considered (helps performance). Leave all layers to affect everything.")]
+
+    [Header("Poison Area")]
+    public float radius = 3f;
     public LayerMask affectLayer = ~0;
 
+
+
     [Header("Targets")]
-    [Tooltip("Choose whether trap affects Player, Enemy or Both.")]
     public TargetMode targetMode = TargetMode.Player;
 
+
+
     [Header("Particles")]
-    [Tooltip("Optional transform containing the ParticleSystem(s) to toggle when trap is active.")]
     public Transform particleRoot;
 
-    [Tooltip("If true the particle system is enabled while trap is active.")]
     public bool enableParticlesWhenActive = true;
+    public bool particlesAlwaysActive = false;
 
-    [Header("Destruction")]
-    [Tooltip("If true the trap will be destroyed when a valid target collides/enters the trap.")]
-    public bool destroyOnCollision = false;
 
-    [Tooltip("Delay in seconds before destroying the trap when triggered by collision/enter.")]
-    public float destroyDelay = 0f;
 
-    // Internal: track occupants and next time they should take damage
-    readonly Dictionary<GameObject, float> occupantsNextTick = new Dictionary<GameObject, float>();
+    private readonly Dictionary<GameObject, float> occupantsNextTick =
+        new Dictionary<GameObject, float>();
 
-    SphereCollider triggerCollider;
-    ParticleSystem[] particleSystems;
 
-    // Preserve trivial Start/Update lifecycle comments as in original file.
+    [SerializeField] private SphereCollider triggerCollider;
+
+    private ParticleSystem[] particleSystems;
+
+
+
     void Start()
     {
         EnsureTriggerCollider();
+
         CacheParticleSystems();
 
-        // By default disable particles until trap is explicitly toggled on (if enabled in inspector).
-        if (particleSystems != null && particleSystems.Length > 0)
+
+        if (particleSystems != null &&
+            particleSystems.Length > 0)
+        {
             SetParticlesActive(false);
+        }
     }
+
+
 
     void Update()
     {
-        // Apply periodic damage to tracked occupants.
-        if (occupantsNextTick.Count == 0) return;
+        CheckProjectileActivation();
+
+
+        if (coolingDown)
+        {
+            cooldownTimer -= Time.deltaTime;
+
+
+            if (cooldownTimer <= 0f)
+            {
+                coolingDown = false;
+            }
+        }
+
+
+
+        if (trapActive)
+        {
+            activeTimer -= Time.deltaTime;
+
+
+            if (activeTimer <= 0f)
+            {
+                trapActive = false;
+                active = false;
+
+                coolingDown = true;
+                cooldownTimer = cooldownDuration;
+
+
+                occupantsNextTick.Clear();
+
+
+                SetParticlesActive(false);
+            }
+        }
+
+
+
+        if (particlesAlwaysActive)
+        {
+            SetParticlesActive(true);
+        }
+
+
+
+        if (!trapActive)
+            return;
+
+
 
         float now = Time.time;
-        var keys = new List<GameObject>(occupantsNextTick.Keys);
-        foreach (var go in keys)
+
+
+        List<GameObject> targets =
+            new List<GameObject>(occupantsNextTick.Keys);
+
+
+
+        foreach (GameObject target in targets)
         {
-            if (go == null)
+            if (target == null)
             {
-                occupantsNextTick.Remove(go);
+                occupantsNextTick.Remove(target);
                 continue;
             }
 
-            if (now >= occupantsNextTick[go])
+
+            if (now >= occupantsNextTick[target])
             {
-                ApplyDamageToTarget(go);
-                occupantsNextTick[go] = now + tickInterval;
+                ApplyDamageToTarget(target);
+
+
+                occupantsNextTick[target] =
+                    now + tickInterval;
             }
         }
     }
 
-    void OnDestroy()
+
+
+    void ActivateTrap()
     {
-        occupantsNextTick.Clear();
+        if (trapActive || coolingDown)
+            return;
+
+
+        trapActive = true;
+
+        active = true;
+
+        activeTimer = activeDuration;
+
+
+        if (enableParticlesWhenActive)
+        {
+            SetParticlesActive(true);
+        }
     }
 
-    // Ensure a SphereCollider exists and is configured as a trigger sized to 'radius'
+
+
     void EnsureTriggerCollider()
     {
-        triggerCollider = GetComponent<SphereCollider>();
         if (triggerCollider == null)
-            triggerCollider = gameObject.AddComponent<SphereCollider>();
+        {
+            triggerCollider =
+                GetComponent<SphereCollider>();
+        }
+
+
+        if (triggerCollider == null)
+        {
+            triggerCollider =
+                gameObject.AddComponent<SphereCollider>();
+        }
+
 
         triggerCollider.isTrigger = true;
-        triggerCollider.radius = Mathf.Max(0.01f, radius);
-        // If object uses scaling, we keep the collider radius as-is; inspector radius is the local radius used.
-    }
 
+
+        // Half size because SphereCollider diameter = radius * 2
+        triggerCollider.radius =
+            Mathf.Max(0.01f, radius * 0.5f);
+    }
     void CacheParticleSystems()
     {
         if (particleRoot != null)
-            particleSystems = particleRoot.GetComponentsInChildren<ParticleSystem>(true);
+        {
+            particleSystems =
+                particleRoot.GetComponentsInChildren<ParticleSystem>(true);
+        }
         else
         {
-            particleSystems = GetComponentsInChildren<ParticleSystem>(true);
-            // If parent has multiple particle systems and you want a specific child, assign particleRoot in inspector.
+            particleSystems =
+                GetComponentsInChildren<ParticleSystem>(true);
         }
     }
 
-    // Public API to toggle the particle visual (and whether trap is considered "active" by visuals)
-    public void SetParticlesActive(bool active)
+
+
+    public void SetParticlesActive(bool state)
     {
-        if (particleSystems == null || particleSystems.Length == 0) return;
-        foreach (var ps in particleSystems)
+        if (particleSystems == null)
+            return;
+
+
+        foreach (ParticleSystem ps in particleSystems)
         {
-            var go = ps.gameObject;
-            if (active)
+            if (ps == null)
+                continue;
+
+
+            GameObject obj = ps.gameObject;
+
+
+            if (state)
             {
-                if (!go.activeSelf) go.SetActive(true);
-                if (!ps.isPlaying) ps.Play(true);
+                if (!obj.activeSelf)
+                    obj.SetActive(true);
+
+
+                if (!ps.isPlaying)
+                    ps.Play(true);
             }
             else
             {
-                if (ps.isPlaying) ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-                // keep the GameObject enabled so designer can toggle root; to fully hide call SetActive(false)
-                go.SetActive(false);
+                if (ps.isPlaying)
+                {
+                    ps.Stop(
+                        true,
+                        ParticleSystemStopBehavior.StopEmitting
+                    );
+                }
+
+
+                obj.SetActive(false);
             }
         }
     }
 
-    // Called by Unity when something enters the trigger
+
+
+    void CheckProjectileActivation()
+    {
+        if (targetCollider == null)
+            return;
+
+
+        Collider[] hits =
+            Physics.OverlapSphere(
+                targetCollider.bounds.center,
+                projectileActivationDistance,
+                projectileLayers
+            );
+
+
+        foreach (Collider hit in hits)
+        {
+            if (hit == null)
+                continue;
+
+
+            float distance =
+                Vector3.Distance(
+                    hit.ClosestPoint(targetCollider.bounds.center),
+                    targetCollider.bounds.center
+                );
+
+
+            if (distance <= projectileActivationDistance)
+            {
+                ActivateTrap();
+                return;
+            }
+        }
+    }
+
+
+
     void OnTriggerEnter(Collider other)
     {
-        if (!IsInAffectLayer(other.gameObject)) return;
-        if (!IsValidTarget(other)) return;
+        // ONLY affect layers entering this poison trigger activate it
 
-        var root = other.transform.root.gameObject;
-        if (!occupantsNextTick.ContainsKey(root))
+        int mask = 1 << other.gameObject.layer;
+
+
+        if ((affectLayer.value & mask) != 0)
         {
-            // apply immediate damage on enter, then schedule next tick
-            ApplyDamageToTarget(root);
-            occupantsNextTick[root] = Time.time + tickInterval;
-        }
-
-        // Optionally enable particles when trap is active
-        if (enableParticlesWhenActive && particleSystems != null && particleSystems.Length > 0)
-            SetParticlesActive(true);
-
-        // Optionally destroy trap on collision/enter
-        if (destroyOnCollision)
-        {
-            // Schedule destruction after delay (0 = immediate end of frame)
-            Destroy(gameObject, Mathf.Max(0f, destroyDelay));
+            ActivateTrap();
         }
     }
 
-    // Support non-trigger collisions as well (forward to trigger handling)
+
+
     void OnCollisionEnter(Collision collision)
     {
-        // Forward to trigger-like handling for convenience. Collision.collider will be evaluated by same logic.
-        OnTriggerEnter(collision.collider);
+        // Projectile activation handled by CheckProjectileActivation()
+        // No projectile uses this trigger collider
     }
+
+
+
+    void OnTriggerStay(Collider other)
+    {
+        if (!trapActive)
+            return;
+
+
+        if (!IsInAffectLayer(other.gameObject))
+            return;
+
+
+        if (!IsValidTarget(other))
+            return;
+
+
+        GameObject root =
+            other.transform.root.gameObject;
+
+
+        if (!occupantsNextTick.ContainsKey(root))
+        {
+            occupantsNextTick[root] = Time.time;
+        }
+    }
+
+
 
     void OnTriggerExit(Collider other)
     {
-        var root = other.transform.root.gameObject;
-        if (occupantsNextTick.ContainsKey(root))
-            occupantsNextTick.Remove(root);
+        GameObject root =
+            other.transform.root.gameObject;
 
-        // If no occupants remain, optionally disable particles
-        if (occupantsNextTick.Count == 0 && enableParticlesWhenActive && particleSystems != null && particleSystems.Length > 0)
-            SetParticlesActive(false);
+
+        if (occupantsNextTick.ContainsKey(root))
+        {
+            occupantsNextTick.Remove(root);
+        }
     }
+
+
 
     bool IsInAffectLayer(GameObject go)
     {
-        int goLayerMask = 1 << go.layer;
-        return (affectLayer & goLayerMask) != 0;
+        int mask = 1 << go.layer;
+
+        return (affectLayer & mask) != 0;
     }
+
+
 
     bool IsValidTarget(Collider col)
     {
-        // Player
-        if ((targetMode == TargetMode.Player || targetMode == TargetMode.Both) && col.gameObject.CompareTag("Player"))
-            return true;
-
-        // Enemy - check tag or EnemyBase component
-        if ((targetMode == TargetMode.Enemy || targetMode == TargetMode.Both))
+        if ((targetMode == TargetMode.Player ||
+             targetMode == TargetMode.Both)
+             &&
+             col.CompareTag("Player"))
         {
-            if (col.gameObject.CompareTag("Enemy")) return true;
-            if (col.GetComponentInParent<EnemyBase>() != null) return true;
-            if (col.GetComponentInParent<Health>() != null && !col.gameObject.CompareTag("Player")) return true; // generic health (avoid player)
+            return true;
         }
+
+
+
+        if (targetMode == TargetMode.Enemy ||
+            targetMode == TargetMode.Both)
+        {
+            if (col.CompareTag("Enemy"))
+                return true;
+
+
+            if (col.GetComponentInParent<EnemyBase>() != null)
+                return true;
+
+
+            if (col.GetComponentInParent<Health>() != null &&
+                !col.CompareTag("Player"))
+            {
+                return true;
+            }
+        }
+
 
         return false;
     }
 
+
+
     void ApplyDamageToTarget(GameObject targetRoot)
     {
-        if (targetRoot == null) return;
+        if (targetRoot == null)
+            return;
 
-        // If target is player, prefer Health on PlayerMovement root
-        if (targetMode == TargetMode.Player || targetMode == TargetMode.Both)
+
+
+        if (targetMode == TargetMode.Player ||
+            targetMode == TargetMode.Both)
         {
             if (targetRoot.CompareTag("Player"))
             {
-                var playerMovement = targetRoot.GetComponentInChildren<PlayerMovement>() ?? targetRoot.GetComponent<PlayerMovement>();
-                Health hp = null;
-                if (playerMovement != null)
-                    hp = playerMovement.GetComponent<Health>() ?? playerMovement.GetComponentInChildren<Health>();
-                if (hp == null)
-                    hp = targetRoot.GetComponentInChildren<Health>() ?? targetRoot.GetComponent<Health>();
+                Health hp =
+                    targetRoot.GetComponentInChildren<Health>()
+                    ??
+                    targetRoot.GetComponent<Health>();
+
 
                 if (hp != null)
                 {
@@ -228,57 +442,97 @@ public class PoisonTrapPlant : MonoBehaviour
             }
         }
 
-        // Try enemy handling (if enemy mode enabled)
-        if (targetMode == TargetMode.Enemy || targetMode == TargetMode.Both)
+
+
+        if (targetMode == TargetMode.Enemy ||
+            targetMode == TargetMode.Both)
         {
-            // Prefer EnemyBase on root
-            var enemyBase = targetRoot.GetComponentInChildren<EnemyBase>() ?? targetRoot.GetComponent<EnemyBase>();
-            if (enemyBase != null)
+            EnemyBase enemy =
+                targetRoot.GetComponentInChildren<EnemyBase>()
+                ??
+                targetRoot.GetComponent<EnemyBase>();
+
+
+            if (enemy != null)
             {
-                if (enemyBase is IDamageable dmgable)
+                if (enemy is IDamageable damageable)
                 {
-                    dmgable.TakeDmg(damagePerTick);
+                    damageable.TakeDmg(damagePerTick);
                     return;
                 }
 
-                var enemyHealth = enemyBase.GetComponent<EnemyHealth>() ?? enemyBase.GetComponentInChildren<EnemyHealth>();
+
+                EnemyHealth enemyHealth =
+                    enemy.GetComponent<EnemyHealth>()
+                    ??
+                    enemy.GetComponentInChildren<EnemyHealth>();
+
+
                 if (enemyHealth != null)
                 {
                     enemyHealth.TakeDamage(damagePerTick);
                     return;
                 }
 
-                var fallback = enemyBase.GetComponentInParent<Health>() ?? enemyBase.GetComponent<Health>();
-                if (fallback != null)
+
+                Health hp =
+                    enemy.GetComponent<Health>()
+                    ??
+                    enemy.GetComponentInParent<Health>();
+
+
+                if (hp != null)
                 {
-                    fallback.TakeDmg(damagePerTick);
+                    hp.TakeDmg(damagePerTick);
                     return;
                 }
             }
 
-            // Generic IDamageable on root
-            if (targetRoot.TryGetComponent<IDamageable>(out var anyDmg))
+
+
+            if (targetRoot.TryGetComponent<IDamageable>
+                (out var damageTarget))
             {
-                anyDmg.TakeDmg(damagePerTick);
+                damageTarget.TakeDmg(damagePerTick);
                 return;
             }
 
-            // Last resort: any Health component on root
-            var health = targetRoot.GetComponentInChildren<Health>() ?? targetRoot.GetComponent<Health>();
-            if (health != null)
+
+
+            Health fallback =
+                targetRoot.GetComponentInChildren<Health>()
+                ??
+                targetRoot.GetComponent<Health>();
+
+
+            if (fallback != null)
             {
-                health.TakeDmg(damagePerTick);
-                return;
+                fallback.TakeDmg(damagePerTick);
             }
         }
     }
 
-    // Editor gizmo to show radius
+
+
     void OnDrawGizmosSelected()
     {
-        Gizmos.color = new Color(0.2f, 0.8f, 0.2f, 0.15f);
-        Gizmos.DrawSphere(transform.position, radius);
-        Gizmos.color = new Color(0.2f, 1f, 0.2f, 1f);
-        Gizmos.DrawWireSphere(transform.position, radius);
+        Gizmos.color =
+            new Color(0.2f, 0.8f, 0.2f, 0.15f);
+
+
+        Gizmos.DrawSphere(
+            transform.position,
+            radius
+        );
+
+
+        Gizmos.color =
+            new Color(0.2f, 1f, 0.2f, 1f);
+
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            radius
+        );
     }
 }
