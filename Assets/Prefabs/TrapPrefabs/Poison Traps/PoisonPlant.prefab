@@ -281,6 +281,7 @@ GameObject:
   - component: {fileID: 7620578317598588740}
   - component: {fileID: 5546396423427984938}
   - component: {fileID: 6707407847498629343}
+  - component: {fileID: 5072013894951627479}
   m_Layer: 14
   m_Name: TempSmoke
   m_TagString: Untagged
@@ -297,7 +298,7 @@ Transform:
   m_GameObject: {fileID: 2804385428889691192}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0.09000397, y: -0.584035, z: 0.3849945}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -386,7 +387,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 1
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -439,7 +440,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 0
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -493,7 +494,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0, b: 0.97766113, a: 1}
+      maxColor: {r: 0.61984307, g: 0.10223561, b: 0.6528301, a: 0.8}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -557,7 +558,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.8
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -874,7 +875,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1000
+    maxNumParticles: 70
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -934,7 +935,7 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 6
     enabled: 1
-    type: 4
+    type: 0
     angle: 25
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
@@ -1021,7 +1022,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 1
+      value: 6.96
       mode: 0
       spread: 0
       speed:
@@ -1140,7 +1141,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 70
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -2955,11 +2956,11 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
   NoiseModule:
-    enabled: 0
+    enabled: 1
     strength:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -3116,7 +3117,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     separateAxes: 0
-    frequency: 0.5
+    frequency: 0.2
     damping: 1
     octaves: 1
     octaveMultiplier: 0.5
@@ -3125,7 +3126,7 @@ ParticleSystem:
     scrollSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.1
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -5052,7 +5053,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
+  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5106,6 +5107,32 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
+--- !u!114 &5072013894951627479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2804385428889691192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 839875f0f16c7b24baa1627cc48b7f97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPollenParticles
+  poisonTrap: {fileID: 10106321672563621}
+  particleMaterial: {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  pollenColor: {r: 0.61984307, g: 0.10223561, b: 0.6528301, a: 0.8}
+  particlesPerRadius: 10
+  particleSize: 0.4
+  lifetime: 1
+  radiusMultiplier: 2
+  centerSpeed: 0.06
+  outerSpeed: 0.001
+  distanceSpeedPower: 1
+  randomFloatAmount: 0.2
+  noiseStrength: 0.5
+  noiseSpeed: 0.2
+  updateEveryChange: 1
 --- !u!1 &3333087179087049256
 GameObject:
   m_ObjectHideFlags: 0
@@ -5196,6 +5223,59 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &3425239489860762430
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7976504726969834233}
+  - component: {fileID: 5344540965147493000}
+  m_Layer: 14
+  m_Name: Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7976504726969834233
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3425239489860762430}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 825260220791743310}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!135 &5344540965147493000
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3425239489860762430}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1.18
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3515523538333392552
 GameObject:
   m_ObjectHideFlags: 0
@@ -5591,6 +5671,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7620578317598588740}
+  - {fileID: 7976504726969834233}
   - {fileID: 1266965644088538588}
   - {fileID: 1463284014691631255}
   - {fileID: 3755913300690997982}
@@ -5692,26 +5773,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b51f14c26f9658940809e3d41d57b002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PoisonTrapPlant
+  targetCollider: {fileID: 5344540965147493000}
+  projectileLayers:
+    serializedVersion: 2
+    m_Bits: 32768
+  projectileActivationDistance: 1.2
+  activeDuration: 5
+  active: 0
+  cooldownDuration: 20
   damagePerTick: 1
   tickInterval: 1
-  radius: 2
+  radius: 3.48
   affectLayer:
     serializedVersion: 2
     m_Bits: 8320
   targetMode: 2
   particleRoot: {fileID: 7620578317598588740}
   enableParticlesWhenActive: 1
-  destroyOnCollision: 1
-  destroyDelay: 10
-  maxHealth: 6
-  destroyOnDeath: 1
-  destroyDelayOnDeath: 0
-  poisonDurationOnShot: 5
-  enableProjectileOverlapDetection: 1
-  projectileDetectRadius: 1
-  overlapBufferSize: 8
-  showGizmos: 1
-  showPoisonAreaGizmo: 1
+  particlesAlwaysActive: 0
+  triggerCollider: {fileID: 0}
 --- !u!208 &186589917682850983
 NavMeshObstacle:
   m_ObjectHideFlags: 0
