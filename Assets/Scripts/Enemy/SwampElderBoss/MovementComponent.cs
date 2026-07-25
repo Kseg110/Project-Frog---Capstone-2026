@@ -1,10 +1,9 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class MovementComponent : MonoBehaviour
+public class MovementComponent : MonoBehaviour  
 {
     private NavMeshAgent agent;
     public NavMeshAgent Agent => agent;
@@ -89,17 +88,37 @@ public class MovementComponent : MonoBehaviour
         agent.isStopped = false;
         agent.SetDestination(position);
     }
+
+    // Use NavMeshAgent pathfinding but apply lateral separation only (prevents pushing enemies backwards)
     public void MoveToTarget(Vector3 movementTarget)
     {
         if (!agent.enabled || target == null) return;
 
-        // Use NavMeshAgent pathfinding instead of manual agent.Move(...) so the agent avoids obstacles.
-        // Optionally bias the destination by a small separation offset to reduce crowding.
-        Vector3 separation = GetSeparationDirection() * separationStrength;
-        Vector3 biasedTarget = movementTarget + separation;
+        // Direction and distance to the desired slot
+        Vector3 toTarget = movementTarget - transform.position;
+        toTarget.y = 0f;
+        float distanceToTarget = toTarget.magnitude;
+
+        Vector3 desiredDir = distanceToTarget > 0.001f ? toTarget / distanceToTarget : Vector3.zero;
+
+        // Compute separation and keep only the lateral component perpendicular to desiredDir
+        Vector3 separation = GetSeparationDirection();
+        separation.y = 0f;
+
+        Vector3 lateral = separation - Vector3.Project(separation, desiredDir);
+        if (lateral.sqrMagnitude > 0.001f)
+            lateral = lateral.normalized;
+        else
+            lateral = Vector3.zero;
+
+        // Limit lateral offset so we never push the agent further away than stopping distance
+        float maxLateralOffset = Mathf.Max(0f, distanceToTarget - agent.stoppingDistance - 0.1f);
+        float lateralOffset = Mathf.Min(separationStrength, maxLateralOffset);
+
+        Vector3 finalTarget = movementTarget + lateral * lateralOffset;
 
         agent.isStopped = false;
-        agent.SetDestination(biasedTarget);
+        agent.SetDestination(finalTarget);
     }
 
     private void RotateTowardsPlayer()
@@ -150,8 +169,10 @@ public class MovementComponent : MonoBehaviour
                 separation += away.normalized / distance;
             }
         }
-        return separation;
-    }                           
+
+        // Prevent unbounded separation magnitudes
+        return Vector3.ClampMagnitude(separation, 1f);
+    }
 
     public float GetDistanceToTarget()
     {
