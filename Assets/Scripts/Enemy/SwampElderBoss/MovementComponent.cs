@@ -1,10 +1,9 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class MovementComponent : MonoBehaviour
+public class MovementComponent : MonoBehaviour  
 {
     private NavMeshAgent agent;
     public NavMeshAgent Agent => agent;
@@ -51,6 +50,9 @@ public class MovementComponent : MonoBehaviour
             return;
         }
         target = TargetManager.Instance.RequestSlot(this);
+
+        // initialize repath timer so we calculate path immediately
+        repathTimer = 0f;
     }
 
     private void Update()
@@ -59,6 +61,7 @@ public class MovementComponent : MonoBehaviour
 
         repathTimer -= Time.deltaTime;
 
+        // Recalculate path at the configured rate so the NavMeshAgent can avoid obstacles
         if (repathTimer <= 0f)
         {
             MoveToTarget(target.position);
@@ -85,20 +88,37 @@ public class MovementComponent : MonoBehaviour
         agent.isStopped = false;
         agent.SetDestination(position);
     }
+
+    // Use NavMeshAgent pathfinding but apply lateral separation only (prevents pushing enemies backwards)
     public void MoveToTarget(Vector3 movementTarget)
     {
         if (!agent.enabled || target == null) return;
 
-        Vector3 targetDirection = movementTarget - transform.position;
-        targetDirection.y = 0f;
+        // Direction and distance to the desired slot
+        Vector3 toTarget = movementTarget - transform.position;
+        toTarget.y = 0f;
+        float distanceToTarget = toTarget.magnitude;
 
+        Vector3 desiredDir = distanceToTarget > 0.001f ? toTarget / distanceToTarget : Vector3.zero;
+
+        // Compute separation and keep only the lateral component perpendicular to desiredDir
         Vector3 separation = GetSeparationDirection();
+        separation.y = 0f;
 
-        Vector3 finalDirection = targetDirection.normalized + separation * separationStrength;
+        Vector3 lateral = separation - Vector3.Project(separation, desiredDir);
+        if (lateral.sqrMagnitude > 0.001f)
+            lateral = lateral.normalized;
+        else
+            lateral = Vector3.zero;
 
-        finalDirection.Normalize();
+        // Limit lateral offset so we never push the agent further away than stopping distance
+        float maxLateralOffset = Mathf.Max(0f, distanceToTarget - agent.stoppingDistance - 0.1f);
+        float lateralOffset = Mathf.Min(separationStrength, maxLateralOffset);
 
-        agent.Move(finalDirection * movementSpeed * Time.deltaTime);
+        Vector3 finalTarget = movementTarget + lateral * lateralOffset;
+
+        agent.isStopped = false;
+        agent.SetDestination(finalTarget);
     }
 
     private void RotateTowardsPlayer()
@@ -149,7 +169,9 @@ public class MovementComponent : MonoBehaviour
                 separation += away.normalized / distance;
             }
         }
-        return separation;
+
+        // Prevent unbounded separation magnitudes
+        return Vector3.ClampMagnitude(separation, 1f);
     }
 
     public float GetDistanceToTarget()
