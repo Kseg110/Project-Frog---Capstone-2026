@@ -87,6 +87,14 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         enableNav = true;
     }
 
+    public virtual void Start()
+    {
+        if (agent != null && agent.speed > 0f)
+        {
+            originalAgentSpeed = agent.speed;
+        }
+    }
+
     public void Activate(Transform playerTransform)
     {
         player = playerTransform;
