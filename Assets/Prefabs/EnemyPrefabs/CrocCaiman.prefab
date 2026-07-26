@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 8573468495165241422}
   - component: {fileID: 1511503074007811530}
   - component: {fileID: 8732270254385064484}
+  - component: {fileID: 9129651843082517972}
   m_Layer: 7
   m_Name: CrocCaiman
   m_TagString: Enemy
@@ -150,11 +151,11 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 4
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -175,6 +176,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCroc
   player: {fileID: 0}
+  movement: {fileID: 0}
+  attackComponent: {fileID: 0}
   attackHitbox: {fileID: 7265194758862469610, guid: 3064ca707cde28846a2b1041992ab7ce, type: 3}
   health: {fileID: 3186272484596176017}
   preferredDistance: 10
@@ -205,7 +208,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -224,10 +227,36 @@ MonoBehaviour:
   knockbackSpeed: 20
   knockbackEasePower: 3
   knockbackResistance: 1
+  projectileKnockbackDistance: 2
+  useProjectileTravelDirection: 1
   collisionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
   capsule: {fileID: 5331853941283378302}
+--- !u!114 &9129651843082517972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4255145973034431359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be22f9f649befc940a48ac6ac4662061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovementComponent
+  target: {fileID: 0}
+  player: {fileID: 0}
+  stopDistance: 5
+  movementSpeed: 4
+  repathRate: 0.2
+  rotationSpeed: 10
+  separationRadius: 3
+  separationStrength: 2
+  currentSlot: none
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1001 &5962947329762784990
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -74,7 +74,7 @@ public class EnemyCroc : EnemyBase
     {
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         Vector3 targetPosition = player.position - directionToPlayer * preferredDistance;
-        MoveTo(targetPosition);
+        movement.MoveToTarget(targetPosition);
     }
 
     // Back away from the player.
@@ -82,7 +82,7 @@ public class EnemyCroc : EnemyBase
     {
         Vector3 directionAwayFromPlayer = (transform.position - player.position).normalized;
         Vector3 retreatTarget = player.position + directionAwayFromPlayer * preferredDistance;
-        MoveTo(retreatTarget);
+        movement.MoveToTarget(retreatTarget);
     }
 
     // Smoothly rotate to face the player on the Y axis only (no tilting).

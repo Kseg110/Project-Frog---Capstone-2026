@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -57,6 +58,7 @@ public class UIDeathOverlay : MonoBehaviour
         Cursor.visible = true;
 
         Time.timeScale = 0f;
+        SelectDefaultButton();
     }
 
     public void RestartScene()
@@ -71,5 +73,15 @@ public class UIDeathOverlay : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(mainMenuSceneName);
+    }
+
+    private void SelectDefaultButton()
+    {
+        var es = EventSystem.current;
+
+        if (RestartButton != null)
+            es.SetSelectedGameObject(RestartButton.gameObject);
+        else if (MenuButton != null)
+            es.SetSelectedGameObject(MenuButton.gameObject);
     }
 }

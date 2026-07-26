@@ -200,7 +200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UINavigator
   selectedScale: 1.1
   scaleSpeed: 10
-  defaultButton: {fileID: 0}
+  defaultButton: {fileID: 482374301654626333}
 --- !u!114 &3666096743258062343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1323,18 +1323,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PauseManager
   openPauseEvent:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: -938976886
+      Data2: 1103517086
+      Data3: -1213066587
+      Data4: 664204133
+    Path: event:/Open Pause Activation
   closePauseEvent:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: 1194684842
+      Data2: 1082943092
+      Data3: -27908161
+      Data4: -1217001489
+    Path: event:/Close Pause Activation
   pauseOverlayPanel: {fileID: 36902866079300892}
   playerHUD: {fileID: 0}
   deathOverlay: {fileID: 8738672289931247498}
@@ -1369,11 +1369,11 @@ RectTransform:
   m_LocalScale: {x: 1.1, y: 1.04, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2973313065504549832}
+  m_Father: {fileID: 6557900131496874080}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -28.5, y: -8.499878}
+  m_AnchoredPosition: {x: -28.499756, y: -8.499878}
   m_SizeDelta: {x: -57, y: -17}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &220703656633819762
@@ -1859,7 +1859,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -87.22119, y: 0, z: -309.28174, w: 0}
+  m_margin: {x: -87.22119, y: 0, z: -119.15033, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2215,7 +2215,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -950, y: 25}
+  m_AnchoredPosition: {x: -950, y: 59}
   m_SizeDelta: {x: 1920, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1406479706343015843
@@ -2587,7 +2587,6 @@ RectTransform:
   m_Children:
   - {fileID: 7920444300416548453}
   - {fileID: 3413891288125879375}
-  - {fileID: 1310290037578384249}
   - {fileID: 6557900131496874080}
   - {fileID: 6176760502715725396}
   m_Father: {fileID: 0}
@@ -3698,6 +3697,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1310290037578384249}
   - {fileID: 9114670957570120415}
   - {fileID: 8939706753563800193}
   m_Father: {fileID: 2973313065504549832}
@@ -3762,6 +3762,7 @@ MonoBehaviour:
   cardUIPrefab: {fileID: 7598020870873114302, guid: 91de5ea4df9ed4c44be87c60cb904e11, type: 3}
   upgradeManager: {fileID: 0}
   playerHUD: {fileID: 0}
+  playerCrosshair: {fileID: 0}
 --- !u!225 &8149327955125672871
 CanvasGroup:
   m_ObjectHideFlags: 0
