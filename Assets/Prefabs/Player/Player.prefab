@@ -806,7 +806,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3479168319086078328}
-  - component: {fileID: 8092192667463358919}
   m_Layer: 0
   m_Name: PlayerVisual
   m_TagString: Untagged
@@ -831,14 +830,6 @@ Transform:
   - {fileID: 2230023641781056278}
   m_Father: {fileID: 900614694835417969}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &8092192667463358919
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6600727344098246571}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &6972304314141020578
 GameObject:
   m_ObjectHideFlags: 0
@@ -1276,8 +1267,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTongueAttack
   tongueMesh: {fileID: 5647910625679070788}
   maxLength: 10
-  extendSpeed: 10
-  retractSpeed: 25
+  extendSpeed: 20
+  retractSpeed: 30
   tongueWidth: 0.3
 --- !u!114 &7481143701210063934
 MonoBehaviour:
@@ -1322,7 +1313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackScript
   healAmountPerFly: 15
-  inventoryManager: {fileID: 6688073144704042943, guid: 53122166a72fbd343b6c29b1bfbbd281, type: 3}
+  inventoryManager: {fileID: 0}
   flyGatherEvent:
     Guid:
       Data1: 2093426210
@@ -1385,7 +1376,7 @@ MonoBehaviour:
   iceSlowPercent: 50
   windSpeedBoostPercent: 35
   playerAnchor: {fileID: 7481143701210063934}
-  playerHUD: {fileID: 5389160929384392534, guid: 8004996074e7a6845978bfbe2514fdf3, type: 3}
+  playerHUD: {fileID: 0}
   overchargeVFX: {fileID: 1866820753286131010}
   trailCollider: {fileID: 461726596801835861}
   playerMovement: {fileID: -4393449127589004673}
@@ -1629,7 +1620,7 @@ CapsuleCollider:
   m_Radius: 0.5
   m_Height: 1
   m_Direction: 1
-  m_Center: {x: 0, y: 0.98, z: 0}
+  m_Center: {x: 0, y: 0.83, z: 0}
 --- !u!114 &833077249816884151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1802,7 +1793,7 @@ Transform:
   m_GameObject: {fileID: 8716308114830600715}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.049, z: 0}
+  m_LocalPosition: {x: 0, y: 0.59, z: 0}
   m_LocalScale: {x: 0.08, y: 0.08, z: 0.08}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -1866,7 +1857,7 @@ TrailRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0
+        time: 0.01424408
         value: 1
         inSlope: 0
         outSlope: 0
@@ -1939,8 +1930,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 1
+      time: 0.008575439
+      value: 0.99733734
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -1948,8 +1939,8 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 1.0291748
-      value: 0.44049072
+      time: 1.0079346
+      value: 0.572937
       inSlope: -1
       outSlope: -1
       tangentMode: 0
@@ -2248,6 +2239,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5391655241159891590, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: dd56ce189f5c6ea4f9bbd2cdc2b52ae6, type: 2}
     - target: {fileID: 5805108770995761340, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
