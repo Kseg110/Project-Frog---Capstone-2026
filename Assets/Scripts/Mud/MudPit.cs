@@ -44,7 +44,7 @@ public class MudPit : MonoBehaviour
 
     public void HandleEnter(Collider other)
     {
-        Debug.Log($"[MudPit] ENTER from: {other.gameObject.name}", other.gameObject);
+        //Debug.Log($"[MudPit] ENTER from: {other.gameObject.name}", other.gameObject);
 
         if ((affectedLayers.value & (1 << other.gameObject.layer)) == 0) return;
 
@@ -69,7 +69,7 @@ public class MudPit : MonoBehaviour
 
     public void HandleExit(Collider other)
     {
-        Debug.Log($"[MudPit] EXIT from: {other.gameObject.name}", other.gameObject);
+        //Debug.Log($"[MudPit] EXIT from: {other.gameObject.name}", other.gameObject);
 
         IMovement victim = other.GetComponentInParent<IMovement>();
         if (victim == null) return;
