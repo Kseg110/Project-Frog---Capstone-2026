@@ -378,6 +378,7 @@ GameObject:
   - component: {fileID: 4841448948749723779}
   - component: {fileID: -5907844099691676864}
   - component: {fileID: 2085735272965509620}
+  - component: {fileID: 2659999331978297730}
   m_Layer: 0
   m_Name: FireAnchor
   m_TagString: Untagged
@@ -545,6 +546,23 @@ MonoBehaviour:
   PIMPMyAnchor:
   - {fileID: 232573379608071637}
   - {fileID: 779705461479096973}
+--- !u!114 &2659999331978297730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6911843594789955862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e95dc5ff2b64380880dd7ac5922847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifierVolume
+  m_SerializedVersion: 0
+  m_Size: {x: 3.13, y: 2, z: 1.32}
+  m_Center: {x: 0, y: 1, z: 0}
+  m_Area: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &7164860429683319075
 GameObject:
   m_ObjectHideFlags: 0
