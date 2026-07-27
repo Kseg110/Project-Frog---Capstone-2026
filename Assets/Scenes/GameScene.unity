@@ -1363,6 +1363,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 48982450}
+  - component: {fileID: 48982451}
   m_Layer: 5
   m_Name: TowerPopUp
   m_TagString: Untagged
@@ -1387,6 +1388,24 @@ Transform:
   - {fileID: 228537173}
   m_Father: {fileID: 951314021}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &48982451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48982449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b02981a0548f2e04f81fd5c99a272505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputUIswap
+  keyboardImages:
+  - {fileID: 84742602}
+  - {fileID: 1263724730}
+  gamepadImages:
+  - {fileID: 1161911261}
+  - {fileID: 44667314}
 --- !u!1 &53587038
 GameObject:
   m_ObjectHideFlags: 0
@@ -7702,6 +7721,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 116781876}
+  - component: {fileID: 116781877}
   m_Layer: 5
   m_Name: PowerUpPopUp
   m_TagString: Untagged
@@ -7726,6 +7746,22 @@ Transform:
   - {fileID: 965367211}
   m_Father: {fileID: 951314021}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &116781877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 116781875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b02981a0548f2e04f81fd5c99a272505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputUIswap
+  keyboardImages:
+  - {fileID: 878412206}
+  gamepadImages:
+  - {fileID: 54183463}
 --- !u!1 &117230102
 GameObject:
   m_ObjectHideFlags: 0
@@ -9897,7 +9933,6 @@ GameObject:
   - component: {fileID: 228537172}
   - component: {fileID: 228537171}
   - component: {fileID: 228537170}
-  - component: {fileID: 228537174}
   m_Layer: 5
   m_Name: TutorialCanvas
   m_TagString: Untagged
@@ -9993,24 +10028,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &228537174
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 228537169}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b02981a0548f2e04f81fd5c99a272505, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputUIswap
-  keyboardImages:
-  - {fileID: 84742602}
-  - {fileID: 1263724730}
-  gamepadImages:
-  - {fileID: 1161911261}
-  - {fileID: 44667314}
 --- !u!1 &230745952
 GameObject:
   m_ObjectHideFlags: 0
@@ -43111,7 +43128,6 @@ GameObject:
   - component: {fileID: 965367214}
   - component: {fileID: 965367213}
   - component: {fileID: 965367212}
-  - component: {fileID: 965367215}
   m_Layer: 5
   m_Name: TutorialCanvas
   m_TagString: Untagged
@@ -43204,22 +43220,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &965367215
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 965367210}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b02981a0548f2e04f81fd5c99a272505, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputUIswap
-  keyboardImages:
-  - {fileID: 878412206}
-  gamepadImages:
-  - {fileID: 54183463}
 --- !u!1 &975733541
 GameObject:
   m_ObjectHideFlags: 0
@@ -59886,6 +59886,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1524899107}
+  - component: {fileID: 1524899108}
   m_Layer: 5
   m_Name: FlyPopUp
   m_TagString: Untagged
@@ -59910,6 +59911,24 @@ Transform:
   - {fileID: 2092111059}
   m_Father: {fileID: 951314021}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1524899108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1524899106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b02981a0548f2e04f81fd5c99a272505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputUIswap
+  keyboardImages:
+  - {fileID: 1834873885}
+  - {fileID: 337546899}
+  gamepadImages:
+  - {fileID: 2054023559}
+  - {fileID: 2018684939}
 --- !u!1 &1535729722
 GameObject:
   m_ObjectHideFlags: 0
@@ -82530,7 +82549,6 @@ GameObject:
   - component: {fileID: 2092111058}
   - component: {fileID: 2092111057}
   - component: {fileID: 2092111056}
-  - component: {fileID: 2092111060}
   m_Layer: 5
   m_Name: TutorialCanvas
   m_TagString: Untagged
@@ -82625,24 +82643,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &2092111060
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2092111055}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b02981a0548f2e04f81fd5c99a272505, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputUIswap
-  keyboardImages:
-  - {fileID: 1834873885}
-  - {fileID: 337546899}
-  gamepadImages:
-  - {fileID: 2054023559}
-  - {fileID: 2018684939}
 --- !u!1 &2099155029
 GameObject:
   m_ObjectHideFlags: 0
