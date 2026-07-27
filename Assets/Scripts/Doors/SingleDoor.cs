@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Reflection;
 using UnityEngine;
 
 /// <summary>
@@ -6,6 +7,7 @@ using UnityEngine;
 /// - Finds or uses the assigned door Transform and a child trigger collider.
 /// - When the player steps on the trigger the door moves down into the ground.
 /// - The trigger child will receive a small relay component at Awake if it has no script.
+/// - Optionally rebakes a NavMeshSurface (or a terrain object containing one) after opening so AI can path through.
 /// </summary>
 public class SingleDoor : MonoBehaviour
 {
@@ -32,6 +34,16 @@ public class SingleDoor : MonoBehaviour
 
     [Tooltip("If true the door GameObject will be destroyed after reaching the open position.")]
     [SerializeField] private bool destroyDoorWhenOpened = false;
+
+    [Header("NavMesh Re-bake (optional)")]
+    [Tooltip("Assign the GameObject (terrain or NavMesh parent) that contains a NavMeshSurface component to be rebuilt after the door opens.")]
+    [SerializeField] private GameObject navMeshTarget;
+
+    [Tooltip("Delay in seconds after the door opens before rebaking the NavMesh.")]
+    [SerializeField] private float navBakeDelay = 5f;
+
+    [Tooltip("If true, attempt to rebake the NavMeshSurface on the target after opening.")]
+    [SerializeField] private bool rebakeNavMeshOnOpen = true;
 
     private Vector3 closedLocalPos;
     private Vector3 openLocalPos;
@@ -104,6 +116,52 @@ public class SingleDoor : MonoBehaviour
         {
             Destroy(doorTransform.gameObject);
         }
+
+        // After opening, optionally rebake navmesh
+        if (rebakeNavMeshOnOpen && navMeshTarget != null)
+        {
+            StartCoroutine(BakeNavMeshAfterDelay(navBakeDelay));
+        }
+    }
+
+    private IEnumerator BakeNavMeshAfterDelay(float delay)
+    {
+        if (delay > 0f)
+            yield return new WaitForSeconds(delay);
+
+        if (navMeshTarget == null)
+            yield break;
+
+        // Try to find any component named NavMeshSurface and call BuildNavMesh() or Bake()
+        var components = navMeshTarget.GetComponents<Component>();
+        foreach (var comp in components)
+        {
+            if (comp == null) continue;
+            var t = comp.GetType();
+            if (t.Name == "NavMeshSurface")
+            {
+                // Try BuildNavMesh first
+                var buildMethod = t.GetMethod("BuildNavMesh", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (buildMethod != null)
+                {
+                    buildMethod.Invoke(comp, null);
+                    Debug.Log($"SingleDoor: Invoked NavMeshSurface.BuildNavMesh() on '{navMeshTarget.name}'.");
+                    yield break;
+                }
+
+                // Fallback to Bake()
+                var bakeMethod = t.GetMethod("Bake", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (bakeMethod != null)
+                {
+                    bakeMethod.Invoke(comp, null);
+                    Debug.Log($"SingleDoor: Invoked NavMeshSurface.Bake() on '{navMeshTarget.name}'.");
+                    yield break;
+                }
+            }
+        }
+
+        // If no NavMeshSurface found, try to call a static NavMeshBuilder update if available (best-effort)
+        Debug.LogWarning($"SingleDoor: No NavMeshSurface component found on '{navMeshTarget.name}'. Cannot rebake navmesh automatically.");
     }
 
     // Relay component attached to the trigger child so the parent SingleDoor gets notified.

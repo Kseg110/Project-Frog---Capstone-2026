@@ -595,6 +595,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Press"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ConsumeFly"",
+                    ""type"": ""Button"",
+                    ""id"": ""a1a4d28e-4676-4ac3-a52b-2587b7a1e49a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -661,6 +670,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""143b3f9c-6048-4feb-9e75-9d8e2e4d2851"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""ConsumeFly"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1429,6 +1449,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_PlayerGamepad_Dash = m_PlayerGamepad.FindAction("Dash", throwIfNotFound: true);
         m_PlayerGamepad_Tether = m_PlayerGamepad.FindAction("Tether", throwIfNotFound: true);
         m_PlayerGamepad_Pause = m_PlayerGamepad.FindAction("Pause", throwIfNotFound: true);
+        m_PlayerGamepad_ConsumeFly = m_PlayerGamepad.FindAction("ConsumeFly", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1776,6 +1797,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerGamepad_Dash;
     private readonly InputAction m_PlayerGamepad_Tether;
     private readonly InputAction m_PlayerGamepad_Pause;
+    private readonly InputAction m_PlayerGamepad_ConsumeFly;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerGamepad".
     /// </summary>
@@ -1839,6 +1861,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerGamepad/Pause".
         /// </summary>
         public InputAction @Pause => m_Wrapper.m_PlayerGamepad_Pause;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerGamepad/ConsumeFly".
+        /// </summary>
+        public InputAction @ConsumeFly => m_Wrapper.m_PlayerGamepad_ConsumeFly;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1904,6 +1930,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @ConsumeFly.started += instance.OnConsumeFly;
+            @ConsumeFly.performed += instance.OnConsumeFly;
+            @ConsumeFly.canceled += instance.OnConsumeFly;
         }
 
         /// <summary>
@@ -1954,6 +1983,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @ConsumeFly.started -= instance.OnConsumeFly;
+            @ConsumeFly.performed -= instance.OnConsumeFly;
+            @ConsumeFly.canceled -= instance.OnConsumeFly;
         }
 
         /// <summary>
@@ -2462,6 +2494,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPause(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ConsumeFly" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnConsumeFly(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

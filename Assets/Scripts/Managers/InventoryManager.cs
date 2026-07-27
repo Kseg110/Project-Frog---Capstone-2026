@@ -7,6 +7,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private GameObject flyInventoryUIPrefab;
     [SerializeField] private PlayerTongueHealing playerTongueHealing;
     [SerializeField] private InputActionReference flyConsumeActionRef;
+    [SerializeField] private InputActionReference flyConsumeActionRefGP;
     [SerializeField] private int maximumInventorySize = 3;
     [SerializeField] private Vector2 flyIconSize = new Vector2(50f, 50f);
 
@@ -37,24 +38,33 @@ public class InventoryManager : MonoBehaviour
     private void OnEnable()
     {
         flyConsumeActionRef.action.Enable();
+        flyConsumeActionRefGP.action.Enable();
+
     }
 
     private void OnDisable()
     {
         flyConsumeActionRef.action.Disable();
+        flyConsumeActionRefGP.action.Enable();
+
     }
 
     private void Update()
     {
         // Check if the interaction button was pressed during this frame
-        if (flyConsumeActionRef.action.WasPressedThisFrame())
+        if (flyConsumeActionRef.action.WasPressedThisFrame() || flyConsumeActionRefGP.action.WasPressedThisFrame())
         {
+            Debug.Log("Consume button pressed");
+            Debug.Log($"Pressed on {gameObject.name} ({GetInstanceID()})");
+            Debug.Log($"[{GetInstanceID()}] Before: {flyInventoryUIPrefabList.Count}");
             ConsumeFly();
         }
     }
 
     private void ConsumeFly()
     {
+        Debug.Log($"Before Consume: {flyInventoryUIPrefabList.Count}");
+
         if (flyInventoryUIPrefabList == null || flyInventoryUIPrefabList.Count == 0)
         {
             return;
@@ -62,6 +72,9 @@ public class InventoryManager : MonoBehaviour
 
         Destroy(flyInventoryUIPrefabList[^1]);
         flyInventoryUIPrefabList.RemoveAt(flyInventoryUIPrefabList.Count - 1);
+
+        Debug.Log($"After Consume: {flyInventoryUIPrefabList.Count}");
+
         playerTongueHealing.HealPlayer(1);
     }
 }

@@ -10,6 +10,7 @@ public class UpgradeManager : MonoBehaviour
     [Header("All Cards")]
     [SerializeField] private List<UpgradeDataSO> allCards;
     private List<UpgradeDataSO> deck; //runtime pool of cards that can be drawn from, starts as a copy of allCards and shrinks as cards reach max level
+    private HashSet<UpgradeDataSO> temporaryBlacklist = new HashSet<UpgradeDataSO>();
 
     [Header("Rarity Chances")]
     [SerializeField, Range(0, 100)] private int commonChance = 90;
@@ -84,7 +85,13 @@ public class UpgradeManager : MonoBehaviour
         List<UpgradeDataSO> result = new List<UpgradeDataSO>();
 
         // Temporary pool to avoid duplicates
-        List<UpgradeDataSO> tempPool = new List<UpgradeDataSO>(deck);
+        List<UpgradeDataSO> tempPool = new List<UpgradeDataSO>();
+
+        foreach (var card in deck)
+        {
+            if (!temporaryBlacklist.Contains(card))
+                tempPool.Add(card);
+        }
 
         for (int i = 0; i < count; i++)
         {
@@ -95,6 +102,9 @@ public class UpgradeManager : MonoBehaviour
             result.Add(card);
             tempPool.Remove(card);
         }
+
+        // Clear blacklist after the draw
+        temporaryBlacklist.Clear();
 
         return result;
     }
@@ -137,6 +147,11 @@ public class UpgradeManager : MonoBehaviour
         if (cardLevels[card] >= card.MaxLevel -1)
         {
             deck.Remove(card);
+        }
+        else
+        {
+            // Temporary removal for next wave
+            temporaryBlacklist.Add(card);  
         }
 
         // Notify Anchors

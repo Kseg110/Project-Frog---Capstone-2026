@@ -10,6 +10,7 @@ TagManager:
   - Fly
   - Hitbox
   - trap
+  - projectile
   layers:
   - Default
   - TransparentFX
@@ -26,8 +27,7 @@ TagManager:
   - Water
   - Player
   - Trap
-  - 
-  - 
+  - projectile
   - 
   - 
   - 
@@ -47,6 +47,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 1310950511
     locked: 0
   m_RenderingLayers:
   - Default
