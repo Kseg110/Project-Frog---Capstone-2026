@@ -251,8 +251,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.13, y: 4.02, z: 1.32}
-  m_Center: {x: 0, y: 2.07, z: 0}
+  m_Size: {x: 2.82, y: 1.94, z: 2.98}
+  m_Center: {x: -0.61, y: 1.06, z: 0.2}
 --- !u!114 &3930934824642072566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277,6 +277,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3e49f4ea4bcee44984fd226e9f510b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BrokenAnchor
+  pointLight: {fileID: 0}
+  baseIntensity: 1
+  maxOverchargeIntensity: 50
   data: {fileID: 11400000, guid: c4e95bf949050614bab8e0d0df860c4e, type: 2}
 --- !u!1 &6216827790647654512
 GameObject:
@@ -328,7 +331,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
