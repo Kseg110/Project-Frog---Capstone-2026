@@ -195,7 +195,10 @@ public class PlayerTakeDamage : MonoBehaviour
             return;
 
         if (flashCoroutine != null)
+        {
             StopCoroutine(flashCoroutine);
+            RestoreOriginalColors();
+        }
 
         flashCoroutine = StartCoroutine(FlashRoutine());
     }
@@ -206,7 +209,6 @@ public class PlayerTakeDamage : MonoBehaviour
     private IEnumerator FlashRoutine()
     {
         float interval = 1f / flashFrequency / 2f;
-
         bool isRed = false;
 
         while (Time.time < nextAllowedDamageTime)
@@ -222,10 +224,24 @@ public class PlayerTakeDamage : MonoBehaviour
             yield return new WaitForSeconds(interval);
         }
 
-        // Restore colors
+        RestoreOriginalColors();
+        flashCoroutine = null;
+    }
+
+    private void RestoreOriginalColors()
+    {
         for (int i = 0; i < cachedRenderers.Length; i++)
             cachedRenderers[i].material.color = originalColors[i];
+    }
 
-        flashCoroutine = null;
+    private void OnDisable()
+    {
+        if (flashCoroutine != null)
+        {
+            StopCoroutine(flashCoroutine);
+            flashCoroutine = null;
+        }
+
+        RestoreOriginalColors();
     }
 }

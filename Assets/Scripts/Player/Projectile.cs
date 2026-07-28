@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class Projectile : MonoBehaviour, IProjectile
 {
@@ -16,6 +17,7 @@ public class Projectile : MonoBehaviour, IProjectile
 
     // Wind Upgrade
     private bool isHoming = false;
+    private bool skipAutoHoming = true; // prevents auto homing in awake
     private float turnSpeed = 10f;
     private EnemyBase target;
     private float pointBlankRange = 10f;
@@ -26,8 +28,8 @@ public class Projectile : MonoBehaviour, IProjectile
 
     private void Awake()
     {
-        // If homing upgrade is active, enable homing
-        if (HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
+        // If homing upgrade is active, enable homing with delay
+        if (!skipAutoHoming && HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
             EnableHoming();
     }
 
@@ -73,6 +75,17 @@ public class Projectile : MonoBehaviour, IProjectile
         isHoming = true;
         this.turnSpeed = turnSpeed;
         target = FindNearestEnemy();
+    }
+
+    public void EnableHomingDelayed(float delay, float turnSpeed = 10f)
+    {
+        StartCoroutine(EnableHomingAfterDelay(delay, turnSpeed));
+    }
+
+    private IEnumerator EnableHomingAfterDelay(float delay, float turnSpeed)
+    {
+        yield return new WaitForSeconds(delay);
+        EnableHoming(turnSpeed);
     }
 
     private EnemyBase FindNearestEnemy()

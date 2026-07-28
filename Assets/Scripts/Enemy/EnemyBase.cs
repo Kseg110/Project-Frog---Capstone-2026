@@ -1,9 +1,11 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem.Processors;
+using UnityEngine.Rendering;
 
 // Enemy BaseClass
 
@@ -17,6 +19,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     [SerializeField] private protected Health health;
     private Rigidbody rb;
 
+    protected NavMeshAgent agent => movement?.Agent;
+
     protected bool enableNav = true;
 
     protected bool canAttack = true;
@@ -26,6 +30,14 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     private bool isActive;
 
+    private float originalAgentSpeed;
+    private float environmentalSpeedModifier = 1f;
+
+    // Per-source speed modifiers, stacked multiplicatively (matches PlayerMovement contract)
+    private readonly Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
+
+    private Coroutine slowCourotine;
+    private Coroutine freezeCoroutine;
 
     public void Activate(Transform playerTransform)
     {
@@ -41,6 +53,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (movement == null)
         {
             Debug.LogError($"{name} is missing a MovementComponent.");
+        }
+
+        if (agent != null)
+        {
+            originalAgentSpeed = agent.speed > 0f ? agent.speed : 3.5f;
         }
 
         // Initialize health component
@@ -80,6 +97,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     protected virtual void Update()
     {
         if (health != null && health.IsDead) return;
+
+        UpdateActualSpeed();
     }
 
     #region Health
@@ -133,31 +152,58 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     // Apply a slow effect
     public void ApplySlow(float duration)
     {
+        /*
         if (IsSlowed) return;
         StartCoroutine(SlowRoutine(duration));
+        */
+
+        if (slowCourotine != null) StopCoroutine(slowCourotine);
+        slowCourotine = StartCoroutine(SlowRoutine(duration));
     }
 
     private IEnumerator SlowRoutine(float duration)
     {
         IsSlowed = true;
+        UpdateActualSpeed();
+
         yield return new WaitForSeconds(duration);
+
         IsSlowed = false;
+        UpdateActualSpeed();
+        slowCourotine = null;
     }
 
     // Apply freeze
     public void Freeze(float duration)
     {
+        /*
         if (IsFrozen) return;
         StartCoroutine(FreezeRoutine(duration));
+        */
+
+        if (freezeCoroutine != null) StopCoroutine(freezeCoroutine);
+        freezeCoroutine = StartCoroutine(FreezeRoutine(duration));
     }
 
     private IEnumerator FreezeRoutine(float duration)
     {
         IsFrozen = true;
+        UpdateActualSpeed();
         StopMovement(); // freeze movement
+
         yield return new WaitForSeconds(duration);
-        ResumeMovement();
+
+        //ResumeMovement();
+
         IsFrozen = false;
+        UpdateActualSpeed();
+
+        if (!isAttacking)
+        {
+            ResumeMovement();
+        }
+
+        freezeCoroutine = null;
     }
 
     // Burning DOT is handled by Health, but we track the state here
@@ -169,9 +215,18 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     // Cleanse all effects (used by Extinguisher, Shatter, etc.)
     public void Cleanse()
     {
+        if (slowCourotine != null) StopCoroutine(slowCourotine);
+        if (freezeCoroutine != null) StopCoroutine(freezeCoroutine);
+
         IsBurning = false;
         IsFrozen = false;
         IsSlowed = false;
+
+        slowCourotine = null;
+        freezeCoroutine = null;
+
+        UpdateActualSpeed();
+        ResumeMovement();
     }
 
     public void TakeDamagePercent(float percent)
@@ -196,8 +251,63 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             health.TakeDmg(dmg, effectType, effectDuration, effectValue);
     }
 
+    public void SetEnvironmentalSpeedModifier(float multiplier)
+    {
+        environmentalSpeedModifier = Mathf.Max(0f, multiplier);
+        UpdateActualSpeed();
+    }
+
+    private void UpdateActualSpeed()
+    {
+        if (agent == null) return;
+
+        if (IsFrozen)
+        {
+            agent.speed = 0f;
+            return;
+        }
+
+        float currentSlowFactor = IsSlowed ? 0.5f : 1.0f;
+        float targetSpeed = originalAgentSpeed * currentSlowFactor * environmentalSpeedModifier;
+
+        if (!Mathf.Approximately(agent.speed, targetSpeed))
+        {
+            agent.speed = targetSpeed;
+        }
+
+        //Debug.Log($"[EnemyBase] {gameObject.name} envMod={environmentalSpeedModifier} orig={originalAgentSpeed} agent.speed={agent.speed} actualVel={agent.velocity.magnitude}");
+    }
+
+    // Argument is a MULTIPLIER (0.5 = half speed), stacked multiplicatively.
+    // Matches PlayerMovement so a single value behaves identically for both.
+    public void AddSpeedModifier(object source, float multiplier)
+    {
+        if (source == null) return;
+
+        speedModifiers[source] = multiplier;
+        RecalculateEnvironmentalSpeed();
+    }
+
+    public void RemoveSpeedModifier(object source)
+    {
+        if (source == null) return;
+
+        if (speedModifiers.Remove(source))
+            RecalculateEnvironmentalSpeed();
+    }
+
+    private void RecalculateEnvironmentalSpeed()
+    {
+        float finalMult = 1f;
+        foreach (var mult in speedModifiers.Values)
+            finalMult *= mult;
+
+        SetEnvironmentalSpeedModifier(finalMult);
+    }
+
     public void ReleaseSlot()
     {
         movement.ReleaseTargetSlot();
     }
 }
+
