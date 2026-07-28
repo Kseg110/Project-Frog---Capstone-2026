@@ -378,6 +378,7 @@ GameObject:
   - component: {fileID: 4841448948749723779}
   - component: {fileID: -5907844099691676864}
   - component: {fileID: 2085735272965509620}
+  - component: {fileID: 7503027827942005804}
   m_Layer: 0
   m_Name: FireAnchor
   m_TagString: Untagged
@@ -545,6 +546,22 @@ MonoBehaviour:
   PIMPMyAnchor:
   - {fileID: 232573379608071637}
   - {fileID: 779705461479096973}
+--- !u!208 &7503027827942005804
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6911843594789955862}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.565, y: 1.57, z: 0.66}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1.63, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &7164860429683319075
 GameObject:
   m_ObjectHideFlags: 0
