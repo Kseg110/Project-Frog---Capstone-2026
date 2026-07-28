@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 6679297640843568677}
   - component: {fileID: 19667051309881852}
   - component: {fileID: 7418626977015277531}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Dart
-  m_TagString: Untagged
+  m_TagString: projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -131,6 +131,11 @@ MonoBehaviour:
   maxScale: 2
   speed: 0
   damage: 10
+  effectType: 
+  effectDuration: 0
+  effectValue: 0
+  isPlayerProjectile: 0
+  isPiercingProjectile: 0
   targetMode: 2
   destroyOnHit: 1
 --- !u!54 &7418626977015277531
