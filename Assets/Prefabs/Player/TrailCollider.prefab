@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 2530763791120963583}
   - component: {fileID: 2043230328738876702}
   m_Layer: 0
-  m_Name: IceVFX
+  m_Name: IceCloudVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -698,7 +698,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.1
+      scalar: 0.05
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -827,7 +827,7 @@ ParticleSystem:
     m_UseMeshMaterialIndex: 0
     m_UseMeshColors: 1
     alignToDirection: 0
-    m_Texture: {fileID: 2800000, guid: d145959e30c80aa4296f9623ce456d09, type: 3}
+    m_Texture: {fileID: 0}
     m_TextureClipChannel: 3
     m_TextureClipThreshold: 0
     m_TextureUVChannel: 0
@@ -1395,7 +1395,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.4481132, g: 1, b: 0.9814347, a: 1}
+        key0: {r: 0.7311321, g: 1, b: 0.9904657, a: 1}
         key1: {r: 1, g: 1, b: 1, a: 0.8627451}
         key2: {r: 1, g: 1, b: 1, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}

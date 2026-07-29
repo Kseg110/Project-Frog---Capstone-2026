@@ -231,6 +231,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FrogSkeleton
       objectReference: {fileID: 0}
+    - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5650343039611556545, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -1039,6 +1043,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CrocCaiman
       objectReference: {fileID: 0}
+    - target: {fileID: 4255145973034431359, guid: a1f0976d03c74e84595a21eecbbe5c17, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8604627787603212412, guid: a1f0976d03c74e84595a21eecbbe5c17, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.4393082
@@ -1836,6 +1844,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1866820753286131010, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: iceColor.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3469857485663395449, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: m_TagString
       value: Untagged
@@ -2010,6 +2022,63 @@ MonoBehaviour:
   amplitude: 0.15
   frequency: 2
   randomPhase: 1
+--- !u!1001 &1866714762
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 113067487273363146, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 113067487273363146, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.87
+      objectReference: {fileID: 0}
+    - target: {fileID: 113067487273363146, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.6667767
+      objectReference: {fileID: 0}
+    - target: {fileID: 113067487273363146, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 113067487273363146, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 113067487273363146, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 113067487273363146, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 113067487273363146, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 113067487273363146, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 113067487273363146, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4814241709677053993, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
+      propertyPath: m_Name
+      value: TrailCollider
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1ec64e99652220d409fcb91c0781eb27, type: 3}
 --- !u!1001 &1985804192
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2021,6 +2090,10 @@ PrefabInstance:
     - target: {fileID: 3449643467730253744, guid: 52cb8c935dc2f744e98dcdcfb7d79ff5, type: 3}
       propertyPath: m_Name
       value: RockGolem
+      objectReference: {fileID: 0}
+    - target: {fileID: 3449643467730253744, guid: 52cb8c935dc2f744e98dcdcfb7d79ff5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6029786094854106383, guid: 52cb8c935dc2f744e98dcdcfb7d79ff5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2203,3 +2276,4 @@ SceneRoots:
   - {fileID: 727508069}
   - {fileID: 686438392}
   - {fileID: 1985804192}
+  - {fileID: 1866714762}
