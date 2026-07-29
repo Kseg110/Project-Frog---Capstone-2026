@@ -16,6 +16,8 @@ public class CardSelectionUI : MonoBehaviour
     private CanvasGroup canvasGroup;
     public bool IsCardSelectionActive { get; private set; }
 
+    private List<CardUI> spawnedCards = new List<CardUI>();
+
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
@@ -71,6 +73,8 @@ public class CardSelectionUI : MonoBehaviour
 
     private IEnumerator SpawnCardsSequentially(List<UpgradeDataSO> cards)
     {
+        spawnedCards.Clear();
+
         // Spawn each card one at a time with a short delay between them for a staggered animation effect
         // WaitForSecondsRealtime is used here because normal timers stop while the game is frozen
         foreach (UpgradeDataSO card in cards)
@@ -78,6 +82,7 @@ public class CardSelectionUI : MonoBehaviour
             CardUI ui = Instantiate(cardUIPrefab, cardContainer);
             ui.Setup(card, OnCardChosen);
             ui.PlaySpawnAnimation();
+            spawnedCards.Add(ui);
             yield return new WaitForSecondsRealtime(0.35f);
         }
 
@@ -88,32 +93,67 @@ public class CardSelectionUI : MonoBehaviour
             UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(firstButton.gameObject);
     }
 
+    //private void OnCardChosen(UpgradeDataSO chosenCard)
+    //{
+    //    IsCardSelectionActive = false;
+
+    //    // Tell the upgrade manager which card the player picked so it can apply the upgrade
+    //    upgradeManager.OnCardChosen(chosenCard);
+
+    //    // Remove all card UI objects from the screen
+    //    foreach (Transform child in cardContainer)
+    //        Destroy(child.gameObject);
+
+    //    // Hide the selection screen, unfreeze the game, and lock the cursor again
+    //    HideUI();
+
+    //    // Unfreeze game
+    //    Time.timeScale = 1f;
+
+    //    playerHUD.ShowHUD();
+    //    Cursor.visible = false;
+
+    //    // Show the player's crosshair again now that card selection is over
+    //    if (playerCrosshair != null)
+    //        playerCrosshair.gameObject.SetActive(true);
+
+    //    //call next wave
+    //    waveSpawner.StartNextWaveAfterCard();
+    //}
 
     private void OnCardChosen(UpgradeDataSO chosenCard)
     {
         IsCardSelectionActive = false;
 
-        // Tell the upgrade manager which card the player picked so it can apply the upgrade
         upgradeManager.OnCardChosen(chosenCard);
 
-        // Remove all card UI objects from the screen
+        StartCoroutine(HandleCardDisappear(chosenCard));
+    }
+
+    private IEnumerator HandleCardDisappear(UpgradeDataSO chosenCard)
+    {
+        CardUI chosenUI = spawnedCards.Find(ui => ui.Data == chosenCard);
+
+        foreach (var ui in spawnedCards)
+        {
+            if (ui != chosenUI)
+                StartCoroutine(ui.PlaySlideDownAnimation());
+        }
+
+        yield return StartCoroutine(chosenUI.PlayDissolveAnimation());
+
         foreach (Transform child in cardContainer)
             Destroy(child.gameObject);
 
-        // Hide the selection screen, unfreeze the game, and lock the cursor again
         HideUI();
-
-        // Unfreeze game
         Time.timeScale = 1f;
 
         playerHUD.ShowHUD();
         Cursor.visible = false;
 
-        // Show the player's crosshair again now that card selection is over
         if (playerCrosshair != null)
             playerCrosshair.gameObject.SetActive(true);
 
-        //call next wave
         waveSpawner.StartNextWaveAfterCard();
     }
 }
