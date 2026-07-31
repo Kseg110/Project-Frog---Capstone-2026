@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 4190489891638949421}
   - component: {fileID: -2593096587871656810}
   - component: {fileID: 4653997872707702896}
+  - component: {fileID: 3412971611251648848}
   m_Layer: 7
   m_Name: RockGolem
   m_TagString: Enemy
@@ -301,6 +302,31 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.2, y: 4.2, z: 1.5}
   m_Center: {x: 0, y: 1.14, z: -0.17}
+--- !u!114 &3412971611251648848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3449643467730253744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5819dbb78c68bf848a36ad613d695e4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyFlash
+  enemyRenderers:
+  - {fileID: 2907758780347023231}
+  - {fileID: 4441828012672719775}
+  - {fileID: 6959488756468435652}
+  - {fileID: 2002996954385405699}
+  - {fileID: 6704691150697722602}
+  - {fileID: 7748760585187239627}
+  - {fileID: 5530401053052633524}
+  - {fileID: 8880933985839903141}
+  - {fileID: 6202097811739803156}
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.15
+  customFlashMaterial: {fileID: 2100000, guid: 95ccb423ed8ea854a905c9cc444a551b, type: 2}
 --- !u!1001 &1836448197354565205
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -528,8 +554,53 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+--- !u!23 &2002996954385405699 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4653331929886659572, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+  m_PrefabInstance: {fileID: 6584235865335416055}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &2907758780347023231 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8288180867435543432, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+  m_PrefabInstance: {fileID: 6584235865335416055}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &4441828012672719775 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -1802727751417274520, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+  m_PrefabInstance: {fileID: 6584235865335416055}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &5530401053052633524 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1720385875169396035, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+  m_PrefabInstance: {fileID: 6584235865335416055}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &6202097811739803156 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 958599024952097507, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+  m_PrefabInstance: {fileID: 6584235865335416055}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6689357133400056604 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+  m_PrefabInstance: {fileID: 6584235865335416055}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &6704691150697722602 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 456058415299343901, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+  m_PrefabInstance: {fileID: 6584235865335416055}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &6959488756468435652 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4308525944392650291, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+  m_PrefabInstance: {fileID: 6584235865335416055}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &7748760585187239627 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3519219034381247036, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+  m_PrefabInstance: {fileID: 6584235865335416055}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &8880933985839903141 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2333020507128608082, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
   m_PrefabInstance: {fileID: 6584235865335416055}
   m_PrefabAsset: {fileID: 0}
