@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private ParticleSystem dashEffect;
     [SerializeField] private float dashEffectBackOffset = 1f;
     [SerializeField] private float dashEffectHeightOffset = 0.5f;
-    
+
 
     [Header("FMod Events")]
     //[SerializeField] private EventReference fireAnchorEvent;
@@ -67,6 +67,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private float dashTimer;
     private float dashCooldownTimer;
+
+    // Tether-break stun state. Independent of the StopMovement/ResumeMovement external lock so the two systems compose instead of stomping each other. Set by TetherDamageDealer on a Golem break.
+    private float stunTimer;
+    private bool isStunned;
 
     public bool IsDashing => isDashing;
     public float DashCooldownProgress => dashCooldownTimer > 0f ? 1f - (dashCooldownTimer / dashCooldown) : 1f;
@@ -143,7 +147,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     {
         bool shouldUseGamepad = (newDevice == InputManager.InputDevice.Gamepad);
         SwitchInputMode(shouldUseGamepad);
-        
+
     }
 
     private void SyncWithInputManager()
@@ -188,7 +192,18 @@ public class PlayerMovement : MonoBehaviour, IMovement
         float progress = 1f - (dashCooldownTimer / dashCooldown);
         playerHUD?.UpdateDashCooldown(progress);
 
-        if (isMovementStopped || movementStoppedExternally)
+        // Tick down the tether-break stun.
+        if (isStunned)
+        {
+            stunTimer -= Time.deltaTime;
+            if (stunTimer <= 0f)
+            {
+                isStunned = false;
+                stunTimer = 0f;
+            }
+        }
+
+        if (isMovementStopped || movementStoppedExternally || isStunned)
             return;
 
         // READ INPUT
@@ -232,7 +247,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void FixedUpdate()
     {
-        if (isMovementStopped || movementStoppedExternally)
+        if (isMovementStopped || movementStoppedExternally || isStunned)
         {
             rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             return;
@@ -341,6 +356,16 @@ public class PlayerMovement : MonoBehaviour, IMovement
     {
         isMovementStopped = false;
         movementStoppedExternally = false;
+    }
+
+    // Temporarily disables movement for `duration` seconds. Called by TetherDamageDealer when a Golem breaks the tether. Independent of StopMovement/ResumeMovement so it won't fight other movement locks.
+    public void ApplyStun(float duration)
+    {
+        if (duration <= 0f) return;
+        // Take the longer of any existing stun and the new one so overlapping breaks don't cut it short.
+        stunTimer = Mathf.Max(stunTimer, duration);
+        isStunned = true;
+        moveInput = Vector3.zero;
     }
 
     private void StartDash()
