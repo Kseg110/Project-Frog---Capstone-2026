@@ -1835,13 +1835,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 70420343}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.13798265, z: -0, w: 0.9904347}
-  m_LocalPosition: {x: 281.68405, y: 2.553, z: 248.72707}
-  m_LocalScale: {x: 2.6373534, y: 5.4900002, z: 10.936542}
+  m_LocalRotation: {x: 0, y: 0.12327239, z: 0, w: 0.9923729}
+  m_LocalPosition: {x: 286.22, y: 2.553, z: 247.58}
+  m_LocalScale: {x: 1.5037134, y: 5.4900002, z: 10.936542}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1535729723}
-  m_LocalEulerAnglesHint: {x: 0, y: 1.7, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 14.162, z: 0}
 --- !u!65 &70420345
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -69455,6 +69455,10 @@ PrefabInstance:
       propertyPath: playerHUD
       value: 
       objectReference: {fileID: 1152341541}
+    - target: {fileID: 7481143701210063934, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: losBlockingMask.m_Bits
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7555014404437206304, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: m_Name
       value: Player
