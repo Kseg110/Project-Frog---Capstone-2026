@@ -391,11 +391,14 @@ public class PlayerMovement : MonoBehaviour, IMovement
         // Lock facing to dash direction immediately
         rb.MoveRotation(Quaternion.LookRotation(dashDirection));
 
-        // Spawn the trail effect behind the player, facing opposite the dash direction
-        Vector3 spawnPosition = transform.position - dashDirection * dashEffectBackOffset + Vector3.up * dashEffectHeightOffset;
-        Quaternion spawnRotation = Quaternion.LookRotation(-dashDirection);
-        ParticleSystem fx = Instantiate(dashEffect, spawnPosition, spawnRotation);
-        fx.Play();
+        if (dashEffect != null)
+        {
+            // Spawn the trail effect behind the player, facing opposite the dash direction
+            Vector3 spawnPosition = transform.position - dashDirection * dashEffectBackOffset + Vector3.up * dashEffectHeightOffset;
+            Quaternion spawnRotation = Quaternion.LookRotation(-dashDirection);
+
+            Instantiate(dashEffect, spawnPosition, spawnRotation);; 
+        }
 
         RuntimeManager.PlayOneShot(dashActivationEvent, transform.position);
 
