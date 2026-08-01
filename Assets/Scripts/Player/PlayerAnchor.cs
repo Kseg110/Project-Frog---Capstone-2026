@@ -95,7 +95,7 @@ public class PlayerAnchor : MonoBehaviour
         if (tetherAction != null && tetherAction.WasPressedThisFrame())
         {
             if (isTethered)
-                ReleaseTether();
+                ReleaseTether(playReel: true);   // manual detach - play the reel-in animation
             else
                 StartTether();
         }
@@ -106,24 +106,25 @@ public class PlayerAnchor : MonoBehaviour
         if (!isTethered)
             return;
 
-        // Anchor destroyed / despawned.
+        // Anchor destroyed / despawned - nothing to reel from, detach instantly.
         if (attachedAnchor == null)
         {
-            ReleaseTether();
+            ReleaseTether(playReel: false);
             return;
         }
 
-        // Out of range.
+        // Out of range - reel in.
         if (Vector3.Distance(transform.position, attachedAnchor.transform.position) > attachedAnchor.TetherRange)
         {
-            ReleaseTether();
+            ReleaseTether(playReel: true);
             return;
         }
 
-        // Cover moved between player and anchor.
+        // Cover moved between player and anchor. Reeling for consistency; flip to false if LOS-breaks
+        // should snap instantly (rope "cut" by geometry) rather than reel.
         if (requireLineOfSightWhileTethered && !HasLineOfSight(attachedAnchor))
         {
-            ReleaseTether();
+            ReleaseTether(playReel: true);
         }
     }
 
@@ -183,9 +184,7 @@ public class PlayerAnchor : MonoBehaviour
         {
             if (blocked)
             {
-                // A SphereCast that starts already overlapping geometry returns distance 0
-                // and a zero normal. That's the classic false-block: the sweep never left
-                // the origin, so the "blocker" is something the player is standing in/against.
+                // A SphereCast that starts already overlapping geometry returns distance 0 and a zero normal. That's the classic false-block: the sweep never left the origin, so the "blocker" is something the player is standing in/against.
                 string degenerate = (hit.distance <= Mathf.Epsilon) ? " [DEGENERATE - sphere overlapped at origin]" : "";
 
                 Debug.Log($"<color=red>[LOS]</color> {anchor.name} BLOCKED by '{hit.collider.name}' " +
@@ -235,15 +234,25 @@ public class PlayerAnchor : MonoBehaviour
     }
 
     /// <summary>
-    /// Release tethering
+    /// Release tethering. When playReel is true (manual toggle, range exceeded, LOS break), the tether
+    /// plays its reel-in animation before fully detaching; the logical release happens immediately either
+    /// way. Dash and anchor-destroyed paths pass false for an instant detach.
     /// </summary>
-    public void ReleaseTether()
+    public void ReleaseTether(bool playReel = false)
     {
         isTethered = false;
+        AnchorBase releasedAnchor = attachedAnchor;   // cache before we clear it
         attachedAnchor = null;
 
         if (anchorTether != null)
-            anchorTether.SetEndPoint(null, true);
+        {
+            // Only reel if we were actually attached to something and the caller wants the animation; otherwise detach instantly. 
+            if (playReel && releasedAnchor != null && anchorTether.EndPoint != null)
+                anchorTether.ReelInAndBreak();
+            else
+                anchorTether.SetEndPoint(null, true);
+        }
+
         OnTetherReleased?.Invoke();
         OnAnchorChanged?.Invoke(null);
     }

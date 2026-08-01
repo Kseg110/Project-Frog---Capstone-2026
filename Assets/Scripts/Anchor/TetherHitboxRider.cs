@@ -13,6 +13,12 @@ public class TetherHitboxRider : MonoBehaviour
     [SerializeField] private ParticleSystem iceVFX;
     [SerializeField] private ParticleSystem windVFX;
 
+    [Header("Fade-Out On Detach")]
+    [Tooltip("When the tether detaches/breaks, spawn one detached copy of the last-played element VFX at each hitbox's last position so the effect lingers and fades instead of cutting instantly.")]
+    [SerializeField] private bool spawnFadeOutOnDetach = true;
+    [Tooltip("Safety cap: the fade-out instances self-destruct after this many seconds even if their ParticleSystem reports it's still alive.")]
+    [SerializeField] private float fadeOutMaxLifetime = 3f;
+
     [Range(2, 20)][SerializeField] private int hitboxCount = 8;
     [Tooltip("Only activate hitboxes while attached to an anchor (uses OnAnchorAttached/Detached).")]
     [SerializeField] private bool onlyWhileAttached = true;
@@ -29,6 +35,9 @@ public class TetherHitboxRider : MonoBehaviour
     private Transform[] hitboxes;
     private HitboxEffects[] hitboxEffects;
     private bool active;
+
+    // The element currently being shown, cached so HandleDetached knows which VFX to spawn as a fade-out (by the time detach fires, the anchor is already gone so it can't read it from the tether).
+    private AnchorElement? currentElement;
 
     private void Awake()
     {
@@ -104,13 +113,53 @@ public class TetherHitboxRider : MonoBehaviour
 
     private void HandleDetached()
     {
+        // Spawn the lingering fade-out copies at each hitbox's last position BEFORE we disable them, so the last-played element dissipates in place instead of cutting instantly.
+        if (spawnFadeOutOnDetach)
+            SpawnFadeOutBurst();
+
         SetHitboxesActive(!onlyWhileAttached ? active : false);
         ApplyElement(null); // turn all element effects off while detached
+    }
+
+    // Spawns one detached copy of the last played element's VFX at each hitbox's current world position/rotation. Unparented so it survives the hitbox being disabled this same frame, and set to self-destruct once it finishes (or after fadeOutMaxLifetime as a hard cap).
+    private void SpawnFadeOutBurst()
+    {
+        ParticleSystem prefab = PrefabForElement(currentElement);
+        if (prefab == null) return;          // no element was showing, or that slot is unassigned
+        if (hitboxes == null) return;
+
+        for (int i = 0; i < hitboxCount; i++)
+        {
+            Transform hb = hitboxes[i];
+            if (hb == null) continue;
+
+            // World-space spawn so it stays put where the rope was; NOT parented to the hitbox.
+            ParticleSystem fade = Instantiate(prefab, hb.position, hb.rotation);
+            fade.gameObject.SetActive(true);
+            fade.Play();
+
+            // Auto-cleanup: prefer the system's own duration, capped by the safety lifetime.
+            float life = Mathf.Min(fadeOutMaxLifetime, fade.main.duration + fade.main.startLifetime.constantMax);
+            Destroy(fade.gameObject, life);
+        }
+    }
+
+    private ParticleSystem PrefabForElement(AnchorElement? element)
+    {
+        return element switch
+        {
+            AnchorElement.Fire => fireVFX,
+            AnchorElement.Ice => iceVFX,
+            AnchorElement.Wind => windVFX,
+            _ => null
+        };
     }
 
     // Enables the effect matching 'element' on every hitbox and disables the other two.
     private void ApplyElement(AnchorElement? element)
     {
+        currentElement = element;   // cache so a later detach knows what to fade out
+
         if (hitboxEffects == null) return;
 
         for (int i = 0; i < hitboxEffects.Length; i++)
