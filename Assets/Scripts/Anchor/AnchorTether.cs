@@ -39,8 +39,12 @@ public class AnchorTether : MonoBehaviour
     [Header("Throw Animation")]
     [Tooltip("How long the rope takes to fly from the player out to the anchor on attach.")]
     [SerializeField] private float throwDuration = 0.5f;
-    [Tooltip("Eases the tip's travel from start (0) to anchor (1). Linear is fine; EaseInOut gives a snappier launch + settle.")]
+    [Tooltip("Eases the tip's travel between the player and the anchor. Shared by throw and reel. Linear is fine; EaseInOut gives a snappier launch + settle.")]
     [SerializeField] private AnimationCurve throwEase = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+    [Header("Reel Animation")]
+    [Tooltip("How long the rope takes to reel back in from the anchor to the player when severed.")]
+    [SerializeField] private float reelDuration = 0.5f;
 
     [Header("Cooldown")]
     [SerializeField] private float tetherCooldown = 1.0f;
@@ -65,9 +69,16 @@ public class AnchorTether : MonoBehaviour
     private Vector3 throwTipPosition;   // current virtual end position while throwing
     private Coroutine throwRoutine;
 
+    // Reel-in (reverse throw) state - the end is unpinned and the rope's rest length is shrunk so the free end draws in along the existing slack toward the player before detaching.
+    private bool isReeling;
+    private Coroutine reelRoutine;
+
     // True while the rope is animating its throw from the player out to the anchor.
     // Downstream systems (hitbox rider, restraint, VFX) can gate on this if they want to ignore the rope until it physically lands.
     public bool IsThrowing => isThrowing;
+
+    // True while the rope is retracting from the anchor back to the player prior to a forced break.
+    public bool IsReeling => isReeling;
 
     // Lifecycle
     private void Awake()
@@ -124,8 +135,8 @@ public class AnchorTether : MonoBehaviour
             return;
         }
 
-        // Runtime: rope is only visible while attached to something.
-        lr.enabled = endPoint != null;
+        // Runtime: rope is only visible while attached to something, or while reeling in.
+        lr.enabled = endPoint != null || isReeling;
 
         // Keep the optional MidPoint transform riding the middle of the rope.
         if (midPoint != null && ropeInitialized)
@@ -151,7 +162,7 @@ public class AnchorTether : MonoBehaviour
             if (!ropeInitialized) return;
         }
 
-        // While throwing, pin the rope's end to the moving virtual tip instead of the real anchor.
+        // While throwing, pin the rope's end to the moving virtual tip. While reeling, the end is unpinned (dangling) so it draws in along the slack rather than beelining to the player.
         Vector3? pinnedEnd = GetActivePinnedEnd();
         rope.Simulate(Time.fixedDeltaTime, startPoint.position, pinnedEnd, collisionProbe);
 
@@ -163,10 +174,11 @@ public class AnchorTether : MonoBehaviour
     private bool AreEndPointsValid() => startPoint != null && endPoint != null;
     private bool IsPrefab => gameObject.scene.rootCount == 0;
 
-    // The world position the sim should pin its end particle to this step: the moving virtual tip while throwing, otherwise the real end point (or null when dangling).
+    // The world position the sim should pin its end particle to this step: the moving virtual tip while throwing; NULL while reeling (end dangles so it reels in along the slack); otherwise the real end point (or null when dangling).
     private Vector3? GetActivePinnedEnd()
     {
         if (isThrowing) return throwTipPosition;
+        if (isReeling) return null;              // dangle the end so it reels in along the slack, not a straight line
         return endPoint != null ? endPoint.position : (Vector3?)null;
     }
 
@@ -257,6 +269,13 @@ public class AnchorTether : MonoBehaviour
     public void SetEndPoint(Transform t, bool instantAssign = false)
     {
         Debug.Log("<color=orange>[AnchorTether]</color> SetEndPoint called with: " + (t ? t.name : "NULL"));
+
+        // Don't let a new attach interrupt an in-progress reel-in break.
+        if (isReeling)
+        {
+            Debug.Log("<color=red>[AnchorTether]</color> BLOCKED - reeling in");
+            return;
+        }
 
         if (!canTether && t != endPoint && t != null)
         {
@@ -369,6 +388,54 @@ public class AnchorTether : MonoBehaviour
         throwRoutine = null;
     }
 
+    /* Forcibly severs the tether, playing the reel-in first: the end is unpinned and the rope's rest length is shrunk so the free end draws in along the existing slack toward the player, THEN the normal
+       break/detach cleanup runs. Guarded so it can't stack or re-fire while already reeling. In edit mode (no coroutines) it falls straight through to an instant break. -E.M */
+
+    public void ReelInAndBreak()
+    {
+        if (!Application.isPlaying) { BreakTether(); return; }
+        if (endPoint == null) return;   // already detached
+        if (isReeling) return;          // already reeling
+
+        if (reelRoutine != null) StopCoroutine(reelRoutine);
+        reelRoutine = StartCoroutine(ReelInRoutine());
+    }
+
+    /* Reels the tether in from the anchor to the player. The end particle is UNPINNED for the duration (see GetActivePinnedEnd) and the rope's rest length is shrunk from full to zero, so the
+       constraints draw the free (anchor) end inward along the slack while gravity keeps the body draped - a tape-measure retract in otherwords. -E.M */ 
+
+    private IEnumerator ReelInRoutine()
+    {
+        Debug.Log("<color=lime>[AnchorTether]</color> ReelInRoutine STARTED");
+
+        // Cancel any in-flight throw so we don't fight over rope state.
+        StopThrow();
+
+        isReeling = true;
+
+        float t = 0f;
+        float dur = Mathf.Max(0.0001f, reelDuration);
+        while (t < dur)
+        {
+            t += Time.deltaTime;
+            float k = throwEase.Evaluate(Mathf.Clamp01(t / dur));
+
+            // Shrink rest length toward zero. With the end unpinned, the free end is pulled in along the existing slack toward the player as total rope length drops.
+            rope.SetLengthScale(1f - k);
+            yield return null;
+        }
+
+        // Restore full rest length for the next throw.
+        rope.SetLengthScale(1f);
+
+        // Clear reeling BEFORE the break so SetEndPoint isn't blocked by the guard.
+        isReeling = false;
+        reelRoutine = null;
+
+        // Now run the real break/detach cleanup.
+        BreakTether();
+    }
+
     // Forcibly severs the tether. Detaches the end point, fires OnTetherBroken (for VFX/SFX/gameplay reactions), then the normal OnAnchorDetached chain so downstream systems (rider, restraint) clean up automatically.
     // The cooldown is applied so the player can't instantly re-attach.
     public void BreakTether()
@@ -408,6 +475,8 @@ public class AnchorTether : MonoBehaviour
     }
 }
 
+#region Verlet Rope Simulation Class
+
 // Self-contained verlet rope simulation. No GameObjects, no Rigidbodies - just position arrays and constraint projection. Cannot stretch apart or explode because constraints are enforced by directly correcting positions.
 [Serializable]
 public class VerletRope
@@ -437,12 +506,16 @@ public class VerletRope
     private int count;
     private float segmentLength;
 
+    // Cached at Initialize so SetLengthScale can shrink/restore relative to the original rest length.
+    private float baseSegmentLength;
+
     private readonly Collider[] overlapResults = new Collider[8];
 
     public void Initialize(Vector3 start, Vector3 end, int particleCount, float ropeLength)
     {
         count = Mathf.Max(2, particleCount);
         segmentLength = ropeLength / (count - 1);
+        baseSegmentLength = segmentLength;
 
         Positions = new Vector3[count];
         prevPositions = new Vector3[count];
@@ -452,6 +525,12 @@ public class VerletRope
             Positions[i] = Vector3.Lerp(start, end, i / (float)(count - 1));
             prevPositions[i] = Positions[i];
         }
+    }
+
+    // Scales the rope's rest length (0 = fully collapsed, 1 = full length). Used by the reel-in to draw the free end inward along the existing slack for a tape-measure retract. Also used in PlayerTether.cs for manual/radii detach.
+    public void SetLengthScale(float scale)
+    {
+        segmentLength = baseSegmentLength * Mathf.Clamp01(scale);
     }
 
     /// <param name="pinnedStart">World position the first particle is locked to (player).</param>
@@ -561,3 +640,5 @@ public class VerletRope
         }
     }
 }
+
+#endregion
