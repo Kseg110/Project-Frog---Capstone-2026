@@ -93,34 +93,6 @@ public class CardSelectionUI : MonoBehaviour
             UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(firstButton.gameObject);
     }
 
-    //private void OnCardChosen(UpgradeDataSO chosenCard)
-    //{
-    //    IsCardSelectionActive = false;
-
-    //    // Tell the upgrade manager which card the player picked so it can apply the upgrade
-    //    upgradeManager.OnCardChosen(chosenCard);
-
-    //    // Remove all card UI objects from the screen
-    //    foreach (Transform child in cardContainer)
-    //        Destroy(child.gameObject);
-
-    //    // Hide the selection screen, unfreeze the game, and lock the cursor again
-    //    HideUI();
-
-    //    // Unfreeze game
-    //    Time.timeScale = 1f;
-
-    //    playerHUD.ShowHUD();
-    //    Cursor.visible = false;
-
-    //    // Show the player's crosshair again now that card selection is over
-    //    if (playerCrosshair != null)
-    //        playerCrosshair.gameObject.SetActive(true);
-
-    //    //call next wave
-    //    waveSpawner.StartNextWaveAfterCard();
-    //}
-
     private void OnCardChosen(UpgradeDataSO chosenCard)
     {
         IsCardSelectionActive = false;
