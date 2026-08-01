@@ -12,6 +12,8 @@ public class UINavigator : MonoBehaviour
     [Header("Default Selection")]
     [SerializeField] private Selectable defaultButton;
 
+    [SerializeField] private FMODUnity.EventReference hoverEvent;
+
     private GameObject lastSelected;
 
     void OnEnable()
@@ -37,7 +39,13 @@ public class UINavigator : MonoBehaviour
     private void HandleSelectionVisual()
     {
         var es = EventSystem.current;
-        GameObject current = es.currentSelectedGameObject;
+
+        // If the user is hovering over a UI element
+        GameObject current = UIHoverScaler.HoveredObject;
+
+        // If not hovering, use the currently selected UI element
+        if (current == null)
+            current = es.currentSelectedGameObject;
 
         if (current == lastSelected)
             return;
@@ -47,6 +55,11 @@ public class UINavigator : MonoBehaviour
 
         if (current != null)
             current.transform.localScale = Vector3.one * selectedScale;
+
+        if (current != lastSelected && current != null)
+        {
+            FMODUnity.RuntimeManager.PlayOneShot(hoverEvent);
+        }
 
         lastSelected = current;
     }

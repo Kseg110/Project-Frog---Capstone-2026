@@ -84,6 +84,11 @@ public class TetherDamageDealer : MonoBehaviour
         if (debugLogging)
             Debug.Log($"[TetherHit] touched '{other.name}' (tag={other.tag}, layer={LayerMask.LayerToName(other.gameObject.layer)})");
 
+        //Block damage if the tether is broken or the anchor is broken
+        var anchor = Tether.CurrentAnchor;
+        if (anchor == null || anchor.Element == AnchorElement.Broken)
+            return;
+
         if (!other.CompareTag(enemyTag)) return;
 
         // --- BREAKER DWELL PATH (runs BEFORE the hit-cooldown gate) ---
