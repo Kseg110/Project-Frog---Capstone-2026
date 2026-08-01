@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6152530834813121501}
   - component: {fileID: 3365456380286929823}
   - component: {fileID: 779705461479096973}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Snake
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 8156246626004526482}
   - component: {fileID: 3935579230865292050}
   - component: {fileID: 3899950719744874833}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: AnchorRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -193,7 +193,7 @@ GameObject:
   - component: {fileID: 2816318769174537541}
   - component: {fileID: 2825636081349336361}
   - component: {fileID: 232573379608071637}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Post
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,7 +283,7 @@ GameObject:
   - component: {fileID: 1188289179829845215}
   - component: {fileID: 7129591735367783726}
   - component: {fileID: 651712897103575657}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: SnakeEye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -571,7 +571,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1751208365160479709}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: AnchorPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -604,7 +604,7 @@ GameObject:
   - component: {fileID: 5774203893443183712}
   - component: {fileID: 4665012605810861960}
   - component: {fileID: 394321328028667999}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: SnakeTongue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -694,7 +694,7 @@ GameObject:
   - component: {fileID: 393917763313745571}
   - component: {fileID: 4935234711728926343}
   - component: {fileID: 4458162769400909653}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: PointLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -822,6 +822,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AnchorIdleFireVFX
       objectReference: {fileID: 0}
+    - target: {fileID: 6780589512944548904, guid: 6ec76b2c0cfd5f14687a400cbdb9b8ea, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 8403520120608848373, guid: 6ec76b2c0cfd5f14687a400cbdb9b8ea, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.04
@@ -895,6 +899,10 @@ PrefabInstance:
     - target: {fileID: 2531620929154299599, guid: 82424795768bf1c4a8f14faf456b6f27, type: 3}
       propertyPath: m_Name
       value: AnchorActiveFireVFX
+      objectReference: {fileID: 0}
+    - target: {fileID: 2531620929154299599, guid: 82424795768bf1c4a8f14faf456b6f27, type: 3}
+      propertyPath: m_Layer
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 2793581424019418211, guid: 82424795768bf1c4a8f14faf456b6f27, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b

@@ -149,7 +149,7 @@ public class PlayerOvercharge : MonoBehaviour
         if (isTethered)
         {
             // Stores current anchor type
-            lastTetheredAnchor = playerAnchor.CurrentAnchor;
+            lastTetheredAnchor = playerAnchor.AttachedAnchor;
             // Charge while tethered
             currentChargeTime += Time.deltaTime;
             // Fully charged check
