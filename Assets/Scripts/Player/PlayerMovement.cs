@@ -191,6 +191,15 @@ public class PlayerMovement : MonoBehaviour, IMovement
         if (isMovementStopped || movementStoppedExternally)
             return;
 
+        // While dashing, ignore movement input and lock rotation to the dash direction.
+        // This prevents the dash from being cancelled or redirected by new input.
+        if (isDashing)
+        {
+            if (dashDirection.sqrMagnitude > 0.0001f)
+                rb.MoveRotation(Quaternion.LookRotation(dashDirection));
+            return;
+        }
+
         // READ INPUT
         Vector2 move = moveAction.ReadValue<Vector2>();
         Vector3 rawInput = new Vector3(move.x, 0f, move.y);
@@ -201,7 +210,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         Vector3 targetInput = rawInput.sqrMagnitude > 0.001f ? rawInput : Vector3.zero;
 
         // Smooth input to prevent analog stick jitter from causing dead-stops
-        moveInput = isDashing ? Vector3.zero : Vector3.Lerp(moveInput, targetInput, Time.deltaTime * inputSmoothSpeed);
+        moveInput = Vector3.Lerp(moveInput, targetInput, Time.deltaTime * inputSmoothSpeed);
 
         //READ LOOK INPUT
         Vector2 look = lookAction.ReadValue<Vector2>();
@@ -348,7 +357,14 @@ public class PlayerMovement : MonoBehaviour, IMovement
         playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;
-        dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
+
+        // Capture and lock the dash direction at the moment the dash starts.
+        // Normalize to ensure consistent speed and prevent fractional input from changing it.
+        dashDirection = (moveInput.sqrMagnitude > 0.01f) ? moveInput.normalized : transform.forward;
+        moveInput = Vector3.zero; // make sure normal movement input doesn't interfere
+
+        // Lock facing to dash direction immediately
+        rb.MoveRotation(Quaternion.LookRotation(dashDirection));
 
         // Spawn the trail effect behind the player, facing opposite the dash direction
         Vector3 spawnPosition = transform.position - dashDirection * dashEffectBackOffset + Vector3.up * dashEffectHeightOffset;
