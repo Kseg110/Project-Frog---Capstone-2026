@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 1511503074007811530}
   - component: {fileID: 8732270254385064484}
   - component: {fileID: 9129651843082517972}
-  - component: {fileID: 8166012795029777393}
+  - component: {fileID: 5727934348299759323}
   m_Layer: 7
   m_Name: CrocCaiman
   m_TagString: Enemy
@@ -40,6 +40,7 @@ Transform:
   m_Children:
   - {fileID: 859507056069778811}
   - {fileID: 6493838797995227987}
+  - {fileID: 424166498906235134}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &6021168482038359616
@@ -176,7 +177,7 @@ MonoBehaviour:
   preferredDistance: 10
   distanceTolerance: 1.5
   retreatDistance: 5
-  attackSO: {fileID: 11400000, guid: 7f9569228344aa24686afb2da85d1425, type: 2}
+  attackSO: {fileID: 11400000, guid: bd1aed1a9114cb241a1918ede035414d, type: 2}
   lookRotationSpeed: 8
 --- !u!54 &1511503074007811530
 Rigidbody:
@@ -250,7 +251,7 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
---- !u!114 &8166012795029777393
+--- !u!114 &5727934348299759323
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -273,6 +274,37 @@ MonoBehaviour:
   flashColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.15
   customFlashMaterial: {fileID: 2100000, guid: 95ccb423ed8ea854a905c9cc444a551b, type: 2}
+--- !u!1 &7539180464835233359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 424166498906235134}
+  m_Layer: 7
+  m_Name: ProjectileSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &424166498906235134
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7539180464835233359}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 1.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8604627787603212412}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &893731843634264720
 PrefabInstance:
   m_ObjectHideFlags: 0
