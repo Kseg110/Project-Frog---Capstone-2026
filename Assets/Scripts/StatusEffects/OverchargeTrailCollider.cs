@@ -14,10 +14,25 @@ public class OverchargeTrailCollider : MonoBehaviour
     [SerializeField] private int maxColliders = 12;
     [SerializeField] private float colliderSpacing = 0.3f;
 
+    [Header("Element VFX")]
+    [SerializeField] private ParticleSystem fireVFX;
+    [SerializeField] private ParticleSystem iceVFX;
+    [SerializeField] private ParticleSystem windVFX;
+
+    private struct TrailEffects
+    {
+        public ParticleSystem fire;
+        public ParticleSystem ice;
+        public ParticleSystem wind;
+    }
+    private TrailEffects[] trailEffects;
+
     private TrailRenderer trailRenderer;
     private List<GameObject> activeColliders = new List<GameObject>();
     private Dictionary<GameObject, float> enemyDamageTimes = new Dictionary<GameObject, float>();
     private bool isEnabled = false;
+    // The anchor type that determines which VFX to spawn on each collider
+    private PlayerOvercharge.AnchorType currentAnchorType = PlayerOvercharge.AnchorType.None;
 
     private void Awake()
     {
@@ -96,7 +111,41 @@ public class OverchargeTrailCollider : MonoBehaviour
         trigger.enemyTag = enemyTag;
         trigger.OnEnemyEnter += HandleEnemyTrigger;
 
+        // Instantiate the matching VFX prefab as a child of the collider so it follows
+        ParticleSystem vfxInstance = null;
+        switch (currentAnchorType)
+        {
+            case PlayerOvercharge.AnchorType.Fire:
+                if (fireVFX != null)
+                    vfxInstance = Instantiate(fireVFX, colliderObj.transform);
+                break;
+            case PlayerOvercharge.AnchorType.Ice:
+                if (iceVFX != null)
+                    vfxInstance = Instantiate(iceVFX, colliderObj.transform);
+                break;
+            case PlayerOvercharge.AnchorType.Wind:
+                if (windVFX != null)
+                    vfxInstance = Instantiate(windVFX, colliderObj.transform);
+                break;
+            case PlayerOvercharge.AnchorType.None:
+            default:
+                break;
+        }
+
+        if (vfxInstance != null)
+        {
+            // Reset local transform so VFX aligns with collider
+            vfxInstance.transform.localPosition = Vector3.zero;
+            vfxInstance.transform.localRotation = Quaternion.identity;
+        }
+
         return colliderObj;
+    }
+
+    // Called by PlayerOvercharge to set which anchor type is currently overcharged
+    public void SetAnchorType(PlayerOvercharge.AnchorType anchorType)
+    {
+        currentAnchorType = anchorType;
     }
 
     private void HandleEnemyTrigger(GameObject enemy)
