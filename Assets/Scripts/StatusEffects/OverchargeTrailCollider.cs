@@ -111,7 +111,7 @@ public class OverchargeTrailCollider : MonoBehaviour
         trigger.enemyTag = enemyTag;
         trigger.OnEnemyEnter += HandleEnemyTrigger;
 
-        // Instantiate the matching VFX prefab as a child of the collider so it follows
+        // Instantiate the matching VFX prefab so it looks cool
         ParticleSystem vfxInstance = null;
         switch (currentAnchorType)
         {
