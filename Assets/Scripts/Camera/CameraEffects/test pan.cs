@@ -31,7 +31,19 @@ public class CameraPanRoundTrigger : MonoBehaviour
 
         public int doorIndex = 0;
     }
+    public List<PanPoint> GetPanPoints()
+    {
+        foreach (RoundPan pan in roundPans)
+        {
+            if (pan != null &&
+                pan.round == currentRound)
+            {
+                return pan.panPoints;
+            }
+        }
 
+        return null;
+    }
 
 
     [Header("References")]

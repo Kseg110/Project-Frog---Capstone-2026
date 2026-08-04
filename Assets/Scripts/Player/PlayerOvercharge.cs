@@ -146,10 +146,29 @@ public class PlayerOvercharge : MonoBehaviour
     {
         bool isTethered = playerAnchor.IsTethered;
 
+
         if (isTethered)
         {
-            // Stores current anchor type
             lastTetheredAnchor = playerAnchor.CurrentAnchor;
+
+
+            // THIS ANCHOR CANNOT OVERCHARGE
+            if (lastTetheredAnchor != null &&
+                !lastTetheredAnchor.CanOvercharge)
+            {
+                currentChargeTime = 0f;
+
+                lastTetheredAnchor.ResetOverchargeVisual();
+
+                OnChargeChanged?.Invoke(0f);
+
+                if (playerHUD != null)
+                {
+                    playerHUD.UpdateOverchargeWheel(0f);
+                }
+
+                return;
+            }
             // Charge while tethered
             currentChargeTime += Time.deltaTime;
             // Fully charged check
