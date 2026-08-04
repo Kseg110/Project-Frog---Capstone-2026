@@ -28,7 +28,7 @@ public class PlayerOvercharge : MonoBehaviour
     [SerializeField] private PlayerMovement playerMovement;
 
     // Overcharge Events
-    public event Action<float> OnChargeChanged; 
+    public event Action<float> OnChargeChanged;
     public event Action OnOverchargeActivated;
     public event Action OnCooldownComplete;
 
@@ -100,17 +100,17 @@ public class PlayerOvercharge : MonoBehaviour
 
     private void OnDestroy()
     {
-       // unsub from collision events
-       if (trailCollider != null)
+        // unsub from collision events
+        if (trailCollider != null)
         {
             trailCollider.OnEnemyHit -= HandleEnemyHit;
         }
 
-       // unsub from anchor events
-       if (playerAnchor != null)
+        // unsub from anchor events
+        if (playerAnchor != null)
         {
             playerAnchor.OnAnchorChanged -= HandleAnchorChanged;
-        }    
+        }
     }
 
     private void HandleAnchorChanged(AnchorBase newAnchor)
@@ -146,29 +146,10 @@ public class PlayerOvercharge : MonoBehaviour
     {
         bool isTethered = playerAnchor.IsTethered;
 
-
         if (isTethered)
         {
-            lastTetheredAnchor = playerAnchor.CurrentAnchor;
-
-
-            // THIS ANCHOR CANNOT OVERCHARGE
-            if (lastTetheredAnchor != null &&
-                !lastTetheredAnchor.CanOvercharge)
-            {
-                currentChargeTime = 0f;
-
-                lastTetheredAnchor.ResetOverchargeVisual();
-
-                OnChargeChanged?.Invoke(0f);
-
-                if (playerHUD != null)
-                {
-                    playerHUD.UpdateOverchargeWheel(0f);
-                }
-
-                return;
-            }
+            // Stores current anchor type
+            lastTetheredAnchor = playerAnchor.AttachedAnchor;
             // Charge while tethered
             currentChargeTime += Time.deltaTime;
             // Fully charged check
@@ -185,7 +166,7 @@ public class PlayerOvercharge : MonoBehaviour
         }
         else
         {
-            // Decay Charge timer when not tethered
+            // Decay Charge timer when not tethered. 
             if (currentChargeTime > 0)
             {
                 currentChargeTime -= Time.deltaTime * chargeDecayRate;
@@ -208,7 +189,7 @@ public class PlayerOvercharge : MonoBehaviour
     {
         currentCooldownTime -= Time.deltaTime;
 
-        if(currentCooldownTime <= 0f)
+        if (currentCooldownTime <= 0f)
         {
             currentCooldownTime = 0f;
             isInCooldown = false;
@@ -228,6 +209,12 @@ public class PlayerOvercharge : MonoBehaviour
 
     private void ActivateOvercharge()
     {
+        // Guard: only fire if the tether is genuinely live. A broken tether must never convert into a free overcharge.
+        if (playerAnchor == null || !playerAnchor.IsTethered || lastTetheredAnchor == null)
+        {
+            return;
+        }
+
         isOvercharged = true;
 
         // Determine anchor type
@@ -303,7 +290,7 @@ public class PlayerOvercharge : MonoBehaviour
             case AnchorType.Wind:
                 ApplyWindSpeedBoost();
                 break;
- 
+
         }
     }
 
@@ -390,7 +377,7 @@ public class PlayerOvercharge : MonoBehaviour
             return AnchorType.Ice;
         else if (anchor is AnchorWind)
             return AnchorType.Wind;
-        
+
         return AnchorType.None;
     }
 
