@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -79,15 +80,36 @@ public class PlayerTakeDamage : MonoBehaviour
             return;
         }
 
-        // Cache renderers
-        cachedRenderers = GetComponentsInChildren<Renderer>();
+        CacheFlashRenderers();
+
+        // Rigidbody handled manually
+        rb.isKinematic = true;
+    }
+
+    // Builds the set of renderers the damage flash tints red, EXCLUDING the tether.
+    private void CacheFlashRenderers()
+    {
+        Renderer[] allRenderers = GetComponentsInChildren<Renderer>();
+
+        // Find the tether subtree (if any) so we can skip every renderer beneath it.
+        AnchorTether tether = GetComponentInChildren<AnchorTether>();
+        Transform tetherRoot = tether != null ? tether.transform : null;
+
+        List<Renderer> flashSet = new List<Renderer>(allRenderers.Length);
+        foreach (Renderer r in allRenderers)
+        {
+            // Skip anything parented under the tether — its materials are owned by AnchorTether.
+            if (tetherRoot != null && r.transform.IsChildOf(tetherRoot))
+                continue;
+
+            flashSet.Add(r);
+        }
+
+        cachedRenderers = flashSet.ToArray();
         originalColors = new Color[cachedRenderers.Length];
 
         for (int i = 0; i < cachedRenderers.Length; i++)
             originalColors[i] = cachedRenderers[i].material.color;
-
-        // Rigidbody handled manually
-        rb.isKinematic = true;
     }
 
     /// <summary>

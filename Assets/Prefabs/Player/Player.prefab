@@ -404,7 +404,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3166762862184597052}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1922,7 +1922,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerOverchargeVFX
   fireColor: {r: 1, g: 0, b: 0, a: 1}
-  iceColor: {r: 0, g: 1, b: 1, a: 1}
+  iceColor: {r: 0, g: 1, b: 1, a: 0}
   windColor: {r: 0, g: 1, b: 0, a: 1}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   trailTime: 4
@@ -1969,6 +1969,9 @@ MonoBehaviour:
   colliderRadius: 0.5
   maxColliders: 25
   colliderSpacing: 0.3
+  fireVFX: {fileID: 6824751853293586592, guid: b8ffba7299f62a540b8620e3070519c0, type: 3}
+  iceVFX: {fileID: 3853130270983130712, guid: 1de09d68db0d7e74287a3e6a3af14665, type: 3}
+  windVFX: {fileID: 7586543259414874113, guid: 90795e9d3d31ae4499357912b325a9fe, type: 3}
 --- !u!1 &9103946886274004586
 GameObject:
   m_ObjectHideFlags: 0

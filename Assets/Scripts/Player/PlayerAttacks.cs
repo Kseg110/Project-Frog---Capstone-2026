@@ -139,7 +139,7 @@ public class PlayerAttacks : MonoBehaviour
                 if (secondaryPressed && !playerChargeAttack.IsCharging)
                 {
                     playerMovement.StopMovement(GetAimDirection());
-                    playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
+                    playerChargeAttack.BeginCharge(playerAnchor.AttachedAnchor);
                 }
 
                 if (secondaryHeld)
