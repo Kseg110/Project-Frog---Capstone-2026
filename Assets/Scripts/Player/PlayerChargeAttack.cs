@@ -19,6 +19,9 @@ public class PlayerChargeAttack : MonoBehaviour
     [Header("Charge Upgrade Settings")]
     [SerializeField] private float WindHomingDelay = 3f; // Delay before homing activates
 
+    [Header("References")]
+    [SerializeField] private PlayerAnchor playerAnchor;
+
     private AnchorBase CurrentAnchor;
     private float ChargeTimer;
     private bool isCharging;
@@ -35,7 +38,31 @@ public class PlayerChargeAttack : MonoBehaviour
         {
             Debug.LogError("[PlayerChargeAttack] Missing projectile prefab assignment!", this);
         }
+
+        // A charge attack is only ever fired from an active tether, so we need to know tether state.
+        if (playerAnchor == null)
+        {
+            playerAnchor = GetComponent<PlayerAnchor>();
+        }
+        if (playerAnchor == null)
+        {
+            Debug.LogError("[PlayerChargeAttack] No PlayerAnchor reference — charge cannot be tether-gated!", this);
+        }
+
         playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+    }
+
+    private void OnEnable()
+    {
+        // Any release (Golem break, dash, manual detach, LOS break, out-of-range) routes through PlayerAnchor.ReleaseTether, which fires this. Cancelling here covers every break source with no per-source bookkeeping.
+        if (playerAnchor != null)
+            playerAnchor.OnTetherReleased += HandleTetherReleased;
+    }
+
+    private void OnDisable()
+    {
+        if (playerAnchor != null)
+            playerAnchor.OnTetherReleased -= HandleTetherReleased;
     }
 
     private void Update()
@@ -47,9 +74,18 @@ public class PlayerChargeAttack : MonoBehaviour
         playerHUD?.UpdateChargeAttackCooldown(CooldownProgress);
     }
 
+    // Fired when the tether is released by any means. If the player was mid-charge, drop it — no projectile, no cooldown penalty.
+    private void HandleTetherReleased()
+    {
+        if (isCharging)
+            CancelCharge();
+    }
+
     public bool CanBeginCharge()
     {
-        return !IsOnCooldown && !isCharging;
+        // Must be tethered to charge. This is the primary gate that fixes the in-radius-but-untethered exploit.
+        bool tethered = playerAnchor != null && playerAnchor.IsTethered;
+        return tethered && !IsOnCooldown && !isCharging;
     }
 
     public bool BeginCharge(AnchorBase anchor)
@@ -68,7 +104,7 @@ public class PlayerChargeAttack : MonoBehaviour
         isCharging = false;
         ChargeTimer = 0f;
         CurrentAnchor = null;
-    }    
+    }
 
     public void UpdateCharge()
     {
@@ -79,6 +115,13 @@ public class PlayerChargeAttack : MonoBehaviour
     public void ReleaseCharge(Vector3 firePoint, Vector3 direction)
     {
         if (!IsCharging || CurrentAnchor == null) return;
+
+        // Failsafe: even if a charge somehow survived a break this frame (event ordering edge case), don't fire while untethered. Mirrors the belt-and-suspenders style of IgnorePlayerCollision.
+        if (playerAnchor == null || !playerAnchor.IsTethered)
+        {
+            CancelCharge();
+            return;
+        }
 
         float chargePercent = Mathf.Clamp01(ChargeTimer / MaxChargeTime);
         float chargedDamage = Mathf.Lerp(MinDamage, MaxDamage, chargePercent);
@@ -160,7 +203,7 @@ public class PlayerChargeAttack : MonoBehaviour
 
                         var projObj = Instantiate(WindChargeProjectilePrefab, spawnPos, Quaternion.LookRotation(spreadDir));
                         var proj = projObj.GetComponent<Projectile>();
-                        
+
                         if (proj != null)
                         {
                             proj.Initialize(chargePercent);

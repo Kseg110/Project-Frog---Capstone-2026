@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private ParticleSystem dashEffect;
     [SerializeField] private float dashEffectBackOffset = 1f;
     [SerializeField] private float dashEffectHeightOffset = 0.5f;
-    
+
 
     [Header("FMod Events")]
     //[SerializeField] private EventReference fireAnchorEvent;
@@ -67,6 +67,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private float dashTimer;
     private float dashCooldownTimer;
+
+    // Tether-break stun state. Independent of the StopMovement/ResumeMovement external lock so the two systems compose instead of stomping each other. Set by TetherDamageDealer on a Golem break.
+    private float stunTimer;
+    private bool isStunned;
 
     public bool IsDashing => isDashing;
     public float DashCooldownProgress => dashCooldownTimer > 0f ? 1f - (dashCooldownTimer / dashCooldown) : 1f;
@@ -143,7 +147,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     {
         bool shouldUseGamepad = (newDevice == InputManager.InputDevice.Gamepad);
         SwitchInputMode(shouldUseGamepad);
-        
+
     }
 
     private void SyncWithInputManager()
@@ -188,8 +192,28 @@ public class PlayerMovement : MonoBehaviour, IMovement
         float progress = 1f - (dashCooldownTimer / dashCooldown);
         playerHUD?.UpdateDashCooldown(progress);
 
-        if (isMovementStopped || movementStoppedExternally)
+        // Tick down the tether-break stun.
+        if (isStunned)
+        {
+            stunTimer -= Time.deltaTime;
+            if (stunTimer <= 0f)
+            {
+                isStunned = false;
+                stunTimer = 0f;
+            }
+        }
+
+        if (isMovementStopped || movementStoppedExternally || isStunned)
             return;
+
+        // While dashing, ignore movement input and lock rotation to the dash direction.
+        // This prevents the dash from being cancelled or redirected by new input.
+        if (isDashing)
+        {
+            if (dashDirection.sqrMagnitude > 0.0001f)
+                rb.MoveRotation(Quaternion.LookRotation(dashDirection));
+            return;
+        }
 
         // READ INPUT
         Vector2 move = moveAction.ReadValue<Vector2>();
@@ -201,7 +225,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         Vector3 targetInput = rawInput.sqrMagnitude > 0.001f ? rawInput : Vector3.zero;
 
         // Smooth input to prevent analog stick jitter from causing dead-stops
-        moveInput = isDashing ? Vector3.zero : Vector3.Lerp(moveInput, targetInput, Time.deltaTime * inputSmoothSpeed);
+        moveInput = Vector3.Lerp(moveInput, targetInput, Time.deltaTime * inputSmoothSpeed);
 
         //READ LOOK INPUT
         Vector2 look = lookAction.ReadValue<Vector2>();
@@ -232,7 +256,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void FixedUpdate()
     {
-        if (isMovementStopped || movementStoppedExternally)
+        if (isMovementStopped || movementStoppedExternally || isStunned)
         {
             rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             return;
@@ -343,18 +367,38 @@ public class PlayerMovement : MonoBehaviour, IMovement
         movementStoppedExternally = false;
     }
 
+    // Temporarily disables movement for `duration` seconds. Called by TetherDamageDealer when a Golem breaks the tether. Independent of StopMovement/ResumeMovement so it won't fight other movement locks.
+    public void ApplyStun(float duration)
+    {
+        if (duration <= 0f) return;
+        // Take the longer of any existing stun and the new one so overlapping breaks don't cut it short.
+        stunTimer = Mathf.Max(stunTimer, duration);
+        isStunned = true;
+        moveInput = Vector3.zero;
+    }
+
     private void StartDash()
     {
         playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;
-        dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
 
-        // Spawn the trail effect behind the player, facing opposite the dash direction
-        Vector3 spawnPosition = transform.position - dashDirection * dashEffectBackOffset + Vector3.up * dashEffectHeightOffset;
-        Quaternion spawnRotation = Quaternion.LookRotation(-dashDirection);
-        ParticleSystem fx = Instantiate(dashEffect, spawnPosition, spawnRotation);
-        fx.Play();
+        // Capture and lock the dash direction at the moment the dash starts.
+        // Normalize to ensure consistent speed and prevent fractional input from changing it.
+        dashDirection = (moveInput.sqrMagnitude > 0.01f) ? moveInput.normalized : transform.forward;
+        moveInput = Vector3.zero; // make sure normal movement input doesn't interfere
+
+        // Lock facing to dash direction immediately
+        rb.MoveRotation(Quaternion.LookRotation(dashDirection));
+
+        if (dashEffect != null)
+        {
+            // Spawn the trail effect behind the player, facing opposite the dash direction
+            Vector3 spawnPosition = transform.position - dashDirection * dashEffectBackOffset + Vector3.up * dashEffectHeightOffset;
+            Quaternion spawnRotation = Quaternion.LookRotation(-dashDirection);
+
+            Instantiate(dashEffect, spawnPosition, spawnRotation);; 
+        }
 
         RuntimeManager.PlayOneShot(dashActivationEvent, transform.position);
 

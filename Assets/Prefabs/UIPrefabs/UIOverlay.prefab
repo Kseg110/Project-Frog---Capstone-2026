@@ -201,6 +201,13 @@ MonoBehaviour:
   selectedScale: 1.1
   scaleSpeed: 10
   defaultButton: {fileID: 482374301654626333}
+  hoverEvent:
+    Guid:
+      Data1: 1817436377
+      Data2: 1097588408
+      Data3: 431456922
+      Data4: 351406592
+    Path: event:/Button Click Activation
 --- !u!114 &3666096743258062343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,6 +234,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6252356971155091974}
   - component: {fileID: 963547855628885530}
+  - component: {fileID: 9126582682354327804}
   m_Layer: 5
   m_Name: SFX
   m_TagString: Untagged
@@ -308,6 +316,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9126582682354327804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 423140049957753601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cf2ba66d21bb2a458a1c18721056700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIHoverScaler
 --- !u!1 &548507195307816888
 GameObject:
   m_ObjectHideFlags: 0
@@ -742,6 +762,7 @@ GameObject:
   - component: {fileID: 661544242631789355}
   - component: {fileID: 6440787564147360020}
   - component: {fileID: 5306155333868111525}
+  - component: {fileID: 503029182183500414}
   m_Layer: 5
   m_Name: MainMenuButton
   m_TagString: Untagged
@@ -889,6 +910,18 @@ MonoBehaviour:
       Data3: 431456922
       Data4: 351406592
     Path: event:/Button Click Activation
+--- !u!114 &503029182183500414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1588105797978388020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cf2ba66d21bb2a458a1c18721056700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIHoverScaler
 --- !u!1 &1802669906960744551
 GameObject:
   m_ObjectHideFlags: 0
@@ -1309,6 +1342,13 @@ MonoBehaviour:
   selectedScale: 1.1
   scaleSpeed: 10
   defaultButton: {fileID: 0}
+  hoverEvent:
+    Guid:
+      Data1: 1817436377
+      Data2: 1097588408
+      Data3: 431456922
+      Data4: 351406592
+    Path: event:/Button Click Activation
 --- !u!114 &5205191158196424457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1950,6 +1990,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1415049205807215078}
   - component: {fileID: 7199217677492045932}
+  - component: {fileID: 627047293074945534}
   m_Layer: 5
   m_Name: Music
   m_TagString: Untagged
@@ -2031,6 +2072,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &627047293074945534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2753037788140960334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cf2ba66d21bb2a458a1c18721056700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIHoverScaler
 --- !u!1 &3011559776406058768
 GameObject:
   m_ObjectHideFlags: 0
@@ -2407,6 +2460,7 @@ GameObject:
   - component: {fileID: 1056642354796166971}
   - component: {fileID: 6843765172171480325}
   - component: {fileID: 5477691337470328227}
+  - component: {fileID: 1927531828463001626}
   m_Layer: 5
   m_Name: ResumeButton
   m_TagString: Untagged
@@ -2554,6 +2608,18 @@ MonoBehaviour:
       Data3: 431456922
       Data4: 351406592
     Path: event:/Button Click Activation
+--- !u!114 &1927531828463001626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4732695624519074290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cf2ba66d21bb2a458a1c18721056700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIHoverScaler
 --- !u!1 &4760693357370252907
 GameObject:
   m_ObjectHideFlags: 0
@@ -2982,6 +3048,7 @@ GameObject:
   - component: {fileID: 4470531435219531772}
   - component: {fileID: 3517025137450835872}
   - component: {fileID: 1559867556959409112}
+  - component: {fileID: 2136655424916206321}
   m_Layer: 5
   m_Name: QuitButton
   m_TagString: Untagged
@@ -3129,6 +3196,18 @@ MonoBehaviour:
       Data3: 431456922
       Data4: 351406592
     Path: event:/Button Click Activation
+--- !u!114 &2136655424916206321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5514792852378674043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cf2ba66d21bb2a458a1c18721056700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIHoverScaler
 --- !u!1 &6021900518633193520
 GameObject:
   m_ObjectHideFlags: 0
@@ -3279,6 +3358,7 @@ GameObject:
   - component: {fileID: 1029664581106555162}
   - component: {fileID: 482374301654626333}
   - component: {fileID: 8944694183703677423}
+  - component: {fileID: 5824955539919714856}
   m_Layer: 5
   m_Name: RestartButton
   m_TagString: Untagged
@@ -3426,6 +3506,18 @@ MonoBehaviour:
       Data3: 431456922
       Data4: 351406592
     Path: event:/Button Click Activation
+--- !u!114 &5824955539919714856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6433025792093733172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cf2ba66d21bb2a458a1c18721056700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIHoverScaler
 --- !u!1 &6665941804046573824
 GameObject:
   m_ObjectHideFlags: 0
@@ -3583,6 +3675,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4256638851470479154}
   - component: {fileID: 1838586392568949771}
+  - component: {fileID: 6408385729038347194}
   m_Layer: 5
   m_Name: Master
   m_TagString: Untagged
@@ -3664,6 +3757,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6408385729038347194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7583189764991933538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cf2ba66d21bb2a458a1c18721056700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIHoverScaler
 --- !u!1 &7716794811003222684
 GameObject:
   m_ObjectHideFlags: 0
@@ -3790,6 +3895,13 @@ MonoBehaviour:
   selectedScale: 1.05
   scaleSpeed: 10
   defaultButton: {fileID: 0}
+  hoverEvent:
+    Guid:
+      Data1: 1817436377
+      Data2: 1097588408
+      Data3: 431456922
+      Data4: 351406592
+    Path: event:/Button Click Activation
 --- !u!1 &8574995773122030855
 GameObject:
   m_ObjectHideFlags: 0
