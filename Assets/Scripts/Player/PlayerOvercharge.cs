@@ -261,6 +261,8 @@ public class PlayerOvercharge : MonoBehaviour
 
         if (trailCollider != null)
         {
+            // Inform the trail collider which anchor type we're overcharging with so it can spawn the correct VFX
+            trailCollider.SetAnchorType(currentAnchorType);
             trailCollider.EnableCollider();
         }
     }

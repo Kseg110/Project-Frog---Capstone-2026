@@ -372,7 +372,9 @@ GameObject:
   - component: {fileID: 5289892553675338067}
   - component: {fileID: 1437986667445852762}
   - component: {fileID: 2280907441491126881}
-  m_Layer: 11
+  - component: {fileID: 4333163172545244430}
+  - component: {fileID: 695283957806314990}
+  m_Layer: 0
   m_Name: TetherPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -402,7 +404,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3166762862184597052}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -562,7 +564,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  reelDuration: 0.5
   tetherCooldown: 1
   fireMaterial: {fileID: 2100000, guid: c422a7cd7239689488c5dda2aa71fdfa, type: 2}
   iceMaterial: {fileID: 2100000, guid: c914056a48bfe8442bea0be938ecf37a, type: 2}
@@ -585,11 +586,50 @@ MonoBehaviour:
   fireVFX: {fileID: 2785212119508678309, guid: 2d4809fa676d30a4680c6df7f4e0b0d5, type: 3}
   iceVFX: {fileID: 2785212119508678309, guid: 0e88c34dfc0e9c34f9b86f58a9891bf7, type: 3}
   windVFX: {fileID: 2785212119508678309, guid: 0456aa19b2662e34fa551d925cb2337c, type: 3}
-  spawnFadeOutOnDetach: 1
-  fadeOutMaxLifetime: 3
   hitboxCount: 12
   onlyWhileAttached: 1
 --- !u!114 &2280907441491126881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166762862184597052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8d8911ca050d59429526241f99da7f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TetherPlayerRestraint
+  tether: {fileID: 5289892553675338067}
+  playerBody: {fileID: 4346447341780550031}
+  playerHitbox: {fileID: 8373491071249081965}
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  pullStrength: 0.1
+  maxPullSpeed: 25
+  deadzone: 0.02
+  onlyWhileAttached: 1
+--- !u!114 &4333163172545244430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166762862184597052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a47c76e661ab2ec449f7bdabeb0f81ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TetherHitboxRider
+  tether: {fileID: 5289892553675338067}
+  hitboxPrefab: {fileID: 5948033876199092692, guid: ee2f65ebb6c61be4fb4c55e3a38551c8, type: 3}
+  fireVFX: {fileID: 4516163113860431531, guid: 22a548aa13f274943b9bc7a142b3054a, type: 3}
+  iceVFX: {fileID: 1000636850518528415, guid: da24b35a63a583343aa792e0b3fdc10c, type: 3}
+  windVFX: {fileID: 3932552804357240584, guid: 531493f6e2df84847a1b956661d05898, type: 3}
+  hitboxCount: 12
+  onlyWhileAttached: 1
+--- !u!114 &695283957806314990
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1253,7 +1293,7 @@ MonoBehaviour:
   playerOvercharge: {fileID: 3953045122372634609}
   losBlockingMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 0
   losOriginOffset: {x: 0, y: 1, z: 0}
   losEndPadding: 0.15
   useThickCheck: 1
@@ -1360,7 +1400,6 @@ MonoBehaviour:
   MinDamage: 12.5
   MaxDamage: 25
   WindHomingDelay: 3
-  playerAnchor: {fileID: 0}
 --- !u!114 &531424311684605953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1738,7 +1777,7 @@ GameObject:
   - component: {fileID: 6812064872470953024}
   - component: {fileID: 1866820753286131010}
   - component: {fileID: 461726596801835861}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: OverchargeTrailPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1883,7 +1922,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerOverchargeVFX
   fireColor: {r: 1, g: 0, b: 0, a: 1}
-  iceColor: {r: 0, g: 1, b: 1, a: 1}
+  iceColor: {r: 0, g: 1, b: 1, a: 0}
   windColor: {r: 0, g: 1, b: 0, a: 1}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   trailTime: 4
@@ -1930,6 +1969,9 @@ MonoBehaviour:
   colliderRadius: 0.5
   maxColliders: 25
   colliderSpacing: 0.3
+  fireVFX: {fileID: 6824751853293586592, guid: b8ffba7299f62a540b8620e3070519c0, type: 3}
+  iceVFX: {fileID: 3853130270983130712, guid: 1de09d68db0d7e74287a3e6a3af14665, type: 3}
+  windVFX: {fileID: 7586543259414874113, guid: 90795e9d3d31ae4499357912b325a9fe, type: 3}
 --- !u!1 &9103946886274004586
 GameObject:
   m_ObjectHideFlags: 0
