@@ -1,9 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraPanEffect : CameraEffectBase
 {
-
     [Header("Pan Settings")]
     [SerializeField] private float panTime = 1.0f;
     [SerializeField] private bool usePlayerOffset = true;
@@ -13,7 +13,6 @@ public class CameraPanEffect : CameraEffectBase
 
     private enum State { Idle, PanningToPOI, Holding, Returning }
     private State state = State.Idle;
-
 
     private int currentPanIndex = 0;
     private float currentHoldTime = 0f;
@@ -35,6 +34,12 @@ public class CameraPanEffect : CameraEffectBase
     private PlayerMovement playerMovement;
     private bool playerPaused;
     private bool doorReadyTriggered = false;
+
+    // New: track whether we disabled dash on the player so we can re-enable later
+    private bool dashDisabledByPan = false;
+
+    // New: global flag other systems (PlayerMovement) can query to know a camera pan is active.
+    public static bool GlobalPanActive { get; private set; } = false;
 
     private void Awake()
     {
@@ -59,6 +64,8 @@ public class CameraPanEffect : CameraEffectBase
         controller?.RemoveEffect(this);
         if (playerPaused)
             ResumePlayer();
+
+        GlobalPanActive = false;
     }
 
     private void Update()
@@ -76,7 +83,6 @@ public class CameraPanEffect : CameraEffectBase
 
         Vector3 desiredPosition = originalPosition;
         Quaternion desiredRotation = originalRotation;
-
 
         if (state == State.PanningToPOI)
         {
@@ -202,6 +208,9 @@ public class CameraPanEffect : CameraEffectBase
             {
                 timer = 0f;
                 state = State.Idle;
+
+                // pan finished -> allow dashing again
+                GlobalPanActive = false;
             }
         }
 
@@ -238,7 +247,6 @@ public class CameraPanEffect : CameraEffectBase
         doorReadyTriggered = false; // Reset flag
         panTime = time;
 
-
         if (playerTransform == null)
         {
             playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -260,15 +268,20 @@ public class CameraPanEffect : CameraEffectBase
 
         if (pausePlayerDuringPan && !playerPaused && playerMovement != null)
         {
+            // stop movement and also disable dash so player cannot dash to skip and immediately dash again
             playerMovement.StopMovement();
+            playerMovement.SetDashEnabled(false);
+            dashDisabledByPan = true;
             playerPaused = true;
         }
-
 
         timer = 0f;
         holdTimer = 0f;
 
         state = State.PanningToPOI;
+
+        // mark global flag so PlayerMovement won't dash while pan is active
+        GlobalPanActive = true;
     }
 
     // Skips camera pan on dash input and returns to original position.
@@ -295,9 +308,12 @@ public class CameraPanEffect : CameraEffectBase
         holdTimer = 0f;
         panPoints.Clear();
 
-        // Resume player movement
+        // Clear global flag immediately so other systems know the pan is done
+        GlobalPanActive = false;
+
+        // Resume player movement on the next frame to avoid consuming the same Dash input that triggered the skip.
         if (playerPaused)
-            ResumePlayer();
+            StartCoroutine(ResumePlayerNextFrame());
 
         Debug.Log("Camera Pan Skipped");
     }
@@ -361,8 +377,29 @@ public class CameraPanEffect : CameraEffectBase
         if (playerMovement == null && playerTransform != null)
             playerMovement = playerTransform.GetComponent<PlayerMovement>();
 
+        // Re-enable dash if we disabled it
+        if (dashDisabledByPan && playerMovement != null)
+        {
+            playerMovement.SetDashEnabled(true);
+            dashDisabledByPan = false;
+        }
+
         playerMovement?.ResumeMovement();
         playerPaused = false;
+    }
+
+    private System.Collections.IEnumerator ResumePlayerNextFrame()
+    {
+        // wait one frame so PlayerMovement.Update does not see the same Dash press that triggered the skip
+        yield return null;
+
+        // As an extra safety, also disable dash for the next frame on the player (in case Resume happens and input system still reports press)
+        if (playerMovement != null)
+        {
+            playerMovement.DisableDashForOneFrame();
+        }
+
+        ResumePlayer();
     }
 
     private static float EaseInOutQuad(float t)

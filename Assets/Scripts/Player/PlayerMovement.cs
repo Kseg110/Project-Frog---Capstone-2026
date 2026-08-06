@@ -72,6 +72,9 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private float stunTimer;
     private bool isStunned;
 
+    // New: allow disabling dash ability without affecting movement stop
+    private bool dashEnabled = true;
+
     public bool IsDashing => isDashing;
     public float DashCooldownProgress => dashCooldownTimer > 0f ? 1f - (dashCooldownTimer / dashCooldown) : 1f;
 
@@ -249,8 +252,15 @@ public class PlayerMovement : MonoBehaviour, IMovement
             }
         }
 
-        // Check for valid dash input
-        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
+        // Check for valid dash input. Respect dashEnabled flag.
+        // Change the dash input check in Update() to also require CameraPanEffect.GlobalPanActive == false
+
+        // Old:
+        // if (!isDashing && dashCooldownTimer <= 0f && dashEnabled && dashAction.WasPressedThisFrame())
+        //     StartDash();
+
+        // New:
+        if (!isDashing && dashCooldownTimer <= 0f && dashEnabled && !CameraPanEffect.GlobalPanActive && dashAction.WasPressedThisFrame())
             StartDash();
     }
 
@@ -375,6 +385,25 @@ public class PlayerMovement : MonoBehaviour, IMovement
         stunTimer = Mathf.Max(stunTimer, duration);
         isStunned = true;
         moveInput = Vector3.zero;
+    }
+
+    // New API: enable/disable dash input handling
+    public void SetDashEnabled(bool enabled)
+    {
+        dashEnabled = enabled;
+    }
+
+    // New API: disable dash for one frame (useful to avoid consuming the same press used to skip)
+    public void DisableDashForOneFrame()
+    {
+        StartCoroutine(DisableDashForOneFrameCoroutine());
+    }
+
+    private System.Collections.IEnumerator DisableDashForOneFrameCoroutine()
+    {
+        dashEnabled = false;
+        yield return null;
+        dashEnabled = true;
     }
 
     private void StartDash()
