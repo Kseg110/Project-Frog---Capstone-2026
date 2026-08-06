@@ -17,6 +17,7 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private float maxChargeTime = 2f;
     [SerializeField] private float tongueAutoAimRange = 10f;
     [SerializeField] private float basicShotSlowMultiplier = 0.5f;
+    [SerializeField] private float basicShotSlowDuration = 1f;
 
     [Header("Aiming Correction")]
     [SerializeField] private float aimCorrectionStrength = 1.0f;
@@ -32,6 +33,7 @@ public class PlayerAttacks : MonoBehaviour
 
     private float fireCooldown => 1f / attacksPerSecond;
     private float lastFireTime = -999f;
+    private float basicShotSlowTimer = 0f;
     private float chargeTimer;
     private bool isCharging;
     private float attackWindowTimer;
@@ -124,11 +126,16 @@ public class PlayerAttacks : MonoBehaviour
         if (attackHeld && !playerMovement.IsDashing)
             TryBasicShot();
 
-        // Remove slow when player stops shooting
-        if (!attackHeld && isBasicShotSlowed)
+        // Tick down basic shot slow timer
+        if (isBasicShotSlowed)
         {
-            isBasicShotSlowed = false;
-            playerMovement.RemoveSpeedModifier(this);
+            basicShotSlowTimer -= Time.deltaTime;
+
+            if (basicShotSlowTimer <= 0f)
+            {
+                isBasicShotSlowed = false;
+                playerMovement.RemoveSpeedModifier(this);
+            }
         }
 
         // SECONDARY ATTACK - Block if dashing
@@ -196,6 +203,10 @@ public class PlayerAttacks : MonoBehaviour
 
     private void ApplyBasicShotSlow()
     {
+        // Refresh the timer every time a shot is fired
+        basicShotSlowTimer = basicShotSlowDuration;
+
+        // If not already slowed, apply the slow modifier
         if (!isBasicShotSlowed)
         {
             isBasicShotSlowed = true;
