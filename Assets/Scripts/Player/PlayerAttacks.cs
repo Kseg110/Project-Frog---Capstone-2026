@@ -228,7 +228,7 @@ public class PlayerAttacks : MonoBehaviour
             // CRITICAL: Set isPlayerProjectile FIRST before anything else
             proj.isPlayerProjectile = true;
             proj.Initialize(chargePercent);
-            proj.damage = 2f;
+            //proj.damage = 2f;
         }
 
         // Always ignore collision with player, regardless of Projectile component
