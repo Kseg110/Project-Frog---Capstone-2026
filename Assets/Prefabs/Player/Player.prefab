@@ -803,7 +803,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 8a770163cce97b047822066010551c60, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -887,7 +887,7 @@ TrailRenderer:
       m_NumAlphaKeys: 2
     numCornerVertices: 0
     numCapVertices: 0
-    alignment: 1
+    alignment: 0
     textureMode: 0
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
@@ -1195,7 +1195,7 @@ MonoBehaviour:
   chargedTime: 20
   chargeCooldown: 15
   chargeDecayRate: 1
-  fireDamage: 4
+  fireDamage: 5
   fireDamageInterval: 3
   iceSlowPercent: 50
   windSpeedBoostPercent: 35
@@ -1222,7 +1222,7 @@ MonoBehaviour:
   MaxChargeTime: 1
   CooldownTime: 1
   MinDamage: 12.5
-  MaxDamage: 25
+  MaxDamage: 30
   WindHomingDelay: 3
   playerAnchor: {fileID: 0}
 --- !u!114 &531424311684605953
