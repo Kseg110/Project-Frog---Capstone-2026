@@ -61,6 +61,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private Vector3 lookDirection;
 
     private bool isDashing;
+    private bool isInMud = false;
     private bool isMovementStopped;
     private bool isTethered;
     private bool movementStoppedExternally;
@@ -202,6 +203,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
                 stunTimer = 0f;
             }
         }
+        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame() && !isInMud)
+            StartDash();
 
         if (isMovementStopped || movementStoppedExternally || isStunned)
             return;
@@ -248,10 +251,6 @@ public class PlayerMovement : MonoBehaviour, IMovement
                 rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             }
         }
-
-        // Check for valid dash input
-        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
-            StartDash();
     }
 
     private void FixedUpdate()
@@ -414,6 +413,15 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         Debug.Log("end dash");
         PlayerDashVFX.Instance.EndDashVFX();
+    }
+
+    public void SetInMud(bool value)
+    {
+        isInMud = value;
+        if (isInMud && isDashing)
+        {
+            EndDash();
+        }
     }
 
     public void AddSpeedModifier(object source, float multiplier)
