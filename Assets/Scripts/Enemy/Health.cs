@@ -153,7 +153,7 @@ public class Health : MonoBehaviour, IDamageable
             // Fallback: if the prefab is missing the component, destroy immediately so a dead enemy can't linger as an invisible, immortal obstacle.
             var fade = GetComponent<EnemyFadeOut>();
             if (fade != null)
-                fade.BeginFade();
+                fade.Die();
             else
                 Destroy(gameObject);
         }
