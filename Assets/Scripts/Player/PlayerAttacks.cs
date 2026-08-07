@@ -27,6 +27,10 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private EventReference basicShotEvent;
     [SerializeField] private EventReference chargeShotEvent;
 
+    [Header("Animation Timing")]
+    [SerializeField] private float attackWindupTime = 0.5f;   // time before projectile fires
+    [SerializeField] private float attackRecoveryTime = 0.2f; // optional recovery window
+
     //public bool isTethered;
     public float LastChargeValue { get; private set; }
     public event System.Action<float> OnChargeShotFired;
@@ -201,17 +205,57 @@ public class PlayerAttacks : MonoBehaviour
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
     }
 
+
+    /// <summary>
+    /// Those should be the same as TryBasicShot, but with a coroutine to handle windup and recovery times for animation timing.
+    /// </summary>
+
+    //private void TryBasicShot()
+    //{
+    //    if (playerTongueAttack.IsActive) return;
+    //    if (Time.time < lastFireTime + fireCooldown) return;
+
+    //    StartCoroutine(PerformBasicShot());
+    //}
+
+    //private IEnumerator PerformBasicShot()
+    //{
+    //    Vector3 aimDirection = GetAimDirection();
+    //    attackWindowTimer = attackWindowDuration;
+
+    //    // Insert Begin attack animation
+    //    // animator.SetTrigger("AttackStart");
+
+    //    // Apply slowdown immediately
+    //    ApplyBasicShotSlow();
+
+    //    // Wind-up delay (animation timing)
+    //    yield return new WaitForSeconds(attackWindupTime);
+
+    //    // Fire projectile
+    //    Shoot(0f, aimDirection);
+    //    lastFireTime = Time.time;
+
+    //    RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+
+    //    // InsertEnd attack animation
+    //    // animator.SetTrigger("AttackEnd");
+
+    //    // Recovery delay (animation timing)
+    //    if (attackRecoveryTime > 0f)
+    //        yield return new WaitForSeconds(attackRecoveryTime);
+    //}
+
     private void ApplyBasicShotSlow()
     {
-        // Refresh the timer every time a shot is fired
-        basicShotSlowTimer = basicShotSlowDuration;
-
-        // If not already slowed, apply the slow modifier
+        // Only refresh timer if not already slowed
         if (!isBasicShotSlowed)
         {
-            isBasicShotSlowed = true;
             playerMovement.AddSpeedModifier(this, basicShotSlowMultiplier);
+            isBasicShotSlowed = true;
         }
+
+        basicShotSlowTimer = Mathf.Max(basicShotSlowTimer, basicShotSlowDuration);
     }
 
     private void Shoot(float chargePercent, Vector3? direction = null)
