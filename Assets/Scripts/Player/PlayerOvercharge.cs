@@ -144,7 +144,8 @@ public class PlayerOvercharge : MonoBehaviour
 
     private void UpdateCharge()
     {
-        bool isTethered = playerAnchor.IsTethered;
+        // Build only while the tether is ACTIVE (attached AND settled), not merely logically tethered.
+        bool isTethered = playerAnchor.IsTetherActive;
 
         if (isTethered)
         {
@@ -209,8 +210,8 @@ public class PlayerOvercharge : MonoBehaviour
 
     private void ActivateOvercharge()
     {
-        // Guard: only fire if the tether is genuinely live. A broken tether must never convert into a free overcharge.
-        if (playerAnchor == null || !playerAnchor.IsTethered || lastTetheredAnchor == null)
+        // Guard: only fire if the tether is genuinely active (attached AND settled). 
+        if (playerAnchor == null || !playerAnchor.IsTetherActive || lastTetheredAnchor == null)
         {
             return;
         }
