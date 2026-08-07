@@ -148,21 +148,24 @@ public class PlayerOvercharge : MonoBehaviour
 
         if (isTethered)
         {
-            // Stores current anchor type
-            lastTetheredAnchor = playerAnchor.AttachedAnchor;
-            // Charge while tethered
-            currentChargeTime += Time.deltaTime;
-            // Fully charged check
-            if (currentChargeTime >= chargedTime)
-            {
-                currentChargeTime = chargedTime;
-                ActivateOvercharge();
-            }
-            // Update current anchor's light intensity
-            if (lastTetheredAnchor != null)
-            {
-                lastTetheredAnchor.UpdateOverchargeVisual(ChargeProgress);
-            }
+
+                // Stores current anchor type
+                lastTetheredAnchor = playerAnchor.AttachedAnchor;
+
+                if (lastTetheredAnchor != null && lastTetheredAnchor.CanOvercharge)
+                {
+                    // Charge while tethered
+                    currentChargeTime += Time.deltaTime;
+
+                    // Fully charged check
+                    if (currentChargeTime >= chargedTime)
+                    {
+                        currentChargeTime = chargedTime;
+                        ActivateOvercharge();
+                    }
+                    // Update current anchor's light intensity
+                    lastTetheredAnchor.UpdateOverchargeVisual(ChargeProgress);
+                }
         }
         else
         {
@@ -174,16 +177,17 @@ public class PlayerOvercharge : MonoBehaviour
             }
         }
 
-        // Tell listeneres of charge change
-        OnChargeChanged?.Invoke(ChargeProgress);
+            // Tell listeneres of charge change
+            OnChargeChanged?.Invoke(ChargeProgress);
 
-        // Update Player HUD (can be removed in the future if desired)
-        if (playerHUD != null)
-        {
-            playerHUD.UpdateOverchargeWheel(ChargeProgress);
+            // Update Player HUD (can be removed in the future if desired)
+            if (playerHUD != null)
+            {
+                playerHUD.UpdateOverchargeWheel(ChargeProgress);
+            }
+            //------------------------------------------------------------
         }
-        //------------------------------------------------------------
-    }
+    
 
     private void UpdateCooldown()
     {
