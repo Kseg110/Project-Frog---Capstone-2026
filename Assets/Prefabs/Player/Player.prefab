@@ -932,6 +932,7 @@ GameObject:
   - component: {fileID: -5455150326957673816}
   - component: {fileID: 7342988453639927308}
   - component: {fileID: 833077249816884151}
+  - component: {fileID: 1593668902978562511}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1466,6 +1467,23 @@ MonoBehaviour:
   tongueHealAmount: 20
   arrowSpeed: 40
   attackSpeed: 1
+--- !u!114 &1593668902978562511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a96a4116d6eae9342aed7eb5325bf5da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerOverchargeTattoo
+  playerRenderer: {fileID: 6807598555737843133}
+  materialIndex: 0
+  fillPropertyName: _FilAmount
+  lerpSpeed: 5
+  playerOvercharge: {fileID: 3953045122372634609}
 --- !u!1 &8228960295327052452
 GameObject:
   m_ObjectHideFlags: 0
@@ -1892,9 +1910,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: dd56ce189f5c6ea4f9bbd2cdc2b52ae6, type: 2}
     - target: {fileID: 495975331598566030, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 495975331598566030, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: dd56ce189f5c6ea4f9bbd2cdc2b52ae6, type: 2}
+      objectReference: {fileID: 2100000, guid: 94bb0cd5ee61b774382fc19068aad92d, type: 2}
+    - target: {fileID: 495975331598566030, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 94bb0cd5ee61b774382fc19068aad92d, type: 2}
     - target: {fileID: 919132149155446097, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
       propertyPath: m_Name
       value: Mesh_PlayerFrog
@@ -2008,6 +2034,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
+--- !u!23 &6807598555737843133 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 495975331598566030, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
+  m_PrefabInstance: {fileID: 6384833505838065459}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6850473402843529432 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
