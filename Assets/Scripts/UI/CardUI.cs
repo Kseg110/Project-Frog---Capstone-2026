@@ -21,8 +21,19 @@ public class CardUI : MonoBehaviour
     [Header("Spawn Animation")]
     [SerializeField] private float spinDuration = 1.5f;
 
+    [Header("Disappear Animations")]
+    [SerializeField] private float slideDownDuration = 0.5f;
+    [SerializeField] private float dissolveDuration = 0.6f;
+
+    [Header("VFX")]
+    [SerializeField] private GameObject vfxFire;
+    [SerializeField] private GameObject vfxIce;
+    [SerializeField] private GameObject vfxWind;
+
     private UpgradeDataSO upgradeData;
     private System.Action<UpgradeDataSO> onSelected;
+
+    public UpgradeDataSO Data => upgradeData;
 
     /// <summary>
     /// Fills the card with all its visual information and registers what happens when the player clicks it.
@@ -87,5 +98,57 @@ public class CardUI : MonoBehaviour
 
         // Snap to exactly flat to avoid any floating point drift at the end of the animation
         transform.rotation = Quaternion.Euler(0, 0, 0);
+    }
+
+    public IEnumerator PlaySlideDownAnimation()
+    {
+        Vector3 startPos = transform.localPosition;
+        Vector3 endPos = startPos + new Vector3(0, -1500f, 0);
+
+        float elapsed = 0f;
+
+        while (elapsed < slideDownDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / slideDownDuration;
+            transform.localPosition = Vector3.Lerp(startPos, endPos, t);
+            yield return null;
+        }
+    }
+
+    public IEnumerator PlayDissolveAnimation()
+    {
+        GameObject vfx = null;
+
+        switch (upgradeData.Element)
+        {
+            case AnchorElement.Fire: vfx = vfxFire; break;
+            case AnchorElement.Ice: vfx = vfxIce; break;
+            case AnchorElement.Wind: vfx = vfxWind; break;
+        }
+
+        GameObject instance = null;
+
+        // VFX only on the card that is being dissolved, not on the other cards
+        if (vfx != null)
+        {
+            instance = Instantiate(vfx, transform);
+            instance.transform.localPosition = Vector3.zero;
+            instance.transform.localScale = new Vector3(300f, 400f, 1f) * 0.01f;
+        }
+
+        CanvasGroup cg = gameObject.AddComponent<CanvasGroup>();
+        float elapsed = 0f;
+
+        while (elapsed < dissolveDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            cg.alpha = Mathf.Lerp(1f, 0f, elapsed / dissolveDuration);
+            yield return null;
+        }
+
+        // destroy the card after the dissolve animation is complete
+        if (instance != null)
+            Destroy(instance);
     }
 }

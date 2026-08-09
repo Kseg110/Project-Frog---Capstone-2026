@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private LayerMask collisionLayers;
     [SerializeField] private string hitBoxName = "Hitbox";
     [SerializeField] private float inputSmoothSpeed = 20f;
-
+    [SerializeField] private float panDashLockTimer;
     private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
     private float CurrentSpeed
     {
@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private ParticleSystem dashEffect;
     [SerializeField] private float dashEffectBackOffset = 1f;
     [SerializeField] private float dashEffectHeightOffset = 0.5f;
-    
+
 
     [Header("FMod Events")]
     //[SerializeField] private EventReference fireAnchorEvent;
@@ -61,12 +61,17 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private Vector3 lookDirection;
 
     private bool isDashing;
+    private bool isInMud = false;
     private bool isMovementStopped;
     private bool isTethered;
     private bool movementStoppedExternally;
 
     private float dashTimer;
     private float dashCooldownTimer;
+
+    // Tether-break stun state. Independent of the StopMovement/ResumeMovement external lock so the two systems compose instead of stomping each other. Set by TetherDamageDealer on a Golem break.
+    private float stunTimer;
+    private bool isStunned;
 
     public bool IsDashing => isDashing;
     public float DashCooldownProgress => dashCooldownTimer > 0f ? 1f - (dashCooldownTimer / dashCooldown) : 1f;
@@ -143,7 +148,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     {
         bool shouldUseGamepad = (newDevice == InputManager.InputDevice.Gamepad);
         SwitchInputMode(shouldUseGamepad);
-        
+
     }
 
     private void SyncWithInputManager()
@@ -176,9 +181,48 @@ public class PlayerMovement : MonoBehaviour, IMovement
         lookAction = map.FindAction("Look");
         dashAction = map.FindAction("Dash");
     }
+    public float speed;
+    public float GetMovementSpeed()
+    {
+        // No movement allowed.
+        if (isDashing ||
+            isMovementStopped ||
+            movementStoppedExternally ||
+            isStunned)
+        {
+            speed = 0f;
+            return speed;
+        }
 
+        // Read the SAME Move input used by PlayerMovement.
+        Vector2 move = moveAction.ReadValue<Vector2>();
+
+        // Nothing pressed = 0.
+        if (move == Vector2.zero)
+        {
+            speed = 0f;
+            return speed;
+        }
+
+        // WASD or controller is being pressed.
+        speed = Mathf.Clamp01(move.magnitude);
+
+        return speed;
+    }
     private void Update()
     {
+        if (CameraPanEffect.GlobalPanActive)
+        {
+            // While panning, always keep the lock at 5 seconds.
+            panDashLockTimer = 1;
+
+        }
+        else if (panDashLockTimer > 0f)
+        {
+            panDashLockTimer = panDashLockTimer - 0.5f;
+
+        }
+
         UpdateTetherStatus();
 
         // Update dash cooldown
@@ -188,8 +232,30 @@ public class PlayerMovement : MonoBehaviour, IMovement
         float progress = 1f - (dashCooldownTimer / dashCooldown);
         playerHUD?.UpdateDashCooldown(progress);
 
-        if (isMovementStopped || movementStoppedExternally)
+        // Tick down the tether-break stun.
+        if (isStunned)
+        {
+            stunTimer -= Time.deltaTime;
+            if (stunTimer <= 0f)
+            {
+                isStunned = false;
+                stunTimer = 0f;
+            }
+        }
+        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame() && !isInMud && !CameraPanEffect.GlobalPanActive && panDashLockTimer <= 0f)
+            StartDash();
+
+        if (isMovementStopped || movementStoppedExternally || isStunned || CameraPanEffect.GlobalPanActive)
             return;
+
+        // While dashing, ignore movement input and lock rotation to the dash direction.
+        // This prevents the dash from being cancelled or redirected by new input.
+        if (isDashing)
+        {
+            if (dashDirection.sqrMagnitude > 0.0001f)
+                rb.MoveRotation(Quaternion.LookRotation(dashDirection));
+            return;
+        }
 
         // READ INPUT
         Vector2 move = moveAction.ReadValue<Vector2>();
@@ -201,7 +267,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         Vector3 targetInput = rawInput.sqrMagnitude > 0.001f ? rawInput : Vector3.zero;
 
         // Smooth input to prevent analog stick jitter from causing dead-stops
-        moveInput = isDashing ? Vector3.zero : Vector3.Lerp(moveInput, targetInput, Time.deltaTime * inputSmoothSpeed);
+        moveInput = Vector3.Lerp(moveInput, targetInput, Time.deltaTime * inputSmoothSpeed);
 
         //READ LOOK INPUT
         Vector2 look = lookAction.ReadValue<Vector2>();
@@ -225,14 +291,13 @@ public class PlayerMovement : MonoBehaviour, IMovement
             }
         }
 
-        // Check for valid dash input
-        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
-            StartDash();
+
     }
 
     private void FixedUpdate()
     {
-        if (isMovementStopped || movementStoppedExternally)
+        GetMovementSpeed();
+        if (isMovementStopped || movementStoppedExternally || isStunned || CameraPanEffect.GlobalPanActive)
         {
             rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             return;
@@ -343,18 +408,40 @@ public class PlayerMovement : MonoBehaviour, IMovement
         movementStoppedExternally = false;
     }
 
+    // Temporarily disables movement for `duration` seconds. Called by TetherDamageDealer when a Golem breaks the tether. Independent of StopMovement/ResumeMovement so it won't fight other movement locks.
+    public void ApplyStun(float duration)
+    {
+        if (duration <= 0f) return;
+        // Take the longer of any existing stun and the new one so overlapping breaks don't cut it short.
+        stunTimer = Mathf.Max(stunTimer, duration);
+        isStunned = true;
+        moveInput = Vector3.zero;
+    }
+
     private void StartDash()
     {
+        if (CameraPanEffect.GlobalPanActive)
+            return;
         playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;
-        dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
 
-        // Spawn the trail effect behind the player, facing opposite the dash direction
-        Vector3 spawnPosition = transform.position - dashDirection * dashEffectBackOffset + Vector3.up * dashEffectHeightOffset;
-        Quaternion spawnRotation = Quaternion.LookRotation(-dashDirection);
-        ParticleSystem fx = Instantiate(dashEffect, spawnPosition, spawnRotation);
-        fx.Play();
+        // Capture and lock the dash direction at the moment the dash starts.
+        // Normalize to ensure consistent speed and prevent fractional input from changing it.
+        dashDirection = (moveInput.sqrMagnitude > 0.01f) ? moveInput.normalized : transform.forward;
+        moveInput = Vector3.zero; // make sure normal movement input doesn't interfere
+
+        // Lock facing to dash direction immediately
+        rb.MoveRotation(Quaternion.LookRotation(dashDirection));
+
+        if (dashEffect != null)
+        {
+            // Spawn the trail effect behind the player, facing opposite the dash direction
+            Vector3 spawnPosition = transform.position - dashDirection * dashEffectBackOffset + Vector3.up * dashEffectHeightOffset;
+            Quaternion spawnRotation = Quaternion.LookRotation(-dashDirection);
+
+            Instantiate(dashEffect, spawnPosition, spawnRotation);; 
+        }
 
         RuntimeManager.PlayOneShot(dashActivationEvent, transform.position);
 
@@ -370,6 +457,15 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         Debug.Log("end dash");
         PlayerDashVFX.Instance.EndDashVFX();
+    }
+
+    public void SetInMud(bool value)
+    {
+        isInMud = value;
+        if (isInMud && isDashing)
+        {
+            EndDash();
+        }
     }
 
     public void AddSpeedModifier(object source, float multiplier)
