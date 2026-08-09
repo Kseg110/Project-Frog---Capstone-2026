@@ -554,7 +554,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3378797235667509468}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1970647443580336200}
   m_SourcePrefab: {fileID: 100100000, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
 --- !u!23 &2002996954385405699 stripped
 MeshRenderer:
@@ -581,6 +587,49 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 958599024952097507, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
   m_PrefabInstance: {fileID: 6584235865335416055}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6313640354788243878 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}
+  m_PrefabInstance: {fileID: 6584235865335416055}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3378797235667509468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6313640354788243878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 566e3e43e0b1a5746917c2269a4f7b48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimations
+  animator: {fileID: 1970647443580336200}
+  enemy: {fileID: 4456900721603793363}
+  isAttackingParameter: IsAttacking
+  movementSpeedParameter: MovementSpeed
+--- !u!95 &1970647443580336200
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6313640354788243878}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 007bd774435873047b5e54553e0dec82, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &6689357133400056604 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a590a01e03ce0cc40a78691caf71c6b2, type: 3}

@@ -95,10 +95,12 @@ public class PoisonTrapPlant : MonoBehaviour
         {
             cooldownTimer -= Time.deltaTime;
 
-
             if (cooldownTimer <= 0f)
             {
                 coolingDown = false;
+
+                if (particlesAlwaysActive)
+                    SetParticlesActive(true);
             }
         }
 
@@ -129,7 +131,8 @@ public class PoisonTrapPlant : MonoBehaviour
 
         if (particlesAlwaysActive)
         {
-            SetParticlesActive(true);
+            // Always active EXCEPT during cooldown.
+            SetParticlesActive(!coolingDown);
         }
 
 
@@ -300,7 +303,8 @@ public class PoisonTrapPlant : MonoBehaviour
 
             if (distance <= projectileActivationDistance)
             {
-                ActivateTrap();
+                coolingDown = true;
+                cooldownTimer = cooldownDuration;
                 return;
             }
         }

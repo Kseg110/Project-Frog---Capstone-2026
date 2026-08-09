@@ -16,8 +16,11 @@ public class CameraPanEffect : CameraEffectBase
     [Tooltip("Controls how fast the camera moves along the spline path.")]
     [SerializeField]
     private float splineSpeed = 20f;
+    // New: global flag other systems (PlayerMovement) can query to know a camera pan is active.
+    public static bool GlobalPanActive = false;
 
-
+    [SerializeField]
+    private bool GlobalPanActiveInspector;
     //==================================================
     // POINT TO POINT SETTINGS
     //==================================================
@@ -104,9 +107,7 @@ public class CameraPanEffect : CameraEffectBase
     private Transform playerTransform;
 
 
-    [Tooltip("Player movement script used to stop and resume movement.")]
-    [SerializeField]
-    private PlayerMovement playerMovement;
+
 
 
 
@@ -295,11 +296,7 @@ public class CameraPanEffect : CameraEffectBase
             GameObject.FindGameObjectWithTag("Player")
             ?.transform;
 
-        if (playerTransform != null)
-        {
-            playerMovement =
-                playerTransform.GetComponent<PlayerMovement>();
-        }
+
 
         if (doorSystem == null)
         {
@@ -316,7 +313,7 @@ public class CameraPanEffect : CameraEffectBase
 
     private void Update()
     {
-
+        GlobalPanActiveInspector = GlobalPanActive;
 
 
 
@@ -889,15 +886,9 @@ public class CameraPanEffect : CameraEffectBase
         if (pausePlayerDuringPan &&
             !playerPaused)
         {
-            if (playerMovement == null &&
-                playerTransform != null)
-            {
-                playerMovement =
-                    playerTransform.GetComponent<PlayerMovement>();
-            }
 
+            GlobalPanActive = true;
 
-            playerMovement?.StopMovement();
 
             playerPaused = true;
         }
@@ -1076,16 +1067,10 @@ public class CameraPanEffect : CameraEffectBase
             return;
         }
 
-        if (playerMovement == null &&
-            playerTransform != null)
-        {
-            playerMovement =
-                playerTransform.GetComponent<PlayerMovement>();
-        }
 
-        playerMovement?.ResumeMovement();
+        GlobalPanActive = false;
 
-        playerPaused = false;
+       playerPaused = false;
     }
 
     private static float EaseInOutQuad(float t)
