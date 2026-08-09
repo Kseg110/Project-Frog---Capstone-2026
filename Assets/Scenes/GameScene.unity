@@ -41373,6 +41373,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1284814115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &663750357 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6600727344098246571, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+  m_PrefabInstance: {fileID: 1933949835}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &663750359 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8619462945748240520, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+  m_PrefabInstance: {fileID: 1933949835}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &663750360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663750357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62992a3e71fd81947b038b9d9962d89a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Player.playerAnimation
+  playerAttacks: {fileID: 1933949849}
+  playerMovement: {fileID: 1933949847}
+  animator: {fileID: 663750359}
+  isAttackingParameter: IsAttacking
+  movementSpeedParameter: MovementSpeed
+  movespeed: 0
 --- !u!1 &664986446
 GameObject:
   m_ObjectHideFlags: 0
@@ -128225,7 +128253,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 900614694835417969, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.828
+      value: 0.9
       objectReference: {fileID: 0}
     - target: {fileID: 900614694835417969, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: m_LocalPosition.z
@@ -128282,7 +128310,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6600727344098246571, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 663750360}
   m_SourcePrefab: {fileID: 100100000, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
 --- !u!114 &1933949836 stripped
 MonoBehaviour:
@@ -128339,6 +128370,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 114454af98abb4845acb8b406c9a1a22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+--- !u!114 &1933949849 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4281862109518123148, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+  m_PrefabInstance: {fileID: 1933949835}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201730561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a789a7a883d4ed499bada1581cb8f9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttacks
 --- !u!1 &1938438910 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1347666014598980849, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}

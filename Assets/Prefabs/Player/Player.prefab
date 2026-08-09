@@ -4942,7 +4942,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DartFireVFX
   playerAttacks: {fileID: 4281862109518123148}
   playerAnchor: {fileID: 7481143701210063934}
-  playerOvercharge: {fileID: 3953045122372634609}
   normalMaterial: {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
   fireMaterial: {fileID: 2100000, guid: 773abbdc7dce24144b3951d4cd00f92c, type: 2}
   iceMaterial: {fileID: 2100000, guid: 325f6ebb7c42e84428c8ea3ccbe8b924, type: 2}
@@ -5553,6 +5552,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3479168319086078328}
+  - component: {fileID: 8619462945748240520}
   m_Layer: 0
   m_Name: PlayerVisual
   m_TagString: Untagged
@@ -5576,6 +5576,28 @@ Transform:
   - {fileID: 6850473402843529432}
   m_Father: {fileID: 900614694835417969}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &8619462945748240520
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6600727344098246571}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 16331ab828c2c1145b9349283ee11f9d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7307145619484185438
 GameObject:
   m_ObjectHideFlags: 0
@@ -5839,6 +5861,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   hitBoxName: Hitbox
   inputSmoothSpeed: 20
+  panDashLockTimer: 0
   dashDistance: 5
   dashDuration: 0.15
   dashCooldown: 0.5
@@ -5996,6 +6019,7 @@ MonoBehaviour:
   maxChargeTime: 2
   tongueAutoAimRange: 10
   basicShotSlowMultiplier: 0.5
+  basicShotSlowDuration: 1
   aimCorrectionStrength: 1
   targetHeightOffset: 0
   basicShotEvent:
@@ -6012,6 +6036,8 @@ MonoBehaviour:
       Data3: -1778522690
       Data4: 597843026
     Path: event:/Player Charge Shot Activation
+  attackWindupTime: 0.5
+  attackRecoveryTime: 0.2
 --- !u!114 &3953045122372634609
 MonoBehaviour:
   m_ObjectHideFlags: 0

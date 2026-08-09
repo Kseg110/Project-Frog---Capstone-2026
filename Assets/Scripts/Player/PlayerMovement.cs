@@ -181,7 +181,34 @@ public class PlayerMovement : MonoBehaviour, IMovement
         lookAction = map.FindAction("Look");
         dashAction = map.FindAction("Dash");
     }
+    public float speed;
+    public float GetMovementSpeed()
+    {
+        // No movement allowed.
+        if (isDashing ||
+            isMovementStopped ||
+            movementStoppedExternally ||
+            isStunned)
+        {
+            speed = 0f;
+            return speed;
+        }
 
+        // Read the SAME Move input used by PlayerMovement.
+        Vector2 move = moveAction.ReadValue<Vector2>();
+
+        // Nothing pressed = 0.
+        if (move == Vector2.zero)
+        {
+            speed = 0f;
+            return speed;
+        }
+
+        // WASD or controller is being pressed.
+        speed = Mathf.Clamp01(move.magnitude);
+
+        return speed;
+    }
     private void Update()
     {
         if (CameraPanEffect.GlobalPanActive)
@@ -269,6 +296,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void FixedUpdate()
     {
+        GetMovementSpeed();
         if (isMovementStopped || movementStoppedExternally || isStunned || CameraPanEffect.GlobalPanActive)
         {
             rb.MoveRotation(Quaternion.LookRotation(lookDirection));
