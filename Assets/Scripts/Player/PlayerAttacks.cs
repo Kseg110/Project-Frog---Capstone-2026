@@ -26,6 +26,10 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private EventReference basicShotEvent;
     [SerializeField] private EventReference chargeShotEvent;
 
+
+
+    public event System.Action OnBasicShotFired;
+
     //public bool isTethered;
     public float LastChargeValue { get; private set; }
     public event System.Action<float> OnChargeShotFired;
@@ -185,7 +189,8 @@ public class PlayerAttacks : MonoBehaviour
 
         Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
-
+        Shoot(0f, aimDirection);
+        OnBasicShotFired?.Invoke();
         ApplyBasicShotSlow();
 
         Shoot(0f, aimDirection);
