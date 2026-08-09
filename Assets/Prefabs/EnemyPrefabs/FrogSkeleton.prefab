@@ -744,7 +744,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dc3fab14ec00df94f90a194ba9ffa64b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8088092507689064667}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dc3fab14ec00df94f90a194ba9ffa64b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7971179199129275204}
   m_SourcePrefab: {fileID: 100100000, guid: dc3fab14ec00df94f90a194ba9ffa64b, type: 3}
 --- !u!23 &892071735557421341 stripped
 MeshRenderer:
@@ -761,6 +767,49 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 693441441322860827, guid: dc3fab14ec00df94f90a194ba9ffa64b, type: 3}
   m_PrefabInstance: {fileID: 1988005967611786518}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1682016622641301575 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: dc3fab14ec00df94f90a194ba9ffa64b, type: 3}
+  m_PrefabInstance: {fileID: 1988005967611786518}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8088092507689064667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682016622641301575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 566e3e43e0b1a5746917c2269a4f7b48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimations
+  animator: {fileID: 7971179199129275204}
+  enemy: {fileID: 3574255279237135700}
+  isAttackingParameter: IsAttacking
+  movementSpeedParameter: MovementSpeed
+--- !u!95 &7971179199129275204
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682016622641301575}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 9a08341f26fb89948974b34118ed725b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!23 &1769641493169444172 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -8999925526249119654, guid: dc3fab14ec00df94f90a194ba9ffa64b, type: 3}
