@@ -248,7 +248,14 @@ public class SpikeTrap : MonoBehaviour
             return;
         }
 
-        // Otherwise try Rigidbody on the object's root
+        // Otherwise try EnemyKnockback first (preferred) then Rigidbody fallback
+        var enemyKnock = other.GetComponentInParent<EnemyKnockback>();
+        if (enemyKnock != null)
+        {
+            enemyKnock.ApplyKnockback(dir, distance);
+            return;
+        }
+
         var rb = other.GetComponentInParent<Rigidbody>() ?? other.GetComponent<Rigidbody>() ?? other.GetComponentInChildren<Rigidbody>();
         Vector3 knockback = dir * knockbackForce;
         if (rb != null)

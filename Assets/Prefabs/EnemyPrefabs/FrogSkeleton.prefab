@@ -144,6 +144,9 @@ MonoBehaviour:
   attackHitbox: {fileID: 7265194758862469610, guid: 53f6e5ae24fb383409cd36a8cb582420, type: 3}
   health: {fileID: 2873713759039743146}
   attackRange: 2
+  postAttackRetreatDistance: 2.5
+  postAttackWaitTimeout: 0.25
+  postAttackRetreatTime: 1
 --- !u!114 &2873713759039743146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230,10 +233,13 @@ MonoBehaviour:
   knockbackResistance: 1
   projectileKnockbackDistance: 5
   useProjectileTravelDirection: 1
+  debugKnockbackMultiplier: 1
   collisionLayers:
     serializedVersion: 2
     m_Bits: 512
   capsule: {fileID: 1401022787646104557}
+  fallbackCapsuleHeight: 1.6
+  fallbackCapsuleRadius: 0.3
 --- !u!114 &3071640110403620277
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -23,6 +23,9 @@ public class EnemyKnockback : MonoBehaviour
 
     [SerializeField] private bool useProjectileTravelDirection = true;
 
+    [Header("Debug")]
+    [Tooltip("Temporary multiplier for knockback — set very high to make knockback obvious while debugging.")]
+    [SerializeField] private float debugKnockbackMultiplier = 50f;
 
 
     [Header("Collision")]
@@ -32,6 +35,12 @@ public class EnemyKnockback : MonoBehaviour
 
     [Tooltip("Capsule used for collision-safe movement.")]
     [SerializeField] private CapsuleCollider capsule;
+
+    [Header("Fallback capsule (used when no CapsuleCollider assigned)")]
+    [Tooltip("Height used for fallback capsule casts when a CapsuleCollider is not assigned.")]
+    [SerializeField] private float fallbackCapsuleHeight = 1.6f;
+    [Tooltip("Radius used for fallback capsule casts when a CapsuleCollider is not assigned.")]
+    [SerializeField] private float fallbackCapsuleRadius = 0.3f;
 
 
 
@@ -43,6 +52,9 @@ public class EnemyKnockback : MonoBehaviour
     private NavMeshAgent agent;
     private Coroutine knockbackCoroutine;
 
+    // new: movement component reference so we can disable local movement logic while knocked back
+    private MovementComponent movementComp;
+
 
 
     private void Awake()
@@ -51,6 +63,7 @@ public class EnemyKnockback : MonoBehaviour
 
         agent = GetComponent<NavMeshAgent>();
 
+        movementComp = GetComponent<MovementComponent>();
 
         if (capsule == null)
             capsule = GetComponentInChildren<CapsuleCollider>();
@@ -128,14 +141,17 @@ public class EnemyKnockback : MonoBehaviour
             return;
 
 
+        // increased final distance includes debug multiplier so it's visually obvious while debugging
         float finalDistance =
             distance *
-            knockbackResistance;
+            knockbackResistance *
+            Mathf.Max(1f, debugKnockbackMultiplier);
 
 
         if (finalDistance <= 0f)
             return;
 
+        Debug.Log($"[EnemyKnockback] ApplyKnockback on '{name}' dir={direction.normalized} requested={distance:F2} resistance={knockbackResistance:F2} debugMult={debugKnockbackMultiplier:F2} final={finalDistance:F2}", this);
 
 
         if (knockbackCoroutine != null)
@@ -155,19 +171,23 @@ public class EnemyKnockback : MonoBehaviour
 
 
 
+
     private IEnumerator KnockbackRoutine(
         Vector3 dir,
         float distance)
     {
         IsBeingKnockedBack = true;
 
-
+        // disable local movement so other scripts don't fight our forced movement
+        if (movementComp != null)
+            movementComp.SetMovementEnabled(false);
 
         bool hadAgent =
             agent != null &&
             agent.enabled;
 
-
+        // DEBUG: start info
+        Debug.Log($"[EnemyKnockback] KnockbackRoutine START on '{name}' dir={dir} distance={distance:F2} hadAgent={hadAgent}", this);
 
         if (hadAgent)
         {
@@ -232,33 +252,128 @@ public class EnemyKnockback : MonoBehaviour
 
                 if (capsule != null)
                 {
-                    CollisionUtility.MoveWithCapsuleCollision(
-                        rb,
-                        capsule,
-                        motion,
-                        collisionLayers
-                    );
+                    // If Rigidbody is kinematic we must move the transform directly (MoveWithCapsuleCollision uses rb.MovePosition internally).
+                    if (rb.isKinematic)
+                    {
+                        // compute capsule start/end in world space
+                        CollisionUtility.GetCapsule(rb, capsule, out Vector3 capStart, out Vector3 capEnd);
+                        Vector3 testStart = capStart + motion;
+                        Vector3 testEnd = capEnd + motion;
+
+                        // Check overlap at target; if clear, move transform; else try small incremental steps.
+                        Collider[] overlaps = Physics.OverlapCapsule(testStart, testEnd, capsule.radius, collisionLayers, QueryTriggerInteraction.Ignore);
+                        if (!TryGetBlockingOverlap(overlaps, out Collider blocking))
+                        {
+                            transform.position += motion;
+                        }
+                        else
+                        {
+                            Debug.Log($"[EnemyKnockback] Overlap blocked by '{blocking?.name}' (root='{blocking?.transform?.root?.name}', attachedRb={(blocking?.attachedRigidbody != null ? blocking.attachedRigidbody.name : "null")})", this);
+                            bool moved = false;
+                            float remaining = motion.magnitude;
+                            float step = Mathf.Min(0.5f, remaining);
+                            for (int s = 0; s < 6 && step > 0.001f; s++)
+                            {
+                                Vector3 stepMotion = motion.normalized * step;
+                                Vector3 sStart = capStart + stepMotion;
+                                Vector3 sEnd = capEnd + stepMotion;
+                                Collider[] ov = Physics.OverlapCapsule(sStart, sEnd, capsule.radius, collisionLayers, QueryTriggerInteraction.Ignore);
+                                if (!TryGetBlockingOverlap(ov, out Collider stepBlocking))
+                                {
+                                    transform.position += stepMotion;
+                                    moved = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    Debug.Log($"[EnemyKnockback] incremental step blocked by '{stepBlocking?.name}'", this);
+                                }
+                                step *= 0.5f;
+                            }
+
+                            if (!moved)
+                            {
+                                Debug.Log($"[EnemyKnockback] Knockback blocked by capsule overlap on '{name}' — stopping (blocking '{blocking?.name}').", this);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        CollisionUtility.MoveWithCapsuleCollision(
+                            rb,
+                            capsule,
+                            motion,
+                            collisionLayers
+                        );
+                    }
                 }
                 else
                 {
-                    // Backup collision check
+                    // Backup collision check using a reasonable capsule height so we don't immediately hit ground.
+                    float capHeight = Mathf.Max(0.01f, fallbackCapsuleHeight);
+                    float capRadius = Mathf.Max(0.01f, fallbackCapsuleRadius);
+
+                    Vector3 capsuleTop = rb.position + Vector3.up * (capHeight / 2f);
+                    Vector3 capsuleBottom = rb.position - Vector3.up * (capHeight / 2f);
+
                     if (!Physics.CapsuleCast(
-                        rb.position,
-                        rb.position + Vector3.up,
-                        0.3f,
+                        capsuleTop,
+                        capsuleBottom,
+                        capRadius,
                         motion.normalized,
                         out RaycastHit hit,
                         motion.magnitude,
                         collisionLayers,
                         QueryTriggerInteraction.Ignore))
                     {
-                        rb.MovePosition(
-                            rb.position + motion
-                        );
+                        // No blocking hit -> move
+                        if (rb.isKinematic)
+                            transform.position += motion;
+                        else
+                            rb.MovePosition(rb.position + motion);
                     }
                     else
                     {
-                        break;
+                        // If Rigidbody is kinematic, try a few small incremental steps to allow a nudge/slide.
+                        if (rb.isKinematic)
+                        {
+                            bool moved = false;
+                            float remaining = motion.magnitude;
+                            float step = Mathf.Min(0.2f, remaining);
+                            // Try a few finer steps
+                            for (int s = 0; s < 6 && step > 0.001f; s++)
+                            {
+                                Vector3 stepMotion = motion.normalized * step;
+                                Vector3 testTop = (rb.position + stepMotion) + Vector3.up * (capHeight / 2f);
+                                Vector3 testBottom = (rb.position + stepMotion) - Vector3.up * (capHeight / 2f);
+
+                                Collider[] overlaps = Physics.OverlapCapsule(testTop, testBottom, capRadius, collisionLayers, QueryTriggerInteraction.Ignore);
+                                if (!TryGetBlockingOverlap(overlaps, out Collider blocking2))
+                                {
+                                    transform.position += stepMotion;
+                                    moved = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    Debug.Log($"[EnemyKnockback] incremental fallback step blocked by '{blocking2?.name}'", this);
+                                }
+
+                                step *= 0.5f;
+                            }
+
+                            if (!moved)
+                            {
+                                Debug.Log($"[EnemyKnockback] Knockback blocked by capsule cast on '{name}' — hit '{hit.collider?.name}'. Stopping knockback.", this);
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            Debug.Log($"[EnemyKnockback] Knockback blocked by capsule cast on '{name}' — hit '{hit.collider?.name}'. Stopping knockback.", this);
+                            break;
+                        }
                     }
                 }
 
@@ -267,9 +382,16 @@ public class EnemyKnockback : MonoBehaviour
                 // Hit wall/object and could not move
                 if (Vector3.Distance(
                     oldPosition,
-                    rb.position) < 0.001f)
+                    rb.position) < 0.001f &&
+                    !rb.isKinematic) // note: for kinematic we moved transform; check transform delta below instead
                 {
+                    Debug.Log($"[EnemyKnockback] Knockback movement stalled on '{name}' (oldPos==newPos) — breaking.", this);
                     break;
+                }
+                else
+                {
+                    Vector3 newPos = rb.isKinematic ? transform.position : rb.position;
+                    Debug.Log($"[EnemyKnockback] '{name}' moved from {oldPosition} to {newPos} during knockback.", this);
                 }
             }
 
@@ -293,10 +415,62 @@ public class EnemyKnockback : MonoBehaviour
             agent.isStopped = false;
         }
 
+        // re-enable movement
+        if (movementComp != null)
+            movementComp.SetMovementEnabled(true);
 
+        Vector3 finalPos = rb.isKinematic ? transform.position : rb.position;
+        Debug.Log($"[EnemyKnockback] KnockbackRoutine END on '{name}' finalPos={finalPos}", this);
 
         IsBeingKnockedBack = false;
 
         knockbackCoroutine = null;
+    }
+
+    // Return true and the first blocking collider if any. Ignores:
+    //  - null entries
+    //  - trigger colliders
+    //  - colliders whose attachedRigidbody == this.rb (same body)
+    //  - colliders whose root == this.transform.root (same multi-part prefab)
+    //  - colliders that are children/parents of this transform
+    //  - colliders on the Terrain layer (useful ground layer)
+    private bool TryGetBlockingOverlap(Collider[] overlaps, out Collider blocking)
+    {
+        blocking = null;
+        if (overlaps == null || overlaps.Length == 0) return false;
+
+        int terrainLayer = LayerMask.NameToLayer("Terrain");
+
+        foreach (var col in overlaps)
+        {
+            if (col == null) continue;
+
+            // ignore triggers (they shouldn't block physical movement)
+            if (col.isTrigger) continue;
+
+            // ignore colliders on this exact transform
+            if (col.transform == transform) continue;
+
+            // ignore colliders on children of this object
+            if (col.transform.IsChildOf(transform)) continue;
+
+            // ignore colliders on parents/ancestors of this object
+            if (transform.IsChildOf(col.transform)) continue;
+
+            // ignore colliders that are part of the same Rigidbody (same physics body)
+            if (col.attachedRigidbody == rb) continue;
+
+            // ignore colliders that share the same top-level root (same prefab/actor)
+            if (col.transform.root == transform.root) continue;
+
+            // ignore terrain layer if present
+            if (terrainLayer != -1 && col.gameObject.layer == terrainLayer) continue;
+
+            // This collider belongs to another object -> blocking
+            blocking = col;
+            return true;
+        }
+
+        return false;
     }
 }
