@@ -206,8 +206,11 @@ public class PlayerMovement : MonoBehaviour, IMovement
             }
         }
 
-        if (isMovementStopped || movementStoppedExternally || isStunned)
+        if (isMovementStopped || movementStoppedExternally || isStunned || CameraPanEffect.GlobalPanActive)
+        {
+            moveInput = Vector3.zero;
             return;
+        }
 
         // While dashing, ignore movement input and lock rotation to the dash direction.
         // This prevents the dash from being cancelled or redirected by new input.
@@ -260,14 +263,15 @@ public class PlayerMovement : MonoBehaviour, IMovement
         //     StartDash();
 
         // New:
-        if (!isDashing && dashCooldownTimer <= 0f && dashEnabled && !CameraPanEffect.GlobalPanActive && dashAction.WasPressedThisFrame())
+        if (!isDashing && !CameraPanEffect.GlobalPanActive && dashCooldownTimer <= 0f && dashEnabled && !CameraPanEffect.GlobalPanActive && dashAction.WasPressedThisFrame())
             StartDash();
     }
 
     private void FixedUpdate()
     {
-        if (isMovementStopped || movementStoppedExternally || isStunned)
+        if (isMovementStopped || movementStoppedExternally || isStunned || CameraPanEffect.GlobalPanActive)
         {
+            moveInput = Vector3.zero;
             rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             return;
         }
@@ -408,6 +412,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void StartDash()
     {
+        if (CameraPanEffect.GlobalPanActive)
+            return;
         playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;

@@ -261,7 +261,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.67
+      scalar: 1
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -379,7 +379,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.3
+      scalar: 1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4874,7 +4874,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 325f6ebb7c42e84428c8ea3ccbe8b924, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4949,8 +4949,8 @@ MonoBehaviour:
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   fireColor: {r: 1, g: 0, b: 0, a: 1}
   iceColor: {r: 0, g: 1, b: 1, a: 1}
-  windColor: {r: 1, g: 1, b: 1, a: 1}
-  duration: 0.15
+  windColor: {r: 0.22284728, g: 0.7433963, b: 0.20618726, a: 1}
+  duration: 0.3
 --- !u!1 &2138293394534099949
 GameObject:
   m_ObjectHideFlags: 0
