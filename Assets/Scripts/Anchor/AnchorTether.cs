@@ -266,21 +266,24 @@ public class AnchorTether : MonoBehaviour
         NotifyPointsChanged();
     }
 
-    public void SetEndPoint(Transform t, bool instantAssign = false)
+    // Returns TRUE if the attach/detach was committed, FALSE if refused by the reeling or cooldown guard.
+    public bool SetEndPoint(Transform t, bool instantAssign = false)
     {
         Debug.Log("<color=orange>[AnchorTether]</color> SetEndPoint called with: " + (t ? t.name : "NULL"));
 
         // Don't let a new attach interrupt an in-progress reel-in break.
+        // REFUSED: report failure so the caller doesn't commit tether state on a rope that didn't attach.
         if (isReeling)
         {
             Debug.Log("<color=red>[AnchorTether]</color> BLOCKED - reeling in");
-            return;
+            return false;
         }
 
+        // REFUSED: cooldown gate on NEW attaches. Same reasoning - caller must know this didn't take.
         if (!canTether && t != endPoint && t != null)
         {
             Debug.Log("<color=red>[AnchorTether]</color> BLOCKED by cooldown");
-            return;
+            return false;
         }
 
         endPoint = t;
@@ -330,6 +333,9 @@ public class AnchorTether : MonoBehaviour
         }
 
         NotifyPointsChanged();
+
+        // COMMITTED: attach/detach went through.
+        return true;
     }
 
     private IEnumerator TetherCooldownRoutine()
@@ -402,7 +408,7 @@ public class AnchorTether : MonoBehaviour
     }
 
     /* Reels the tether in from the anchor to the player. The end particle is UNPINNED for the duration (see GetActivePinnedEnd) and the rope's rest length is shrunk from full to zero, so the
-       constraints draw the free (anchor) end inward along the slack while gravity keeps the body draped - a tape-measure retract in otherwords. -E.M */ 
+       constraints draw the free (anchor) end inward along the slack while gravity keeps the body draped - a tape-measure retract in otherwords. -E.M */
 
     private IEnumerator ReelInRoutine()
     {
