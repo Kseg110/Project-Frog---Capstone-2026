@@ -200,7 +200,7 @@ public class PlayerAttacks : MonoBehaviour
 
         Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
-        OnShotFired?.Invoke(true);
+        OnShotFired?.Invoke(false);
         ApplyBasicShotSlow();
 
         Shoot(0f, aimDirection);
