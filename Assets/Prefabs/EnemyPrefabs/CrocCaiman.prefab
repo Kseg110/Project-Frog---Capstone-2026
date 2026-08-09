@@ -179,6 +179,8 @@ MonoBehaviour:
   retreatDistance: 5
   attackSO: {fileID: 11400000, guid: bd1aed1a9114cb241a1918ede035414d, type: 2}
   lookRotationSpeed: 8
+  eyeHeight: 1
+  targetEyeHeight: 1
 --- !u!54 &1511503074007811530
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -223,10 +225,13 @@ MonoBehaviour:
   knockbackResistance: 1
   projectileKnockbackDistance: 2
   useProjectileTravelDirection: 1
+  debugKnockbackMultiplier: 1
   collisionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
   capsule: {fileID: 5331853941283378302}
+  fallbackCapsuleHeight: 1.6
+  fallbackCapsuleRadius: 0.3
 --- !u!114 &9129651843082517972
 MonoBehaviour:
   m_ObjectHideFlags: 0
