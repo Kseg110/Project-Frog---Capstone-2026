@@ -1012,8 +1012,8 @@ MonoBehaviour:
   dashDuration: 0.15
   dashCooldown: 0.5
   dashEffect: {fileID: 7611360948172514216, guid: ca67dd471ecd02745af09bfa37b54c89, type: 3}
-  dashEffectBackOffset: 1
-  dashEffectHeightOffset: 0.5
+  dashEffectBackOffset: -4
+  dashEffectHeightOffset: 0.2
   dashActivationEvent:
     Guid:
       Data1: 1888212263
@@ -1483,10 +1483,8 @@ MonoBehaviour:
   materialIndex: 0
   fillPropertyName: _FillAmount
   emissionColorPropertyName: _EmissionColor
-  lerpSpeed: 0.5
-  colorLerpSpeed: 0.5
   fireColor: {r: 0.8679245, g: 0.10750652, b: 0.012281928, a: 1}
-  iceeColor: {r: 0.012815925, g: 0.46098882, b: 0.9056604, a: 1}
+  iceColor: {r: 0, g: 0.5, b: 1, a: 1}
   windColor: {r: 0.025231387, g: 0.5943396, b: 0.19484794, a: 1}
   neutralColor: {r: 1, g: 1, b: 1, a: 1}
   emissionIntensity: 6
