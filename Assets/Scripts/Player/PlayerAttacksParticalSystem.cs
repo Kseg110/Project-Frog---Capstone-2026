@@ -19,6 +19,10 @@ public class DartFireVFX : MonoBehaviour
     [SerializeField] private Color iceColor = Color.cyan;
     [SerializeField] private Color windColor = Color.white;
 
+    [Header("Particle Size")]
+    [SerializeField] private float normalSize = 1f;
+    [SerializeField] private float overchargeSize = 2f;
+
     [Header("Settings")]
     [SerializeField] private float duration = 0.15f;
 
@@ -46,46 +50,64 @@ public class DartFireVFX : MonoBehaviour
     private void OnEnable()
     {
         if (playerAttacks != null)
-            playerAttacks.OnBasicShotFired += OnBasicShotFired;
+            playerAttacks.OnShotFired += OnShotFired;
     }
 
     private void OnDisable()
     {
         if (playerAttacks != null)
-            playerAttacks.OnBasicShotFired -= OnBasicShotFired;
+            playerAttacks.OnShotFired -= OnShotFired;
     }
 
-    private void OnBasicShotFired()
+    // false = primary attack
+    // true = secondary attack
+    private void OnShotFired(bool isSecondaryAttack)
     {
         if (vfxCoroutine != null)
             StopCoroutine(vfxCoroutine);
 
-        vfxCoroutine = StartCoroutine(PlayVFX());
+        vfxCoroutine = StartCoroutine(
+            PlayVFX(isSecondaryAttack)
+        );
     }
 
-    private System.Collections.IEnumerator PlayVFX()
+    private System.Collections.IEnumerator PlayVFX(bool isSecondaryAttack)
     {
         fireVFX.Stop(
             true,
             ParticleSystemStopBehavior.StopEmittingAndClear
         );
 
-        // Get the correct material and color based
-        // on the currently attached anchor.
+        // Get material and color based on anchor.
         Material selectedMaterial;
         Color selectedColor;
 
-        GetVFXSettings(out selectedMaterial, out selectedColor);
+        GetVFXSettings(
+            out selectedMaterial,
+            out selectedColor
+        );
 
-        // Apply material.
         if (selectedMaterial != null)
             vfxRenderer.material = selectedMaterial;
 
-        // Apply color.
         var main = fireVFX.main;
         main.startColor = selectedColor;
 
-        // Play the ONE particle system.
+        // -----------------------------------------
+        // PARTICLE SIZE
+        // -----------------------------------------
+
+        if (isSecondaryAttack)
+        {
+            // Secondary attack = BIG particle
+            main.startSize = overchargeSize;
+        }
+        else
+        {
+            // Primary attack = NORMAL particle
+            main.startSize = normalSize;
+        }
+
         fireVFX.Play();
 
         yield return new WaitForSeconds(duration);
@@ -106,21 +128,18 @@ public class DartFireVFX : MonoBehaviour
         material = normalMaterial;
         color = normalColor;
 
-        // No PlayerAnchor = normal.
         if (playerAnchor == null)
             return;
 
-        // Not attached = normal.
         if (!playerAnchor.IsTethered)
             return;
 
-        // No anchor = normal.
         if (playerAnchor.AttachedAnchor == null)
             return;
 
         AnchorBase anchor = playerAnchor.AttachedAnchor;
 
-        // Fire anchor.
+        // Fire
         if (anchor.BaseData is AnchorFireData)
         {
             material = fireMaterial;
@@ -128,7 +147,7 @@ public class DartFireVFX : MonoBehaviour
             return;
         }
 
-        // Ice anchor.
+        // Ice
         if (anchor.BaseData is AnchorIceData)
         {
             material = iceMaterial;
@@ -136,14 +155,12 @@ public class DartFireVFX : MonoBehaviour
             return;
         }
 
-        // Wind anchor.
+        // Wind
         if (anchor.BaseData is AnchorWindData)
         {
             material = windMaterial;
             color = windColor;
             return;
         }
-
-        // Anything else stays normal.
     }
 }

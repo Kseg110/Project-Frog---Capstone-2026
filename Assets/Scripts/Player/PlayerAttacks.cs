@@ -28,7 +28,7 @@ public class PlayerAttacks : MonoBehaviour
 
 
 
-    public event System.Action OnBasicShotFired;
+    public event System.Action<bool> OnShotFired;
 
     //public bool isTethered;
     public float LastChargeValue { get; private set; }
@@ -152,7 +152,7 @@ public class PlayerAttacks : MonoBehaviour
                 if (secondaryReleased)
                 {
                     playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
-
+                    OnShotFired?.Invoke(true);
                     RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
 
                     playerMovement.ResumeMovement();
@@ -190,7 +190,7 @@ public class PlayerAttacks : MonoBehaviour
         Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
         Shoot(0f, aimDirection);
-        OnBasicShotFired?.Invoke();
+        OnShotFired?.Invoke(false);
         ApplyBasicShotSlow();
 
         Shoot(0f, aimDirection);
