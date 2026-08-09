@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.62634, y: 6.88348, z: 15.90419}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.55844, z: 0.38919103}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -48,8 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99d5d2ddadefd514f95ebb21b732fb09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
-  baseSpeed: 10
-  baseDamage: 20
+  baseSpeed: 20
+  baseDamage: 10
   maxScale: 2
   fireHitVfx: {fileID: 7312745477584444270, guid: 3f7deb7f0bf59ef4784f7edd44a1f827, type: 3}
   iceHitVfx: {fileID: 2179949210641252972, guid: a5eb1ed76098dc949899fe884d9861bf, type: 3}
@@ -60,7 +60,7 @@ MonoBehaviour:
   effectType: 
   effectDuration: 0
   effectValue: 0
-  isPlayerProjectile: 0
+  isPlayerProjectile: 1
   isPiercingProjectile: 0
 --- !u!33 &8847850907498326296
 MeshFilter:

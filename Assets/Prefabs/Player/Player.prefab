@@ -5657,7 +5657,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 8a770163cce97b047822066010551c60, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5741,7 +5741,7 @@ TrailRenderer:
       m_NumAlphaKeys: 2
     numCornerVertices: 0
     numCapVertices: 0
-    alignment: 1
+    alignment: 0
     textureMode: 0
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
@@ -5786,6 +5786,7 @@ GameObject:
   - component: {fileID: -5455150326957673816}
   - component: {fileID: 7342988453639927308}
   - component: {fileID: 833077249816884151}
+  - component: {fileID: 1593668902978562511}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -5866,8 +5867,8 @@ MonoBehaviour:
   dashDuration: 0.15
   dashCooldown: 0.5
   dashEffect: {fileID: 7611360948172514216, guid: ca67dd471ecd02745af09bfa37b54c89, type: 3}
-  dashEffectBackOffset: 1
-  dashEffectHeightOffset: 0.5
+  dashEffectBackOffset: -4
+  dashEffectHeightOffset: 0.2
   dashActivationEvent:
     Guid:
       Data1: 1888212263
@@ -5909,8 +5910,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 576901950fbd0a646a2f8525ad748856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerImmortality
-  glowMaterial: {fileID: 2100000, guid: bfa71111225aa1843bec2f997fe5f5d8, type: 2}
-  glowColor: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
+  glowMaterial: {fileID: 2100000, guid: 26d88ade74010784089a3c02ad3e6bfe, type: 2}
+  glowColor: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 1}
   glowIntensity: 5
   isImmortal: 0
 --- !u!114 &5146856041539489363
@@ -6054,7 +6055,7 @@ MonoBehaviour:
   chargedTime: 20
   chargeCooldown: 15
   chargeDecayRate: 1
-  fireDamage: 4
+  fireDamage: 5
   fireDamageInterval: 3
   iceSlowPercent: 50
   windSpeedBoostPercent: 35
@@ -6081,7 +6082,7 @@ MonoBehaviour:
   MaxChargeTime: 1
   CooldownTime: 1
   MinDamage: 12.5
-  MaxDamage: 25
+  MaxDamage: 30
   WindHomingDelay: 3
   playerAnchor: {fileID: 0}
 --- !u!114 &531424311684605953
@@ -6289,7 +6290,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7555014404437206304}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: b15dbaff158892845bb00620de53bb89, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -6325,6 +6326,29 @@ MonoBehaviour:
   tongueHealAmount: 20
   arrowSpeed: 40
   attackSpeed: 1
+--- !u!114 &1593668902978562511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555014404437206304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a96a4116d6eae9342aed7eb5325bf5da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerOverchargeTattoo
+  playerRenderer: {fileID: 6807598555737843133}
+  materialIndex: 0
+  fillPropertyName: _FillAmount
+  emissionColorPropertyName: _EmissionColor
+  fireColor: {r: 0.8679245, g: 0.10750652, b: 0.012281928, a: 1}
+  iceColor: {r: 0, g: 0.5, b: 1, a: 1}
+  windColor: {r: 0.025231387, g: 0.5943396, b: 0.19484794, a: 1}
+  neutralColor: {r: 1, g: 1, b: 1, a: 1}
+  emissionIntensity: 6
+  playerOvercharge: {fileID: 3953045122372634609}
+  playerAnchor: {fileID: 7481143701210063934}
 --- !u!1 &8228960295327052452
 GameObject:
   m_ObjectHideFlags: 0
@@ -6751,9 +6775,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: dd56ce189f5c6ea4f9bbd2cdc2b52ae6, type: 2}
     - target: {fileID: 495975331598566030, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 495975331598566030, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: dd56ce189f5c6ea4f9bbd2cdc2b52ae6, type: 2}
+      objectReference: {fileID: 2100000, guid: 94bb0cd5ee61b774382fc19068aad92d, type: 2}
+    - target: {fileID: 495975331598566030, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 94bb0cd5ee61b774382fc19068aad92d, type: 2}
     - target: {fileID: 919132149155446097, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
       propertyPath: m_Name
       value: Mesh_PlayerFrog
@@ -6867,6 +6899,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
+--- !u!23 &6807598555737843133 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 495975331598566030, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
+  m_PrefabInstance: {fileID: 6384833505838065459}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6850473402843529432 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f0d7a71f9ffcc4049883f7dc40bd10a3, type: 3}
