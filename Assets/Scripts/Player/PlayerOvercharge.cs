@@ -209,6 +209,9 @@ public class PlayerOvercharge : MonoBehaviour
         {
             playerHUD.UpdateOverchargeWheel(fillAmount);
         }
+
+        // Notify listeners of cooldown progress
+        OnChargeChanged?.Invoke(fillAmount);
     }
 
     private void ActivateOvercharge()

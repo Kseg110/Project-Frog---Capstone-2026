@@ -1481,9 +1481,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerOverchargeTattoo
   playerRenderer: {fileID: 6807598555737843133}
   materialIndex: 0
-  fillPropertyName: _FilAmount
-  lerpSpeed: 5
+  fillPropertyName: _FillAmount
+  emissionColorPropertyName: _EmissionColor
+  lerpSpeed: 0.5
+  colorLerpSpeed: 0.5
+  fireColor: {r: 0.8679245, g: 0.10750652, b: 0.012281928, a: 1}
+  iceeColor: {r: 0.012815925, g: 0.46098882, b: 0.9056604, a: 1}
+  windColor: {r: 0.025231387, g: 0.5943396, b: 0.19484794, a: 1}
+  neutralColor: {r: 1, g: 1, b: 1, a: 1}
+  emissionIntensity: 6
   playerOvercharge: {fileID: 3953045122372634609}
+  playerAnchor: {fileID: 7481143701210063934}
 --- !u!1 &8228960295327052452
 GameObject:
   m_ObjectHideFlags: 0
