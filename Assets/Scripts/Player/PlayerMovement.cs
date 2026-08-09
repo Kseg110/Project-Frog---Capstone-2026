@@ -61,6 +61,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private Vector3 lookDirection;
 
     private bool isDashing;
+    private bool isInMud = false;
     private bool isMovementStopped;
     private bool isTethered;
     private bool movementStoppedExternally;
@@ -71,9 +72,6 @@ public class PlayerMovement : MonoBehaviour, IMovement
     // Tether-break stun state. Independent of the StopMovement/ResumeMovement external lock so the two systems compose instead of stomping each other. Set by TetherDamageDealer on a Golem break.
     private float stunTimer;
     private bool isStunned;
-
-    // New: allow disabling dash ability without affecting movement stop
-    private bool dashEnabled = true;
 
     public bool IsDashing => isDashing;
     public float DashCooldownProgress => dashCooldownTimer > 0f ? 1f - (dashCooldownTimer / dashCooldown) : 1f;
@@ -205,12 +203,11 @@ public class PlayerMovement : MonoBehaviour, IMovement
                 stunTimer = 0f;
             }
         }
+        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame() && !isInMud)
+            StartDash();
 
-        if (isMovementStopped || movementStoppedExternally || isStunned || CameraPanEffect.GlobalPanActive)
-        {
-            moveInput = Vector3.zero;
+        if (isMovementStopped || movementStoppedExternally || isStunned)
             return;
-        }
 
         // While dashing, ignore movement input and lock rotation to the dash direction.
         // This prevents the dash from being cancelled or redirected by new input.
@@ -254,24 +251,12 @@ public class PlayerMovement : MonoBehaviour, IMovement
                 rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             }
         }
-
-        // Check for valid dash input. Respect dashEnabled flag.
-        // Change the dash input check in Update() to also require CameraPanEffect.GlobalPanActive == false
-
-        // Old:
-        // if (!isDashing && dashCooldownTimer <= 0f && dashEnabled && dashAction.WasPressedThisFrame())
-        //     StartDash();
-
-        // New:
-        if (!isDashing && !CameraPanEffect.GlobalPanActive && dashCooldownTimer <= 0f && dashEnabled && !CameraPanEffect.GlobalPanActive && dashAction.WasPressedThisFrame())
-            StartDash();
     }
 
     private void FixedUpdate()
     {
-        if (isMovementStopped || movementStoppedExternally || isStunned || CameraPanEffect.GlobalPanActive)
+        if (isMovementStopped || movementStoppedExternally || isStunned)
         {
-            moveInput = Vector3.zero;
             rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             return;
         }
@@ -391,29 +376,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
         moveInput = Vector3.zero;
     }
 
-    // New API: enable/disable dash input handling
-    public void SetDashEnabled(bool enabled)
-    {
-        dashEnabled = enabled;
-    }
-
-    // New API: disable dash for one frame (useful to avoid consuming the same press used to skip)
-    public void DisableDashForOneFrame()
-    {
-        StartCoroutine(DisableDashForOneFrameCoroutine());
-    }
-
-    private System.Collections.IEnumerator DisableDashForOneFrameCoroutine()
-    {
-        dashEnabled = false;
-        yield return null;
-        dashEnabled = true;
-    }
-
     private void StartDash()
     {
-        if (CameraPanEffect.GlobalPanActive)
-            return;
         playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;
@@ -449,6 +413,15 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         Debug.Log("end dash");
         PlayerDashVFX.Instance.EndDashVFX();
+    }
+
+    public void SetInMud(bool value)
+    {
+        isInMud = value;
+        if (isInMud && isDashing)
+        {
+            EndDash();
+        }
     }
 
     public void AddSpeedModifier(object source, float multiplier)
