@@ -27,6 +27,10 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private EventReference basicShotEvent;
     [SerializeField] private EventReference chargeShotEvent;
 
+
+
+    public event System.Action<bool> OnShotFired;
+
     [Header("Animation Timing")]
     [SerializeField] private float attackWindupTime = 0.5f;   // time before projectile fires
     [SerializeField] private float attackRecoveryTime = 0.2f; // optional recovery window
@@ -159,7 +163,7 @@ public class PlayerAttacks : MonoBehaviour
                 if (secondaryReleased)
                 {
                     playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
-
+                    OnShotFired?.Invoke(true);
                     RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
 
                     playerMovement.ResumeMovement();
@@ -196,7 +200,7 @@ public class PlayerAttacks : MonoBehaviour
 
         Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
-
+        OnShotFired?.Invoke(true);
         ApplyBasicShotSlow();
 
         Shoot(0f, aimDirection);

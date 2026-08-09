@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private LayerMask collisionLayers;
     [SerializeField] private string hitBoxName = "Hitbox";
     [SerializeField] private float inputSmoothSpeed = 20f;
-
+    [SerializeField] private float panDashLockTimer;
     private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
     private float CurrentSpeed
     {
@@ -184,6 +184,18 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void Update()
     {
+        if (CameraPanEffect.GlobalPanActive)
+        {
+            // While panning, always keep the lock at 5 seconds.
+            panDashLockTimer = 1;
+
+        }
+        else if (panDashLockTimer > 0f)
+        {
+            panDashLockTimer = panDashLockTimer - 0.5f;
+
+        }
+
         UpdateTetherStatus();
 
         // Update dash cooldown
@@ -203,10 +215,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
                 stunTimer = 0f;
             }
         }
-        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame() && !isInMud)
+        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame() && !isInMud && !CameraPanEffect.GlobalPanActive && panDashLockTimer <= 0f)
             StartDash();
 
-        if (isMovementStopped || movementStoppedExternally || isStunned)
+        if (isMovementStopped || movementStoppedExternally || isStunned || CameraPanEffect.GlobalPanActive)
             return;
 
         // While dashing, ignore movement input and lock rotation to the dash direction.
@@ -251,11 +263,13 @@ public class PlayerMovement : MonoBehaviour, IMovement
                 rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             }
         }
+
+
     }
 
     private void FixedUpdate()
     {
-        if (isMovementStopped || movementStoppedExternally || isStunned)
+        if (isMovementStopped || movementStoppedExternally || isStunned || CameraPanEffect.GlobalPanActive)
         {
             rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             return;
@@ -378,6 +392,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void StartDash()
     {
+        if (CameraPanEffect.GlobalPanActive)
+            return;
         playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;
