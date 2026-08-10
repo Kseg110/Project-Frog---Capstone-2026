@@ -48,6 +48,13 @@ public class PlayerAnchor : MonoBehaviour
     public AnchorBase CurrentAnchor => currentAnchor;
     public AnchorBase AttachedAnchor => attachedAnchor;
 
+    // isTethered flips true the instant StartTether begins the throw, BEFORE the rope has flown out and landed — and stays true through the reel-in on release.
+    public bool IsTetherActive =>
+        isTethered
+        && anchorTether != null
+        && !anchorTether.IsThrowing
+        && !anchorTether.IsReeling;
+
     private void Awake()
     {
         allAnchors = FindObjectsByType<AnchorBase>(FindObjectsSortMode.None);
@@ -60,7 +67,21 @@ public class PlayerAnchor : MonoBehaviour
             playerOvercharge = GetComponent<PlayerOvercharge>();
         }
 
+        // Safety net: if the ROPE severs itself (reel-in completes, or a forced break inside AnchorTether), reconcile our logical tether flags.
+        if (anchorTether != null)
+        {
+            anchorTether.OnTetherBroken += HandleTetherBrokenByRope;
+        }
+
         RebindTetherActionFromCurrentMap();
+    }
+
+    private void OnDestroy()
+    {
+        if (anchorTether != null)
+        {
+            anchorTether.OnTetherBroken -= HandleTetherBrokenByRope;
+        }
     }
 
     private void Update()
@@ -120,8 +141,7 @@ public class PlayerAnchor : MonoBehaviour
             return;
         }
 
-        // Cover moved between player and anchor. Reeling for consistency; flip to false if LOS-breaks
-        // should snap instantly (rope "cut" by geometry) rather than reel.
+        // Cover moved between player and anchor. Reeling for consistency; flip to false if LOS-breaks.
         if (requireLineOfSightWhileTethered && !HasLineOfSight(attachedAnchor))
         {
             ReleaseTether(playReel: true);
@@ -219,11 +239,15 @@ public class PlayerAnchor : MonoBehaviour
         // AnchorTether must receive the Transform of the AnchorPoint child of the current anchor (or the anchor itself if no child exists)
         Transform anchorBaseTransform = GetAnchorPointTransform(currentAnchor);
 
-        // Sent Transform to AnchorTether
-        if (anchorTether != null)
-            anchorTether.SetEndPoint(anchorBaseTransform, true);
+        // Ask the tether to attach. It can REFUSE (mid-reel, or on cooldown) and return false — in which case we must NOT commit isTethered. Otherwise the overcharge/charge is kept alive with no rope. This was the spam-desync bug.
+        bool attached = anchorTether != null && anchorTether.SetEndPoint(anchorBaseTransform, true);
+        if (!attached)
+        {
+            Debug.Log("[PlayerAnchor] Tether attach refused by AnchorTether (reeling/cooldown). Not committing tether state.");
+            return;
+        }
 
-        // Activate the tether
+        // Attach confirmed — now it's safe to commit logical tether state.
         isTethered = true;
         attachedAnchor = currentAnchor;
 
@@ -252,6 +276,19 @@ public class PlayerAnchor : MonoBehaviour
             else
                 anchorTether.SetEndPoint(null, true);
         }
+
+        OnTetherReleased?.Invoke();
+        OnAnchorChanged?.Invoke(null);
+    }
+
+    // The rope severed itself (reel-in completed, or a forced break inside AnchorTether). 
+    private void HandleTetherBrokenByRope()
+    {
+        if (!isTethered && attachedAnchor == null)
+            return;   // already clean, nothing to reconcile
+
+        isTethered = false;
+        attachedAnchor = null;
 
         OnTetherReleased?.Invoke();
         OnAnchorChanged?.Invoke(null);

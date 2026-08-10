@@ -83,9 +83,9 @@ public class PlayerChargeAttack : MonoBehaviour
 
     public bool CanBeginCharge()
     {
-        // Must be tethered to charge. This is the primary gate that fixes the in-radius-but-untethered exploit.
-        bool tethered = playerAnchor != null && playerAnchor.IsTethered;
-        return tethered && !IsOnCooldown && !isCharging;
+        // Must be tethered AND settled to charge.
+        bool tetherActive = playerAnchor != null && playerAnchor.IsTetherActive;
+        return tetherActive && !IsOnCooldown && !isCharging;
     }
 
     public bool BeginCharge(AnchorBase anchor)
@@ -109,6 +109,14 @@ public class PlayerChargeAttack : MonoBehaviour
     public void UpdateCharge()
     {
         if (!IsCharging || CurrentAnchor == null) return;
+
+        // Cancel if the tether stops being active mid-charge.
+        if (playerAnchor == null || !playerAnchor.IsTetherActive)
+        {
+            CancelCharge();
+            return;
+        }
+
         ChargeTimer = Mathf.Clamp(ChargeTimer + Time.deltaTime, 0f, MaxChargeTime);
     }
 
@@ -116,8 +124,8 @@ public class PlayerChargeAttack : MonoBehaviour
     {
         if (!IsCharging || CurrentAnchor == null) return;
 
-        // Failsafe: even if a charge somehow survived a break this frame (event ordering edge case), don't fire while untethered. Mirrors the belt-and-suspenders style of IgnorePlayerCollision.
-        if (playerAnchor == null || !playerAnchor.IsTethered)
+        // Failsafe: even if a charge somehow survived a break or animation window this frame (event/order edge case), don't fire unless the tether is genuinely active (attached AND settled).
+        if (playerAnchor == null || !playerAnchor.IsTetherActive)
         {
             CancelCharge();
             return;

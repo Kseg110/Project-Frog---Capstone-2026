@@ -144,25 +144,29 @@ public class PlayerOvercharge : MonoBehaviour
 
     private void UpdateCharge()
     {
-        bool isTethered = playerAnchor.IsTethered;
+        // Build only while the tether is ACTIVE (attached AND settled), not merely logically tethered.
+        bool isTethered = playerAnchor.IsTetherActive;
 
         if (isTethered)
         {
-            // Stores current anchor type
-            lastTetheredAnchor = playerAnchor.AttachedAnchor;
-            // Charge while tethered
-            currentChargeTime += Time.deltaTime;
-            // Fully charged check
-            if (currentChargeTime >= chargedTime)
-            {
-                currentChargeTime = chargedTime;
-                ActivateOvercharge();
-            }
-            // Update current anchor's light intensity
-            if (lastTetheredAnchor != null)
-            {
-                lastTetheredAnchor.UpdateOverchargeVisual(ChargeProgress);
-            }
+
+                // Stores current anchor type
+                lastTetheredAnchor = playerAnchor.AttachedAnchor;
+
+                if (lastTetheredAnchor != null && lastTetheredAnchor.CanOvercharge)
+                {
+                    // Charge while tethered
+                    currentChargeTime += Time.deltaTime;
+
+                    // Fully charged check
+                    if (currentChargeTime >= chargedTime)
+                    {
+                        currentChargeTime = chargedTime;
+                        ActivateOvercharge();
+                    }
+                    // Update current anchor's light intensity
+                    lastTetheredAnchor.UpdateOverchargeVisual(ChargeProgress);
+                }
         }
         else
         {
@@ -174,16 +178,17 @@ public class PlayerOvercharge : MonoBehaviour
             }
         }
 
-        // Tell listeneres of charge change
-        OnChargeChanged?.Invoke(ChargeProgress);
+            // Tell listeneres of charge change
+            OnChargeChanged?.Invoke(ChargeProgress);
 
-        // Update Player HUD (can be removed in the future if desired)
-        if (playerHUD != null)
-        {
-            playerHUD.UpdateOverchargeWheel(ChargeProgress);
+            // Update Player HUD (can be removed in the future if desired)
+            if (playerHUD != null)
+            {
+                playerHUD.UpdateOverchargeWheel(ChargeProgress);
+            }
+            //------------------------------------------------------------
         }
-        //------------------------------------------------------------
-    }
+    
 
     private void UpdateCooldown()
     {
@@ -205,12 +210,15 @@ public class PlayerOvercharge : MonoBehaviour
         {
             playerHUD.UpdateOverchargeWheel(fillAmount);
         }
+
+        // Notify listeners of cooldown progress
+        OnChargeChanged?.Invoke(fillAmount);
     }
 
     private void ActivateOvercharge()
     {
-        // Guard: only fire if the tether is genuinely live. A broken tether must never convert into a free overcharge.
-        if (playerAnchor == null || !playerAnchor.IsTethered || lastTetheredAnchor == null)
+        // Guard: only fire if the tether is genuinely active (attached AND settled). 
+        if (playerAnchor == null || !playerAnchor.IsTetherActive || lastTetheredAnchor == null)
         {
             return;
         }
