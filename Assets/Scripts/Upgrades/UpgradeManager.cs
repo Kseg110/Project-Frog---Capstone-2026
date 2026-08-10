@@ -194,4 +194,46 @@ public class UpgradeManager : MonoBehaviour
         }
         return false;
     }
+
+    // DEBUG adds one level to the specified card.
+    public void DebugAddCard(UpgradeDataSO card)
+    {
+        if (card == null)
+            return;
+
+        OnCardChosen(card);
+
+        Debug.Log($"[DEBUG] Added card: {card.CardName}. New Level: {GetLevel(card)}");
+    }
+
+    //DEBUG removes one level from specified card. 
+    public void DebugremoveCard(UpgradeDataSO card)
+    {
+        if (card == null)
+            return;
+
+        if (!cardLevels.ContainsKey(card) || cardLevels[card] <= 0) {
+            Debug.Log($"[DEBUG] Cannot remove {card.CardName}; card is already level 0.");
+        }
+
+        cardLevels[card] --;
+
+        //Keep element tracking in sync
+        if (elementLevels.TryGetValue(card.Element, out var elementDictionary) && elementDictionary.ContainsKey(card))
+        {
+            elementDictionary[card] --;
+        }
+
+        //Put card back into the deck if it was maxed out previously
+        if (!deck.Contains(card))
+        {
+            deck.Add(card);
+        }
+
+        OnUpgradesChanged?.Invoke();
+
+        FindFirstObjectByType<CardIconManager>()?.RefreshIcons();
+
+        Debug.Log($"[DEBUG] Removed card: {card.CardName}. New level: {GetLevel(card)}");
+    }
 }
