@@ -93,8 +93,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000006, guid: c5ee8a3072645674b9fcc384d8287678, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 85350879a734b0a4aa9f827c60672fe0, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -3331,6 +3331,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: IceAnchor
       objectReference: {fileID: 0}
+    - target: {fileID: 3611004053729616516, guid: d1ce69b2414d069499f7b7bbea82fbf6, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3500,6 +3504,10 @@ PrefabInstance:
     - target: {fileID: 1104820440521387983, guid: 341889f7661c84a4eadf491db210611d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2541478902315805735, guid: 341889f7661c84a4eadf491db210611d, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4094776375660702646, guid: 341889f7661c84a4eadf491db210611d, type: 3}
       propertyPath: m_Name
@@ -10393,6 +10401,82 @@ MonoBehaviour:
   m_Center: {x: 0, y: 1, z: 0}
   m_Area: 1
   m_AffectedAgents: ffffffff
+--- !u!1 &244124097
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 244124099}
+  - component: {fileID: 244124098}
+  m_Layer: 0
+  m_Name: AdaptiveProbeVolume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &244124098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244124097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cded085d155cde949b60f67a11dbc3bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.ProbeVolume
+  mode: 0
+  size: {x: 503.01, y: 4.1819468, z: 503.01}
+  overrideRendererFilters: 0
+  minRendererVolumeSize: 0.1
+  objectLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  lowestSubdivLevelOverride: 0
+  highestSubdivLevelOverride: 7
+  overridesSubdivLevels: 0
+  mightNeedRebaking: 0
+  cachedTransform:
+    e00: 1
+    e01: 0
+    e02: 0
+    e03: -250
+    e10: 0
+    e11: 1
+    e12: 0
+    e13: -0.58597326
+    e20: 0
+    e21: 0
+    e22: 1
+    e23: -250
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 1
+  cachedHashCode: -1192710148
+  fillEmptySpaces: 0
+  version: 2
+  globalVolume: 0
+--- !u!4 &244124099
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244124097}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 250, y: 0.58597326, z: 250}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &245496435 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 56a80d2a8c77cb34e828cbfe4fbe9f57, type: 3}
@@ -17010,6 +17094,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1781756405}
     m_Modifications:
+    - target: {fileID: 4935234711728926343, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6486689412368981102, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
       propertyPath: m_Layer
       value: 3
@@ -27987,6 +28075,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3057289845000029743, guid: 7dad59d65cdf07c4c961e5465a6271b2, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4780295651325015127, guid: 7dad59d65cdf07c4c961e5465a6271b2, type: 3}
       propertyPath: data
       value: 
@@ -29225,6 +29317,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: IceAnchor
       objectReference: {fileID: 0}
+    - target: {fileID: 3611004053729616516, guid: d1ce69b2414d069499f7b7bbea82fbf6, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -29855,6 +29951,10 @@ PrefabInstance:
     - target: {fileID: 1374343851861677201, guid: 7dad59d65cdf07c4c961e5465a6271b2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057289845000029743, guid: 7dad59d65cdf07c4c961e5465a6271b2, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4780295651325015127, guid: 7dad59d65cdf07c4c961e5465a6271b2, type: 3}
       propertyPath: data
@@ -55675,6 +55775,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3057289845000029743, guid: 7dad59d65cdf07c4c961e5465a6271b2, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4780295651325015127, guid: 7dad59d65cdf07c4c961e5465a6271b2, type: 3}
       propertyPath: data
       value: 
@@ -57399,6 +57503,10 @@ PrefabInstance:
     - target: {fileID: 2993321440109438229, guid: d1ce69b2414d069499f7b7bbea82fbf6, type: 3}
       propertyPath: m_Name
       value: IceAnchor
+      objectReference: {fileID: 0}
+    - target: {fileID: 3611004053729616516, guid: d1ce69b2414d069499f7b7bbea82fbf6, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -78846,6 +78954,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1499817023}
     m_Modifications:
+    - target: {fileID: 4935234711728926343, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6911843594789955862, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
       propertyPath: m_Name
       value: FireAnchor
@@ -80525,6 +80637,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 484671116}
     m_Modifications:
+    - target: {fileID: 4935234711728926343, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6486689412368981102, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
       propertyPath: m_Layer
       value: 3
@@ -116279,6 +116395,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2541478902315805735, guid: 341889f7661c84a4eadf491db210611d, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4094776375660702646, guid: 341889f7661c84a4eadf491db210611d, type: 3}
       propertyPath: m_Name
       value: WindAnchor
@@ -118514,6 +118634,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 842460681}
     m_Modifications:
+    - target: {fileID: 4935234711728926343, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6911843594789955862, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
       propertyPath: m_Name
       value: TestAnchor (1)
@@ -126733,6 +126857,56 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1877346923}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1880073767
+GameObject:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1880073769}
+  - component: {fileID: 1880073768}
+  m_Layer: 0
+  m_Name: ProbeVolumePerSceneData
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1880073768
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1880073767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a83d2f7ae04ab6f4f99b0d85377be998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.ProbeVolumePerSceneData
+  serializedBakingSet: {fileID: 11400000, guid: b1560fec977bac64e806b316d0df6d85, type: 2}
+  sceneGUID: be89179a444745c42b2e598737c2752a
+  obsoleteAsset: {fileID: 0}
+  obsoleteCellSharedDataAsset: {fileID: 0}
+  obsoleteCellSupportDataAsset: {fileID: 0}
+  obsoleteSerializedScenarios: []
+--- !u!4 &1880073769
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1880073767}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1881578282
 GameObject:
   m_ObjectHideFlags: 0
@@ -134088,6 +134262,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2541478902315805735, guid: 341889f7661c84a4eadf491db210611d, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4094776375660702646, guid: 341889f7661c84a4eadf491db210611d, type: 3}
       propertyPath: m_Name
       value: WindAnchor
@@ -141329,6 +141507,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 95422466}
     m_Modifications:
+    - target: {fileID: 4935234711728926343, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6911843594789955862, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
       propertyPath: m_Name
       value: FireAnchor
@@ -141795,6 +141977,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3057289845000029743, guid: 7dad59d65cdf07c4c961e5465a6271b2, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4780295651325015127, guid: 7dad59d65cdf07c4c961e5465a6271b2, type: 3}
       propertyPath: data
       value: 
@@ -142088,6 +142274,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3057289845000029743, guid: 7dad59d65cdf07c4c961e5465a6271b2, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4780295651325015127, guid: 7dad59d65cdf07c4c961e5465a6271b2, type: 3}
       propertyPath: data
       value: 
@@ -142262,6 +142452,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2541478902315805735, guid: 341889f7661c84a4eadf491db210611d, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4094776375660702646, guid: 341889f7661c84a4eadf491db210611d, type: 3}
       propertyPath: m_Name
       value: WindAnchor
@@ -142323,6 +142517,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: IceAnchor
       objectReference: {fileID: 0}
+    - target: {fileID: 3611004053729616516, guid: d1ce69b2414d069499f7b7bbea82fbf6, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -142363,3 +142561,5 @@ SceneRoots:
   - {fileID: 1144615186}
   - {fileID: 1479251109}
   - {fileID: 951314021}
+  - {fileID: 244124099}
+  - {fileID: 1880073769}
