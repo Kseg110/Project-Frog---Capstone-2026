@@ -23,7 +23,7 @@ public class Projectile : MonoBehaviour, IProjectile
 
     // Wind Upgrade
     private bool isHoming = false;
-    private bool skipAutoHoming = true; // prevents auto homing in awake
+    private bool skipAutoHoming = true; // prevents auto homing in awake    
     private float turnSpeed = 10f;
     private EnemyBase target;
     private float pointBlankRange = 10f;
@@ -31,6 +31,10 @@ public class Projectile : MonoBehaviour, IProjectile
     // Ice Upgrade
     public bool isPiercingProjectile = false;
     private int pierceCount = 0;
+
+    // Default is 0 so basic shots do not apply knockback. Charged attacks will add knockback based on charge time
+    [Tooltip("Knockback distance applied to enemies when hit by player projectiles. 0 = no knockback.")]
+    public float knockbackDistance = 0f;
 
     private void Awake()
     {
@@ -213,6 +217,42 @@ public class Projectile : MonoBehaviour, IProjectile
                 enemy.TakeDamage(finalDamage, effectType, effectDuration, effectValue);
             else
                 enemy.TakeDamage(finalDamage);
+
+            // Apply knockback to enemy only if knockbackDistance > 0
+            if (knockbackDistance > 0f)
+            {
+                Vector3 pushDir = (enemy.transform.position - transform.position);
+                pushDir.y = 0f;
+                if (pushDir.sqrMagnitude > 0.0001f)
+                {
+                    pushDir.Normalize();
+                    var enemyKnock = enemy.GetComponentInParent<EnemyKnockback>();
+                    if (enemyKnock != null)
+                    {
+                        //Debug.Log($"[Projectile] Using EnemyKnockback on '{enemy.name}' (distance={knockbackDistance})", enemy);
+                        enemyKnock.ApplyKnockback(pushDir, knockbackDistance);
+                    }
+                    else
+                    {
+                        //Debug.Log($"[Projectile] EnemyKnockback not found on '{enemy.name}', falling back to Rigidbody/transform nudge", enemy);
+                        // fallback: try attached rigidbody
+                        var rb = other.attachedRigidbody ?? enemy.GetComponentInParent<Rigidbody>();
+                        if (rb != null)
+                        {
+                            if (rb.isKinematic)
+                                rb.MovePosition(rb.position + pushDir * knockbackDistance);
+                            else
+                                rb.AddForce(pushDir * knockbackDistance, ForceMode.Impulse);
+                        }
+                        else
+                        {
+                            // last resort: nudge root transform
+                            var root = other.transform.root;
+                            root.position += pushDir * knockbackDistance;
+                        }
+                    }
+                }
+            }
 
             // Play corresponding VFX only when hitting an enemy
             if (!string.IsNullOrEmpty(effectType))

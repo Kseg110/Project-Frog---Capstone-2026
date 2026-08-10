@@ -179,6 +179,8 @@ MonoBehaviour:
   retreatDistance: 5
   attackSO: {fileID: 11400000, guid: bd1aed1a9114cb241a1918ede035414d, type: 2}
   lookRotationSpeed: 8
+  eyeHeight: 1
+  targetEyeHeight: 1
 --- !u!54 &1511503074007811530
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -223,10 +225,13 @@ MonoBehaviour:
   knockbackResistance: 1
   projectileKnockbackDistance: 2
   useProjectileTravelDirection: 1
+  debugKnockbackMultiplier: 1
   collisionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
   capsule: {fileID: 5331853941283378302}
+  fallbackCapsuleHeight: 1.6
+  fallbackCapsuleRadius: 0.3
 --- !u!114 &9129651843082517972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,7 +247,7 @@ MonoBehaviour:
   target: {fileID: 0}
   player: {fileID: 0}
   stopDistance: 5
-  movementSpeed: 6
+  movementSpeed: 4
   repathRate: 0.2
   rotationSpeed: 10
   separationRadius: 3
@@ -393,57 +398,8 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: -9046931331231681689, guid: d5a92bad7e8b92744a4df401cc19d757, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d5a92bad7e8b92744a4df401cc19d757, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5917870128718706250}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d5a92bad7e8b92744a4df401cc19d757, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 9185212558482178710}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d5a92bad7e8b92744a4df401cc19d757, type: 3}
---- !u!1 &46801474999240641 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d5a92bad7e8b92744a4df401cc19d757, type: 3}
-  m_PrefabInstance: {fileID: 893731843634264720}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &5917870128718706250
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 46801474999240641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 566e3e43e0b1a5746917c2269a4f7b48, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimations
-  animator: {fileID: 9185212558482178710}
-  enemy: {fileID: 8573468495165241422}
-  isAttackingParameter: IsAttacking
-  movementSpeedParameter: MovementSpeed
---- !u!95 &9185212558482178710
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 46801474999240641}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 72c98953b9c8f2c4c90e03f1bb3cbf29, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &859507056069778811 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d5a92bad7e8b92744a4df401cc19d757, type: 3}

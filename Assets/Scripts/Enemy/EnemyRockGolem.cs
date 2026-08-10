@@ -8,6 +8,12 @@ public class EnemyRockGolem : EnemyBase
 
     private EnemyAttack enemyAttack;
 
+    [Header("Line of Sight")]
+    [Tooltip("Height above enemy position used as ray origin for LOS checks.")]
+    [SerializeField] private float eyeHeight = 1.0f;
+    [Tooltip("Height above player position used as ray target for LOS checks.")]
+    [SerializeField] private float targetEyeHeight = 1.0f;
+
     protected override void Awake()
     {
         base.Awake();
@@ -51,6 +57,13 @@ public class EnemyRockGolem : EnemyBase
 
     protected void AttackPlayer()
     {
+        // If player is behind an obstacle, move toward them to regain LOS instead of staying still.
+        if (!HasLineOfSight(player))
+        {
+            ChasePlayer();
+            return;
+        }
+
         StopMovement();
 
         if (enemyAttack.CanAttack)
@@ -60,4 +73,28 @@ public class EnemyRockGolem : EnemyBase
         }
     }
     #endregion
+
+    // Returns true when an unobstructed ray reaches the player (player tag or player's transforms).
+    private bool HasLineOfSight(Transform target)
+    {
+        if (target == null) return false;
+
+        Vector3 origin = transform.position + Vector3.up * eyeHeight;
+        Vector3 dest = target.position + Vector3.up * targetEyeHeight;
+        Vector3 dir = dest - origin;
+        float dist = dir.magnitude;
+        if (dist < 0.001f) return true;
+
+        if (Physics.Raycast(origin, dir.normalized, out RaycastHit hit, dist, ~0, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.collider != null)
+            {
+                if (hit.collider.CompareTag("Player")) return true;
+                if (target != null && (hit.collider.transform == target || hit.collider.transform.IsChildOf(target))) return true;
+            }
+            return false;
+        }
+
+        return true;
+    }
 }
