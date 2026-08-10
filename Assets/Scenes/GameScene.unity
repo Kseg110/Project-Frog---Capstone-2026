@@ -14,10 +14,10 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: 0.5445106, g: 0.38461193, b: 0.6320754, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.014
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -10368,7 +10368,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &242666607
 Transform:
   m_ObjectHideFlags: 0
@@ -10440,7 +10440,7 @@ MonoBehaviour:
   lowestSubdivLevelOverride: 0
   highestSubdivLevelOverride: 7
   overridesSubdivLevels: 0
-  mightNeedRebaking: 0
+  mightNeedRebaking: 1
   cachedTransform:
     e00: 1
     e01: 0
@@ -16288,7 +16288,6 @@ GameObject:
   - component: {fileID: 290839057}
   - component: {fileID: 290839056}
   - component: {fileID: 290839055}
-  - component: {fileID: 290839054}
   m_Layer: 0
   m_Name: ZoneBarrierA4
   m_TagString: Untagged
@@ -16296,27 +16295,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &290839054
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 290839053}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.0000001, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &290839055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16331,7 +16309,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   playerTag: Player
   blockingCollider: {fileID: 290839056}
-  tetherGracePeriod: 1
+  tetherGracePeriod: 2
   temporaryDisableDuration: 0.5
   debugIsTethered: 0
   debugIsDashing: 0
@@ -16356,7 +16334,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.74, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &290839057
 MeshRenderer:
@@ -18227,8 +18205,8 @@ Transform:
   m_GameObject: {fileID: 325779536}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.9989184, z: -0, w: 0.046497103}
-  m_LocalPosition: {x: -135.25, y: 1.965, z: -27.3}
-  m_LocalScale: {x: 1, y: 3, z: 25}
+  m_LocalPosition: {x: -135.09, y: 1.965, z: -29.03}
+  m_LocalScale: {x: 1, y: 3, z: 16.33366}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1284898920}
@@ -20179,7 +20157,7 @@ Transform:
   m_GameObject: {fileID: 376137146}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.95061517, z: -0, w: -0.31037214}
-  m_LocalPosition: {x: -129.1, y: 1.965, z: -5.100006}
+  m_LocalPosition: {x: -128.38998, y: 1.965, z: -5.6200104}
   m_LocalScale: {x: 1, y: 3, z: 25}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27561,7 +27539,6 @@ GameObject:
   - component: {fileID: 474170465}
   - component: {fileID: 474170464}
   - component: {fileID: 474170463}
-  - component: {fileID: 474170462}
   m_Layer: 0
   m_Name: ZoneBarrierA2
   m_TagString: Untagged
@@ -27569,27 +27546,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &474170462
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 474170461}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.0000001, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &474170463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27604,7 +27560,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   playerTag: Player
   blockingCollider: {fileID: 474170464}
-  tetherGracePeriod: 1
+  tetherGracePeriod: 2
   temporaryDisableDuration: 0.5
   debugIsTethered: 0
   debugIsDashing: 0
@@ -27629,7 +27585,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.69, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &474170465
 MeshRenderer:
@@ -27697,7 +27653,7 @@ Transform:
   m_GameObject: {fileID: 474170461}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.10756562, z: 0, w: 0.994198}
-  m_LocalPosition: {x: -76.41, y: 2.57, z: -38.81}
+  m_LocalPosition: {x: -76.75, y: 2.57, z: -37.26}
   m_LocalScale: {x: 2.8, y: 5.0983377, z: 20.57}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -29485,7 +29441,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &564280543
 Transform:
   m_ObjectHideFlags: 0
@@ -29758,7 +29714,6 @@ GameObject:
   - component: {fileID: 571895392}
   - component: {fileID: 571895391}
   - component: {fileID: 571895390}
-  - component: {fileID: 571895389}
   m_Layer: 0
   m_Name: ZoneBarrierA1
   m_TagString: Untagged
@@ -29766,27 +29721,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &571895389
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 571895388}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.0000001, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &571895390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29801,7 +29735,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   playerTag: Player
   blockingCollider: {fileID: 571895391}
-  tetherGracePeriod: 1
+  tetherGracePeriod: 2
   temporaryDisableDuration: 0.5
   debugIsTethered: 0
   debugIsDashing: 0
@@ -29826,7 +29760,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.91, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &571895392
 MeshRenderer:
@@ -40402,7 +40336,6 @@ GameObject:
   - component: {fileID: 608889744}
   - component: {fileID: 608889743}
   - component: {fileID: 608889742}
-  - component: {fileID: 608889741}
   m_Layer: 0
   m_Name: ZoneBarrierA3
   m_TagString: Untagged
@@ -40425,27 +40358,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 230745953}
   m_LocalEulerAnglesHint: {x: 0, y: 26.699, z: 0}
---- !u!65 &608889741
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 608889739}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.0000001, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &608889742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40460,7 +40372,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   playerTag: Player
   blockingCollider: {fileID: 608889743}
-  tetherGracePeriod: 1
+  tetherGracePeriod: 2
   temporaryDisableDuration: 0.5
   debugIsTethered: 0
   debugIsDashing: 0
@@ -48255,7 +48167,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 083f8ec187635924688f97e710791fa5, type: 2}
   - {fileID: 11400000, guid: d0520017cbd923b41bff21cd9d4ce7b0, type: 2}
   - {fileID: 11400000, guid: 0a926eb0719870643b6225444b65b033, type: 2}
-  delayBetweenSpawns: 0.2
+  delayBetweenSpawns: 0.5
   transitionAfterWaves: 050000000a0000000f00000014000000
   cardSelectionUI: {fileID: 1436747172}
   waveText: {fileID: 359992009}
@@ -63963,7 +63875,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1021741469
 Transform:
   m_ObjectHideFlags: 0
@@ -126038,7 +125950,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3743919326050583871, guid: e1b61dc5304edc44b87361953254c944, type: 3}
       propertyPath: rounds.Array.data[0].timeeachenables
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3743919326050583871, guid: e1b61dc5304edc44b87361953254c944, type: 3}
       propertyPath: rounds.Array.data[0].enableList.Array.size
@@ -127721,7 +127633,7 @@ Transform:
   m_GameObject: {fileID: 1905668696}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.49896944, z: -0, w: -0.86661965}
-  m_LocalPosition: {x: -121.600006, y: 1.965, z: -15.699997}
+  m_LocalPosition: {x: -120.89, y: 1.965, z: -16.22}
   m_LocalScale: {x: 1, y: 3, z: 25}
   m_ConstrainProportionsScale: 0
   m_Children: []
