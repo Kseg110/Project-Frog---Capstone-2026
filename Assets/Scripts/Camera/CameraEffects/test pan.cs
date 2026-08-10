@@ -1,91 +1,131 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Splines;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+
+[ExecuteAlways]
 public class CameraPanRoundTrigger : MonoBehaviour
 {
     [System.Serializable]
     public class PanPoint
     {
         public Transform pointOfInterest;
-
-        // This point's own hold time
         public float holdTime = 5f;
     }
+
+
 
     [System.Serializable]
     public class RoundPan
     {
         public int round;
 
-        // List of points for this round
-        public List<PanPoint> panPoints = new List<PanPoint>();
+        public List<PanPoint> panPoints =
+            new List<PanPoint>();
 
-        // Move time between points
         public float panTime = 2f;
 
-        // Door index that becomes ready after LAST point
         public int doorIndex = 0;
+    }
+    public List<PanPoint> GetPanPoints()
+    {
+        foreach (RoundPan pan in roundPans)
+        {
+            if (pan != null &&
+                pan.round == currentRound)
+            {
+                return pan.panPoints;
+            }
+        }
+
+        return null;
     }
 
 
     [Header("References")]
     [SerializeField] private CameraPanEffect cameraPan;
-
     [SerializeField] private WaveRoundSystem waveSystem;
+
 
 
     [Header("Round")]
     [SerializeField] private int currentRound = 1;
 
 
-    [Header("Round Triggers")]
-    [SerializeField] private List<RoundPan> roundPans = new List<RoundPan>();
+
+    [Header("Round Paths")]
+    [SerializeField]
+    private List<RoundPan> roundPans =
+        new List<RoundPan>();
 
 
-    private int previousRound = int.MinValue;
+
+    [Header("Spline Settings")]
+    [SerializeField]
+    private float heightOffset = 20f;
+
+
+
+    private int previousRound =
+        int.MinValue;
+
 
 
     private void Update()
     {
+        if (!Application.isPlaying)
+            return;
+
+
+
         if (waveSystem != null)
-            currentRound = waveSystem.CurrentWave;
+        {
+            currentRound =
+                waveSystem.CurrentWave;
+        }
+
 
 
         if (cameraPan == null)
             return;
 
 
-        // Do not start another pan while one is active
+
         if (cameraPan.IsPanning)
             return;
 
 
-        // Only trigger when round changes
+
         if (currentRound == previousRound)
             return;
 
 
-        previousRound = currentRound;
+
+        previousRound =
+            currentRound;
+
 
 
         foreach (RoundPan pan in roundPans)
         {
+            if (pan == null)
+                continue;
+
+
+
             if (pan.round == currentRound &&
                 pan.panPoints != null &&
                 pan.panPoints.Count > 0)
             {
-                Debug.Log(
-                    "Camera Pan Round "
-                    + currentRound
-                    + " Door "
-                    + pan.doorIndex
-                );
-
-
                 cameraPan.TriggerPan(
                     pan.panPoints,
                     pan.panTime,
-                    pan.doorIndex
+                    pan.doorIndex,
+                    pan.round
                 );
 
 
@@ -93,10 +133,129 @@ public class CameraPanRoundTrigger : MonoBehaviour
             }
         }
     }
+    public SplineContainer GetSplineForRound(int round)
+    {
+        Transform splineObject =
+            transform.Find(
+                "CameraPanSpline_Round_" + round
+            );
+
+
+        if (splineObject == null)
+        {
+            Debug.LogWarning(
+                "No spline found for round " + round
+            );
+
+            return null;
+        }
+
+
+        return splineObject.GetComponent<SplineContainer>();
+    }
+
+
+
+    public List<RoundPan> GetRoundPans()
+    {
+        return roundPans;
+    }
+
 
 
     public void SetRound(int round)
     {
         currentRound = round;
+    }
+    public void BuildAllSplines()
+    {
+        ClearOldSplines();
+
+        foreach (RoundPan round in roundPans)
+        {
+            if (round == null)
+                continue;
+
+            if (round.panPoints == null ||
+                round.panPoints.Count == 0)
+                continue;
+
+            CreateSpline(round);
+        }
+
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(this);
+#endif
+    }
+
+
+
+    private void ClearOldSplines()
+    {
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            Transform child =
+                transform.GetChild(i);
+
+            if (child.name.StartsWith(
+                "CameraPanSpline_Round_"))
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(child.gameObject);
+#else
+            Destroy(child.gameObject);
+#endif
+            }
+        }
+    }
+
+
+
+    private void CreateSpline(RoundPan round)
+    {
+        GameObject splineObject =
+            new GameObject(
+                "CameraPanSpline_Round_" + round.round
+            );
+
+
+        splineObject.transform.SetParent(transform);
+
+
+        SplineContainer container =
+            splineObject.AddComponent<SplineContainer>();
+
+
+        Spline spline =
+            new Spline();
+
+
+        foreach (PanPoint point in round.panPoints)
+        {
+            if (point == null)
+                continue;
+
+            if (point.pointOfInterest == null)
+                continue;
+
+
+            Vector3 position =
+                point.pointOfInterest.position +
+                Vector3.up * heightOffset;
+
+
+            spline.Add(
+                new BezierKnot(position)
+            );
+        }
+
+
+        container.Spline =
+            spline;
+
+
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(container);
+#endif
     }
 }

@@ -28,6 +28,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     private float environmentalSpeedModifier = 1f;
     private float statusSlowMultiplier = 1f;
 
+    private EnemyFlash enemyFlash;
+
     // Per-source speed modifiers, stacked multiplicatively (matches PlayerMovement contract)
     private readonly Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
 
@@ -42,6 +44,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         rb = GetComponent<Rigidbody>();
         movement = GetComponent<MovementComponent>();
+        enemyFlash = GetComponent<EnemyFlash>();
 
         if (attackComponent == null)
         {
@@ -56,6 +59,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (agent != null)
         {
             originalAgentSpeed = agent.speed > 0f ? agent.speed : 3.5f;
+        }
+
+        if (enemyFlash == null)
+        {
+            enemyFlash = GetComponentInChildren<EnemyFlash>();
         }
 
         // Initialize health component
@@ -150,12 +158,20 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         {
             health.TakeDmg(dmg);
         }
+
+        if (enemyFlash != null)
+        {
+            enemyFlash.Flash();
+        }
     }
 
     public void TakeDamage(float dmg, string effectType, float effectDuration, float effectValue)
     {
         if (health != null)
             health.TakeDmg(dmg);
+
+        if (enemyFlash != null)
+            enemyFlash.Flash();
 
         if (effectType == "Burn")
         {
@@ -169,6 +185,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         float damageAmount = (percent / 100f) * health.maxHealth;
         health.TakeDmg(damageAmount);
+
+        if (enemyFlash != null)
+        {
+            enemyFlash.Flash();
+        }
     }
     #endregion
 
@@ -355,6 +376,19 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public void ReleaseSlot()
     {
         movement.ReleaseTargetSlot();
+    }
+    public float MovementSpeed
+    {
+        get
+        {
+            if (agent == null || !agent.enabled)
+                return 0f;
+
+            if (agent.speed <= 0.001f)
+                return 0f;
+
+            return Mathf.Clamp01(agent.velocity.magnitude / agent.speed);
+        }
     }
 }
 

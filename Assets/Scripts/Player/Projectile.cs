@@ -7,6 +7,12 @@ public class Projectile : MonoBehaviour, IProjectile
     [SerializeField] protected float baseDamage = 10f;
     [SerializeField] protected float maxScale = 2f;
 
+    [Header("Hit VFX (assign prefabs)")]
+    [SerializeField] private GameObject fireHitVfx;
+    [SerializeField] private GameObject iceHitVfx;
+    [SerializeField] private GameObject windHitVfx;
+    [SerializeField] private GameObject defaultHitVfx;
+
     public float speed;
     public float damage;
 
@@ -17,7 +23,7 @@ public class Projectile : MonoBehaviour, IProjectile
 
     // Wind Upgrade
     private bool isHoming = false;
-    private bool skipAutoHoming = true; // prevents auto homing in awake
+    private bool skipAutoHoming = true; // prevents auto homing in awake    
     private float turnSpeed = 10f;
     private EnemyBase target;
     private float pointBlankRange = 10f;
@@ -25,6 +31,10 @@ public class Projectile : MonoBehaviour, IProjectile
     // Ice Upgrade
     public bool isPiercingProjectile = false;
     private int pierceCount = 0;
+
+    // Default is 0 so basic shots do not apply knockback. Charged attacks will add knockback based on charge time
+    [Tooltip("Knockback distance applied to enemies when hit by player projectiles. 0 = no knockback.")]
+    public float knockbackDistance = 0f;
 
     private void Awake()
     {
@@ -118,6 +128,32 @@ public class Projectile : MonoBehaviour, IProjectile
         transform.position += transform.forward * speed * Time.deltaTime;
     }
 
+    // Play configured VFX prefab at projectile position. If prefab is null, nothing happens.
+    private void PlayHitVfx(GameObject vfxPrefab)
+    {
+        if (vfxPrefab == null) return;
+
+        GameObject go = Instantiate(vfxPrefab, transform.position, Quaternion.identity);
+
+        // Try to determine particle durations to auto-destroy the spawned VFX
+        float maxLifetime = 0f;
+        var systems = go.GetComponentsInChildren<ParticleSystem>();
+        foreach (var s in systems)
+        {
+            var main = s.main;
+            float lifetime = main.duration;
+            // Add startLifetime (handle MinMaxCurve)
+            var startLifetime = main.startLifetime;
+            lifetime += (startLifetime.mode == ParticleSystemCurveMode.Constant) ? startLifetime.constant : startLifetime.constantMax;
+            if (lifetime > maxLifetime) maxLifetime = lifetime;
+        }
+
+        // Fallback destroy time if no particle systems found
+        if (maxLifetime <= 0f) maxLifetime = 3f;
+
+        Destroy(go, Mathf.Max(0.5f, maxLifetime));
+    }
+
     // ============================
     // COLLISION
     // ============================
@@ -181,6 +217,60 @@ public class Projectile : MonoBehaviour, IProjectile
                 enemy.TakeDamage(finalDamage, effectType, effectDuration, effectValue);
             else
                 enemy.TakeDamage(finalDamage);
+
+            // Apply knockback to enemy only if knockbackDistance > 0
+            if (knockbackDistance > 0f)
+            {
+                Vector3 pushDir = (enemy.transform.position - transform.position);
+                pushDir.y = 0f;
+                if (pushDir.sqrMagnitude > 0.0001f)
+                {
+                    pushDir.Normalize();
+                    var enemyKnock = enemy.GetComponentInParent<EnemyKnockback>();
+                    if (enemyKnock != null)
+                    {
+                        //Debug.Log($"[Projectile] Using EnemyKnockback on '{enemy.name}' (distance={knockbackDistance})", enemy);
+                        enemyKnock.ApplyKnockback(pushDir, knockbackDistance);
+                    }
+                    else
+                    {
+                        //Debug.Log($"[Projectile] EnemyKnockback not found on '{enemy.name}', falling back to Rigidbody/transform nudge", enemy);
+                        // fallback: try attached rigidbody
+                        var rb = other.attachedRigidbody ?? enemy.GetComponentInParent<Rigidbody>();
+                        if (rb != null)
+                        {
+                            if (rb.isKinematic)
+                                rb.MovePosition(rb.position + pushDir * knockbackDistance);
+                            else
+                                rb.AddForce(pushDir * knockbackDistance, ForceMode.Impulse);
+                        }
+                        else
+                        {
+                            // last resort: nudge root transform
+                            var root = other.transform.root;
+                            root.position += pushDir * knockbackDistance;
+                        }
+                    }
+                }
+            }
+
+            // Play corresponding VFX only when hitting an enemy
+            if (!string.IsNullOrEmpty(effectType))
+            {
+                if (effectType == "Burn")
+                    PlayHitVfx(fireHitVfx);
+                else if (effectType == "Freeze" || effectType.ToLower().Contains("ice"))
+                    PlayHitVfx(iceHitVfx);
+                else if (effectType.ToLower().Contains("wind") || effectType.ToLower().Contains("knock"))
+                    PlayHitVfx(windHitVfx);
+                else
+                    PlayHitVfx(defaultHitVfx);
+            }
+            else
+            {
+                // No power-up: optional default dart VFX (may be left null)
+                PlayHitVfx(defaultHitVfx);
+            }
 
             // Extinguisher
             if (ExtinguisherUpgrade.Instance != null)

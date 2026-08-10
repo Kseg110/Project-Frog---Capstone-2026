@@ -36,6 +36,7 @@ public class AnchorUpgradeController : MonoBehaviour
             AnchorFireData => AnchorElement.Fire,
             AnchorIceData => AnchorElement.Ice,
             AnchorWindData => AnchorElement.Wind,
+            BrokenAnchorData => AnchorElement.Broken,
             _ => AnchorElement.Fire
         };
 

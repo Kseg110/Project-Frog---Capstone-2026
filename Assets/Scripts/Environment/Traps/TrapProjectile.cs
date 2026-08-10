@@ -13,6 +13,10 @@ public class TrapProjectile : Projectile
     [SerializeField] private TargetMode targetMode = TargetMode.Enemy;
     [SerializeField] private bool destroyOnHit = true;
 
+    [Header("Knockback")]
+    [Tooltip("Distance used when applying knockback from this trap projectile.")]
+    [SerializeField] private float projectileKnockbackDistance = 2f;
+
     private void Awake()
     {
         var col = GetComponent<Collider>();
@@ -41,7 +45,8 @@ public class TrapProjectile : Projectile
         if (targetMode == TargetMode.Player || targetMode == TargetMode.Both)
         {
             var playerMovement = other.GetComponentInParent<PlayerMovement>();
-            if (playerMovement != null || other.gameObject.CompareTag("Player"))
+            bool isPlayer = playerMovement != null || other.gameObject.CompareTag("Player");
+            if (isPlayer)
             {
                 Health health = null;
                 if (playerMovement != null)
@@ -58,6 +63,32 @@ public class TrapProjectile : Projectile
                 {
                     Debug.LogWarning($"[{nameof(TrapProjectile)}] Hit Player but no Health component found on {other.name}.");
                     dealtDamage = true; // consider it handled to avoid hitting enemy branch when same object is tagged differently
+                }
+
+                // Apply player knockback via PlayerTakeDamage if available
+                var playerTake = other.GetComponentInParent<PlayerTakeDamage>() ?? other.GetComponent<PlayerTakeDamage>();
+                if (playerTake != null)
+                {
+                    Vector3 dir = (other.transform.position - transform.position).normalized;
+                    dir.y = 0f;
+                    playerTake.TryApplyDamageAndKnockback(0f, dir, projectileKnockbackDistance);
+                }
+                else
+                {
+                    // fallback: use rigidbody/transform nudge for player if PlayerTakeDamage not present
+                    var rb = other.GetComponentInParent<Rigidbody>() ?? other.GetComponent<Rigidbody>();
+                    Vector3 dir = (other.transform.position - transform.position).normalized;
+                    if (rb != null)
+                    {
+                        if (rb.isKinematic)
+                            rb.MovePosition(rb.position + dir * projectileKnockbackDistance);
+                        else
+                            rb.AddForce(dir * projectileKnockbackDistance, ForceMode.Impulse);
+                    }
+                    else
+                    {
+                        other.transform.root.position += dir * projectileKnockbackDistance;
+                    }
                 }
             }
         }
@@ -87,6 +118,34 @@ public class TrapProjectile : Projectile
                     }
                 }
 
+                // Apply enemy knockback: prefer EnemyKnockback component
+                Vector3 pushDir = (enemyBase.transform.position - transform.position);
+                pushDir.y = 0f;
+                if (pushDir.sqrMagnitude > 0.0001f)
+                {
+                    pushDir.Normalize();
+                    var ek = enemyBase.GetComponentInParent<EnemyKnockback>();
+                    if (ek != null)
+                    {
+                        ek.ApplyKnockback(pushDir, projectileKnockbackDistance);
+                    }
+                    else
+                    {
+                        var rb = other.attachedRigidbody ?? enemyBase.GetComponentInParent<Rigidbody>();
+                        if (rb != null)
+                        {
+                            if (rb.isKinematic)
+                                rb.MovePosition(rb.position + pushDir * projectileKnockbackDistance);
+                            else
+                                rb.AddForce(pushDir * projectileKnockbackDistance, ForceMode.Impulse);
+                        }
+                        else
+                        {
+                            enemyBase.transform.root.position += pushDir * projectileKnockbackDistance;
+                        }
+                    }
+                }
+
                 dealtDamage = true;
             }
             else
@@ -107,6 +166,33 @@ public class TrapProjectile : Projectile
                             else Debug.LogWarning($"[{nameof(TrapProjectile)}] Hit Enemy but no damageable component found on {other.name}.");
                         }
                     }
+
+                    // Apply knockback for parent enemy
+                    Vector3 pushDir = (parentEnemy.transform.position - transform.position);
+                    pushDir.y = 0f;
+                    if (pushDir.sqrMagnitude > 0.0001f)
+                    {
+                        pushDir.Normalize();
+                        var ek = parentEnemy.GetComponentInParent<EnemyKnockback>();
+                        if (ek != null)
+                            ek.ApplyKnockback(pushDir, projectileKnockbackDistance);
+                        else
+                        {
+                            var rb = other.attachedRigidbody ?? parentEnemy.GetComponentInParent<Rigidbody>();
+                            if (rb != null)
+                            {
+                                if (rb.isKinematic)
+                                    rb.MovePosition(rb.position + pushDir * projectileKnockbackDistance);
+                                else
+                                    rb.AddForce(pushDir * projectileKnockbackDistance, ForceMode.Impulse);
+                            }
+                            else
+                            {
+                                parentEnemy.transform.root.position += pushDir * projectileKnockbackDistance;
+                            }
+                        }
+                    }
+
                     dealtDamage = true;
                 }
                 else

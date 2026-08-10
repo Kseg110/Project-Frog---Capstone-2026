@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.62634, y: 6.88348, z: 15.90419}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.55844, z: 0.38919103}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -48,16 +48,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99d5d2ddadefd514f95ebb21b732fb09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
-  baseSpeed: 10
-  baseDamage: 20
+  baseSpeed: 20
+  baseDamage: 10
   maxScale: 2
+  fireHitVfx: {fileID: 7312745477584444270, guid: 3f7deb7f0bf59ef4784f7edd44a1f827, type: 3}
+  iceHitVfx: {fileID: 2179949210641252972, guid: a5eb1ed76098dc949899fe884d9861bf, type: 3}
+  windHitVfx: {fileID: 3978182244026985220, guid: f1fbcc1e7d9070747a89f32397ccf40d, type: 3}
+  defaultHitVfx: {fileID: 0}
   speed: 5
   damage: 5
   effectType: 
   effectDuration: 0
   effectValue: 0
-  isPlayerProjectile: 0
+  isPlayerProjectile: 1
   isPiercingProjectile: 0
+  knockbackDistance: 0
 --- !u!33 &8847850907498326296
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -91,7 +96,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: 61d8c411758c64f198c76760f9e6eb4d, type: 3}
+  - {fileID: 2100000, guid: 8bac49486c1074d45a4a1ce800936d9f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

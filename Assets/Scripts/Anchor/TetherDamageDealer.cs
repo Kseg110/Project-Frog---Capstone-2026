@@ -37,8 +37,36 @@ public class TetherDamageDealer : MonoBehaviour
         }
     }
 
+    // Cached player movement, resolved from the same root as the tether. Used to stun the player on a Golem break.
+    private PlayerMovement cachedPlayerMovement;
+    private PlayerMovement PlayerMovementRef
+    {
+        get
+        {
+            if (cachedPlayerMovement == null && Tether != null)
+                cachedPlayerMovement = Tether.GetComponentInParent<PlayerMovement>();
+            return cachedPlayerMovement;
+        }
+    }
+
+    // Cached player anchor, resolved from the same root as the tether. The break MUST go through this so isTethered clears and OnTetherReleased fires — otherwise overcharge/charge stay live on a dead rope.
+    private PlayerAnchor cachedPlayerAnchor;
+    private PlayerAnchor PlayerAnchorRef
+    {
+        get
+        {
+            if (cachedPlayerAnchor == null && Tether != null)
+                cachedPlayerAnchor = Tether.GetComponentInParent<PlayerAnchor>();
+            return cachedPlayerAnchor;
+        }
+    }
+
     // Shared across ALL hitboxes on the rope, so 8 adjacent capsules sweeping through one enemy count as a single hit instead of eight.
     private static readonly Dictionary<Collider, float> lastHitTimes = new();
+
+    // Tracks which breakers are being actively contacted THIS physics step, shared across all hitboxes so multiple capsules touching one Golem don't each reset each other. Used to detect contact-loss for dwell reset.
+    private static readonly HashSet<TetherBreaker> contactedThisStep = new();
+    private static readonly HashSet<TetherBreaker> contactedLastStep = new();
 
     private void OnTriggerEnter(Collider other)
     {
@@ -56,8 +84,23 @@ public class TetherDamageDealer : MonoBehaviour
         if (debugLogging)
             Debug.Log($"[TetherHit] touched '{other.name}' (tag={other.tag}, layer={LayerMask.LayerToName(other.gameObject.layer)})");
 
+        //Block damage if the tether is broken or the anchor is broken
+        var anchor = Tether.CurrentAnchor;
+        if (anchor == null || anchor.Element == AnchorElement.Broken)
+            return;
+
         if (!other.CompareTag(enemyTag)) return;
 
+        // --- BREAKER DWELL PATH (runs BEFORE the hit-cooldown gate) ---
+        // Dwell must accumulate every physics step of contact, so it can't sit behind the per-enemy hitCooldown that gates discrete damage ticks. We handle the breaker here and return early.
+        TetherBreaker breaker = other.GetComponentInParent<TetherBreaker>();
+        if (breaker != null)
+        {
+            HandleBreakerContact(breaker, other);
+            return;
+        }
+
+        // --- NORMAL DAMAGE / KNOCKBACK PATH (unchanged) ---
         // Per-enemy cooldown shared across all rope hitboxes
         if (lastHitTimes.TryGetValue(other, out float lastTime)
             && Time.time - lastTime < hitCooldown)
@@ -65,33 +108,81 @@ public class TetherDamageDealer : MonoBehaviour
 
         lastHitTimes[other] = Time.time;
 
-        // If the enemy is marked as a breaker, sever the tether and skip normal damage/knockback (unless the breaker opts into taking them).
-        TetherBreaker breaker = other.GetComponentInParent<TetherBreaker>();
-        if (breaker != null && breaker.CanBreakTether)
+        ApplyDamage(other);
+        ApplyKnockback(other);
+    }
+
+    // Feeds sustained-contact time into the breaker. When its threshold is met, severs the tether and reels it in. Marks the breaker as contacted this step so LateUpdate can detect contact-loss and reset dwell.
+    private void HandleBreakerContact(TetherBreaker breaker, Collider other)
+    {
+        contactedThisStep.Add(breaker);
+
+        if (!breaker.CanBreakTether) return;
+
+        if (breaker.AddContact(Time.fixedDeltaTime))
         {
-            if (Tether != null)
+            // Route the break through PlayerAnchor, NOT AnchorTether directly.
+            PlayerAnchor pa = PlayerAnchorRef;
+            if (pa != null)
             {
-                Tether.BreakTether();
+                pa.ReleaseTether(playReel: true);
                 breaker.NotifyBrokeTether();
             }
+            else
+            {
+                // Fallback: no PlayerAnchor found (shouldn't happen in normal setup). Preserve the old visual-only behaviour rather than silently doing nothing, and warn so it's caught.
+                if (Tether != null)
+                {
+                    Tether.ReelInAndBreak();
+                    breaker.NotifyBrokeTether();
+                }
+                if (debugLogging)
+                    Debug.LogWarning("[TetherDamageDealer] Break could not find PlayerAnchor up from the tether — tether state may not have cleared.");
+            }
 
-            // Most breakers are hazards that don't get damaged by the break itself. If they've opted in, fall through; otherwise stop here.
-            if (!breaker.TakeContactDamage && !breaker.TakeKnockback)
-                return;
+            // Golem-break-only: freeze the player's movement for the breaker's configured duration.
+            // This fires ONLY here, so manual detach / range / LOS releases never stun the player.
+            if (breaker.PlayerStunDuration > 0f)
+            {
+                PlayerMovement pm = PlayerMovementRef;
+                if (pm != null)
+                    pm.ApplyStun(breaker.PlayerStunDuration);
+                else if (debugLogging)
+                    Debug.LogWarning("[TetherDamageDealer] Break stun requested but no PlayerMovement found up from the tether.");
+            }
 
-            // Selective fall-through: apply only what the breaker opts into.
+            // Optional selective effects on the breaking hit, matching the old behaviour.
             if (breaker.TakeContactDamage)
                 ApplyDamage(other);
             if (breaker.TakeKnockback)
                 ApplyKnockback(other);
-            return;
+        }
+    }
+
+    // At end of each physics step, any breaker that was contacted last step but NOT this step has lost contact -> reset its dwell to zero. Runs once globally (guarded) rather than per-hitbox.
+    private static bool sweptThisStep;
+    private void FixedUpdate()
+    {
+        // Only one hitbox needs to run the sweep; the sets are static/shared.
+        if (sweptThisStep) return;
+        sweptThisStep = true;
+
+        foreach (var breaker in contactedLastStep)
+        {
+            if (breaker != null && !contactedThisStep.Contains(breaker))
+                breaker.ResetContact();
         }
 
-        // Damage 
-        ApplyDamage(other);
+        contactedLastStep.Clear();
+        foreach (var b in contactedThisStep)
+            contactedLastStep.Add(b);
+        contactedThisStep.Clear();
+    }
 
-        // Knockback 
-        ApplyKnockback(other);
+    private void LateUpdate()
+    {
+        // Reset the per-step sweep guard so the next FixedUpdate runs it again.
+        sweptThisStep = false;
     }
 
     private void ApplyDamage(Collider other)

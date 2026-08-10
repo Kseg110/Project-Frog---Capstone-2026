@@ -24,6 +24,12 @@ public class EnemyCroc : EnemyBase
     [Tooltip("How quickly the Axolotl turns to face the player while attacking.")]
     [SerializeField] private float lookRotationSpeed = 8f;
 
+    [Header("Line of Sight")]
+    [Tooltip("Height above enemy position used as ray origin for LOS checks.")]
+    [SerializeField] private float eyeHeight = 1.0f;
+    [Tooltip("Height above player position used as ray target for LOS checks.")]
+    [SerializeField] private float targetEyeHeight = 1.0f;
+
     protected override void Awake()
     {
         base.Awake();
@@ -48,24 +54,38 @@ public class EnemyCroc : EnemyBase
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
+        // Evaluate LOS and range
+        bool hasLos = HasLineOfSight(player);
+        bool inSORange = attackSO != null ? Vector3.Distance(transform.position, player.position) <= attackSO.range : false;
+
+        // If the player is too close, retreat regardless
         if (distanceToPlayer < retreatDistance)
         {
-            // Run from the Player if they get close.
-            Retreat();
+            Retreat();  
+            return;
         }
-        else if (distanceToPlayer > preferredDistance + distanceTolerance)
+
+        // If the enemy cannot attack because of LOS or range -> move toward the player to regain range/LOS.
+        if (!(hasLos && inSORange))
         {
-            // Close the distance to Player.
+            // Direct chase toward the player's current position so the croc will try to reach the player and regain LOS/range.
+            movement.MoveTo(player.position);
+            return;
+        }
+
+        // At this point the croc has LOS and is within the SO range.
+        // Maintain preferred distance behavior as before.
+        if (distanceToPlayer > preferredDistance + distanceTolerance)
+        {
             Approach();
         }
         else
         {
-            // Inside the comfort zone — hold position and face the player.
             StopMovement();
             FaceTarget();
         }
 
-        // Attempt attack regardless of movement state.
+        // Attempt attack (TryAttack still enforces cooldown via attackSO.CanAttack and LOS as safety)
         TryAttack();
     }
 
@@ -105,9 +125,38 @@ public class EnemyCroc : EnemyBase
     {
         if (attackSO == null) return;
 
+        // Safety: require LOS as well before firing
+        if (!HasLineOfSight(player)) return;
+
         if (attackSO.CanAttack(player, transform))
         {
             attackSO.Attack(player, transform);
         }
+    }
+
+    // Returns true when an unobstructed ray reaches the player (player tag or player's transforms).
+    private bool HasLineOfSight(Transform target)
+    {
+        if (target == null) return false;
+
+        Vector3 origin = transform.position + Vector3.up * eyeHeight;
+        Vector3 dest = target.position + Vector3.up * targetEyeHeight;
+        Vector3 dir = dest - origin;
+        float dist = dir.magnitude;
+        if (dist < 0.001f) return true;
+
+        if (Physics.Raycast(origin, dir.normalized, out RaycastHit hit, dist, ~0, QueryTriggerInteraction.Ignore))
+        {
+            // Consider LOS valid if the ray hit the player (or a child of the player)
+            if (hit.collider != null)
+            {
+                if (hit.collider.CompareTag("Player")) return true;
+                if (target != null && (hit.collider.transform == target || hit.collider.transform.IsChildOf(target))) return true;
+            }
+            return false;
+        }
+
+        // Nothing hit — assume clear LOS
+        return true;
     }
 }

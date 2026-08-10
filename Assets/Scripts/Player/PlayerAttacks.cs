@@ -17,6 +17,7 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private float maxChargeTime = 2f;
     [SerializeField] private float tongueAutoAimRange = 10f;
     [SerializeField] private float basicShotSlowMultiplier = 0.5f;
+    [SerializeField] private float basicShotSlowDuration = 1f;
 
     [Header("Aiming Correction")]
     [SerializeField] private float aimCorrectionStrength = 1.0f;
@@ -26,12 +27,21 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private EventReference basicShotEvent;
     [SerializeField] private EventReference chargeShotEvent;
 
+
+
+    public event System.Action<bool> OnShotFired;
+
+    [Header("Animation Timing")]
+    [SerializeField] private float attackWindupTime = 0.5f;   // time before projectile fires
+    [SerializeField] private float attackRecoveryTime = 0.2f; // optional recovery window
+
     //public bool isTethered;
     public float LastChargeValue { get; private set; }
     public event System.Action<float> OnChargeShotFired;
 
     private float fireCooldown => 1f / attacksPerSecond;
     private float lastFireTime = -999f;
+    private float basicShotSlowTimer = 0f;
     private float chargeTimer;
     private bool isCharging;
     private float attackWindowTimer;
@@ -124,11 +134,16 @@ public class PlayerAttacks : MonoBehaviour
         if (attackHeld && !playerMovement.IsDashing)
             TryBasicShot();
 
-        // Remove slow when player stops shooting
-        if (!attackHeld && isBasicShotSlowed)
+        // Tick down basic shot slow timer
+        if (isBasicShotSlowed)
         {
-            isBasicShotSlowed = false;
-            playerMovement.RemoveSpeedModifier(this);
+            basicShotSlowTimer -= Time.deltaTime;
+
+            if (basicShotSlowTimer <= 0f)
+            {
+                isBasicShotSlowed = false;
+                playerMovement.RemoveSpeedModifier(this);
+            }
         }
 
         // SECONDARY ATTACK - Block if dashing
@@ -139,7 +154,7 @@ public class PlayerAttacks : MonoBehaviour
                 if (secondaryPressed && !playerChargeAttack.IsCharging)
                 {
                     playerMovement.StopMovement(GetAimDirection());
-                    playerChargeAttack.BeginCharge(playerAnchor.CurrentAnchor);
+                    playerChargeAttack.BeginCharge(playerAnchor.AttachedAnchor);
                 }
 
                 if (secondaryHeld)
@@ -148,7 +163,7 @@ public class PlayerAttacks : MonoBehaviour
                 if (secondaryReleased)
                 {
                     playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
-
+                    OnShotFired?.Invoke(true);
                     RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
 
                     playerMovement.ResumeMovement();
@@ -185,7 +200,7 @@ public class PlayerAttacks : MonoBehaviour
 
         Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
-
+        OnShotFired?.Invoke(false);
         ApplyBasicShotSlow();
 
         Shoot(0f, aimDirection);
@@ -194,13 +209,57 @@ public class PlayerAttacks : MonoBehaviour
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
     }
 
+
+    /// <summary>
+    /// Those should be the same as TryBasicShot, but with a coroutine to handle windup and recovery times for animation timing.
+    /// </summary>
+
+    //private void TryBasicShot()
+    //{
+    //    if (playerTongueAttack.IsActive) return;
+    //    if (Time.time < lastFireTime + fireCooldown) return;
+
+    //    StartCoroutine(PerformBasicShot());
+    //}
+
+    //private IEnumerator PerformBasicShot()
+    //{
+    //    Vector3 aimDirection = GetAimDirection();
+    //    attackWindowTimer = attackWindowDuration;
+
+    //    // Insert Begin attack animation
+    //    // animator.SetTrigger("AttackStart");
+
+    //    // Apply slowdown immediately
+    //    ApplyBasicShotSlow();
+
+    //    // Wind-up delay (animation timing)
+    //    yield return new WaitForSeconds(attackWindupTime);
+
+    //    // Fire projectile
+    //    Shoot(0f, aimDirection);
+    //    lastFireTime = Time.time;
+
+    //    RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+
+    //    // InsertEnd attack animation
+    //    // animator.SetTrigger("AttackEnd");
+
+    //    // Recovery delay (animation timing)
+    //    if (attackRecoveryTime > 0f)
+    //        yield return new WaitForSeconds(attackRecoveryTime);
+    //}
+
     private void ApplyBasicShotSlow()
     {
+        // Only refresh timer if not already slowed
         if (!isBasicShotSlowed)
         {
-            isBasicShotSlowed = true;
             playerMovement.AddSpeedModifier(this, basicShotSlowMultiplier);
+            isBasicShotSlowed = true;
         }
+
+        basicShotSlowTimer = Mathf.Max(basicShotSlowTimer, basicShotSlowDuration);
     }
 
     private void Shoot(float chargePercent, Vector3? direction = null)
@@ -228,7 +287,7 @@ public class PlayerAttacks : MonoBehaviour
             // CRITICAL: Set isPlayerProjectile FIRST before anything else
             proj.isPlayerProjectile = true;
             proj.Initialize(chargePercent);
-            proj.damage = 2f;
+            //proj.damage = 2f;
         }
 
         // Always ignore collision with player, regardless of Projectile component

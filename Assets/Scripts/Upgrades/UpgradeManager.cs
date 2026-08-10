@@ -41,7 +41,8 @@ public class UpgradeManager : MonoBehaviour
         {
             { AnchorElement.Fire, new Dictionary<UpgradeDataSO, int>() },
             { AnchorElement.Ice, new Dictionary<UpgradeDataSO, int>() },
-            { AnchorElement.Wind, new Dictionary<UpgradeDataSO, int>() }
+            { AnchorElement.Wind, new Dictionary<UpgradeDataSO, int>() },
+            { AnchorElement.Broken, new Dictionary<UpgradeDataSO, int>() }
         };
     }
 

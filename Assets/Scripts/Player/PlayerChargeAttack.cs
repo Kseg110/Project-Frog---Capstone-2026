@@ -19,6 +19,9 @@ public class PlayerChargeAttack : MonoBehaviour
     [Header("Charge Upgrade Settings")]
     [SerializeField] private float WindHomingDelay = 3f; // Delay before homing activates
 
+    [Header("References")]
+    [SerializeField] private PlayerAnchor playerAnchor;
+
     private AnchorBase CurrentAnchor;
     private float ChargeTimer;
     private bool isCharging;
@@ -35,7 +38,31 @@ public class PlayerChargeAttack : MonoBehaviour
         {
             Debug.LogError("[PlayerChargeAttack] Missing projectile prefab assignment!", this);
         }
+
+        // A charge attack is only ever fired from an active tether, so we need to know tether state.
+        if (playerAnchor == null)
+        {
+            playerAnchor = GetComponent<PlayerAnchor>();
+        }
+        if (playerAnchor == null)
+        {
+            Debug.LogError("[PlayerChargeAttack] No PlayerAnchor reference — charge cannot be tether-gated!", this);
+        }
+
         playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+    }
+
+    private void OnEnable()
+    {
+        // Any release (Golem break, dash, manual detach, LOS break, out-of-range) routes through PlayerAnchor.ReleaseTether, which fires this. Cancelling here covers every break source with no per-source bookkeeping.
+        if (playerAnchor != null)
+            playerAnchor.OnTetherReleased += HandleTetherReleased;
+    }
+
+    private void OnDisable()
+    {
+        if (playerAnchor != null)
+            playerAnchor.OnTetherReleased -= HandleTetherReleased;
     }
 
     private void Update()
@@ -47,9 +74,18 @@ public class PlayerChargeAttack : MonoBehaviour
         playerHUD?.UpdateChargeAttackCooldown(CooldownProgress);
     }
 
+    // Fired when the tether is released by any means. If the player was mid-charge, drop it — no projectile, no cooldown penalty.
+    private void HandleTetherReleased()
+    {
+        if (isCharging)
+            CancelCharge();
+    }
+
     public bool CanBeginCharge()
     {
-        return !IsOnCooldown && !isCharging;
+        // Must be tethered AND settled to charge.
+        bool tetherActive = playerAnchor != null && playerAnchor.IsTetherActive;
+        return tetherActive && !IsOnCooldown && !isCharging;
     }
 
     public bool BeginCharge(AnchorBase anchor)
@@ -68,17 +104,32 @@ public class PlayerChargeAttack : MonoBehaviour
         isCharging = false;
         ChargeTimer = 0f;
         CurrentAnchor = null;
-    }    
+    }
 
     public void UpdateCharge()
     {
         if (!IsCharging || CurrentAnchor == null) return;
+
+        // Cancel if the tether stops being active mid-charge.
+        if (playerAnchor == null || !playerAnchor.IsTetherActive)
+        {
+            CancelCharge();
+            return;
+        }
+
         ChargeTimer = Mathf.Clamp(ChargeTimer + Time.deltaTime, 0f, MaxChargeTime);
     }
 
     public void ReleaseCharge(Vector3 firePoint, Vector3 direction)
     {
         if (!IsCharging || CurrentAnchor == null) return;
+
+        // Failsafe: even if a charge somehow survived a break or animation window this frame (event/order edge case), don't fire unless the tether is genuinely active (attached AND settled).
+        if (playerAnchor == null || !playerAnchor.IsTetherActive)
+        {
+            CancelCharge();
+            return;
+        }
 
         float chargePercent = Mathf.Clamp01(ChargeTimer / MaxChargeTime);
         float chargedDamage = Mathf.Lerp(MinDamage, MaxDamage, chargePercent);
@@ -99,15 +150,24 @@ public class PlayerChargeAttack : MonoBehaviour
                     }
 
                     var projObj = Instantiate(FireChargeProjectilePrefab, firePoint, Quaternion.LookRotation(direction));
-                    var proj = projObj.GetComponent<Projectile>();
+
+                    var proj = projObj.GetComponent<Projectile>() ?? projObj.GetComponentInChildren<Projectile>();
                     if (proj != null)
                     {
+                        proj.isPlayerProjectile = true; // ensure this is set before anything that checks it
                         proj.Initialize(chargePercent);
                         proj.damage = explosionDamage;
                         proj.effectType = "Burn";
                         proj.effectDuration = fireData.BurnDuration;
                         proj.effectValue = fireData.BurnTickRate;
-                        proj.isPlayerProjectile = true;
+
+                        // Apply charged knockback: scale from 1m to 5m with chargePercent
+                        proj.knockbackDistance = Mathf.Lerp(1f, 5f, chargePercent);
+                        Debug.Log($"[PlayerChargeAttack] Spawned charged projectile '{projObj.name}' knockbackDistance={proj.knockbackDistance} charge={chargePercent}", this);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[PlayerChargeAttack] FireChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
                     }
 
                     IgnorePlayerCollision(projObj);
@@ -122,16 +182,23 @@ public class PlayerChargeAttack : MonoBehaviour
                     float iceDamage = chargedDamage * iceData.DamageMultiplier;
 
                     var projObj = Instantiate(IceChargeProjectilePrefab, firePoint, Quaternion.LookRotation(direction));
-                    var proj = projObj.GetComponent<Projectile>();
+                    var proj = projObj.GetComponent<Projectile>() ?? projObj.GetComponentInChildren<Projectile>();
                     if (proj != null)
                     {
+                        proj.isPlayerProjectile = true;
                         proj.Initialize(chargePercent);
                         proj.damage = iceDamage;
                         proj.effectType = "Freeze";
                         proj.effectDuration = 1f;
                         proj.effectValue = 1f;
                         proj.isPiercingProjectile = true;
-                        proj.isPlayerProjectile = true;
+
+                        // Apply charged knockback
+                        proj.knockbackDistance = Mathf.Lerp(1f, 5f, chargePercent);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[PlayerChargeAttack] IceChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
                     }
 
                     IgnorePlayerCollision(projObj);
@@ -159,16 +226,23 @@ public class PlayerChargeAttack : MonoBehaviour
                         Vector3 spawnPos = firePoint + spreadDir * 0.5f;
 
                         var projObj = Instantiate(WindChargeProjectilePrefab, spawnPos, Quaternion.LookRotation(spreadDir));
-                        var proj = projObj.GetComponent<Projectile>();
-                        
+                        var proj = projObj.GetComponent<Projectile>() ?? projObj.GetComponentInChildren<Projectile>();
+
                         if (proj != null)
                         {
+                            proj.isPlayerProjectile = true;
                             proj.Initialize(chargePercent);
                             proj.damage = windDamage;
-                            proj.isPlayerProjectile = true;
+
+                            // Apply charged knockback (same per projectile)
+                            proj.knockbackDistance = Mathf.Lerp(5f, 12f, chargePercent);
 
                             if (HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
                                 proj.EnableHomingDelayed(WindHomingDelay);
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[PlayerChargeAttack] WindChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
                         }
 
                         IgnorePlayerCollision(projObj);
@@ -182,7 +256,7 @@ public class PlayerChargeAttack : MonoBehaviour
                                     Physics.IgnoreCollision(c1, c2);
                         }
 
-                        spawnedProjectiles.Add(projObj);
+                        spawnedProjectiles.Add(projObj);        
                     }
                     break;
                 }

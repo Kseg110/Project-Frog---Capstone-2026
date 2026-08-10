@@ -48,6 +48,13 @@ public class PlayerAnchor : MonoBehaviour
     public AnchorBase CurrentAnchor => currentAnchor;
     public AnchorBase AttachedAnchor => attachedAnchor;
 
+    // isTethered flips true the instant StartTether begins the throw, BEFORE the rope has flown out and landed — and stays true through the reel-in on release.
+    public bool IsTetherActive =>
+        isTethered
+        && anchorTether != null
+        && !anchorTether.IsThrowing
+        && !anchorTether.IsReeling;
+
     private void Awake()
     {
         allAnchors = FindObjectsByType<AnchorBase>(FindObjectsSortMode.None);
@@ -60,7 +67,21 @@ public class PlayerAnchor : MonoBehaviour
             playerOvercharge = GetComponent<PlayerOvercharge>();
         }
 
+        // Safety net: if the ROPE severs itself (reel-in completes, or a forced break inside AnchorTether), reconcile our logical tether flags.
+        if (anchorTether != null)
+        {
+            anchorTether.OnTetherBroken += HandleTetherBrokenByRope;
+        }
+
         RebindTetherActionFromCurrentMap();
+    }
+
+    private void OnDestroy()
+    {
+        if (anchorTether != null)
+        {
+            anchorTether.OnTetherBroken -= HandleTetherBrokenByRope;
+        }
     }
 
     private void Update()
@@ -95,7 +116,7 @@ public class PlayerAnchor : MonoBehaviour
         if (tetherAction != null && tetherAction.WasPressedThisFrame())
         {
             if (isTethered)
-                ReleaseTether();
+                ReleaseTether(playReel: true);   // manual detach - play the reel-in animation
             else
                 StartTether();
         }
@@ -106,24 +127,24 @@ public class PlayerAnchor : MonoBehaviour
         if (!isTethered)
             return;
 
-        // Anchor destroyed / despawned.
+        // Anchor destroyed / despawned - nothing to reel from, detach instantly.
         if (attachedAnchor == null)
         {
-            ReleaseTether();
+            ReleaseTether(playReel: false);
             return;
         }
 
-        // Out of range.
+        // Out of range - reel in.
         if (Vector3.Distance(transform.position, attachedAnchor.transform.position) > attachedAnchor.TetherRange)
         {
-            ReleaseTether();
+            ReleaseTether(playReel: true);
             return;
         }
 
-        // Cover moved between player and anchor.
+        // Cover moved between player and anchor. Reeling for consistency; flip to false if LOS-breaks.
         if (requireLineOfSightWhileTethered && !HasLineOfSight(attachedAnchor))
         {
-            ReleaseTether();
+            ReleaseTether(playReel: true);
         }
     }
 
@@ -183,9 +204,7 @@ public class PlayerAnchor : MonoBehaviour
         {
             if (blocked)
             {
-                // A SphereCast that starts already overlapping geometry returns distance 0
-                // and a zero normal. That's the classic false-block: the sweep never left
-                // the origin, so the "blocker" is something the player is standing in/against.
+                // A SphereCast that starts already overlapping geometry returns distance 0 and a zero normal. That's the classic false-block: the sweep never left the origin, so the "blocker" is something the player is standing in/against.
                 string degenerate = (hit.distance <= Mathf.Epsilon) ? " [DEGENERATE - sphere overlapped at origin]" : "";
 
                 Debug.Log($"<color=red>[LOS]</color> {anchor.name} BLOCKED by '{hit.collider.name}' " +
@@ -220,11 +239,15 @@ public class PlayerAnchor : MonoBehaviour
         // AnchorTether must receive the Transform of the AnchorPoint child of the current anchor (or the anchor itself if no child exists)
         Transform anchorBaseTransform = GetAnchorPointTransform(currentAnchor);
 
-        // Sent Transform to AnchorTether
-        if (anchorTether != null)
-            anchorTether.SetEndPoint(anchorBaseTransform, true);
+        // Ask the tether to attach. It can REFUSE (mid-reel, or on cooldown) and return false — in which case we must NOT commit isTethered. Otherwise the overcharge/charge is kept alive with no rope. This was the spam-desync bug.
+        bool attached = anchorTether != null && anchorTether.SetEndPoint(anchorBaseTransform, true);
+        if (!attached)
+        {
+            Debug.Log("[PlayerAnchor] Tether attach refused by AnchorTether (reeling/cooldown). Not committing tether state.");
+            return;
+        }
 
-        // Activate the tether
+        // Attach confirmed — now it's safe to commit logical tether state.
         isTethered = true;
         attachedAnchor = currentAnchor;
 
@@ -235,15 +258,38 @@ public class PlayerAnchor : MonoBehaviour
     }
 
     /// <summary>
-    /// Release tethering
+    /// Release tethering. When playReel is true (manual toggle, range exceeded, LOS break), the tether
+    /// plays its reel-in animation before fully detaching; the logical release happens immediately either
+    /// way. Dash and anchor-destroyed paths pass false for an instant detach.
     /// </summary>
-    public void ReleaseTether()
+    public void ReleaseTether(bool playReel = false)
     {
         isTethered = false;
+        AnchorBase releasedAnchor = attachedAnchor;   // cache before we clear it
         attachedAnchor = null;
 
         if (anchorTether != null)
-            anchorTether.SetEndPoint(null, true);
+        {
+            // Only reel if we were actually attached to something and the caller wants the animation; otherwise detach instantly. 
+            if (playReel && releasedAnchor != null && anchorTether.EndPoint != null)
+                anchorTether.ReelInAndBreak();
+            else
+                anchorTether.SetEndPoint(null, true);
+        }
+
+        OnTetherReleased?.Invoke();
+        OnAnchorChanged?.Invoke(null);
+    }
+
+    // The rope severed itself (reel-in completed, or a forced break inside AnchorTether). 
+    private void HandleTetherBrokenByRope()
+    {
+        if (!isTethered && attachedAnchor == null)
+            return;   // already clean, nothing to reconcile
+
+        isTethered = false;
+        attachedAnchor = null;
+
         OnTetherReleased?.Invoke();
         OnAnchorChanged?.Invoke(null);
     }
