@@ -83,9 +83,9 @@ public class PlayerChargeAttack : MonoBehaviour
 
     public bool CanBeginCharge()
     {
-        // Must be tethered to charge. This is the primary gate that fixes the in-radius-but-untethered exploit.
-        bool tethered = playerAnchor != null && playerAnchor.IsTethered;
-        return tethered && !IsOnCooldown && !isCharging;
+        // Must be tethered AND settled to charge.
+        bool tetherActive = playerAnchor != null && playerAnchor.IsTetherActive;
+        return tetherActive && !IsOnCooldown && !isCharging;
     }
 
     public bool BeginCharge(AnchorBase anchor)
@@ -109,6 +109,14 @@ public class PlayerChargeAttack : MonoBehaviour
     public void UpdateCharge()
     {
         if (!IsCharging || CurrentAnchor == null) return;
+
+        // Cancel if the tether stops being active mid-charge.
+        if (playerAnchor == null || !playerAnchor.IsTetherActive)
+        {
+            CancelCharge();
+            return;
+        }
+
         ChargeTimer = Mathf.Clamp(ChargeTimer + Time.deltaTime, 0f, MaxChargeTime);
     }
 
@@ -116,8 +124,8 @@ public class PlayerChargeAttack : MonoBehaviour
     {
         if (!IsCharging || CurrentAnchor == null) return;
 
-        // Failsafe: even if a charge somehow survived a break this frame (event ordering edge case), don't fire while untethered. Mirrors the belt-and-suspenders style of IgnorePlayerCollision.
-        if (playerAnchor == null || !playerAnchor.IsTethered)
+        // Failsafe: even if a charge somehow survived a break or animation window this frame (event/order edge case), don't fire unless the tether is genuinely active (attached AND settled).
+        if (playerAnchor == null || !playerAnchor.IsTetherActive)
         {
             CancelCharge();
             return;
@@ -142,15 +150,24 @@ public class PlayerChargeAttack : MonoBehaviour
                     }
 
                     var projObj = Instantiate(FireChargeProjectilePrefab, firePoint, Quaternion.LookRotation(direction));
-                    var proj = projObj.GetComponent<Projectile>();
+
+                    var proj = projObj.GetComponent<Projectile>() ?? projObj.GetComponentInChildren<Projectile>();
                     if (proj != null)
                     {
+                        proj.isPlayerProjectile = true; // ensure this is set before anything that checks it
                         proj.Initialize(chargePercent);
                         proj.damage = explosionDamage;
                         proj.effectType = "Burn";
                         proj.effectDuration = fireData.BurnDuration;
                         proj.effectValue = fireData.BurnTickRate;
-                        proj.isPlayerProjectile = true;
+
+                        // Apply charged knockback: scale from 1m to 5m with chargePercent
+                        proj.knockbackDistance = Mathf.Lerp(1f, 5f, chargePercent);
+                        Debug.Log($"[PlayerChargeAttack] Spawned charged projectile '{projObj.name}' knockbackDistance={proj.knockbackDistance} charge={chargePercent}", this);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[PlayerChargeAttack] FireChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
                     }
 
                     IgnorePlayerCollision(projObj);
@@ -165,16 +182,23 @@ public class PlayerChargeAttack : MonoBehaviour
                     float iceDamage = chargedDamage * iceData.DamageMultiplier;
 
                     var projObj = Instantiate(IceChargeProjectilePrefab, firePoint, Quaternion.LookRotation(direction));
-                    var proj = projObj.GetComponent<Projectile>();
+                    var proj = projObj.GetComponent<Projectile>() ?? projObj.GetComponentInChildren<Projectile>();
                     if (proj != null)
                     {
+                        proj.isPlayerProjectile = true;
                         proj.Initialize(chargePercent);
                         proj.damage = iceDamage;
                         proj.effectType = "Freeze";
                         proj.effectDuration = 1f;
                         proj.effectValue = 1f;
                         proj.isPiercingProjectile = true;
-                        proj.isPlayerProjectile = true;
+
+                        // Apply charged knockback
+                        proj.knockbackDistance = Mathf.Lerp(1f, 5f, chargePercent);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[PlayerChargeAttack] IceChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
                     }
 
                     IgnorePlayerCollision(projObj);
@@ -202,16 +226,23 @@ public class PlayerChargeAttack : MonoBehaviour
                         Vector3 spawnPos = firePoint + spreadDir * 0.5f;
 
                         var projObj = Instantiate(WindChargeProjectilePrefab, spawnPos, Quaternion.LookRotation(spreadDir));
-                        var proj = projObj.GetComponent<Projectile>();
+                        var proj = projObj.GetComponent<Projectile>() ?? projObj.GetComponentInChildren<Projectile>();
 
                         if (proj != null)
                         {
+                            proj.isPlayerProjectile = true;
                             proj.Initialize(chargePercent);
                             proj.damage = windDamage;
-                            proj.isPlayerProjectile = true;
+
+                            // Apply charged knockback (same per projectile)
+                            proj.knockbackDistance = Mathf.Lerp(5f, 12f, chargePercent);
 
                             if (HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
                                 proj.EnableHomingDelayed(WindHomingDelay);
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[PlayerChargeAttack] WindChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
                         }
 
                         IgnorePlayerCollision(projObj);
@@ -225,7 +256,7 @@ public class PlayerChargeAttack : MonoBehaviour
                                     Physics.IgnoreCollision(c1, c2);
                         }
 
-                        spawnedProjectiles.Add(projObj);
+                        spawnedProjectiles.Add(projObj);        
                     }
                     break;
                 }

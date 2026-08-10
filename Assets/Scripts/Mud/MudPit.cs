@@ -64,6 +64,9 @@ public class MudPit : MonoBehaviour
         {
             Debug.Log($"[MudPit] Applying speed modifier to {((MonoBehaviour)victim).gameObject.name}!", ((MonoBehaviour)victim).gameObject);
             victim.AddSpeedModifier(this, speedMult);
+
+            if (victim is PlayerMovement pm)
+                pm.SetInMud(true);
         }
     }
 
@@ -81,6 +84,9 @@ public class MudPit : MonoBehaviour
         {
             victim.RemoveSpeedModifier(this);
             insideColliders.Remove(victim);
+
+            if (victim is PlayerMovement pm)
+                pm.SetInMud(false);
         }
         //insideColliders.Clear();
     }

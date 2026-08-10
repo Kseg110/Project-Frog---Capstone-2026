@@ -347,14 +347,26 @@ public class BoulderTrap : MonoBehaviour
         private void ApplyKnockbackToRigidbody(Rigidbody targetRb, Vector3 hitPos)
         {
             if (targetRb == null) return;
-            Vector3 push = (targetRb.position - transform.position).normalized * knockbackForce;
+
+            // Direction from boulder center to target
+            Vector3 push = (targetRb.position - transform.position).normalized;
+            float distance = knockbackForce;
+
+            // Prefer EnemyKnockback for enemies to get collision-safe movement
+            var enemyKnock = targetRb.GetComponentInParent<EnemyKnockback>();
+            if (enemyKnock != null)
+            {
+                enemyKnock.ApplyKnockback(push, distance);
+                return;
+            }
+
             if (targetRb.isKinematic)
             {
-                targetRb.MovePosition(targetRb.position + push);
+                targetRb.MovePosition(targetRb.position + push * distance);
             }
             else
             {
-                targetRb.AddForce(push, ForceMode.Impulse);
+                targetRb.AddForce(push * distance, ForceMode.Impulse);
             }
         }
 
