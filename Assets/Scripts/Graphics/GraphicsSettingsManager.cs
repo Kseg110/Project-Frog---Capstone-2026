@@ -9,7 +9,7 @@ public class GraphicsSettingsManager : MonoBehaviour
     private List<Resolution> filteredResolutions = new List<Resolution>();
     private int currentResolutionIndex = 0;
 
-    private void Start()
+    private void Awake()
     {
         InitializeResolutions();
         LoadSettings();
@@ -20,7 +20,6 @@ public class GraphicsSettingsManager : MonoBehaviour
     {
         QualitySettings.SetQualityLevel(qualityIndex, applyExpensiveChanges: true);
         PlayerPrefs.SetInt("QualityLevel", qualityIndex);
-        PlayerPrefs.Save();
     }
     #endregion
 
@@ -30,33 +29,35 @@ public class GraphicsSettingsManager : MonoBehaviour
         Resolution[] allResolutions = Screen.resolutions;
         filteredResolutions.Clear();
 
-        double currentRefreshRate = Screen.currentResolution.refreshRateRatio.value;
+        // Unique resolution width x height mapping to keep the highest available refresh rate
+        Dictionary<(int, int), Resolution> uniqueResolutions = new Dictionary<(int, int), Resolution>();
 
-        for (int i = 0; i < allResolutions.Length; i++)
+        foreach (var res in allResolutions)
         {
-            // Filter out duplicate width x height entries and keep match for current refresh rate
-            if (Mathf.Approximately((float)allResolutions[i].refreshRateRatio.value, (float)currentRefreshRate))
+            var key = (res.width, res.height);
+            if (!uniqueResolutions.ContainsKey(key) || res.refreshRateRatio.value > uniqueResolutions[key].refreshRateRatio.value)
             {
-                filteredResolutions.Add(allResolutions[i]);
+                uniqueResolutions[key] = res;
+            }
+        }
 
-                if (allResolutions[i].width == Screen.width &&
-                    allResolutions[i].height == Screen.height)
-                {
-                    currentResolutionIndex = filteredResolutions.Count - 1;
-                }
+        filteredResolutions.AddRange(uniqueResolutions.Values);
+
+        // Find current matching resolution index
+        for (int i = 0; i < filteredResolutions.Count; i++)
+        {
+            if (filteredResolutions[i].width == Screen.width &&
+                filteredResolutions[i].height == Screen.height)
+            {
+                currentResolutionIndex = i;
+                break;
             }
         }
     }
 
-    public List<Resolution> GetFilteredResolutions()
-    {
-        return filteredResolutions;
-    }
+    public List<Resolution> GetFilteredResolutions() => filteredResolutions;
 
-    public int GetCurrentResolutionIndex()
-    {
-        return currentResolutionIndex;
-    }
+    public int GetCurrentResolutionIndex() => currentResolutionIndex;
 
     public void SetResolution(int resolutionIndex)
     {
@@ -64,9 +65,9 @@ public class GraphicsSettingsManager : MonoBehaviour
         {
             Resolution res = filteredResolutions[resolutionIndex];
             Screen.SetResolution(res.width, res.height, Screen.fullScreenMode);
-            
+            currentResolutionIndex = resolutionIndex;
+
             PlayerPrefs.SetInt("ResolutionIndex", resolutionIndex);
-            PlayerPrefs.Save();
         }
     }
 
@@ -74,25 +75,18 @@ public class GraphicsSettingsManager : MonoBehaviour
     {
         Screen.fullScreen = isFullScreen;
         PlayerPrefs.SetInt("Fullscreen", isFullScreen ? 1 : 0);
-        PlayerPrefs.Save();
     }
 
     public void SetVSync(bool isEnabled)
     {
-        // 0 = Off, 1 = On (60 FPS / Monitor Hz)
         QualitySettings.vSyncCount = isEnabled ? 1 : 0;
         PlayerPrefs.SetInt("VSync", isEnabled ? 1 : 0);
-        PlayerPrefs.Save();
     }
 
     public void SetTargetFPS(int targetFPS)
     {
-        if (QualitySettings.vSyncCount == 0)
-        {
-            Application.targetFrameRate = targetFPS;
-            PlayerPrefs.SetInt("TargetFPS", targetFPS);
-            PlayerPrefs.Save();
-        }
+        Application.targetFrameRate = targetFPS;
+        PlayerPrefs.SetInt("TargetFPS", targetFPS);
     }
     #endregion
 
@@ -105,7 +99,6 @@ public class GraphicsSettingsManager : MonoBehaviour
         {
             urpAsset.renderScale = scale;
             PlayerPrefs.SetFloat("RenderScale", scale);
-            PlayerPrefs.Save();
         }
     }
 
@@ -117,6 +110,9 @@ public class GraphicsSettingsManager : MonoBehaviour
         {
             cameraData.antialiasing = mode;
             cameraData.antialiasingQuality = quality;
+
+            PlayerPrefs.SetInt("AAMode", (int)mode);
+            PlayerPrefs.SetInt("AAQuality", (int)quality);
         }
     }
     #endregion
@@ -133,11 +129,17 @@ public class GraphicsSettingsManager : MonoBehaviour
         if (PlayerPrefs.HasKey("VSync"))
             SetVSync(PlayerPrefs.GetInt("VSync") == 1);
 
+        if (PlayerPrefs.HasKey("TargetFPS"))
+            SetTargetFPS(PlayerPrefs.GetInt("TargetFPS"));
+
         if (PlayerPrefs.HasKey("RenderScale"))
             SetRenderScale(PlayerPrefs.GetFloat("RenderScale"));
 
-        if (PlayerPrefs.HasKey("TargetFPS"))
-            SetTargetFPS(PlayerPrefs.GetInt("TargetFPS"));
+        if (PlayerPrefs.HasKey("ResolutionIndex"))
+            SetResolution(PlayerPrefs.GetInt("ResolutionIndex"));
+
+        // Save once after applying all loaded prefs rather than on every setting write
+        PlayerPrefs.Save();
     }
     #endregion
 }

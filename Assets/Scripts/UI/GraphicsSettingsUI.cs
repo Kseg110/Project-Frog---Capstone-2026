@@ -16,36 +16,48 @@ public class GraphicsSettingsUI : MonoBehaviour
     [SerializeField] private Toggle fullscreenToggle;
     [SerializeField] private Toggle vsyncToggle;
     [SerializeField] private Slider renderScaleSlider;
+    [SerializeField] private TMP_Text renderScaleValueText; // Visual percentage readout (e.g., "100%")
 
-    private void Start()
+    private void Awake()
     {
-        // Auto-locate manager if unassigned
         if (settingsManager == null)
         {
             settingsManager = FindFirstObjectByType<GraphicsSettingsManager>();
         }
+    }
 
+    private void OnEnable()
+    {
+        // Re-bind and refresh UI values whenever the settings panel opens
         SetupQualityDropdown();
         SetupResolutionDropdown();
         SetupTogglesAndSliders();
     }
 
+    private void OnDisable()
+    {
+        RemoveAllListeners();
+    }
+
+    private void OnDestroy()
+    {
+        RemoveAllListeners();
+    }
+
+    #region --- Setup Methods ---
     private void SetupQualityDropdown()
     {
         if (qualityDropdown == null) return;
 
-        // 1. Clear placeholder options
+        qualityDropdown.onValueChanged.RemoveAllListeners();
         qualityDropdown.ClearOptions();
 
-        // 2. Fetch quality tier names defined in Project Settings
         List<string> options = new List<string>(QualitySettings.names);
         qualityDropdown.AddOptions(options);
 
-        // 3. Set current value and refresh display
         qualityDropdown.value = QualitySettings.GetQualityLevel();
         qualityDropdown.RefreshShownValue();
 
-        // 4. Register event listener
         qualityDropdown.onValueChanged.AddListener(OnQualityChanged);
     }
 
@@ -53,10 +65,9 @@ public class GraphicsSettingsUI : MonoBehaviour
     {
         if (resolutionDropdown == null || settingsManager == null) return;
 
-        // 1. Clear placeholder options
+        resolutionDropdown.onValueChanged.RemoveAllListeners();
         resolutionDropdown.ClearOptions();
 
-        // 2. Fetch deduplicated resolutions from manager
         List<Resolution> resolutions = settingsManager.GetFilteredResolutions();
         List<string> options = new List<string>();
 
@@ -68,11 +79,9 @@ public class GraphicsSettingsUI : MonoBehaviour
 
         resolutionDropdown.AddOptions(options);
 
-        // 3. Set current screen resolution index
         resolutionDropdown.value = settingsManager.GetCurrentResolutionIndex();
         resolutionDropdown.RefreshShownValue();
 
-        // 4. Register event listener
         resolutionDropdown.onValueChanged.AddListener(OnResolutionChanged);
     }
 
@@ -80,24 +89,41 @@ public class GraphicsSettingsUI : MonoBehaviour
     {
         if (fullscreenToggle != null)
         {
+            fullscreenToggle.onValueChanged.RemoveAllListeners();
             fullscreenToggle.isOn = Screen.fullScreen;
             fullscreenToggle.onValueChanged.AddListener(OnFullscreenChanged);
         }
 
         if (vsyncToggle != null)
         {
+            vsyncToggle.onValueChanged.RemoveAllListeners();
             vsyncToggle.isOn = QualitySettings.vSyncCount > 0;
             vsyncToggle.onValueChanged.AddListener(OnVSyncChanged);
         }
 
         if (renderScaleSlider != null)
         {
+            renderScaleSlider.onValueChanged.RemoveAllListeners();
             renderScaleSlider.minValue = 0.5f;
             renderScaleSlider.maxValue = 1.5f;
-            renderScaleSlider.value = PlayerPrefs.GetFloat("RenderScale", 1.0f);
+
+            float savedScale = PlayerPrefs.GetFloat("RenderScale", 1.0f);
+            renderScaleSlider.value = savedScale;
+            UpdateRenderScaleText(savedScale);
+
             renderScaleSlider.onValueChanged.AddListener(OnRenderScaleChanged);
         }
     }
+
+    private void RemoveAllListeners()
+    {
+        if (qualityDropdown != null) qualityDropdown.onValueChanged.RemoveAllListeners();
+        if (resolutionDropdown != null) resolutionDropdown.onValueChanged.RemoveAllListeners();
+        if (fullscreenToggle != null) fullscreenToggle.onValueChanged.RemoveAllListeners();
+        if (vsyncToggle != null) vsyncToggle.onValueChanged.RemoveAllListeners();
+        if (renderScaleSlider != null) renderScaleSlider.onValueChanged.RemoveAllListeners();
+    }
+    #endregion
 
     #region --- UI Event Callbacks ---
     private void OnQualityChanged(int index)
@@ -123,6 +149,16 @@ public class GraphicsSettingsUI : MonoBehaviour
     private void OnRenderScaleChanged(float value)
     {
         settingsManager.SetRenderScale(value);
+        UpdateRenderScaleText(value);
+    }
+
+    private void UpdateRenderScaleText(float value)
+    {
+        if (renderScaleValueText != null)
+        {
+            // Displays as percentage: e.g. "100%" or "125%"
+            renderScaleValueText.text = $"{Mathf.RoundToInt(value * 100f)}%";
+        }
     }
     #endregion
 }
