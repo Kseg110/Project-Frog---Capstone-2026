@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     [SerializeField] private LayerMask collisionLayers;
     [SerializeField] private string hitBoxName = "Hitbox";
     [SerializeField] private float inputSmoothSpeed = 20f;
-
+    [SerializeField] private float panDashLockTimer;
     private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
     private float CurrentSpeed
     {
@@ -61,6 +61,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private Vector3 lookDirection;
 
     private bool isDashing;
+    private bool isInMud = false;
     private bool isMovementStopped;
     private bool isTethered;
     private bool movementStoppedExternally;
@@ -180,9 +181,48 @@ public class PlayerMovement : MonoBehaviour, IMovement
         lookAction = map.FindAction("Look");
         dashAction = map.FindAction("Dash");
     }
+    public float speed;
+    public float GetMovementSpeed()
+    {
+        // No movement allowed.
+        if (isDashing ||
+            isMovementStopped ||
+            movementStoppedExternally ||
+            isStunned)
+        {
+            speed = 0f;
+            return speed;
+        }
 
+        // Read the SAME Move input used by PlayerMovement.
+        Vector2 move = moveAction.ReadValue<Vector2>();
+
+        // Nothing pressed = 0.
+        if (move == Vector2.zero)
+        {
+            speed = 0f;
+            return speed;
+        }
+
+        // WASD or controller is being pressed.
+        speed = Mathf.Clamp01(move.magnitude);
+
+        return speed;
+    }
     private void Update()
     {
+        if (CameraPanEffect.GlobalPanActive)
+        {
+            // While panning, always keep the lock at 5 seconds.
+            panDashLockTimer = 1;
+
+        }
+        else if (panDashLockTimer > 0f)
+        {
+            panDashLockTimer = panDashLockTimer - 0.5f;
+
+        }
+
         UpdateTetherStatus();
 
         // Update dash cooldown
@@ -202,8 +242,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
                 stunTimer = 0f;
             }
         }
+        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame() && !isInMud && !CameraPanEffect.GlobalPanActive && panDashLockTimer <= 0f)
+            StartDash();
 
-        if (isMovementStopped || movementStoppedExternally || isStunned)
+        if (isMovementStopped || movementStoppedExternally || isStunned || CameraPanEffect.GlobalPanActive)
             return;
 
         // While dashing, ignore movement input and lock rotation to the dash direction.
@@ -249,14 +291,13 @@ public class PlayerMovement : MonoBehaviour, IMovement
             }
         }
 
-        // Check for valid dash input
-        if (!isDashing && dashCooldownTimer <= 0f && dashAction.WasPressedThisFrame())
-            StartDash();
+
     }
 
     private void FixedUpdate()
     {
-        if (isMovementStopped || movementStoppedExternally || isStunned)
+        GetMovementSpeed();
+        if (isMovementStopped || movementStoppedExternally || isStunned || CameraPanEffect.GlobalPanActive)
         {
             rb.MoveRotation(Quaternion.LookRotation(lookDirection));
             return;
@@ -379,6 +420,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void StartDash()
     {
+        if (CameraPanEffect.GlobalPanActive)
+            return;
         playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;
@@ -414,6 +457,15 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         Debug.Log("end dash");
         PlayerDashVFX.Instance.EndDashVFX();
+    }
+
+    public void SetInMud(bool value)
+    {
+        isInMud = value;
+        if (isInMud && isDashing)
+        {
+            EndDash();
+        }
     }
 
     public void AddSpeedModifier(object source, float multiplier)

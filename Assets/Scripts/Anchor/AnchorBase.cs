@@ -10,7 +10,7 @@ public abstract class AnchorBase : MonoBehaviour
 {
     public abstract AnchorData BaseData { get; }
     public abstract AnchorElement Element { get; }
-
+    public virtual bool CanOvercharge => true;
     public float Damage => BaseData != null ? BaseData.Damage : 0f;
     public float TetherRange => BaseData != null ? BaseData.TetherRange : 0f;
 
@@ -55,14 +55,32 @@ public abstract class AnchorBase : MonoBehaviour
 
     public void UpdateOverchargeVisual(float normalizedProgress)
     {
+        if (!CanOvercharge)
+        {
+            return;
+        }
+
+
         if (pointLight != null)
         {
-            targetIntensity = Mathf.Lerp(baseIntensity, maxOverchargeIntensity, normalizedProgress);
+            targetIntensity =
+                Mathf.Lerp(
+                    baseIntensity,
+                    maxOverchargeIntensity,
+                    normalizedProgress
+                );
         }
     }
 
+
     public void ResetOverchargeVisual()
     {
+        if (!CanOvercharge)
+        {
+            return;
+        }
+
+
         if (pointLight != null)
         {
             targetIntensity = originalIntensity;

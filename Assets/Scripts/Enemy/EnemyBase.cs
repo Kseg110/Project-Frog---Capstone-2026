@@ -377,5 +377,18 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         movement.ReleaseTargetSlot();
     }
+    public float MovementSpeed
+    {
+        get
+        {
+            if (agent == null || !agent.enabled)
+                return 0f;
+
+            if (agent.speed <= 0.001f)
+                return 0f;
+
+            return Mathf.Clamp01(agent.velocity.magnitude / agent.speed);
+        }
+    }
 }
 

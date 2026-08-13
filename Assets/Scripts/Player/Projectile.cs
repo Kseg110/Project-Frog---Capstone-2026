@@ -7,6 +7,12 @@ public class Projectile : MonoBehaviour, IProjectile
     [SerializeField] protected float baseDamage = 10f;
     [SerializeField] protected float maxScale = 2f;
 
+    [Header("Hit VFX (assign prefabs)")]
+    [SerializeField] private GameObject fireHitVfx;
+    [SerializeField] private GameObject iceHitVfx;
+    [SerializeField] private GameObject windHitVfx;
+    [SerializeField] private GameObject defaultHitVfx;
+
     public float speed;
     public float damage;
 
@@ -122,6 +128,32 @@ public class Projectile : MonoBehaviour, IProjectile
         transform.position += transform.forward * speed * Time.deltaTime;
     }
 
+    // Play configured VFX prefab at projectile position. If prefab is null, nothing happens.
+    private void PlayHitVfx(GameObject vfxPrefab)
+    {
+        if (vfxPrefab == null) return;
+
+        GameObject go = Instantiate(vfxPrefab, transform.position, Quaternion.identity);
+
+        // Try to determine particle durations to auto-destroy the spawned VFX
+        float maxLifetime = 0f;
+        var systems = go.GetComponentsInChildren<ParticleSystem>();
+        foreach (var s in systems)
+        {
+            var main = s.main;
+            float lifetime = main.duration;
+            // Add startLifetime (handle MinMaxCurve)
+            var startLifetime = main.startLifetime;
+            lifetime += (startLifetime.mode == ParticleSystemCurveMode.Constant) ? startLifetime.constant : startLifetime.constantMax;
+            if (lifetime > maxLifetime) maxLifetime = lifetime;
+        }
+
+        // Fallback destroy time if no particle systems found
+        if (maxLifetime <= 0f) maxLifetime = 3f;
+
+        Destroy(go, Mathf.Max(0.5f, maxLifetime));
+    }
+
     // ============================
     // COLLISION
     // ============================
@@ -164,8 +196,6 @@ public class Projectile : MonoBehaviour, IProjectile
         if (enemy != null && isPlayerProjectile)
         {
             float finalDamage = damage;
-            // DEBUG: show if this projectile intended to apply knockback
-            Debug.Log($"[Projectile] Hit enemy '{enemy.name}'. isPlayerProjectile={isPlayerProjectile}, knockbackDistance={knockbackDistance}", this);
 
             // Point Blank Shot
             float dist = Vector3.Distance(transform.position, enemy.transform.position);
@@ -199,12 +229,12 @@ public class Projectile : MonoBehaviour, IProjectile
                     var enemyKnock = enemy.GetComponentInParent<EnemyKnockback>();
                     if (enemyKnock != null)
                     {
-                        Debug.Log($"[Projectile] Using EnemyKnockback on '{enemy.name}' (distance={knockbackDistance})", enemy);
+                        //Debug.Log($"[Projectile] Using EnemyKnockback on '{enemy.name}' (distance={knockbackDistance})", enemy);
                         enemyKnock.ApplyKnockback(pushDir, knockbackDistance);
                     }
                     else
                     {
-                        Debug.Log($"[Projectile] EnemyKnockback not found on '{enemy.name}', falling back to Rigidbody/transform nudge", enemy);
+                        //Debug.Log($"[Projectile] EnemyKnockback not found on '{enemy.name}', falling back to Rigidbody/transform nudge", enemy);
                         // fallback: try attached rigidbody
                         var rb = other.attachedRigidbody ?? enemy.GetComponentInParent<Rigidbody>();
                         if (rb != null)
@@ -222,6 +252,24 @@ public class Projectile : MonoBehaviour, IProjectile
                         }
                     }
                 }
+            }
+
+            // Play corresponding VFX only when hitting an enemy
+            if (!string.IsNullOrEmpty(effectType))
+            {
+                if (effectType == "Burn")
+                    PlayHitVfx(fireHitVfx);
+                else if (effectType == "Freeze" || effectType.ToLower().Contains("ice"))
+                    PlayHitVfx(iceHitVfx);
+                else if (effectType.ToLower().Contains("wind") || effectType.ToLower().Contains("knock"))
+                    PlayHitVfx(windHitVfx);
+                else
+                    PlayHitVfx(defaultHitVfx);
+            }
+            else
+            {
+                // No power-up: optional default dart VFX (may be left null)
+                PlayHitVfx(defaultHitVfx);
             }
 
             // Extinguisher
