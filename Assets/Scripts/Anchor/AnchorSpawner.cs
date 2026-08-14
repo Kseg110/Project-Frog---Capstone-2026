@@ -45,24 +45,24 @@ public class AnchorSpawner : MonoBehaviour
 
     public void SpawnAnchors()
     {
-        Debug.Log($"[AnchorSpawner] SpawnAnchors called. points={spawnPoints?.Length ?? 0}, prefabs={anchorPrefabs?.Length ?? 0}, toPlace={anchorsToPlace}");
+        //Debug.Log($"[AnchorSpawner] SpawnAnchors called. points={spawnPoints?.Length ?? 0}, prefabs={anchorPrefabs?.Length ?? 0}, toPlace={anchorsToPlace}");
 
         ClearSpawned();
 
-        if (spawnPoints == null || anchorPrefabs == null)
-        {
-            Debug.LogWarning("[AnchorSpawner] spawnPoints or anchorPrefabs is null — nothing to spawn.", this);
-            return;
-        }
+        //if (spawnPoints == null || anchorPrefabs == null)
+        //{
+        //    //Debug.LogWarning("[AnchorSpawner] spawnPoints or anchorPrefabs is null — nothing to spawn.", this);
+        //    return;
+        //}
 
         int placeCount = Mathf.Min(anchorsToPlace, spawnPoints.Length, anchorPrefabs.Length);
-        Debug.Log($"[AnchorSpawner] placeCount resolved to {placeCount}");
+        //Debug.Log($"[AnchorSpawner] placeCount resolved to {placeCount}");
 
-        if (placeCount <= 0)
-        {
-            Debug.LogWarning("[AnchorSpawner] placeCount is 0 — check that points and prefabs are populated.", this);
-            return;
-        }
+        //if (placeCount <= 0)
+        //{
+        //    Debug.LogWarning("[AnchorSpawner] placeCount is 0 — check that points and prefabs are populated.", this);
+        //    return;
+        //}
 
         // Build [0,1,2,...], then partial Fisher-Yates to pull 'placeCount' DISTINCT points.
         pointIndices.Clear();
@@ -76,16 +76,16 @@ public class AnchorSpawner : MonoBehaviour
             Transform point = spawnPoints[pointIndices[i]];
             GameObject prefab = anchorPrefabs[i];
 
-            if (point == null)
-            {
-                Debug.LogWarning($"[AnchorSpawner] Spawn point at index {pointIndices[i]} is null — skipping.", this);
-                continue;
-            }
-            if (prefab == null)
-            {
-                Debug.LogWarning($"[AnchorSpawner] Anchor prefab at index {i} is null — skipping.", this);
-                continue;
-            }
+            //if (point == null)
+            //{
+            //    Debug.LogWarning($"[AnchorSpawner] Spawn point at index {pointIndices[i]} is null — skipping.", this);
+            //    continue;
+            //}
+            //if (prefab == null)
+            //{
+            //    Debug.LogWarning($"[AnchorSpawner] Anchor prefab at index {i} is null — skipping.", this);
+            //    continue;
+            //}
 
             GameObject instance = Instantiate(prefab, point.position, point.rotation);
 
@@ -93,11 +93,11 @@ public class AnchorSpawner : MonoBehaviour
             AnchorBase anchor = instance.GetComponent<AnchorBase>();
             if (anchor != null)
                 spawned.Add(anchor);
-            else
-                Debug.LogWarning($"[AnchorSpawner] Spawned '{prefab.name}' has no AnchorBase component.", instance);
+            //else
+            //    Debug.LogWarning($"[AnchorSpawner] Spawned '{prefab.name}' has no AnchorBase component.", instance);
         }
 
-        Debug.Log($"[AnchorSpawner] Spawned {spawned.Count} anchor(s).");
+        //Debug.Log($"[AnchorSpawner] Spawned {spawned.Count} anchor(s).");
 
         // Spawned anchors didn't exist when PlayerAnchor cached its list in Awake — refresh it.
         var playerAnchor = FindAnyObjectByType<PlayerAnchor>();

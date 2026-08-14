@@ -65,9 +65,9 @@ public class WaveObjectTrigger : MonoBehaviour
             );
         }
 
-        Debug.Log(
-            "WaveObjectTrigger Triggered At Wave: " +
-            targetWave
-        );
+        //Debug.Log(
+        //    "WaveObjectTrigger Triggered At Wave: " +
+        //    targetWave
+        //);
     }
 }

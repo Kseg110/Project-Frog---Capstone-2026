@@ -68,7 +68,7 @@ public class PlayerTakeDamage : MonoBehaviour
 
         if (hit == null)
         {
-            Debug.LogError($"Hitbox child '{hitBoxName}' not found on {gameObject.name}");
+            //Debug.LogError($"Hitbox child '{hitBoxName}' not found on {gameObject.name}");
             return;
         }
 
@@ -76,7 +76,7 @@ public class PlayerTakeDamage : MonoBehaviour
 
         if (hitbox == null)
         {
-            Debug.LogError($"No CapsuleCollider found on hitbox object '{hitBoxName}'");
+            //Debug.LogError($"No CapsuleCollider found on hitbox object '{hitBoxName}'");
             return;
         }
 
@@ -129,7 +129,7 @@ public class PlayerTakeDamage : MonoBehaviour
         // SHIELD ALWAYS CHECKS FIRST
         if (shield != null && shield.TakeDamage((int)damageAmount))
         {
-            Debug.Log("[Shield] Hit absorbed by shield!");
+            //Debug.Log("[Shield] Hit absorbed by shield!");
 
             // Activate i-frames even if shield absorbed, to prevent multiple hits in quick succession
             nextAllowedDamageTime = Time.time + immortalityTime;
