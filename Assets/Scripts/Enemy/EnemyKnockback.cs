@@ -95,9 +95,6 @@ public class EnemyKnockback : MonoBehaviour
         ApplyKnockback(direction, projectileKnockbackDistance);
     }
 
-
-
-
     public void ApplyKnockback(Vector3 direction, float distance)
     {
         direction.y = 0f;
@@ -105,9 +102,7 @@ public class EnemyKnockback : MonoBehaviour
         if (direction.sqrMagnitude < 0.000001f)
             return;
 
-      
         float finalDistance = distance * knockbackResistance * Mathf.Max(1f, debugKnockbackMultiplier);
-
 
         if (finalDistance <= 0f)
             return;
@@ -128,7 +123,12 @@ public class EnemyKnockback : MonoBehaviour
 
         Debug.Log($"[EnemyKnockback] KnockbackRoutine START on '{name}' dir={dir} distance={distance:F2} hadAgent={hadAgent}", this);
 
-        if (hadAgent) { agent.isStopped = true; agent.updatePosition = false; }
+
+        if (hadAgent)
+        {
+            agent.isStopped = true;
+            agent.updatePosition = true;
+        }
 
         float duration = Mathf.Max(0.01f, distance / knockbackSpeed);
 
@@ -156,41 +156,65 @@ public class EnemyKnockback : MonoBehaviour
                         CollisionUtility.GetCapsule(rb, capsule, out Vector3 capStart, out Vector3 capEnd);
 
                         Vector3 testStart = capStart + motion;
-                        
                         Vector3 testEnd = capEnd + motion;
-                        
+
                         if (TryGetBlockingRaycast(oldPosition, motion.normalized, motion.magnitude, out Collider rayBlock, out RaycastHit rayHit)) { Debug.Log($"[EnemyKnockback] Raycast blocked by '{rayBlock?.name}' — stopping knockback.", this); break; }
-                        
+
                         Collider[] overlaps = Physics.OverlapCapsule(testStart, testEnd, capsule.radius, collisionLayers.value, QueryTriggerInteraction.Ignore);
-                        
-                        if (!TryGetBlockingOverlap(overlaps, out Collider blocking)) { transform.position += motion; }
-                        
+
+                        if (!TryGetBlockingOverlap(overlaps, out Collider blocking))
+                        {
+                            if (hadAgent)
+                            {
+                                agent.Move(motion);
+                                // sync physics/transform
+                                if (!rb.isKinematic) rb.MovePosition(agent.nextPosition);
+                                else transform.position = agent.nextPosition;
+                            }
+                            else
+                            {
+                                transform.position += motion;
+                            }
+                        }
                         else
                         {
                             Debug.Log($"[EnemyKnockback] Overlap blocked by '{blocking?.name}' (root='{blocking?.transform?.root?.name}', attachedRb={(blocking?.attachedRigidbody != null ? blocking.attachedRigidbody.name : "null")})", this);
-                            
+
                             bool moved = false;
-                            
+
                             float remaining = motion.magnitude;
-                            
+
                             float step = Mathf.Min(0.5f, remaining);
-                            
+
                             for (int s = 0; s < 6 && step > 0.001f; s++)
                             {
                                 Vector3 stepMotion = motion.normalized * step;
-                                
+
                                 if (TryGetBlockingRaycast(oldPosition, motion.normalized, stepMotion.magnitude, out Collider stepRayBlock, out RaycastHit stepRayHit)) { Debug.Log($"[EnemyKnockback] incremental ray step blocked by '{stepRayBlock?.name}'", this); step *= 0.5f; continue; }
-                                
+
                                 Vector3 sStart = capStart + stepMotion;
-                                
+
                                 Vector3 sEnd = capEnd + stepMotion;
-                                
+
                                 Collider[] ov = Physics.OverlapCapsule(sStart, sEnd, capsule.radius, collisionLayers.value, QueryTriggerInteraction.Ignore);
-                                
-                                if (!TryGetBlockingOverlap(ov, out Collider stepBlocking)) { transform.position += stepMotion; moved = true; break; }
-                                
+
+                                if (!TryGetBlockingOverlap(ov, out Collider stepBlocking))
+                                {
+                                    if (hadAgent)
+                                    {
+                                        agent.Move(stepMotion);
+                                        if (!rb.isKinematic) rb.MovePosition(agent.nextPosition);
+                                        else transform.position = agent.nextPosition;
+                                    }
+                                    else
+                                    {
+                                        transform.position += stepMotion;
+                                    }
+                                    moved = true;
+                                    break;
+                                }
                                 else { Debug.Log($"[EnemyKnockback] incremental step blocked by '{stepBlocking?.name}'", this); }
-                                
+
                                 step *= 0.5f;
                             }
                             if (!moved) { Debug.Log($"[EnemyKnockback] Knockback blocked by capsule overlap on '{name}' — stopping (blocking '{blocking?.name}').", this); break; }
@@ -198,74 +222,122 @@ public class EnemyKnockback : MonoBehaviour
                     }
                     else
                     {
-                        CollisionUtility.MoveWithCapsuleCollision(rb, capsule, motion, collisionLayers);
+                        // Non-kinematic - prefer using collision utility to respect physics when no agent.
+                        if (hadAgent)
+                        {
+                            // If agent present, prefer using agent.Move and sync Rigidbody via MovePosition.
+                            // Still use collision utility only when agent is not available.
+                            // We attempt a simple agent movement; collision safety remains via the capsule overlap checks above.
+                            agent.Move(motion);
+                            if (!rb.isKinematic) rb.MovePosition(agent.nextPosition);
+                            else transform.position = agent.nextPosition;
+                        }
+                        else
+                        {
+                            CollisionUtility.MoveWithCapsuleCollision(rb, capsule, motion, collisionLayers);
+                        }
                     }
                 }
                 else
                 {
                     float capHeight = Mathf.Max(0.01f, fallbackCapsuleHeight);
-                    
+
                     float capRadius = Mathf.Max(0.01f, fallbackCapsuleRadius);
-                    
+
                     Vector3 capsuleTop = rb.position + Vector3.up * (capHeight / 2f);
-                    
+
                     Vector3 capsuleBottom = rb.position - Vector3.up * (capHeight / 2f);
-                    
+
                     if (TryGetBlockingRaycast(oldPosition, motion.normalized, motion.magnitude, out Collider rcBlock, out RaycastHit rcHit)) { Debug.Log($"[EnemyKnockback] Fallback raycast blocked by '{rcBlock?.name}' — stopping knockback.", this); break; }
-                    
+
                     if (!Physics.CapsuleCast(capsuleTop, capsuleBottom, capRadius, motion.normalized, out RaycastHit hit, motion.magnitude, collisionLayers, QueryTriggerInteraction.Ignore))
                     {
-                        if (rb.isKinematic) transform.position += motion; else rb.MovePosition(rb.position + motion);
+                        if (hadAgent)
+                        {
+                            agent.Move(motion);
+                            if (!rb.isKinematic) rb.MovePosition(agent.nextPosition);
+                            else transform.position = agent.nextPosition;
+                        }
+                        else
+                        {
+                            if (rb.isKinematic) transform.position += motion; else rb.MovePosition(rb.position + motion);
+                        }
                     }
                     else
                     {
                         if (rb.isKinematic)
                         {
                             bool moved = false;
-                           
+
                             float remaining = motion.magnitude;
-                            
+
                             float step = Mathf.Min(0.2f, remaining);
-                            
+
                             for (int s = 0; s < 6 && step > 0.001f; s++)
                             {
                                 Vector3 stepMotion = motion.normalized * step;
-                                
+
                                 if (TryGetBlockingRaycast(oldPosition, motion.normalized, stepMotion.magnitude, out Collider stepRcBlock, out RaycastHit stepRcHit)) { Debug.Log($"[EnemyKnockback] incremental fallback ray blocked by '{stepRcBlock?.name}'", this); step *= 0.5f; continue; }
-                                
+
                                 Vector3 testTop = (rb.position + stepMotion) + Vector3.up * (capHeight / 2f);
-                                
+
                                 Vector3 testBottom = (rb.position + stepMotion) - Vector3.up * (capHeight / 2f);
-                                
+
                                 Collider[] overlaps = Physics.OverlapCapsule(testTop, testBottom, capRadius, collisionLayers, QueryTriggerInteraction.Ignore);
-                                
-                                if (!TryGetBlockingOverlap(overlaps, out Collider blocking2)) { transform.position += stepMotion; moved = true; break; }
-                                
+
+                                if (!TryGetBlockingOverlap(overlaps, out Collider blocking2))
+                                {
+                                    if (hadAgent)
+                                    {
+                                        agent.Move(stepMotion);
+                                        if (!rb.isKinematic) rb.MovePosition(agent.nextPosition);
+                                        else transform.position = agent.nextPosition;
+                                    }
+                                    else
+                                    {
+                                        transform.position += stepMotion;
+                                    }
+                                    moved = true;
+                                    break;
+                                }
+
                                 else { Debug.Log($"[EnemyKnockback] incremental fallback step blocked by '{blocking2?.name}'", this); }
-                                
+
                                 step *= 0.5f;
                             }
                             if (!moved) { Debug.Log($"[EnemyKnockback] Knockback blocked by capsule cast on '{name}' — hit '{hit.collider?.name}'. Stopping knockback.", this); break; }
                         }
-                        else { Debug.Log($"[EnemyKnockback] Knockback blocked by capsule cast on '{name}' — hit '{hit.collider?.name}'. Stopping knockback.", this); break; }
+                        else
+                        {
+                            Debug.Log($"[EnemyKnockback] Knockback blocked by capsule cast on '{name}' — hit '{hit.collider?.name}'. Stopping knockback.", this);
+                            break;
+                        }
                     }
                 }
+
                 if (Vector3.Distance(oldPosition, rb.position) < 0.001f && !rb.isKinematic) { Debug.Log($"[EnemyKnockback] Knockback movement stalled on '{name}' (oldPos==newPos) — breaking.", this); break; } else { Vector3 newPos = rb.isKinematic ? transform.position : rb.position; Debug.Log($"[EnemyKnockback] '{name}' moved from {oldPosition} to {newPos} during knockback.", this); }
             }
             elapsed += Time.fixedDeltaTime;
-           
+
             yield return new WaitForFixedUpdate();
         }
-        if (hadAgent && agent != null) { agent.Warp(rb.position); agent.updatePosition = true; agent.isStopped = false; }
-       
+
+        if (hadAgent && agent != null)
+        {
+            Vector3 syncPos = rb.isKinematic ? transform.position : rb.position;
+            agent.Warp(syncPos);
+            agent.updatePosition = true;
+            agent.isStopped = false;
+        }
+
         if (movementComp != null) movementComp.SetMovementEnabled(true);
-       
+
         Vector3 finalPos = rb.isKinematic ? transform.position : rb.position;
-        
+
         Debug.Log($"[EnemyKnockback] KnockbackRoutine END on '{name}' finalPos={finalPos}", this);
-        
+
         IsBeingKnockedBack = false;
-        
+
         knockbackCoroutine = null;
     }
 
@@ -287,28 +359,20 @@ public class EnemyKnockback : MonoBehaviour
         {
             if (col == null) continue;
 
-            // ignore triggers (they shouldn't block physical movement)
             if (col.isTrigger) continue;
 
-            // ignore colliders on this exact transform
             if (col.transform == transform) continue;
 
-            // ignore colliders on children of this object
             if (col.transform.IsChildOf(transform)) continue;
 
-            // ignore colliders on parents/ancestors of this object
             if (transform.IsChildOf(col.transform)) continue;
 
-            // ignore colliders that are part of the same Rigidbody (same physics body)
             if (col.attachedRigidbody == rb) continue;
 
-            // ignore colliders that share the same top-level root (same prefab/actor)
             if (col.transform.root == transform.root) continue;
 
-            // ignore terrain layer if present
             if (terrainLayer != -1 && col.gameObject.layer == terrainLayer) continue;
 
-            // This collider belongs to another object -> blocking
             blocking = col;
             return true;
         }
