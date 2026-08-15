@@ -1,242 +1,538 @@
 using UnityEngine;
 
 /// <summary>
-/// Invisible barrier that only allows the player to pass when they are tethered to a tower.
-/// Usage:
-/// - Attach this to a GameObject that has a trigger Collider (isTrigger=true) to detect the player.
-/// - The same GameObject (or a child) should contain a non-trigger Collider that physically blocks the player.
-/// - The script will toggle collision between the blocking collider and the player's collider while the player
-///   is inside the trigger based on PlayerAnchor.IsTethered.
+/// Tower barrier controlled by the player's tether and dash state.
+///
+/// Behavior:
+///
+/// 1. Player does NOT need to be inside the trigger to activate the barrier.
+/// 2. Player must be tethered AND dashing at the same time.
+/// 3. When tethered + dashing starts, the barrier disables.
+/// 4. Barrier can stay disabled for up to temporaryDisableDuration seconds.
+/// 5. If the player enters the barrier trigger while it is disabled,
+///    the barrier immediately re-enables.
+/// 6. If the player stops dashing, the barrier re-enables.
+/// 7. If tether is lost, a short tether grace period is used before
+///    closing the barrier.
+/// 8. The barrier can activate again on another tethered dash.
 /// </summary>
 public class TowerBarrier : MonoBehaviour
 {
-    [Tooltip("Player tag used to identify the player collider")]
-    public string playerTag = "Player";
+    [Header("Player References")]
 
-    [Tooltip("Optional explicit blocking collider. If null the script will find a non-trigger collider on this object or children.")]
+    [Tooltip("Player's PlayerAnchor component.")]
+    public PlayerAnchor playerAnchor;
+
+    [Tooltip("Player's PlayerMovement component.")]
+    public PlayerMovement playerMovement;
+
+
+    [Header("Barrier")]
+
+    [Tooltip("The physical collider that blocks the player.")]
     public Collider blockingCollider;
 
-    // runtime
-    private Collider playerCollider;
-    private PlayerAnchor playerAnchor;
-    private bool playerInside = false;
-    private PlayerMovement playerMovement;
-    private Collider[] playerColliders = null;
-    private float lastTetheredTime = -Mathf.Infinity;
-    [Tooltip("Grace period after tether release during which a dash still counts as 'tethered' (seconds)")]
-    public float tetherGracePeriod = 0.2f;
-    private bool currentIgnore = false;
-    [Tooltip("When conditions are met, disable the blocking collider for this many seconds to allow passage.")]
-    public float temporaryDisableDuration = 1.0f;
-    private bool disableInProgress = false;
-    // Debug toggles visible in inspector to help diagnose behavior at runtime
-    [Header("Debug (runtime)")]
-    public bool debugIsTethered = false;
-    public bool debugIsDashing = false;
-    public bool debugWasRecentlyTethered = false;
-    public bool debugAllowPass = false;
-    // debug
-    private bool prevIsDashing = false;
-    private bool prevTethered = false;
-    private bool prevShouldIgnore = false;
-    private float debugLogTimer = 0f;
+    [Tooltip("Maximum time the barrier remains disabled.")]
+    public float temporaryDisableDuration = 10f;
+
+
+    [Header("Tether Settings")]
+
+    [Tooltip(
+        "How long after IsTethered becomes false before the barrier " +
+        "treats the player as completely untethered."
+    )]
+    public float tetherReleaseDelay = 1f;
+
+
+    [Header("Trigger Settings")]
+
+    [Tooltip(
+        "When enabled, entering this object's trigger while the barrier " +
+        "is disabled immediately closes the barrier."
+    )]
+    public bool reactivateOnTriggerEnter = true;
+
+
+    [Header("Debug")]
+
+    public bool debugIsTethered;
+    public bool debugIsDashing;
+    public bool debugTetherGraceActive;
+    public bool debugAllowPass;
+    public bool debugBarrierOpen;
+    public float debugRemainingTime;
+    public float debugTetherReleaseTimer;
+
+
+    // ---------------------------------------------------------
+    // INTERNAL STATE
+    // ---------------------------------------------------------
+
+    private bool dashSequenceStarted = false;
+
+    private bool previousTethered = false;
+
+    private float tetherReleaseTimer = 0f;
+
+    private Coroutine barrierCoroutine;
+
+    private void FindPlayerReferences()
+    {
+        // If already assigned, keep the assigned references.
+        if (playerAnchor != null && playerMovement != null)
+            return;
+
+        // Find PlayerAnchor anywhere in the currently loaded scenes.
+        if (playerAnchor == null)
+        {
+            playerAnchor = FindFirstObjectByType<PlayerAnchor>();
+        }
+
+        // Find PlayerMovement anywhere in the currently loaded scenes.
+        if (playerMovement == null)
+        {
+            playerMovement = FindFirstObjectByType<PlayerMovement>();
+        }
+
+        if (playerAnchor != null)
+        {
+            Debug.Log(
+                $"TowerBarrier: Found PlayerAnchor '{playerAnchor.name}' " +
+                $"in scene '{playerAnchor.gameObject.scene.name}'."
+            );
+        }
+
+        if (playerMovement != null)
+        {
+            Debug.Log(
+                $"TowerBarrier: Found PlayerMovement '{playerMovement.name}' " +
+                $"in scene '{playerMovement.gameObject.scene.name}'."
+            );
+        }
+    }
+    // ---------------------------------------------------------
+    // START
+    // ---------------------------------------------------------
 
     private void Start()
     {
-        if (blockingCollider == null)
-        {
-            // find a non-trigger collider on self or children
-            var cols = GetComponentsInChildren<Collider>(true);
-            foreach (var c in cols)
-            {
-                if (c != null && !c.isTrigger)
-                {
-                    blockingCollider = c;
-                    break;
-                }
-            }
-        }
+        FindBlockingCollider();
+        FindPlayerReferences();
 
         if (blockingCollider == null)
-            Debug.LogWarning($"[TutorialArea] No blocking (non-trigger) collider found on '{gameObject.name}'. This barrier will not block.");
-        else
         {
-            // warn if blocking collider is also a trigger collider on this object (conflict)
-            var triggerCols = GetComponentsInChildren<Collider>(true);
-            foreach (var tc in triggerCols)
-            {
-                if (tc == null) continue;
-                if (tc == blockingCollider && tc.isTrigger)
-                {
-                    Debug.LogWarning($"TowerBarrier: blockingCollider is also a trigger on '{gameObject.name}'. The trigger and blocking collider must be different colliders.");
-                    break;
-                }
-            }
+            Debug.LogWarning(
+                $"TowerBarrier: No non-trigger blocking collider found on '{gameObject.name}'."
+            );
+        }
+
+
+        if (playerAnchor == null)
+        {
+            Debug.LogWarning(
+                $"TowerBarrier: PlayerAnchor is not assigned on '{gameObject.name}'."
+            );
+        }
+
+
+        if (playerMovement == null)
+        {
+            Debug.LogWarning(
+                $"TowerBarrier: PlayerMovement is not assigned on '{gameObject.name}'."
+            );
+        }
+
+
+        // Barrier starts active.
+        CloseBarrier();
+
+
+        if (playerAnchor != null)
+        {
+            previousTethered =
+                playerAnchor.IsTethered;
         }
     }
+
+
+    // ---------------------------------------------------------
+    // UPDATE
+    // ---------------------------------------------------------
 
     private void Update()
     {
-        // while the player is inside the detection trigger, poll tether state and update collision
-        if (!playerInside || playerCollider == null || blockingCollider == null) return;
+        if (playerAnchor == null ||
+            playerMovement == null ||
+            blockingCollider == null)
+        {
+            return;
+        }
 
-        if (playerAnchor == null)
-            playerAnchor = playerCollider.GetComponentInParent<PlayerAnchor>();
 
-        if (playerMovement == null)
-            playerMovement = playerCollider.GetComponentInParent<PlayerMovement>();
+        bool rawTethered =
+            playerAnchor.IsTethered;
 
-        // update last tethered time while tethered
-        if (playerAnchor != null && playerAnchor.IsTethered)
-            lastTetheredTime = Time.time;
+        bool isDashing =
+            playerMovement.IsDashing;
 
-        bool isDashing = playerMovement != null && playerMovement.IsDashing;
-        bool wasRecentlyTethered = (Time.time - lastTetheredTime) <= tetherGracePeriod;
 
-        // allow pass-through only if the player is dashing and was tethered recently (or still tethered)
-        bool tetheredNow = playerAnchor != null && playerAnchor.IsTethered;
-        bool shouldIgnore = isDashing && (tetheredNow || wasRecentlyTethered);
+        // -----------------------------------------------------
+        // TETHER RELEASE DELAY
+        // -----------------------------------------------------
 
-        // expose for inspector debugging
+        if (rawTethered)
+        {
+            // Player is tethered.
+            tetherReleaseTimer = 0f;
+        }
+        else
+        {
+            // Player is no longer tethered.
+            if (previousTethered)
+            {
+                tetherReleaseTimer += Time.deltaTime;
+            }
+            else if (tetherReleaseTimer > 0f)
+            {
+                tetherReleaseTimer += Time.deltaTime;
+            }
+        }
+
+
+        // The player is considered tethered during the release delay.
+        bool effectiveTethered =
+            rawTethered ||
+            tetherReleaseTimer < tetherReleaseDelay;
+
+
+        // -----------------------------------------------------
+        // DEBUG
+        // -----------------------------------------------------
+
+        debugIsTethered = rawTethered;
         debugIsDashing = isDashing;
-        debugIsTethered = tetheredNow;
-        debugWasRecentlyTethered = wasRecentlyTethered;
-        debugAllowPass = shouldIgnore;
 
-        // throttle debug logs to once per 0.2s unless values change
-        debugLogTimer -= Time.deltaTime;
-        if (debugLogTimer <= 0f || isDashing != prevIsDashing || tetheredNow != prevTethered || shouldIgnore != prevShouldIgnore)
+        debugTetherReleaseTimer =
+            tetherReleaseTimer;
+
+        debugTetherGraceActive =
+            !rawTethered &&
+            tetherReleaseTimer < tetherReleaseDelay;
+
+
+        // -----------------------------------------------------
+        // VALID PASS CONDITION
+        // -----------------------------------------------------
+
+        bool allowPass =
+            effectiveTethered &&
+            isDashing;
+
+        debugAllowPass = allowPass;
+
+
+        // -----------------------------------------------------
+        // START BARRIER
+        // -----------------------------------------------------
+
+        if (allowPass)
         {
-            debugLogTimer = 0.2f;
-            Debug.Log($"TowerBarrier: inside={playerInside} isDashing={isDashing} tetheredNow={tetheredNow} wasRecentlyTethered={wasRecentlyTethered} shouldIgnore={shouldIgnore} currentIgnore={currentIgnore} lastTetheredTime={lastTetheredTime} time={Time.time}");
-            if (playerColliders != null)
+            if (!dashSequenceStarted)
             {
-                string names = "";
-                foreach (var pc in playerColliders) if (pc != null) names += pc.gameObject.name + ",";
-                Debug.Log($"TowerBarrier: playerColliders ({playerColliders.Length}): {names}");
+                dashSequenceStarted = true;
+
+                Debug.Log(
+                    "TowerBarrier: TETHERED + DASHING detected. " +
+                    "Disabling barrier."
+                );
+
+                StartBarrier();
             }
         }
 
-        if (shouldIgnore != currentIgnore)
+
+        // -----------------------------------------------------
+        // STOP DASH
+        // -----------------------------------------------------
+
+        if (!isDashing)
         {
-            // Instead of per-collider IgnoreCollision, briefly disable the blocking collider to allow passage.
-            if (shouldIgnore)
+            if (dashSequenceStarted)
             {
-                TryTemporarilyDisableBlocking();
+                dashSequenceStarted = false;
+
+                CloseBarrier();
+
+                Debug.Log(
+                    "TowerBarrier: Dash ended. Barrier reactivated."
+                );
             }
-            currentIgnore = shouldIgnore;
         }
 
-        // Manual inspector override for quick debugging: if the debug checkbox is enabled and player is inside,
-        // force a temporary disable so you can test passing through in the editor.
-        if (debugAllowPass && playerInside && !disableInProgress)
+
+        // -----------------------------------------------------
+        // COMPLETELY UNTETHERED
+        // -----------------------------------------------------
+
+        if (!effectiveTethered)
         {
-            Debug.Log("TowerBarrier: debugAllowPass triggered - disabling blocking collider for debug.");
-            TryTemporarilyDisableBlocking();
+            if (dashSequenceStarted)
+            {
+                dashSequenceStarted = false;
+
+                CloseBarrier();
+
+                Debug.Log(
+                    "TowerBarrier: Tether release delay expired. " +
+                    "Barrier reactivated."
+                );
+            }
         }
 
-        prevIsDashing = isDashing;
-        prevTethered = tetheredNow;
-        prevShouldIgnore = shouldIgnore;
+
+        previousTethered =
+            rawTethered;
     }
+
+
+    // ---------------------------------------------------------
+    // START BARRIER TIMER
+    // ---------------------------------------------------------
+
+    private void StartBarrier()
+    {
+        if (blockingCollider == null)
+            return;
+
+
+        // Stop an old timer if one exists.
+        if (barrierCoroutine != null)
+        {
+            StopCoroutine(barrierCoroutine);
+            barrierCoroutine = null;
+        }
+
+
+        barrierCoroutine =
+            StartCoroutine(
+                BarrierOpenCoroutine()
+            );
+    }
+
+
+    // ---------------------------------------------------------
+    // BARRIER COROUTINE
+    // ---------------------------------------------------------
+
+    private System.Collections.IEnumerator BarrierOpenCoroutine()
+    {
+        if (blockingCollider == null)
+            yield break;
+
+
+        // -----------------------------------------------------
+        // DISABLE BARRIER
+        // -----------------------------------------------------
+
+        blockingCollider.enabled = false;
+
+        debugBarrierOpen = true;
+
+
+        Debug.Log(
+            $"TowerBarrier: Barrier DISABLED for up to " +
+            $"{temporaryDisableDuration} seconds."
+        );
+
+
+        float timer = 0f;
+
+
+        // -----------------------------------------------------
+        // TIMER
+        // -----------------------------------------------------
+
+        while (timer < temporaryDisableDuration)
+        {
+            // Safety check.
+            if (playerAnchor == null ||
+                playerMovement == null)
+            {
+                break;
+            }
+
+
+            bool isTethered =
+                playerAnchor.IsTethered;
+
+            bool isDashing =
+                playerMovement.IsDashing;
+
+
+            // -------------------------------------------------
+            // STOP IF DASH ENDS
+            // -------------------------------------------------
+
+            if (!isDashing)
+            {
+                Debug.Log(
+                    "TowerBarrier: Player stopped dashing. " +
+                    "Reactivating barrier."
+                );
+
+                break;
+            }
+
+
+            // -------------------------------------------------
+            // STOP IF COMPLETELY UNTETHERED
+            // -------------------------------------------------
+
+            bool stillEffectivelyTethered =
+                isTethered ||
+                tetherReleaseTimer < tetherReleaseDelay;
+
+
+            if (!stillEffectivelyTethered)
+            {
+                Debug.Log(
+                    "TowerBarrier: Player is no longer tethered. " +
+                    "Reactivating barrier."
+                );
+
+                break;
+            }
+
+
+            // Increase timer.
+            timer += Time.deltaTime;
+
+
+            debugRemainingTime =
+                Mathf.Max(
+                    0f,
+                    temporaryDisableDuration - timer
+                );
+
+
+            yield return null;
+        }
+
+
+        // -----------------------------------------------------
+        // TIMER EXPIRED OR CONDITION ENDED
+        // -----------------------------------------------------
+
+        CloseBarrier();
+
+        dashSequenceStarted = false;
+        barrierCoroutine = null;
+
+
+        Debug.Log(
+            "TowerBarrier: Barrier timer finished. " +
+            "Barrier REACTIVATED."
+        );
+    }
+
+
+    // ---------------------------------------------------------
+    // TRIGGER
+    // ---------------------------------------------------------
 
     private void OnTriggerEnter(Collider other)
     {
-        // Accept the trigger if the collider belongs to the player (by PlayerMovement or PlayerAnchor) or matches tag
-        var pm = other.GetComponentInParent<PlayerMovement>();
-        var pa = other.GetComponentInParent<PlayerAnchor>();
-        if (pm == null && pa == null && !other.CompareTag(playerTag))
+        if (!reactivateOnTriggerEnter)
             return;
 
-        playerInside = true;
-        playerCollider = other;
-        playerAnchor = pa != null ? pa : other.GetComponentInParent<PlayerAnchor>();
-        playerMovement = pm != null ? pm : other.GetComponentInParent<PlayerMovement>();
 
-        // gather all colliders that belong to the player's root GameObject so we can ignore collisions robustly
-        if (playerMovement != null)
+        if (!debugBarrierOpen)
+            return;
+
+
+        // Check whether this is the player.
+        PlayerMovement pm =
+            other.GetComponentInParent<PlayerMovement>();
+
+        PlayerAnchor pa =
+            other.GetComponentInParent<PlayerAnchor>();
+
+
+        if (pm == null && pa == null)
+            return;
+
+
+        // -----------------------------------------------------
+        // PLAYER PASSED THROUGH THE BARRIER
+        // -----------------------------------------------------
+
+        Debug.Log(
+            "TowerBarrier: Player passed through trigger. " +
+            "Reactivating barrier immediately."
+        );
+
+
+        // Stop timer.
+        if (barrierCoroutine != null)
         {
-            playerColliders = playerMovement.GetComponentsInChildren<Collider>(true);
-        }
-        else
-        {
-            // fallback: only the entering collider
-            playerColliders = new Collider[] { playerCollider };
+            StopCoroutine(barrierCoroutine);
+            barrierCoroutine = null;
         }
 
-        // initialize lastTetheredTime
-        if (playerAnchor != null && playerAnchor.IsTethered)
-            lastTetheredTime = Time.time;
 
-        // initialize collision state
-        currentIgnore = false;
-        bool isDashing = playerMovement != null && playerMovement.IsDashing;
-        bool wasRecentlyTethered = (Time.time - lastTetheredTime) <= tetherGracePeriod;
-        bool shouldIgnore = isDashing && (playerAnchor != null && (playerAnchor.IsTethered || wasRecentlyTethered));
-        if (blockingCollider != null && playerColliders != null)
-        {
-            foreach (var pc in playerColliders)
-            {
-                if (pc == null) continue;
-                Physics.IgnoreCollision(blockingCollider, pc, shouldIgnore);
-            }
-        }
-        currentIgnore = shouldIgnore;
+        // Immediately close.
+        CloseBarrier();
+
+
+        dashSequenceStarted = false;
     }
 
-    private void OnTriggerExit(Collider other)
+
+    // ---------------------------------------------------------
+    // CLOSE BARRIER
+    // ---------------------------------------------------------
+
+    private void CloseBarrier()
     {
-        // Only clear state when the collider leaving belongs to the same player we tracked
-        var pm = other.GetComponentInParent<PlayerMovement>();
-        if (playerMovement != null)
-        {
-            if (pm != playerMovement)
-                return;
-        }
-        else
-        {
-            // fallback: if no PlayerMovement tracked, ensure this is the same collider that entered
-            if (other != playerCollider && !other.CompareTag(playerTag))
-                return;
-        }
-
-        if (blockingCollider != null && playerColliders != null)
-        {
-            // restore collision when player leaves
-            foreach (var pc in playerColliders)
-            {
-                if (pc == null) continue;
-                Physics.IgnoreCollision(blockingCollider, pc, false);
-            }
-        }
-
-        playerInside = false;
-        playerCollider = null;
-        playerAnchor = null;
-        playerMovement = null;
-        playerColliders = null;
-    }
-
-    private void TryTemporarilyDisableBlocking()
-    {
-        if (blockingCollider == null) return;
-        if (disableInProgress) return;
-
-        StartCoroutine(TemporaryDisableCoroutine());
-    }
-
-    private System.Collections.IEnumerator TemporaryDisableCoroutine()
-    {
-        disableInProgress = true;
-        bool previousEnabled = blockingCollider.enabled;
-        blockingCollider.enabled = false;
-        Debug.Log($"TowerBarrier: Temporarily disabled blocking collider '{blockingCollider.name}' for {temporaryDisableDuration} seconds.");
-        yield return new WaitForSeconds(temporaryDisableDuration);
         if (blockingCollider != null)
         {
-            blockingCollider.enabled = previousEnabled;
-            Debug.Log($"TowerBarrier: Re-enabled blocking collider '{blockingCollider.name}'.");
+            blockingCollider.enabled = true;
         }
-        disableInProgress = false;
+
+
+        debugBarrierOpen = false;
+        debugRemainingTime = 0f;
+    }
+
+
+    // ---------------------------------------------------------
+    // FIND BLOCKING COLLIDER
+    // ---------------------------------------------------------
+
+    private void FindBlockingCollider()
+    {
+        if (blockingCollider != null)
+            return;
+
+
+        Collider[] colliders =
+            GetComponentsInChildren<Collider>(true);
+
+
+        foreach (Collider col in colliders)
+        {
+            if (col == null)
+                continue;
+
+
+            // We want the physical collider,
+            // not the trigger.
+            if (!col.isTrigger)
+            {
+                blockingCollider = col;
+                break;
+            }
+        }
     }
 }
