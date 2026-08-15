@@ -51,10 +51,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             attackComponent = GetComponent<EnemyAttack>();
         }
 
-        if (movement == null)
-        {
-            Debug.LogError($"{name} is missing a MovementComponent.", this);
-        }
+        //if (movement == null)
+        //{
+        //    Debug.LogError($"{name} is missing a MovementComponent.", this);
+        //}
 
         if (agent != null)
         {
@@ -72,7 +72,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             health = GetComponent<Health>();
             if (health == null)
             {
-                Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
+                //Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
                 health = gameObject.AddComponent<Health>();
             }
         }
@@ -85,12 +85,12 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             if (playerObject != null)
             {
                 player = playerObject.transform;
-                Debug.Log($"Found player: {player.name}");
+                //Debug.Log($"Found player: {player.name}");
             }
-            else
-            {
-                Debug.LogError("No GameObject with 'Player' tag found!");
-            }
+            //else
+            //{
+            //    Debug.LogError("No GameObject with 'Player' tag found!");
+            //}
         }
         enableNav = true;
     }
