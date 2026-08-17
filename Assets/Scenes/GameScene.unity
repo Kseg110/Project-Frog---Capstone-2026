@@ -917,6 +917,7 @@ GameObject:
   m_Component:
   - component: {fileID: 38953641}
   - component: {fileID: 38953642}
+  - component: {fileID: 38953643}
   m_Layer: 0
   m_Name: Collider1
   m_TagString: Untagged
@@ -960,6 +961,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 7
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &38953643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 38953640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &40384328 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6007023118855961176, guid: 91c09b74764bbb44fa42642540f50bdd, type: 3}
@@ -2116,6 +2129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 94353811}
   - component: {fileID: 94353812}
+  - component: {fileID: 94353813}
   m_Layer: 0
   m_Name: Collider1
   m_TagString: Untagged
@@ -2159,6 +2173,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 6
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &94353813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94353810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1001 &95038791
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3811,6 +3837,7 @@ GameObject:
   m_Component:
   - component: {fileID: 189550283}
   - component: {fileID: 189550284}
+  - component: {fileID: 189550285}
   m_Layer: 0
   m_Name: Collider3
   m_TagString: Untagged
@@ -3854,6 +3881,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 7
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &189550285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 189550282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &190790284 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7817971408759747718, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
@@ -4082,118 +4121,6 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 197906205}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &198650122
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 198650123}
-  - component: {fileID: 198650126}
-  - component: {fileID: 198650125}
-  - component: {fileID: 198650124}
-  m_Layer: 9
-  m_Name: TutorialBridge
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &198650123
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198650122}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.02122247, z: -0, w: -0.9997748}
-  m_LocalPosition: {x: -163.6783, y: -2.1466, z: 176.9645}
-  m_LocalScale: {x: 4.3456397, y: 0.42, z: 10.3}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 842460681}
-  m_LocalEulerAnglesHint: {x: 0, y: 357.568, z: 0}
---- !u!65 &198650124
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198650122}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &198650125
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198650122}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &198650126
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198650122}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &201730561 stripped
 GameObject:
@@ -10848,6 +10775,7 @@ GameObject:
   m_Component:
   - component: {fileID: 273873513}
   - component: {fileID: 273873514}
+  - component: {fileID: 273873515}
   m_Layer: 0
   m_Name: Collider3
   m_TagString: Untagged
@@ -10891,6 +10819,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 18.81, y: 1, z: 4.4}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &273873515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 273873512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &277056323 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3576636988804155383, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
@@ -16074,6 +16014,7 @@ GameObject:
   m_Component:
   - component: {fileID: 293811200}
   - component: {fileID: 293811201}
+  - component: {fileID: 293811202}
   m_Layer: 3
   m_Name: Collider4
   m_TagString: Untagged
@@ -16117,6 +16058,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 24.5, y: 1, z: 6.76}
   m_Center: {x: -1.1, y: 0, z: -4.78}
+--- !u!114 &293811202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 293811199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &294180112
 GameObject:
   m_ObjectHideFlags: 0
@@ -16754,6 +16707,7 @@ GameObject:
   m_Component:
   - component: {fileID: 321862774}
   - component: {fileID: 321862775}
+  - component: {fileID: 321862776}
   m_Layer: 0
   m_Name: Collider2
   m_TagString: Untagged
@@ -16797,6 +16751,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 17.18, y: 1, z: 2.1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &321862776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321862773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &323074630
 GameObject:
   m_ObjectHideFlags: 0
@@ -27590,6 +27556,7 @@ GameObject:
   m_Component:
   - component: {fileID: 564423220}
   - component: {fileID: 564423221}
+  - component: {fileID: 564423222}
   m_Layer: 0
   m_Name: Collider4
   m_TagString: Untagged
@@ -27633,6 +27600,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 13.9, y: 1, z: 2.1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &564423222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 564423219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1001 &564904144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38395,6 +38374,7 @@ GameObject:
   m_Component:
   - component: {fileID: 603001211}
   - component: {fileID: 603001212}
+  - component: {fileID: 603001213}
   m_Layer: 0
   m_Name: Collider5
   m_TagString: Untagged
@@ -38438,6 +38418,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 7.53, y: 1, z: 1.6}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &603001213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603001210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &607040078 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8332076506347898149, guid: 235306f727a087e409d45ee90973d100, type: 3}
@@ -38458,6 +38450,7 @@ GameObject:
   m_Component:
   - component: {fileID: 607177517}
   - component: {fileID: 607177518}
+  - component: {fileID: 607177519}
   m_Layer: 0
   m_Name: Collider6
   m_TagString: Untagged
@@ -38501,6 +38494,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.84, y: 1, z: 19.48}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &607177519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 607177516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &608889739
 GameObject:
   m_ObjectHideFlags: 0
@@ -44820,6 +44825,7 @@ GameObject:
   m_Component:
   - component: {fileID: 683946709}
   - component: {fileID: 683946710}
+  - component: {fileID: 683946711}
   m_Layer: 0
   m_Name: Collider2
   m_TagString: Untagged
@@ -44863,6 +44869,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 25.99, y: 1, z: 3.2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &683946711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683946708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &686453789
 GameObject:
   m_ObjectHideFlags: 0
@@ -44873,6 +44891,7 @@ GameObject:
   m_Component:
   - component: {fileID: 686453790}
   - component: {fileID: 686453791}
+  - component: {fileID: 686453792}
   m_Layer: 0
   m_Name: Collider2
   m_TagString: Untagged
@@ -44916,6 +44935,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 11
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &686453792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 686453789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &690060457
 GameObject:
   m_ObjectHideFlags: 0
@@ -45569,6 +45600,7 @@ GameObject:
   m_Component:
   - component: {fileID: 722333827}
   - component: {fileID: 722333828}
+  - component: {fileID: 722333829}
   m_Layer: 0
   m_Name: Collider4
   m_TagString: Untagged
@@ -45612,6 +45644,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 7
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &722333829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722333826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &722745586
 GameObject:
   m_ObjectHideFlags: 0
@@ -46358,6 +46402,7 @@ GameObject:
   m_Component:
   - component: {fileID: 767683399}
   - component: {fileID: 767683400}
+  - component: {fileID: 767683401}
   m_Layer: 0
   m_Name: Collider4
   m_TagString: Untagged
@@ -46401,6 +46446,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 25.8, y: 1, z: 5.1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &767683401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767683398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!4 &768750446 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8235271406771323519, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}
@@ -52634,7 +52691,6 @@ Transform:
   - {fileID: 1609424552}
   - {fileID: 1770353530}
   - {fileID: 787980372}
-  - {fileID: 198650123}
   - {fileID: 515674432}
   - {fileID: 1081518372}
   - {fileID: 784883975}
@@ -59943,6 +59999,7 @@ GameObject:
   m_Component:
   - component: {fileID: 956204460}
   - component: {fileID: 956204461}
+  - component: {fileID: 956204462}
   m_Layer: 0
   m_Name: Collider1
   m_TagString: Untagged
@@ -59986,6 +60043,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 22.9, y: 1, z: 6.62}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &956204462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956204459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &960352569
 GameObject:
   m_ObjectHideFlags: 0
@@ -60696,6 +60765,7 @@ GameObject:
   m_Component:
   - component: {fileID: 988213772}
   - component: {fileID: 988213773}
+  - component: {fileID: 988213774}
   m_Layer: 3
   m_Name: Collider1
   m_TagString: Untagged
@@ -60739,6 +60809,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 24.5, y: 1, z: 6.76}
   m_Center: {x: -1.1, y: 0, z: -4.78}
+--- !u!114 &988213774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 988213771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &991510669
 GameObject:
   m_ObjectHideFlags: 0
@@ -60887,6 +60969,7 @@ GameObject:
   m_Component:
   - component: {fileID: 999791083}
   - component: {fileID: 999791084}
+  - component: {fileID: 999791085}
   m_Layer: 0
   m_Name: Collider3
   m_TagString: Untagged
@@ -60930,6 +61013,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 17.3, y: 1, z: 2.4}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &999791085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 999791082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &1001954894
 GameObject:
   m_ObjectHideFlags: 0
@@ -67849,6 +67944,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1107658371}
   - component: {fileID: 1107658372}
+  - component: {fileID: 1107658373}
   m_Layer: 0
   m_Name: Collider5
   m_TagString: Untagged
@@ -67892,6 +67988,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 22.2, y: 1, z: 2.8}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1107658373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107658370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &1110360834
 GameObject:
   m_ObjectHideFlags: 0
@@ -74475,6 +74583,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1184600281}
   - component: {fileID: 1184600282}
+  - component: {fileID: 1184600283}
   m_Layer: 0
   m_Name: Collider1
   m_TagString: Untagged
@@ -74518,6 +74627,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 29.68, y: 1, z: 6.62}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1184600283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184600280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1001 &1189185419
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -75399,6 +75520,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1236546375}
   - component: {fileID: 1236546376}
+  - component: {fileID: 1236546377}
   m_Layer: 3
   m_Name: Collider5
   m_TagString: Untagged
@@ -75442,6 +75564,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 24.5, y: 1, z: 2.24}
   m_Center: {x: -1.1, y: 0, z: -4.78}
+--- !u!114 &1236546377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1236546374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &1244964060
 GameObject:
   m_ObjectHideFlags: 0
@@ -76214,6 +76348,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1273809326}
   - component: {fileID: 1273809327}
+  - component: {fileID: 1273809328}
   m_Layer: 0
   m_Name: Collider4
   m_TagString: Untagged
@@ -76257,6 +76392,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 6
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1273809328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1273809325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &1277942296
 GameObject:
   m_ObjectHideFlags: 0
@@ -77666,6 +77813,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1334271620}
   - component: {fileID: 1334271621}
+  - component: {fileID: 1334271622}
   m_Layer: 0
   m_Name: Collider2
   m_TagString: Untagged
@@ -77709,6 +77857,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 6
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1334271622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1334271619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &1334797495
 GameObject:
   m_ObjectHideFlags: 0
@@ -78320,6 +78480,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1348422058}
   - component: {fileID: 1348422059}
+  - component: {fileID: 1348422060}
   m_Layer: 0
   m_Name: Collider5
   m_TagString: Untagged
@@ -78363,6 +78524,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 7
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1348422060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348422057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &1349334833
 GameObject:
   m_ObjectHideFlags: 0
@@ -79114,6 +79287,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1386267931}
   - component: {fileID: 1386267932}
+  - component: {fileID: 1386267933}
   m_Layer: 3
   m_Name: Collider2
   m_TagString: Untagged
@@ -79157,6 +79331,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 24.5, y: 1, z: 4.82}
   m_Center: {x: -1.1, y: 0, z: -4.78}
+--- !u!114 &1386267933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1386267930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &1399250058 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7657956140332551461, guid: 235306f727a087e409d45ee90973d100, type: 3}
@@ -113614,6 +113800,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1679913192}
   - component: {fileID: 1679913193}
+  - component: {fileID: 1679913194}
   m_Layer: 3
   m_Name: Collider3
   m_TagString: Untagged
@@ -113657,6 +113844,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 24.5, y: 1, z: 6.76}
   m_Center: {x: -1.1, y: 0, z: -4.78}
+--- !u!114 &1679913194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1679913191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1001 &1685692237
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -116216,6 +116415,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1760838862}
   - component: {fileID: 1760838863}
+  - component: {fileID: 1760838864}
   m_Layer: 0
   m_Name: Collider5
   m_TagString: Untagged
@@ -116259,6 +116459,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.09, y: 1, z: 4.76}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1760838864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760838861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &1766083405
 GameObject:
   m_ObjectHideFlags: 0
@@ -118004,6 +118216,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1842119102}
   - component: {fileID: 1842119103}
+  - component: {fileID: 1842119104}
   m_Layer: 0
   m_Name: Collider3
   m_TagString: Untagged
@@ -118047,6 +118260,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 6
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1842119104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1842119101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb898fa9de169e44e83cfbf8f491e7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MudPitTrigger
 --- !u!1 &1851350456
 GameObject:
   m_ObjectHideFlags: 0
