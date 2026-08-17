@@ -25387,14 +25387,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc2b95208f734e34391f13934a795e17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  playerTag: Player
+  playerAnchor: {fileID: 0}
+  playerMovement: {fileID: 0}
   blockingCollider: {fileID: 474170464}
-  tetherGracePeriod: 2
   temporaryDisableDuration: 0.5
+  tetherReleaseDelay: 1
+  reactivateOnTriggerEnter: 1
   debugIsTethered: 0
   debugIsDashing: 0
-  debugWasRecentlyTethered: 0
+  debugTetherGraceActive: 0
   debugAllowPass: 0
+  debugBarrierOpen: 0
+  debugRemainingTime: 0
+  debugTetherReleaseTimer: 0
 --- !u!65 &474170464
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27472,14 +27477,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc2b95208f734e34391f13934a795e17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  playerTag: Player
+  playerAnchor: {fileID: 0}
+  playerMovement: {fileID: 0}
   blockingCollider: {fileID: 571895391}
-  tetherGracePeriod: 2
   temporaryDisableDuration: 0.5
+  tetherReleaseDelay: 1
+  reactivateOnTriggerEnter: 1
   debugIsTethered: 0
   debugIsDashing: 0
-  debugWasRecentlyTethered: 0
+  debugTetherGraceActive: 0
   debugAllowPass: 0
+  debugBarrierOpen: 0
+  debugRemainingTime: 0
+  debugTetherReleaseTimer: 0
 --- !u!65 &571895391
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -38002,14 +38012,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc2b95208f734e34391f13934a795e17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  playerTag: Player
+  playerAnchor: {fileID: 0}
+  playerMovement: {fileID: 0}
   blockingCollider: {fileID: 608889743}
-  tetherGracePeriod: 2
   temporaryDisableDuration: 0.5
+  tetherReleaseDelay: 1
+  reactivateOnTriggerEnter: 1
   debugIsTethered: 0
   debugIsDashing: 0
-  debugWasRecentlyTethered: 0
+  debugTetherGraceActive: 0
   debugAllowPass: 0
+  debugBarrierOpen: 0
+  debugRemainingTime: 0
+  debugTetherReleaseTimer: 0
 --- !u!65 &608889743
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -65907,13 +65922,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1081518371}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.035771836, z: -0, w: -0.99935997}
-  m_LocalPosition: {x: -197.81998, y: -2.146633, z: 175.94998}
-  m_LocalScale: {x: 24.4, y: 0.42, z: 10.3}
+  m_LocalRotation: {x: -0, y: 0.023607017, z: -0, w: -0.99972135}
+  m_LocalPosition: {x: -203.333, y: -2.24, z: 175.55478}
+  m_LocalScale: {x: 13.3468, y: 0.42, z: 10.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 842460681}
-  m_LocalEulerAnglesHint: {x: 0, y: 355.9, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 357.295, z: 0}
 --- !u!65 &1081518373
 BoxCollider:
   m_ObjectHideFlags: 0
