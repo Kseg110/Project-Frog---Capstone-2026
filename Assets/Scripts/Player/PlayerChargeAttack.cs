@@ -233,8 +233,9 @@ public class PlayerChargeAttack : MonoBehaviour
                             proj.isPlayerProjectile = true;
                             proj.Initialize(chargePercent);
                             proj.damage = windDamage;
-
-                            // Apply charged knockback (same per projectile)
+                            proj.effectType = "Wind";
+                            proj.effectDuration = 0f;
+                            proj.effectValue = 0f;
                             proj.knockbackDistance = Mathf.Lerp(5f, 12f, chargePercent);
 
                             if (HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
