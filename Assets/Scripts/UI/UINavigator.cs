@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -15,11 +15,17 @@ public class UINavigator : MonoBehaviour
     [SerializeField] private FMODUnity.EventReference hoverEvent;
 
     private GameObject lastSelected;
+    private bool hasInitializedDefault = false;
+    private GameObject lastControllerSelected;
 
     void OnEnable()
     {
-        // StartCoroutine to select the first button after a short delay
-        StartCoroutine(WaitAndSelectFirstButton());
+        if (!hasInitializedDefault)
+        {
+            // StartCoroutine to select the first button after a short delay
+            StartCoroutine(WaitAndSelectFirstButton());
+            hasInitializedDefault = true;
+        }
     }
     IEnumerator WaitAndSelectFirstButton()
     {
@@ -27,8 +33,13 @@ public class UINavigator : MonoBehaviour
         yield return new WaitForSeconds(0.05f); // small delay to ensure the UI is ready
 
         Selectable first = defaultButton != null ? defaultButton : GetComponentInChildren<Selectable>();
+       
         if (first != null)
+        {
             EventSystem.current.SetSelectedGameObject(first.gameObject);
+            lastSelected = first.gameObject;
+            lastSelected.transform.localScale = Vector3.one * selectedScale;
+        }
     }
 
     void Update()
@@ -39,28 +50,38 @@ public class UINavigator : MonoBehaviour
     private void HandleSelectionVisual()
     {
         var es = EventSystem.current;
+        GameObject current = null;
 
-        // If the user is hovering over a UI element
-        GameObject current = UIHoverScaler.HoveredObject;
-
-        // If not hovering, use the currently selected UI element
-        if (current == null)
-            current = es.currentSelectedGameObject;
-
-        if (current == lastSelected)
-            return;
-
-        if (lastSelected != null)
-            lastSelected.transform.localScale = Vector3.one;
-
-        if (current != null)
-            current.transform.localScale = Vector3.one * selectedScale;
-
-        if (current != lastSelected && current != null)
+        if (UIHoverScaler.HoveredObject != null)
         {
-            FMODUnity.RuntimeManager.PlayOneShot(hoverEvent);
+            current = UIHoverScaler.HoveredObject;
+        }
+        else if (es.currentSelectedGameObject != null)
+        {
+            current = es.currentSelectedGameObject;
+        }
+        else
+        {
+            current = lastSelected;
         }
 
-        lastSelected = current;
+        if (current == null)
+            return;
+
+        Slider parentSlider = current.GetComponentInParent<Slider>();
+        if (parentSlider != null)
+            current = parentSlider.gameObject;
+
+        if (current != lastSelected)
+        {
+            if (lastSelected != null)
+                lastSelected.transform.localScale = Vector3.one;
+
+            current.transform.localScale = Vector3.one * selectedScale;
+
+            FMODUnity.RuntimeManager.PlayOneShot(hoverEvent);
+
+            lastSelected = current;
+        }
     }
 }
