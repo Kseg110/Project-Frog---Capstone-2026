@@ -298,6 +298,22 @@ public class Projectile : MonoBehaviour, IProjectile
             return;
         }
 
+        // ============================================================
+        // DAMAGE ANYTHING WITH HEALTH (TARGET DUMMY SUPPORT)
+        // ============================================================
+        var hp = other.GetComponent<Health>();
+        if (hp != null && isPlayerProjectile)
+        {
+            Debug.Log($"[Projectile] Hit {other.name} for {damage} dmg");
+
+            if (!string.IsNullOrEmpty(effectType))
+                hp.TakeDmg(damage, effectType, effectDuration, effectValue);
+            else
+                hp.TakeDmg(damage);
+
+            Destroy(gameObject);
+            return;
+        }
         // Destroy on hitting walls or other objects
         Destroy(gameObject);
     }

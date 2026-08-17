@@ -68,9 +68,10 @@ public class Health : MonoBehaviour, IDamageable
     {
         if (IsDead) return;
 
-
+        Debug.Log($"[Health] {gameObject.name} took {dmg} damage. HP before: {_currentHealth}");
         // Subtract CurrentHealth by damageAmmount
         CurrentHealth -= dmg;
+        Debug.Log($"[Health] {gameObject.name} HP after: {CurrentHealth}");
 
         RuntimeManager.PlayOneShot(damageTakenEvent, transform.position);
 
@@ -92,19 +93,23 @@ public class Health : MonoBehaviour, IDamageable
     // ============================================================
     public void TakeDmg(float dmg, string effectType, float effectDuration, float effectValue)
     {
+        Debug.Log($"[Health] Damage with effect: {effectType} | Base dmg: {dmg}");
         TakeDmg(dmg);
 
         if (effectType == "Burn")
+        {
+            Debug.Log($"[Burn] Applying burn: duration={effectDuration}, tickRate={effectValue}, baseDamage={dmg}");
             ApplyBurn(effectDuration, effectValue, dmg);
+        }
         else if (effectType == "Freeze")
         {
-            if (enemy != null)
-                enemy.Freeze(effectDuration);
+            Debug.Log($"[Freeze] Enemy frozen for {effectDuration}s");
+            enemy?.Freeze(effectDuration);
         }
         else if (effectType == "Slow")
         {
-            if (enemy != null)
-                enemy.ApplySlow(effectDuration);
+            Debug.Log($"[Slow] Enemy slowed for {effectDuration}s");
+            enemy?.ApplySlow(effectDuration);
         }
     }
 
@@ -187,6 +192,7 @@ public class Health : MonoBehaviour, IDamageable
                 float bonus = WildfireUpgrade.Instance.GetBurnBonus();
                 finalTickDamage *= 1f + bonus / 100f;
             }
+            Debug.Log($"[Burn] Tick damage: {finalTickDamage} | Timer: {timer}/{duration}");
 
             TakeDmg(finalTickDamage);
 
