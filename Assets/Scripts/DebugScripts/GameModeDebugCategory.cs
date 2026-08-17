@@ -1,7 +1,9 @@
 using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 [CreateAssetMenu(fileName = "GameModeDebugCategory", menuName = "Scriptable Objects/GameModeDebugCategory")]
 public class GameModeDebugCategory : DebugCategory
@@ -108,10 +110,14 @@ public class GameModeDebugCategory : DebugCategory
 
                 GUILayout.Label("Card", GUILayout.Width(140));
 
+#if UNITY_EDITOR
                 if (GUILayout.Button(selectedCard.CardName, GUILayout.Width(220)))
                 {
                     ShowCardDropdown(cards);
                 }
+#else
+                GUILayout.Label(selectedCard.CardName, GUILayout.Width(220));
+#endif
 
                 GUILayout.EndHorizontal();
 
@@ -145,7 +151,7 @@ public class GameModeDebugCategory : DebugCategory
     bool AutoFindWaveRoundSystem()
     {
         // Fast path: find active scene instances
-        var found = Object.FindObjectOfType<WaveRoundSystem>();
+        var found = Object.FindAnyObjectByType<WaveRoundSystem>();
         if (found != null)
         {
             waveRoundSystem = found;
@@ -179,6 +185,7 @@ public class GameModeDebugCategory : DebugCategory
         return false;
     }
 
+#if UNITY_EDITOR
     private void ShowCardDropdown(List<UpgradeDataSO> cards)
     {
         GenericMenu menu = new GenericMenu();
@@ -204,5 +211,6 @@ public class GameModeDebugCategory : DebugCategory
 
         menu.ShowAsContext();
     }
+#endif
 }
 
