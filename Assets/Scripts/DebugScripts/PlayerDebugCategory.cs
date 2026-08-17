@@ -178,7 +178,7 @@ public class PlayerDebugCategory : DebugCategory
         if (runtimeTakeDamage != null)
             runtimeTakeDamage.isGod = enabled;
 
-        PlayerTakeDamage[] all = Object.FindObjectsOfType<PlayerTakeDamage>();
+        PlayerTakeDamage[] all = Object.FindObjectsByType<PlayerTakeDamage>(FindObjectsSortMode.None);
         foreach (var p in all)
             p.isGod = enabled;
 

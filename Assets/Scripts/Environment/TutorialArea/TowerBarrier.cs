@@ -95,21 +95,21 @@ public class TowerBarrier : MonoBehaviour
             playerMovement = FindFirstObjectByType<PlayerMovement>();
         }
 
-        if (playerAnchor != null)
-        {
-            Debug.Log(
-                $"TowerBarrier: Found PlayerAnchor '{playerAnchor.name}' " +
-                $"in scene '{playerAnchor.gameObject.scene.name}'."
-            );
-        }
+        //if (playerAnchor != null)
+        //{
+        //    Debug.Log(
+        //        $"TowerBarrier: Found PlayerAnchor '{playerAnchor.name}' " +
+        //        $"in scene '{playerAnchor.gameObject.scene.name}'."
+        //    );
+        //}
 
-        if (playerMovement != null)
-        {
-            Debug.Log(
-                $"TowerBarrier: Found PlayerMovement '{playerMovement.name}' " +
-                $"in scene '{playerMovement.gameObject.scene.name}'."
-            );
-        }
+        //if (playerMovement != null)
+        //{
+        //    Debug.Log(
+        //        $"TowerBarrier: Found PlayerMovement '{playerMovement.name}' " +
+        //        $"in scene '{playerMovement.gameObject.scene.name}'."
+        //    );
+        //}
     }
     // ---------------------------------------------------------
     // START
@@ -120,28 +120,28 @@ public class TowerBarrier : MonoBehaviour
         FindBlockingCollider();
         FindPlayerReferences();
 
-        if (blockingCollider == null)
-        {
-            Debug.LogWarning(
-                $"TowerBarrier: No non-trigger blocking collider found on '{gameObject.name}'."
-            );
-        }
+        //if (blockingCollider == null)
+        //{
+        //    Debug.LogWarning(
+        //        $"TowerBarrier: No non-trigger blocking collider found on '{gameObject.name}'."
+        //    );
+        //}
 
 
-        if (playerAnchor == null)
-        {
-            Debug.LogWarning(
-                $"TowerBarrier: PlayerAnchor is not assigned on '{gameObject.name}'."
-            );
-        }
+        //if (playerAnchor == null)
+        //{
+        //    Debug.LogWarning(
+        //        $"TowerBarrier: PlayerAnchor is not assigned on '{gameObject.name}'."
+        //    );
+        //}
 
 
-        if (playerMovement == null)
-        {
-            Debug.LogWarning(
-                $"TowerBarrier: PlayerMovement is not assigned on '{gameObject.name}'."
-            );
-        }
+        //if (playerMovement == null)
+        //{
+        //    Debug.LogWarning(
+        //        $"TowerBarrier: PlayerMovement is not assigned on '{gameObject.name}'."
+        //    );
+        //}
 
 
         // Barrier starts active.
@@ -242,10 +242,10 @@ public class TowerBarrier : MonoBehaviour
             {
                 dashSequenceStarted = true;
 
-                Debug.Log(
-                    "TowerBarrier: TETHERED + DASHING detected. " +
-                    "Disabling barrier."
-                );
+                //Debug.Log(
+                //    "TowerBarrier: TETHERED + DASHING detected. " +
+                //    "Disabling barrier."
+                //);
 
                 StartBarrier();
             }
@@ -264,9 +264,9 @@ public class TowerBarrier : MonoBehaviour
 
                 CloseBarrier();
 
-                Debug.Log(
-                    "TowerBarrier: Dash ended. Barrier reactivated."
-                );
+                //Debug.Log(
+                //    "TowerBarrier: Dash ended. Barrier reactivated."
+                //);
             }
         }
 
@@ -283,10 +283,10 @@ public class TowerBarrier : MonoBehaviour
 
                 CloseBarrier();
 
-                Debug.Log(
-                    "TowerBarrier: Tether release delay expired. " +
-                    "Barrier reactivated."
-                );
+                //Debug.Log(
+                //    "TowerBarrier: Tether release delay expired. " +
+                //    "Barrier reactivated."
+                //);
             }
         }
 
@@ -340,10 +340,10 @@ public class TowerBarrier : MonoBehaviour
         debugBarrierOpen = true;
 
 
-        Debug.Log(
-            $"TowerBarrier: Barrier DISABLED for up to " +
-            $"{temporaryDisableDuration} seconds."
-        );
+        //Debug.Log(
+        //    $"TowerBarrier: Barrier DISABLED for up to " +
+        //    $"{temporaryDisableDuration} seconds."
+        //);
 
 
         float timer = 0f;
@@ -376,10 +376,10 @@ public class TowerBarrier : MonoBehaviour
 
             if (!isDashing)
             {
-                Debug.Log(
-                    "TowerBarrier: Player stopped dashing. " +
-                    "Reactivating barrier."
-                );
+                //Debug.Log(
+                //    "TowerBarrier: Player stopped dashing. " +
+                //    "Reactivating barrier."
+                //);
 
                 break;
             }
@@ -396,10 +396,10 @@ public class TowerBarrier : MonoBehaviour
 
             if (!stillEffectivelyTethered)
             {
-                Debug.Log(
-                    "TowerBarrier: Player is no longer tethered. " +
-                    "Reactivating barrier."
-                );
+                //Debug.Log(
+                //    "TowerBarrier: Player is no longer tethered. " +
+                //    "Reactivating barrier."
+                //);
 
                 break;
             }
@@ -430,10 +430,10 @@ public class TowerBarrier : MonoBehaviour
         barrierCoroutine = null;
 
 
-        Debug.Log(
-            "TowerBarrier: Barrier timer finished. " +
-            "Barrier REACTIVATED."
-        );
+        //Debug.Log(
+        //    "TowerBarrier: Barrier timer finished. " +
+        //    "Barrier REACTIVATED."
+        //);
     }
 
 
@@ -467,10 +467,10 @@ public class TowerBarrier : MonoBehaviour
         // PLAYER PASSED THROUGH THE BARRIER
         // -----------------------------------------------------
 
-        Debug.Log(
-            "TowerBarrier: Player passed through trigger. " +
-            "Reactivating barrier immediately."
-        );
+        //Debug.Log(
+        //    "TowerBarrier: Player passed through trigger. " +
+        //    "Reactivating barrier immediately."
+        //);
 
 
         // Stop timer.
