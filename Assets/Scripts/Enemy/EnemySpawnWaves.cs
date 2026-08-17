@@ -121,7 +121,7 @@ public class EnemySpawnWaves : MonoBehaviour
     private void PrepareAreaTransition()
     {
         isWaitingForAreaTransition = true;
-        Debug.Log($"Wave {currentWave} cleared!");
+        //Debug.Log($"Wave {currentWave} cleared!");
 
         // Door Logic ...
         onAreaCleared?.Invoke();
@@ -132,7 +132,7 @@ public class EnemySpawnWaves : MonoBehaviour
         if (!isWaitingForAreaTransition) return;
 
         isWaitingForAreaTransition = false;
-        Debug.Log("Player reached new area!");
+        //Debug.Log("Player reached new area!");
 
         StartCoroutine(WaitAndSpawnNextWave(false));
     }

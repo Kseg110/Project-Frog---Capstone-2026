@@ -171,7 +171,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         playerInput.SwitchCurrentActionMap(targetMap);
         SetActionMap(targetMap);
 
-        Debug.Log($"[PlayerMovement] Switched to {targetMap}");
+        //Debug.Log($"[PlayerMovement] Switched to {targetMap}");
     }
 
     private void SetActionMap(string mapName)
@@ -445,7 +445,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         RuntimeManager.PlayOneShot(dashActivationEvent, transform.position);
 
-        Debug.Log("start dash");
+       // Debug.Log("start dash");
         PlayerDashVFX.Instance.StartDashVFX();
     }
 
@@ -455,7 +455,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         dashCooldownTimer = dashCooldown;
         playerHUD?.UpdateDashCooldown(0f);
 
-        Debug.Log("end dash");
+       // Debug.Log("end dash");
         PlayerDashVFX.Instance.EndDashVFX();
     }
 
