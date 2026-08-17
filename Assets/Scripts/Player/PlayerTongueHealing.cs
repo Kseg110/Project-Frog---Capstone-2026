@@ -65,4 +65,9 @@ public class PlayerTongueHealing : MonoBehaviour
     {
         playerHealth.Heal(healAmountPerFly * numberOfFlies);
     }
+
+    public void DebugGainFly()
+    {
+        GainFly();
+    }
 }

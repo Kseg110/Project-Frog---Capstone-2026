@@ -139,13 +139,13 @@ public class Health : MonoBehaviour, IDamageable
             if (deathOverlay != null)
                 deathOverlay.ShowDeathOverlay();
             else
-                Debug.LogError("No PlayerDeathOverlay found in scene.");
+                //Debug.LogError("No PlayerDeathOverlay found in scene.");
 
             gameObject.SetActive(false);
         }
         else
         {
-            Debug.Log("Enemy died");
+            //Debug.Log("Enemy died");
             enemy.ReleaseSlot();
             OnDestroyed?.Invoke(gameObject);
 

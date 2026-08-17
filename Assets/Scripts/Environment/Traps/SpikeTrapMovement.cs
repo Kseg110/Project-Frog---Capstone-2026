@@ -58,11 +58,10 @@ public class SpikeTrapMovement : MonoBehaviour
             : Mathf.PingPong(timer * 2f, 1f);                                 // linear ping-pong
 
         // Check if we reached an end and should pause
-        if (pauseAtEnds > 0f)
+        if (pauseAtEnds > 0f && timer > 0f)   // timer > 0f guards against a phantom pause during startDelay/frame one
         {
             bool nowAtTop = t > 0.99f;
             bool nowAtBottom = t < 0.01f;
-
             if ((nowAtTop && !atTop) || (nowAtBottom && atTop))
             {
                 atTop = nowAtTop;

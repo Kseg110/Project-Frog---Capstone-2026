@@ -10,12 +10,12 @@ public class RockGolemAttack : EnemyAttack
     {
         if (burrowProjectilePrefab == null)
         {
-            Debug.LogError($"{name}: burrowProjectilePrefab not assigned.", this);
+            //Debug.LogError($"{name}: burrowProjectilePrefab not assigned.", this);
             return;
         }
         if (attackData == null)
         {
-            Debug.LogError($"{name}: attackData (BurrowAttackDataSO) not assigned.", this);
+            //Debug.LogError($"{name}: attackData (BurrowAttackDataSO) not assigned.", this);
             return;
         }
 
@@ -25,7 +25,7 @@ public class RockGolemAttack : EnemyAttack
 
         if (!go.TryGetComponent<EnemyBurrowProjectile>(out var projectile))
         {
-            Debug.LogError($"{name}: prefab missing BurrowProjectile component.", this);
+            //Debug.LogError($"{name}: prefab missing BurrowProjectile component.", this);
             Destroy(go);
             return;
         }

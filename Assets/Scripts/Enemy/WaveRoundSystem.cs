@@ -79,7 +79,7 @@ public class WaveRoundSystem : MonoBehaviour
 
             if (currentWaveIndex == waves.Length - 1)
             {
-                Debug.Log("Last wave completed");
+                //Debug.Log("Last wave completed");
                 UnityEngine.SceneManagement.SceneManager.LoadScene("Victory");
                 return;
             }
@@ -94,11 +94,11 @@ public class WaveRoundSystem : MonoBehaviour
     /// </summary>
     private void StartWave(int waveIndex)
     {
-        if (waveIndex < 0 || waveIndex >= waves.Length)
-        {
-            Debug.LogError("Invalid wave index!");
-            return;
-        }
+        //if (waveIndex < 0 || waveIndex >= waves.Length)
+        //{
+        //    Debug.LogError("Invalid wave index!");
+        //    return;
+        //}
         WaveDefinition wave = waves[waveIndex];
         activeEnemies.Clear();
         waitingForCardSelection = false;
@@ -131,11 +131,11 @@ public class WaveRoundSystem : MonoBehaviour
     /// </summary>
     private void SpawnEnemy(GameObject enemyPrefab, Transform[] spawnZones)
     {
-        if (enemyPrefab == null || spawnZones == null || spawnZones.Length == 0)
-        {
-            Debug.LogWarning("Missing prefab or spawn zones on wave.");
-            return;
-        }
+        //if (enemyPrefab == null || spawnZones == null || spawnZones.Length == 0)
+        //{
+        //    Debug.LogWarning("Missing prefab or spawn zones on wave.");
+        //    return;
+        //}
 
         Transform zone = spawnZones[Random.Range(0, spawnZones.Length)];
         GameObject enemy = Instantiate(enemyPrefab, zone.position, Quaternion.identity);
@@ -163,11 +163,11 @@ public class WaveRoundSystem : MonoBehaviour
     {
         currentWaveIndex++;
 
-        if (currentWaveIndex >= waves.Length)
-        {
-            Debug.Log("All waves completed after card selection!");
-            return;
-        }
+        //if (currentWaveIndex >= waves.Length)
+        //{
+        //    Debug.Log("All waves completed after card selection!");
+        //    return;
+        //}
 
         // At this point currentWaveIndex has been incremented, so it equals the
         // 1-based number of the wave that was JUST finished. If that wave is a
@@ -176,7 +176,7 @@ public class WaveRoundSystem : MonoBehaviour
             System.Array.IndexOf(transitionAfterWaves, currentWaveIndex) >= 0)
         {
             awaitingAreaArrival = true;
-            Debug.Log($"[WaveRoundSystem] Wave {currentWaveIndex} cleared — holding wave {currentWaveIndex + 1} until player reaches next area.");
+            //Debug.Log($"[WaveRoundSystem] Wave {currentWaveIndex} cleared — holding wave {currentWaveIndex + 1} until player reaches next area.");
             return;   // do NOT StartWave yet
         }
 
@@ -192,7 +192,7 @@ public class WaveRoundSystem : MonoBehaviour
         if (!awaitingAreaArrival) return;
 
         awaitingAreaArrival = false;
-        Debug.Log($"[WaveRoundSystem] Player reached next area — spawning wave {currentWaveIndex + 1}.");
+        //Debug.Log($"[WaveRoundSystem] Player reached next area — spawning wave {currentWaveIndex + 1}.");
         StartWave(currentWaveIndex);
     }
 

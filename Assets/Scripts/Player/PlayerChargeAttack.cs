@@ -34,20 +34,20 @@ public class PlayerChargeAttack : MonoBehaviour
 
     private void Awake()
     {
-        if (FireChargeProjectilePrefab == null || IceChargeProjectilePrefab == null || WindChargeProjectilePrefab == null)
-        {
-            Debug.LogError("[PlayerChargeAttack] Missing projectile prefab assignment!", this);
-        }
+        //if (FireChargeProjectilePrefab == null || IceChargeProjectilePrefab == null || WindChargeProjectilePrefab == null)
+        //{
+        //    Debug.LogError("[PlayerChargeAttack] Missing projectile prefab assignment!", this);
+        //}
 
         // A charge attack is only ever fired from an active tether, so we need to know tether state.
         if (playerAnchor == null)
         {
             playerAnchor = GetComponent<PlayerAnchor>();
         }
-        if (playerAnchor == null)
-        {
-            Debug.LogError("[PlayerChargeAttack] No PlayerAnchor reference — charge cannot be tether-gated!", this);
-        }
+        //if (playerAnchor == null)
+        //{
+        //    Debug.LogError("[PlayerChargeAttack] No PlayerAnchor reference — charge cannot be tether-gated!", this);
+        //}
 
         playerHUD = FindAnyObjectByType<UIPlayerHUD>();
     }
@@ -163,11 +163,11 @@ public class PlayerChargeAttack : MonoBehaviour
 
                         // Apply charged knockback: scale from 1m to 5m with chargePercent
                         proj.knockbackDistance = Mathf.Lerp(1f, 5f, chargePercent);
-                        Debug.Log($"[PlayerChargeAttack] Spawned charged projectile '{projObj.name}' knockbackDistance={proj.knockbackDistance} charge={chargePercent}", this);
+                        //Debug.Log($"[PlayerChargeAttack] Spawned charged projectile '{projObj.name}' knockbackDistance={proj.knockbackDistance} charge={chargePercent}", this);
                     }
                     else
                     {
-                        Debug.LogWarning($"[PlayerChargeAttack] FireChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
+                        //Debug.LogWarning($"[PlayerChargeAttack] FireChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
                     }
 
                     IgnorePlayerCollision(projObj);
@@ -198,7 +198,7 @@ public class PlayerChargeAttack : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogWarning($"[PlayerChargeAttack] IceChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
+                        //Debug.LogWarning($"[PlayerChargeAttack] IceChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
                     }
 
                     IgnorePlayerCollision(projObj);
@@ -242,7 +242,7 @@ public class PlayerChargeAttack : MonoBehaviour
                         }
                         else
                         {
-                            Debug.LogWarning($"[PlayerChargeAttack] WindChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
+                            //Debug.LogWarning($"[PlayerChargeAttack] WindChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
                         }
 
                         IgnorePlayerCollision(projObj);

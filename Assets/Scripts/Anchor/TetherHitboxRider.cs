@@ -92,11 +92,11 @@ public class TetherHitboxRider : MonoBehaviour
     // Instantiates a single effect as a child of the hitbox, snapped to local origin. Starts disabled; ApplyElement decides which one turns on. Returns null (and warns) if the prefab wasn't assigned.
     private ParticleSystem SpawnEffect(ParticleSystem prefab, Transform parent)
     {
-        if (prefab == null)
-        {
-            Debug.LogWarning($"[TetherHitboxRider] An element VFX prefab is not assigned on {name} - that element will show no effect.");
-            return null;
-        }
+        //if (prefab == null)
+        //{
+        //    //Debug.LogWarning($"[TetherHitboxRider] An element VFX prefab is not assigned on {name} - that element will show no effect.");
+        //    return null;
+        //}
 
         ParticleSystem fx = Instantiate(prefab, parent);
         fx.transform.localPosition = Vector3.zero;
