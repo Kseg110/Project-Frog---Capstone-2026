@@ -30,7 +30,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Basecolour:
-        m_Texture: {fileID: 2800000, guid: 2b24361093b0c5f479edc8f9e10b6ec0, type: 3}
+        m_Texture: {fileID: 2800000, guid: 64a75884414a63846ab55daf2ae39e4d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal:
@@ -39,8 +39,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 0.87
-    m_Colors: []
+    - _AlphaClip: 1
+    m_Colors:
+    - _BaseColour: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &6461110028433140076
