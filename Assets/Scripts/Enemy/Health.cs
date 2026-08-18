@@ -136,8 +136,6 @@ public class Health : MonoBehaviour, IDamageable
     {
         IsDead = true;
 
-
-
         if (CompareTag("Player"))
         {
             UIDeathOverlay deathOverlay = FindFirstObjectByType<UIDeathOverlay>();
@@ -185,13 +183,6 @@ public class Health : MonoBehaviour, IDamageable
         while (timer < duration)
         {
             float finalTickDamage = baseDamage;
-
-            // Wildfire upgrade (Fire burn damage bonus)
-            if (WildfireUpgrade.Instance != null)
-            {
-                float bonus = WildfireUpgrade.Instance.GetBurnBonus();
-                finalTickDamage *= 1f + bonus / 100f;
-            }
             Debug.Log($"[Burn] Tick damage: {finalTickDamage} | Timer: {timer}/{duration}");
 
             TakeDmg(finalTickDamage);

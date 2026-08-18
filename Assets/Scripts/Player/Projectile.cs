@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class Projectile : MonoBehaviour, IProjectile
@@ -15,18 +15,23 @@ public class Projectile : MonoBehaviour, IProjectile
 
     public float speed;
     public float damage;
+    public float chargePercent; // 0.0 to 1.0, passed from PlayerAttacks / PlayerChargeAttack
 
     public string effectType;
     public float effectDuration;
     public float effectValue;
     public bool isPlayerProjectile = false;
 
+    // Context passed from PlayerAttacks / PlayerChargeAttack
+    public GameObject player;                    
+    public AnchorElement currentElement;          
+    public float pointBlankRange = 10f;
+
     // Wind Upgrade
     private bool isHoming = false;
     private bool skipAutoHoming = true; // prevents auto homing in awake    
     private float turnSpeed = 10f;
     private EnemyBase target;
-    private float pointBlankRange = 10f;
 
     // Ice Upgrade
     public bool isPiercingProjectile = false;
@@ -48,6 +53,7 @@ public class Projectile : MonoBehaviour, IProjectile
         // Base speed & damage scaling
         speed = Mathf.Lerp(baseSpeed, baseSpeed * 2f, chargePercent);
         damage = Mathf.Lerp(baseDamage, baseDamage * 3f, chargePercent);
+        this.chargePercent = chargePercent;
 
         // Frostwind (Ice primary speed)
         if (FrostwindUpgrade.Instance != null)
@@ -197,13 +203,37 @@ public class Projectile : MonoBehaviour, IProjectile
         {
             float finalDamage = damage;
 
-            // Point Blank Shot
-            float dist = Vector3.Distance(transform.position, enemy.transform.position);
-            if (PointBlankShotUpgrade.Instance != null && dist < pointBlankRange)
+            // ============================
+            // POINT BLANK SHOT BONUS
+            // ============================
+            if (currentElement == AnchorElement.Wind &&
+                PointBlankShotUpgrade.Instance != null &&
+                player != null)
             {
-                float bonus = PointBlankShotUpgrade.Instance.GetBonus();
+                float bonusPercent = PointBlankShotUpgrade.Instance.GetBonus();
+                Vector3 impactPoint = other.ClosestPoint(transform.position);
+                float dist = Vector3.Distance(player.transform.position, impactPoint);
+
+                if (dist <= pointBlankRange)
+                {
+                    finalDamage *= 1f + (bonusPercent / 100f);
+                }
+            }
+
+            // ============================
+            // SEARING SHOT (Fire primary bonus)
+            // ============================
+            if (currentElement == AnchorElement.Fire &&
+                SearingShotUpgrade.Instance != null &&
+                isPlayerProjectile &&
+                chargePercent <= 0f)   // <--- PRIMARY ONLY
+            {
+                float bonus = SearingShotUpgrade.Instance.GetDartBonus();
+                float before = finalDamage;
+
                 finalDamage *= 1f + bonus / 100f;
             }
+
 
             // Cryo Fragility (bonus if slowed)
             if (CryoFragilityUpgrade.Instance != null && enemy.IsSlowed)

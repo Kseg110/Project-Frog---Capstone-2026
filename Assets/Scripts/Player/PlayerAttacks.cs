@@ -1,6 +1,7 @@
 ﻿using FMODUnity;
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerMovement))]
@@ -19,6 +20,9 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private float basicShotSlowMultiplier = 0.5f;
     [SerializeField] private float basicShotSlowDuration = 1f;
 
+    [Header("Wind Upgrades")]
+    [SerializeField] public float pointBlankRange = 10f;
+
     [Header("Aiming Correction")]
     [SerializeField] private float aimCorrectionStrength = 1.0f;
     [SerializeField] private float targetHeightOffset = 1.0f;
@@ -26,8 +30,6 @@ public class PlayerAttacks : MonoBehaviour
     [Header("FMod Events")]
     [SerializeField] private EventReference basicShotEvent;
     [SerializeField] private EventReference chargeShotEvent;
-
-
 
     public event System.Action<bool> OnShotFired;
 
@@ -278,6 +280,57 @@ public class PlayerAttacks : MonoBehaviour
         // Apply perspective correction
         finalDirection = ApplyPerspectiveCorrection(finalDirection);
 
+        // ---------------------------------------------------------
+        // WIND PRIMARY MULTISHOT
+        // ---------------------------------------------------------
+        if (playerAnchor != null && playerAnchor.IsTethered && playerAnchor.AttachedAnchor.Element == AnchorElement.Wind)
+        {
+            int baseProjectiles = 4;
+            int extra = MultishotUpgrade.Instance != null ? MultishotUpgrade.Instance.GetExtraDarts() : 0;
+            int totalProjectiles = baseProjectiles + extra;
+
+            float spreadAngle = 5f;
+            List<GameObject> spawnedProjectiles = new List<GameObject>();
+
+            for (int i = 0; i < totalProjectiles; i++)
+            {
+                float angle = spreadAngle * (i - totalProjectiles / 2f);
+                Vector3 spreadDir = Quaternion.Euler(0, angle, 0) * finalDirection;
+                Vector3 spawnPos = firePoint.position + spreadDir * 0.3f;
+
+                GameObject obj = Instantiate(projectilePrefab, spawnPos, Quaternion.LookRotation(spreadDir));
+                var projMulti = obj.GetComponent<Projectile>();
+
+                if (projMulti != null)
+                {
+                    projMulti.isPlayerProjectile = true;
+                    projMulti.player = this.gameObject;                   
+                    projMulti.currentElement = AnchorElement.Wind;         
+                    projMulti.pointBlankRange = pointBlankRange;
+                    projMulti.Initialize(chargePercent);
+                }
+
+                IgnorePlayerCollision(obj);
+
+                foreach (var other in spawnedProjectiles)
+                {
+                    Collider[] colsA = obj.GetComponentsInChildren<Collider>();
+                    Collider[] colsB = other.GetComponentsInChildren<Collider>();
+                    foreach (var c1 in colsA)
+                        foreach (var c2 in colsB)
+                            Physics.IgnoreCollision(c1, c2);
+                }
+
+                spawnedProjectiles.Add(obj);
+            }
+
+            return;
+        }
+
+        // ---------------------------------------------------------
+        // NORMAL SINGLE SHOT
+        // ---------------------------------------------------------
+
         Quaternion rotation = Quaternion.LookRotation(finalDirection);
         GameObject projObj = Instantiate(projectilePrefab, firePoint.position, rotation);
 
@@ -286,6 +339,12 @@ public class PlayerAttacks : MonoBehaviour
         {
             // CRITICAL: Set isPlayerProjectile FIRST before anything else
             proj.isPlayerProjectile = true;
+            proj.player = this.gameObject;                                
+            proj.currentElement = playerAnchor.IsTethered
+                ? playerAnchor.AttachedAnchor.Element
+                : AnchorElement.Broken;
+
+            proj.pointBlankRange = pointBlankRange;
             proj.Initialize(chargePercent);
             //proj.damage = 2f;
         }
@@ -293,7 +352,6 @@ public class PlayerAttacks : MonoBehaviour
         // Always ignore collision with player, regardless of Projectile component
         IgnorePlayerCollision(projObj);
     }
-
 
     private Vector3 ApplyPerspectiveCorrection(Vector3 baseDirection)
     {

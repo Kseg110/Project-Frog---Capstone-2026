@@ -14,6 +14,9 @@ GameObject:
   - component: {fileID: 3073096946050369883}
   - component: {fileID: 438828359221505690}
   - component: {fileID: 715019672751812269}
+  - component: {fileID: 892664129305044654}
+  - component: {fileID: 3368940682046414736}
+  - component: {fileID: 8737900500061915941}
   m_Layer: 0
   m_Name: TargetDummy
   m_TagString: Enemy
@@ -164,6 +167,69 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!195 &892664129305044654
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4030077040595223971}
+  m_Enabled: 0
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &3368940682046414736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4030077040595223971}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be22f9f649befc940a48ac6ac4662061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovementComponent
+  target: {fileID: 0}
+  player: {fileID: 0}
+  stopDistance: 3
+  movementSpeed: 1
+  repathRate: 0.2
+  rotationSpeed: 10
+  separationRadius: 5
+  separationStrength: 2
+  currentSlot: none
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
+--- !u!114 &8737900500061915941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4030077040595223971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63488769d67013546a485219284f397b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DummyEnemy
+  player: {fileID: 0}
+  movement: {fileID: 0}
+  attackComponent: {fileID: 0}
+  attackHitbox: {fileID: 0}
+  health: {fileID: 438828359221505690}
 --- !u!1001 &4462350323309384926
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -175,7 +175,18 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         if (effectType == "Burn")
         {
-            health.ApplyBurn(effectDuration, effectValue, dmg);
+            float burnDamage = dmg;
+
+            if (WildfireUpgrade.Instance != null)
+            {
+                float bonus = WildfireUpgrade.Instance.GetBurnBonus();
+                float before = burnDamage;
+
+                burnDamage *= 1f + bonus / 100f;
+                Debug.Log($"[Wildfire] Burn tick boosted: +{bonus}% → {before} → {burnDamage}");
+            }
+
+            health.ApplyBurn(effectDuration, effectValue, burnDamage);
         }
     }
 
