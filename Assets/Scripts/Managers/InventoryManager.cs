@@ -10,7 +10,6 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private InputActionReference flyConsumeActionRefGP;
     [SerializeField] private int maximumInventorySize = 3;
     [SerializeField] private Vector2 flyIconSize = new Vector2(50f, 50f);
-
     public List<GameObject> flyInventoryUIPrefabList;
 
     public void GainFlyInInventory(int numberOfFlies)
@@ -21,32 +20,29 @@ public class InventoryManager : MonoBehaviour
             if (flyInventoryUIPrefabList.Count < maximumInventorySize)
             {
                 GameObject newFly = Instantiate(flyInventoryUIPrefab, transform);
-                
+
                 RectTransform rectTransform = newFly.GetComponent<RectTransform>();
                 if (rectTransform != null)
                 {
                     rectTransform.sizeDelta = flyIconSize;
                 }
-                
+
                 flyInventoryUIPrefabList.Add(newFly);
             }
             numberOfFlies--;
         }
     }
 
-
     private void OnEnable()
     {
         flyConsumeActionRef.action.Enable();
         flyConsumeActionRefGP.action.Enable();
-
     }
 
     private void OnDisable()
     {
         flyConsumeActionRef.action.Disable();
-        flyConsumeActionRefGP.action.Enable();
-
+        flyConsumeActionRefGP.action.Disable();
     }
 
     private void Update()
@@ -64,17 +60,15 @@ public class InventoryManager : MonoBehaviour
     private void ConsumeFly()
     {
         Debug.Log($"Before Consume: {flyInventoryUIPrefabList.Count}");
-
         if (flyInventoryUIPrefabList == null || flyInventoryUIPrefabList.Count == 0)
         {
             return;
         }
-
         Destroy(flyInventoryUIPrefabList[^1]);
         flyInventoryUIPrefabList.RemoveAt(flyInventoryUIPrefabList.Count - 1);
-
         Debug.Log($"After Consume: {flyInventoryUIPrefabList.Count}");
 
         playerTongueHealing.HealPlayer(1);
+        playerTongueHealing.ApplyHealSlow(); // slow only fires on a successful consume
     }
 }

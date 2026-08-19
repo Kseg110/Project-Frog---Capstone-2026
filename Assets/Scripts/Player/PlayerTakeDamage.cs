@@ -89,6 +89,14 @@ public class PlayerTakeDamage : MonoBehaviour
     // Builds the set of renderers the damage flash tints red, EXCLUDING the tether.
     private void CacheFlashRenderers()
     {
+        // If a flash is live, kill it and restore before reading colors — otherwise red gets cached as "original".
+        if (flashCoroutine != null)
+        {
+            StopCoroutine(flashCoroutine);
+            flashCoroutine = null;
+            RestoreOriginalColors();
+        }
+
         Renderer[] allRenderers = GetComponentsInChildren<Renderer>();
 
         // Find the tether subtree (if any) so we can skip every renderer beneath it.
@@ -233,21 +241,24 @@ public class PlayerTakeDamage : MonoBehaviour
         float interval = 1f / flashFrequency / 2f;
         bool isRed = false;
 
-        while (Time.time < nextAllowedDamageTime)
+        try
         {
-            isRed = !isRed;
-
-            for (int i = 0; i < cachedRenderers.Length; i++)
+            while (Time.time < nextAllowedDamageTime)
             {
-                cachedRenderers[i].material.color =
-                    isRed ? Color.red : originalColors[i];
+                isRed = !isRed;
+
+                for (int i = 0; i < cachedRenderers.Length; i++)
+                    cachedRenderers[i].material.color = isRed ? Color.red : originalColors[i];
+
+                yield return new WaitForSeconds(interval);
             }
-
-            yield return new WaitForSeconds(interval);
         }
-
-        RestoreOriginalColors();
-        flashCoroutine = null;
+        finally
+        {
+            // Runs even if the coroutine is stopped mid-flash (dash/knockback teardown).
+            RestoreOriginalColors();
+            flashCoroutine = null;
+        }
     }
 
     private void RestoreOriginalColors()
