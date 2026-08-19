@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_TMainWall
+  m_Name: M_WallTrim1
   m_Shader: {fileID: -6465566751694194690, guid: ca176608197d9994a9573074157f41d0, type: 3}
   m_Parent: {fileID: 2100000, guid: 257643b155ce1ad48af463b23defbdd8, type: 2}
   m_ModifiedSerializedProperties: 2
@@ -37,6 +37,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _Ambient_Occlusion:
+        m_Texture: {fileID: 2800000, guid: fc4388371ad9e724ca5985585576a559, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseColour:
         m_Texture: {fileID: 2800000, guid: 4d53d2d49f0abc344865575de2a2316e, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -46,16 +50,21 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal:
-        m_Texture: {fileID: 2800000, guid: 98beb31ac50011d45993af24f7220265, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0bd31ef5d714ff44a99db103cc94fdcd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Roughness:
-        m_Texture: {fileID: 2800000, guid: 6070728087d434b4e9c0628c38459a3f, type: 3}
+        m_Texture: {fileID: 2800000, guid: f284b5320226df2449bbbe55705456ff, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AO_Strength: 0.95
+    - _Metallic_Strength: 0
     - _NormalStrength: 0.86
-    m_Colors: []
+    - _Normal_Strength: 1.75
+    - _Roughness_Strength: 0.38
+    m_Colors:
+    - _Color_Correction: {r: 0.80784315, g: 0.7818718, b: 0.6117647, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
