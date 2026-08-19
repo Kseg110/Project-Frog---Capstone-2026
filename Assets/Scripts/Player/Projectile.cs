@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class Projectile : MonoBehaviour, IProjectile
 {
@@ -36,11 +37,45 @@ public class Projectile : MonoBehaviour, IProjectile
     [Tooltip("Knockback distance applied to enemies when hit by player projectiles. 0 = no knockback.")]
     public float knockbackDistance = 0f;
 
+    // Cache arena colliders globally to avoid repeated Find calls
+    private static Collider[] cachedArenaColliders = null;
+    private static int cachedArenaLayer = int.MinValue; // sentinel
+
     private void Awake()
     {
         // If homing upgrade is active, enable homing with delay
         if (!skipAutoHoming && HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
             EnableHoming();
+
+        // Ensure projectiles ignore collisions with colliders on the "ArenaColliders" layer
+        const string arenaLayerName = "ArenaColliders";
+        int layerIndex = LayerMask.NameToLayer(arenaLayerName);
+
+        if (layerIndex >= 0)
+        {
+            // Populate cache once per domain if needed
+            if (cachedArenaLayer != layerIndex || cachedArenaColliders == null)
+            {
+                cachedArenaLayer = layerIndex;
+                cachedArenaColliders = FindObjectsOfType<Collider>()
+                    .Where(c => c != null && c.gameObject.layer == layerIndex)
+                    .ToArray();
+            }
+
+            var myColliders = GetComponentsInChildren<Collider>();
+            if (cachedArenaColliders != null && cachedArenaColliders.Length > 0 && myColliders != null)
+            {
+                foreach (var mc in myColliders)
+                {
+                    if (mc == null) continue;
+                    foreach (var ac in cachedArenaColliders)
+                    {
+                        if (ac == null) continue;
+                        Physics.IgnoreCollision(mc, ac, true);
+                    }
+                }
+            }
+        }
     }
 
     public virtual void Initialize(float chargePercent)
@@ -188,7 +223,7 @@ public class Projectile : MonoBehaviour, IProjectile
 
         // ============================
         // DAMAGE ENEMY IF PLAYER PROJECTILE
-        // ============================
+
         var enemy = other.GetComponent<EnemyBase>();
         if (enemy == null)
             enemy = other.GetComponentInParent<EnemyBase>();
@@ -229,13 +264,10 @@ public class Projectile : MonoBehaviour, IProjectile
                     var enemyKnock = enemy.GetComponentInParent<EnemyKnockback>();
                     if (enemyKnock != null)
                     {
-                        //Debug.Log($"[Projectile] Using EnemyKnockback on '{enemy.name}' (distance={knockbackDistance})", enemy);
                         enemyKnock.ApplyKnockback(pushDir, knockbackDistance);
                     }
                     else
                     {
-                        //Debug.Log($"[Projectile] EnemyKnockback not found on '{enemy.name}', falling back to Rigidbody/transform nudge", enemy);
-                        // fallback: try attached rigidbody
                         var rb = other.attachedRigidbody ?? enemy.GetComponentInParent<Rigidbody>();
                         if (rb != null)
                         {
@@ -246,7 +278,6 @@ public class Projectile : MonoBehaviour, IProjectile
                         }
                         else
                         {
-                            // last resort: nudge root transform
                             var root = other.transform.root;
                             root.position += pushDir * knockbackDistance;
                         }

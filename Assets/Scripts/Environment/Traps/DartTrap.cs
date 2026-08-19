@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -20,9 +21,13 @@ public class DartTrap : MonoBehaviour
     [Tooltip("Seconds between shots while trigger is active.")]
     [SerializeField] private float fireInterval = 5f;
 
-    private readonly HashSet<GameObject> playersInTrigger = new();
+    private readonly HashSet<GameObject> entitiesInTrigger = new();
     private Coroutine shootingRoutine;
     private GameObject trapTriggerChild;
+
+    // Cache colliders that belong to the ArenaColliders layer so spawned darts will ignore them
+    private int arenaLayer = -1;
+    private Collider[] arenaCollidersCached;
 
     private void Start()
     {
@@ -56,16 +61,29 @@ public class DartTrap : MonoBehaviour
         // Add or get forwarding component so the child's trigger events are forwarded here
         var forwarder = trapTriggerChild.GetComponent<TrapTriggerForwarder>() ?? trapTriggerChild.AddComponent<TrapTriggerForwarder>();
         forwarder.parent = this;
+
+        // Cache ArenaColliders layer colliders (optional — will remain empty if layer not found)
+        arenaLayer = LayerMask.NameToLayer("ArenaColliders");
+        if (arenaLayer >= 0)
+        {
+            arenaCollidersCached = FindObjectsOfType<Collider>().Where(c => c.gameObject.layer == arenaLayer).ToArray();
+        }
+        else
+        {
+            // Layer not defined in project; arenaCollidersCached stays null.
+            arenaCollidersCached = null;
+        }
     }
 
     // Called by the trigger forwarder when something enters the child trigger
     internal void OnChildTriggerEnter(Collider other)
     {
-        if (!other.gameObject.CompareTag("Player")) return;
+        // Accept both players and enemies (or any object you want to trigger the trap).
+        if (!other.gameObject.CompareTag("Player") && !other.gameObject.CompareTag("Enemy")) return;
 
-        playersInTrigger.Add(other.gameObject);
+        entitiesInTrigger.Add(other.gameObject);
 
-        if (playersInTrigger.Count == 1)
+        if (entitiesInTrigger.Count == 1)
         {
             StartShooting();
         }
@@ -74,11 +92,11 @@ public class DartTrap : MonoBehaviour
     // Called by the trigger forwarder when something exits the child trigger
     internal void OnChildTriggerExit(Collider other)
     {
-        if (!other.gameObject.CompareTag("Player")) return;
+        if (!other.gameObject.CompareTag("Player") && !other.gameObject.CompareTag("Enemy")) return;
 
-        playersInTrigger.Remove(other.gameObject);
+        entitiesInTrigger.Remove(other.gameObject);
 
-        if (playersInTrigger.Count == 0)
+        if (entitiesInTrigger.Count == 0)
         {
             StopShooting();
         }
@@ -128,6 +146,20 @@ public class DartTrap : MonoBehaviour
         if (rb != null)
         {
             rb.linearVelocity = shootPoint.right * dartSpeed;
+        }
+
+        // If we have cached arena colliders, make the dart's colliders ignore collisions with them
+        if (arenaCollidersCached != null && arenaCollidersCached.Length > 0)
+        {
+            var dartCols = dart.GetComponentsInChildren<Collider>();
+            foreach (var dcol in dartCols)
+            {
+                foreach (var acol in arenaCollidersCached)
+                {
+                    if (acol == null) continue;
+                    Physics.IgnoreCollision(dcol, acol, true);
+                }
+            }
         }
 
         Destroy(dart, dartLifetime);
