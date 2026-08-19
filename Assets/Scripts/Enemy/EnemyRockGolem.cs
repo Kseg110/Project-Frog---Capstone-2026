@@ -68,7 +68,7 @@ public class EnemyRockGolem : EnemyBase
 
         if (enemyAttack.CanAttack)
         {
-            Debug.Log("[Golem] Calling TriggerAttack");
+            //Debug.Log("[Golem] Calling TriggerAttack");
             enemyAttack.TriggerAttack(player.position);
         }
     }

@@ -269,20 +269,20 @@ public class AnchorTether : MonoBehaviour
     // Returns TRUE if the attach/detach was committed, FALSE if refused by the reeling or cooldown guard.
     public bool SetEndPoint(Transform t, bool instantAssign = false)
     {
-        Debug.Log("<color=orange>[AnchorTether]</color> SetEndPoint called with: " + (t ? t.name : "NULL"));
+        //Debug.Log("<color=orange>[AnchorTether]</color> SetEndPoint called with: " + (t ? t.name : "NULL"));
 
         // Don't let a new attach interrupt an in-progress reel-in break.
         // REFUSED: report failure so the caller doesn't commit tether state on a rope that didn't attach.
         if (isReeling)
         {
-            Debug.Log("<color=red>[AnchorTether]</color> BLOCKED - reeling in");
+            //Debug.Log("<color=red>[AnchorTether]</color> BLOCKED - reeling in");
             return false;
         }
 
         // REFUSED: cooldown gate on NEW attaches. Same reasoning - caller must know this didn't take.
         if (!canTether && t != endPoint && t != null)
         {
-            Debug.Log("<color=red>[AnchorTether]</color> BLOCKED by cooldown");
+           // Debug.Log("<color=red>[AnchorTether]</color> BLOCKED by cooldown");
             return false;
         }
 
@@ -292,20 +292,20 @@ public class AnchorTether : MonoBehaviour
         if (endPoint != null)
             newAnchor = endPoint.GetComponentInParent<AnchorBase>();
 
-        Debug.Log("<color=yellow>[AnchorTether]</color> newAnchor = " + (newAnchor ? newAnchor.name : "NULL"));
+        //Debug.Log("<color=yellow>[AnchorTether]</color> newAnchor = " + (newAnchor ? newAnchor.name : "NULL"));
 
         if (newAnchor != currentAnchor)
         {
-            Debug.Log("<color=cyan>[AnchorTether]</color> Anchor changed!");
+            //Debug.Log("<color=cyan>[AnchorTether]</color> Anchor changed!");
 
             if (currentAnchor != null && newAnchor == null)
             {
-                Debug.Log("<color=magenta>[AnchorTether]</color> OnAnchorDetached invoked");
+                //Debug.Log("<color=magenta>[AnchorTether]</color> OnAnchorDetached invoked");
                 OnAnchorDetached?.Invoke();
             }
             else if (newAnchor != null)
             {
-                Debug.Log("<color=green>[AnchorTether]</color> OnAnchorAttached invoked");
+                //Debug.Log("<color=green>[AnchorTether]</color> OnAnchorAttached invoked");
                 OnAnchorAttached?.Invoke(newAnchor);
                 StartCoroutine(TetherCooldownRoutine());
             }
@@ -412,7 +412,7 @@ public class AnchorTether : MonoBehaviour
 
     private IEnumerator ReelInRoutine()
     {
-        Debug.Log("<color=lime>[AnchorTether]</color> ReelInRoutine STARTED");
+        //Debug.Log("<color=lime>[AnchorTether]</color> ReelInRoutine STARTED");
 
         // Cancel any in-flight throw so we don't fight over rope state.
         StopThrow();
@@ -448,7 +448,7 @@ public class AnchorTether : MonoBehaviour
     {
         if (endPoint == null) return;   // already detached
 
-        Debug.Log("<color=red>[AnchorTether]</color> Tether BROKEN");
+        //Debug.Log("<color=red>[AnchorTether]</color> Tether BROKEN");
 
         OnTetherBroken?.Invoke();
 

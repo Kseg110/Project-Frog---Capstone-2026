@@ -60,7 +60,7 @@ public class PlayerAnchor : MonoBehaviour
         allAnchors = FindObjectsByType<AnchorBase>(FindObjectsSortMode.None);
 
         playerInput = GetComponent<PlayerInput>();
-        Debug.Assert(playerInput != null, $"[{gameObject.name}] missing PlayerInput!", this);
+        //Debug.Assert(playerInput != null, $"[{gameObject.name}] missing PlayerInput!", this);
 
         if (playerOvercharge == null)
         {
@@ -103,7 +103,7 @@ public class PlayerAnchor : MonoBehaviour
         currentActionMapName = playerInput.currentActionMap.name;
         tetherAction = playerInput.currentActionMap.FindAction("Tether");
 
-        Debug.Assert(tetherAction != null, $"Tether action not found on active map '{currentActionMapName}' for [{gameObject.name}]!", this);
+        //Debug.Assert(tetherAction != null, $"Tether action not found on active map '{currentActionMapName}' for [{gameObject.name}]!", this);
     }
 
     private void UpdateCurrentAnchor()
@@ -207,14 +207,14 @@ public class PlayerAnchor : MonoBehaviour
                 // A SphereCast that starts already overlapping geometry returns distance 0 and a zero normal. That's the classic false-block: the sweep never left the origin, so the "blocker" is something the player is standing in/against.
                 string degenerate = (hit.distance <= Mathf.Epsilon) ? " [DEGENERATE - sphere overlapped at origin]" : "";
 
-                Debug.Log($"<color=red>[LOS]</color> {anchor.name} BLOCKED by '{hit.collider.name}' " +
-                          $"(layer {LayerMask.LayerToName(hit.collider.gameObject.layer)}) " +
-                          $"at {hit.distance:F2}m of {castDist:F2}m{degenerate}", hit.collider);
+                //Debug.Log($"<color=red>[LOS]</color> {anchor.name} BLOCKED by '{hit.collider.name}' " +
+                          //$"(layer {LayerMask.LayerToName(hit.collider.gameObject.layer)}) " +
+                          //$"at {hit.distance:F2}m of {castDist:F2}m{degenerate}", hit.collider);
             }
-            else
-            {
-                Debug.Log($"<color=green>[LOS]</color> {anchor.name} clear ({castDist:F2}m)");
-            }
+            //else
+            //{
+            //    //Debug.Log($"<color=green>[LOS]</color> {anchor.name} clear ({castDist:F2}m)");
+            //}
         }
 
         return !blocked;
@@ -226,11 +226,11 @@ public class PlayerAnchor : MonoBehaviour
     public void StartTether()
     {
         // Check for overcharge preventing tethering 
-        if (playerOvercharge != null && !playerOvercharge.CanTether())
-        {
-            Debug.Log("Cannot tether: Overcharge in cooldown");
-            return;
-        }
+        //if (playerOvercharge != null && !playerOvercharge.CanTether())
+        //{
+        //    Debug.Log("Cannot tether: Overcharge in cooldown");
+        //    return;
+        //}
 
         // currentAnchor is already LOS-filtered by GetClosestAnchorInRange().
         if (currentAnchor == null)
@@ -243,7 +243,7 @@ public class PlayerAnchor : MonoBehaviour
         bool attached = anchorTether != null && anchorTether.SetEndPoint(anchorBaseTransform, true);
         if (!attached)
         {
-            Debug.Log("[PlayerAnchor] Tether attach refused by AnchorTether (reeling/cooldown). Not committing tether state.");
+            //Debug.Log("[PlayerAnchor] Tether attach refused by AnchorTether (reeling/cooldown). Not committing tether state.");
             return;
         }
 
@@ -306,7 +306,7 @@ public class PlayerAnchor : MonoBehaviour
     public void RefreshAnchors()
     {
         allAnchors = FindObjectsByType<AnchorBase>(FindObjectsSortMode.None);
-        Debug.Log($"[PlayerAnchor] Refreshed — now aware of {allAnchors.Length} anchor(s).");
+        //Debug.Log($"[PlayerAnchor] Refreshed — now aware of {allAnchors.Length} anchor(s).");
     }
 
 #if UNITY_EDITOR

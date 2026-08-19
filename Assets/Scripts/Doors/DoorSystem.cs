@@ -88,7 +88,7 @@ public class DoorSystem : MonoBehaviour
 
         links[index].ready = true;
 
-        Debug.Log("DoorSystem: Door index " + index + " is now ready.");
+        //Debug.Log("DoorSystem: Door index " + index + " is now ready.");
     }
 
     [Header("Door Links")]
@@ -227,7 +227,7 @@ public class DoorSystem : MonoBehaviour
             {
                 link.doorAnimator.SetBool("Open", true);
                 link.opened = true;
-                Debug.Log($"DoorSystem: Door '{link.door?.name}' animated open.");
+                //Debug.Log($"DoorSystem: Door '{link.door?.name}' animated open.");
                 return;
             }
         }
@@ -285,7 +285,7 @@ public class DoorSystem : MonoBehaviour
         MoveDoor(link, target, link.lowerSpeed);
         link.opened = true;
 
-        Debug.Log($"DoorSystem: Door '{link.door?.name}' lowered by {link.lowerDistance} units.");
+        //Debug.Log($"DoorSystem: Door '{link.door?.name}' lowered by {link.lowerDistance} units.");
     }
 
     private void CloseDoor(DoorLink link)
@@ -362,7 +362,7 @@ public class DoorSystem : MonoBehaviour
         link.opened = false;
         link.lastClosedTime = Time.time;
         link.playerClosed = true;
-        Debug.Log($"DoorSystem: Door '{link.door?.name}' restored (closed) after player passed.");
+        //Debug.Log($"DoorSystem: Door '{link.door?.name}' restored (closed) after player passed.");
 
         if (waveRoundSystem != null)
             waveRoundSystem.OnPlayerReachedNextArea();
@@ -372,19 +372,19 @@ public class DoorSystem : MonoBehaviour
     {
         if (index < 0 || index >= links.Length) return;
         var link = links[index];
-        if (link == null)
-        {
-            Debug.LogWarning($"DoorSystem: OnTriggerActivated received invalid link index {index}.");
-            return;
-        }
+        //if (link == null)
+        //{
+        //    Debug.LogWarning($"DoorSystem: OnTriggerActivated received invalid link index {index}.");
+        //    return;
+        //}
 
         //Debug.Log($"DoorSystem: OnTriggerActivated index={index}, door='{link.door?.name}', opened={link.opened}, destroyed={link.destroyed}, disabledColliders={link.disabledColliders.Count}, disabledRenderers={link.disabledRenderers.Count}");
 
-        if (link.door == null)
-        {
-            Debug.LogWarning($"DoorSystem: OnTriggerActivated link {index} has no door assigned.");
-            return;
-        }
+        //if (link.door == null)
+        //{
+        //    Debug.LogWarning($"DoorSystem: OnTriggerActivated link {index} has no door assigned.");
+        //    return;
+        //}
 
         CloseDoor(link);
     }

@@ -4210,6 +4210,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: -35.356
       objectReference: {fileID: 0}
+    - target: {fileID: 2336751648523176347, guid: ea7d077d1619d0643a7128471533346a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 2d23ff87b64cc48479321b9f6eb1d23c, type: 2}
     - target: {fileID: 3229501152249821700, guid: ea7d077d1619d0643a7128471533346a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -76.731384
@@ -5526,6 +5530,56 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0.029000001}
   m_TimeToStationary: 0.5
+--- !u!1 &1091156851
+GameObject:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1091156853}
+  - component: {fileID: 1091156852}
+  m_Layer: 0
+  m_Name: ProbeVolumePerSceneData
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1091156852
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1091156851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a83d2f7ae04ab6f4f99b0d85377be998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.ProbeVolumePerSceneData
+  serializedBakingSet: {fileID: 0}
+  sceneGUID: b03aa98dede10994d836275234b85d26
+  obsoleteAsset: {fileID: 0}
+  obsoleteCellSharedDataAsset: {fileID: 0}
+  obsoleteCellSupportDataAsset: {fileID: 0}
+  obsoleteSerializedScenarios: []
+--- !u!4 &1091156853
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1091156851}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1092221584 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4965714070357030617, guid: 097293289c6557a409f58f8504540c33, type: 3}
@@ -6528,6 +6582,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DartTrap (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2336751648523176347, guid: ea7d077d1619d0643a7128471533346a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 2d23ff87b64cc48479321b9f6eb1d23c, type: 2}
     - target: {fileID: 3229501152249821700, guid: ea7d077d1619d0643a7128471533346a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 48.448624
@@ -9014,14 +9072,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc2b95208f734e34391f13934a795e17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  playerTag: Player
+  playerAnchor: {fileID: 0}
+  playerMovement: {fileID: 0}
   blockingCollider: {fileID: 1445667059}
-  tetherGracePeriod: 2
   temporaryDisableDuration: 0.5
+  tetherReleaseDelay: 1
+  reactivateOnTriggerEnter: 1
   debugIsTethered: 0
   debugIsDashing: 0
-  debugWasRecentlyTethered: 0
+  debugTetherGraceActive: 0
   debugAllowPass: 0
+  debugBarrierOpen: 0
+  debugRemainingTime: 0
+  debugTetherReleaseTimer: 0
 --- !u!65 &1445667059
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9041,7 +9104,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.79, y: 1, z: 1}
+  m_Size: {x: 0.52, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1445667060
 MeshRenderer:
@@ -9109,7 +9172,7 @@ Transform:
   m_GameObject: {fileID: 1445667057}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.0017790988, z: -0, w: 0.99999845}
-  m_LocalPosition: {x: 119.29, y: 2.57, z: 287.41}
+  m_LocalPosition: {x: 121.68, y: 2.57, z: 287.4}
   m_LocalScale: {x: 5.18, y: 5.0983377, z: 20.57}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12193,12 +12256,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1974701316}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.8573736, z: -0, w: 0.5146946}
-  m_LocalPosition: {x: 189.17, y: 2.87, z: 201.12}
-  m_LocalScale: {x: 5.4799995, y: 5.4799995, z: 5.4799995}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.70710677}
+  m_LocalPosition: {x: 0, y: -0.9180001, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 6538271960397649901}
   m_LocalEulerAnglesHint: {x: 0, y: 118.046, z: 0}
 --- !u!1 &1981874349
 GameObject:
@@ -13464,56 +13527,6 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
---- !u!1 &2147078255
-GameObject:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2147078257}
-  - component: {fileID: 2147078256}
-  m_Layer: 0
-  m_Name: ProbeVolumePerSceneData
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2147078256
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2147078255}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a83d2f7ae04ab6f4f99b0d85377be998, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.ProbeVolumePerSceneData
-  serializedBakingSet: {fileID: 0}
-  sceneGUID: b03aa98dede10994d836275234b85d26
-  obsoleteAsset: {fileID: 0}
-  obsoleteCellSharedDataAsset: {fileID: 0}
-  obsoleteCellSupportDataAsset: {fileID: 0}
-  obsoleteSerializedScenarios: []
---- !u!4 &2147078257
-Transform:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2147078255}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3260608876611249837
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13623,11 +13636,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoulderTrap
       objectReference: {fileID: 0}
+    - target: {fileID: 5413724934862852393, guid: 47c840ead80a9124cb97f123e1d06ea2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1761909537892606710, guid: 47c840ead80a9124cb97f123e1d06ea2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1974701320}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47c840ead80a9124cb97f123e1d06ea2, type: 3}
+--- !u!4 &6538271960397649901 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1761909537892606710, guid: 47c840ead80a9124cb97f123e1d06ea2, type: 3}
+  m_PrefabInstance: {fileID: 6538271960397649900}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7760176351112687940
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13695,7 +13720,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 406447698}
   - {fileID: 1445667062}
-  - {fileID: 1974701320}
   - {fileID: 6538271960397649900}
   - {fileID: 262998875}
   - {fileID: 1265705914}
@@ -13707,4 +13731,4 @@ SceneRoots:
   - {fileID: 1491652828}
   - {fileID: 1286618592}
   - {fileID: 118117159}
-  - {fileID: 2147078257}
+  - {fileID: 1091156853}

@@ -33,7 +33,7 @@ public class MovementComponent : MonoBehaviour
     [SerializeField] private LayerMask enemyLayer;
     private void Awake()
     {
-        Debug.Log($"{name} Movement Awake");
+       // Debug.Log($"{name} Movement Awake");
         agent = GetComponent<NavMeshAgent>();
 
         player = GameObject.Find("Player").transform;
@@ -44,11 +44,11 @@ public class MovementComponent : MonoBehaviour
         agent.stoppingDistance = stopDistance;
         agent.speed = movementSpeed;
 
-        if (TargetManager.Instance == null)
-        {
-            Debug.LogError("No TargetManager found!");
-            return;
-        }
+        //if (TargetManager.Instance == null)
+        //{
+        //    Debug.LogError("No TargetManager found!");
+        //    return;
+        //}
         target = TargetManager.Instance.RequestSlot(this);
 
         // initialize repath timer so we calculate path immediately
@@ -193,12 +193,12 @@ public class MovementComponent : MonoBehaviour
     public void ReleaseTargetSlot()
     {
         TargetManager.Instance.ReleaseSlot(this);
-        Debug.Log("Slot released");
+        //Debug.Log("Slot released");
     }
     public void RequestSlot()
     {
         target = TargetManager.Instance.RequestSlot(this);
         currentSlot = target != null ? target.name : "None";
-        Debug.Log($"target set to : {(target != null ? target.name : "None")}");
+        //Debug.Log($"target set to : {(target != null ? target.name : "None")}");
     }
 }
