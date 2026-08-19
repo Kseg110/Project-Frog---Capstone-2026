@@ -188,6 +188,7 @@ public class PlayerAttacks : MonoBehaviour
             if (attackWindowTimer == 0f)
                 playerMovement.ResumeMovement();
         }
+
     }
 
     // ============================================================
@@ -205,6 +206,8 @@ public class PlayerAttacks : MonoBehaviour
 
         Shoot(0f, aimDirection);
         lastFireTime = Time.time;
+
+        playerMovement.FaceDirection(aimDirection);
 
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
     }
