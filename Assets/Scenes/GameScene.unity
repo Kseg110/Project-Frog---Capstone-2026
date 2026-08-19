@@ -39701,34 +39701,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1284814115}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &663750357 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6600727344098246571, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-  m_PrefabInstance: {fileID: 1933949835}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &663750359 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 8619462945748240520, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-  m_PrefabInstance: {fileID: 1933949835}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &663750360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 663750357}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62992a3e71fd81947b038b9d9962d89a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Player.playerAnimation
-  playerAttacks: {fileID: 1933949849}
-  playerMovement: {fileID: 1933949847}
-  animator: {fileID: 663750359}
-  isAttackingParameter: IsAttacking
-  movementSpeedParameter: MovementSpeed
-  movespeed: 0
 --- !u!1 &664986446
 GameObject:
   m_ObjectHideFlags: 0
@@ -67349,8 +67321,8 @@ Transform:
   m_GameObject: {fileID: 1081518371}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.023607017, z: -0, w: -0.99972135}
-  m_LocalPosition: {x: -203.333, y: -2.24, z: 175.55478}
-  m_LocalScale: {x: 13.3468, y: 0.42, z: 10.3}
+  m_LocalPosition: {x: -204.2045, y: -2.24, z: 175.5136}
+  m_LocalScale: {x: 11.603153, y: 0.42, z: 10.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 842460681}
@@ -125726,17 +125698,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 583013283057882193, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-      propertyPath: healSlowDuration
-      value: 1.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 583013283057882193, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: inventoryManager
       value: 
       objectReference: {fileID: 1968204913}
-    - target: {fileID: 583013283057882193, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-      propertyPath: healSlowMultiplier
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 900614694835417969, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: m_LocalPosition.x
       value: 53.2
@@ -125777,26 +125741,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1102886415016949637, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-      propertyPath: rayOrigin
-      value: 
-      objectReference: {fileID: 1637515280}
-    - target: {fileID: 1102886415016949637, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-      propertyPath: wallLayers.m_Bits
-      value: 262144
-      objectReference: {fileID: 0}
-    - target: {fileID: 2230821827976972090, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-      propertyPath: m_Positions.Array.size
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3953045122372634609, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: playerHUD
       value: 
       objectReference: {fileID: 1152341541}
-    - target: {fileID: 7342988453639927308, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 13400000, guid: b15dbaff158892845bb00620de53bb89, type: 2}
     - target: {fileID: 7555014404437206304, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: m_Name
       value: Player
@@ -125808,10 +125756,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6600727344098246571, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 663750360}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
 --- !u!114 &1933949836 stripped
 MonoBehaviour:
@@ -125868,17 +125813,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 114454af98abb4845acb8b406c9a1a22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
---- !u!114 &1933949849 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4281862109518123148, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
-  m_PrefabInstance: {fileID: 1933949835}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 201730561}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a789a7a883d4ed499bada1581cb8f9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttacks
 --- !u!1 &1938438910 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1347666014598980849, guid: 636bfab2d1b8e1046b4271c0e4910ecc, type: 3}

@@ -5553,6 +5553,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3479168319086078328}
   - component: {fileID: 8619462945748240520}
+  - component: {fileID: 6569902941337475618}
   m_Layer: 0
   m_Name: PlayerVisual
   m_TagString: Untagged
@@ -5598,6 +5599,24 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6569902941337475618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6600727344098246571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62992a3e71fd81947b038b9d9962d89a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Player.playerAnimation
+  playerAttacks: {fileID: 4281862109518123148}
+  playerMovement: {fileID: -4393449127589004673}
+  animator: {fileID: 8619462945748240520}
+  isAttackingParameter: IsAttacking
+  movementSpeedParameter: MovementSpeed
+  movespeed: 0
 --- !u!1 &7307145619484185438
 GameObject:
   m_ObjectHideFlags: 0
@@ -5951,6 +5970,11 @@ MonoBehaviour:
   extendSpeed: 20
   retractSpeed: 30
   tongueWidth: 0.3
+  wallLayers:
+    serializedVersion: 2
+    m_Bits: 262144
+  rayOrigin: {fileID: 159703758368673626}
+  wallSkin: 0.5
 --- !u!114 &7481143701210063934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5995,6 +6019,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackScript
   healAmountPerFly: 15
   inventoryManager: {fileID: 0}
+  healSlowMultiplier: 0.5
+  healSlowDuration: 1.25
   flyGatherEvent:
     Guid:
       Data1: 2093426210
