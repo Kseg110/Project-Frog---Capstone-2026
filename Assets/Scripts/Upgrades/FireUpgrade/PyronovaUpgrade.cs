@@ -6,6 +6,10 @@ public class PyronovaUpgrade : MonoBehaviour, IElementUpgrade
 
     public AnchorElement Element => AnchorElement.Fire;
 
+    [Header("AOE Settings")]
+    [SerializeField] private float aoeRadius = 5f;        
+    [SerializeField] private float aoeDamagePercent = 50f;  
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -25,5 +29,21 @@ public class PyronovaUpgrade : MonoBehaviour, IElementUpgrade
             AnchorElement.Fire,
             UpgradeStat.ExplosionDamage
         );
+    }
+
+    /// <summary>
+    /// Radius of the AOE explosion around the main target.
+    /// </summary>
+    public float GetAoeRadius()
+    {
+        return aoeRadius;
+    }
+
+    /// <summary>
+    /// Percentage of the main explosion damage applied to AOE targets.
+    /// </summary>
+    public float GetAoeDamagePercent()
+    {
+        return aoeDamagePercent;
     }
 }

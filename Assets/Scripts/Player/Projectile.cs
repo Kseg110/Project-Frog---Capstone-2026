@@ -234,6 +234,27 @@ public class Projectile : MonoBehaviour, IProjectile
                 finalDamage *= 1f + bonus / 100f;
             }
 
+            // ----------------------
+            // PYRONOVA AOE EXPLOSION
+            // ----------------------
+            if (currentElement == AnchorElement.Fire && chargePercent > 0f)
+            {
+                float aoeRadius = PyronovaUpgrade.Instance.GetAoeRadius();
+                float aoePercent = PyronovaUpgrade.Instance.GetAoeDamagePercent();
+
+                float aoeDamage = finalDamage * (aoePercent / 100f);
+
+                Collider[] hits = Physics.OverlapSphere(enemy.transform.position, aoeRadius);
+
+                foreach (var hit in hits)
+                {
+                    var aoeEnemy = hit.GetComponent<EnemyBase>();
+                    if (aoeEnemy != null && aoeEnemy != enemy)
+                    {
+                        aoeEnemy.TakeDamage(aoeDamage);
+                    }
+                }
+            }
 
             // Cryo Fragility (bonus if slowed)
             if (CryoFragilityUpgrade.Instance != null && enemy.IsSlowed)
@@ -247,6 +268,18 @@ public class Projectile : MonoBehaviour, IProjectile
                 enemy.TakeDamage(finalDamage, effectType, effectDuration, effectValue);
             else
                 enemy.TakeDamage(finalDamage);
+
+            // -------------------------
+            // EXTINGUISHER BONUS DAMAGE 
+            // -------------------------
+            if (currentElement == AnchorElement.Fire &&
+                ExtinguisherUpgrade.Instance != null &&
+                ExtinguisherUpgrade.Instance.IsEnabled() &&
+                enemy.IsBurning)
+            {
+                float extra = ExtinguisherUpgrade.Instance.GetBonusDamage();
+                enemy.TakeDamage(extra);
+            }
 
             // Apply knockback to enemy only if knockbackDistance > 0
             if (knockbackDistance > 0f)
@@ -302,9 +335,6 @@ public class Projectile : MonoBehaviour, IProjectile
                 PlayHitVfx(defaultHitVfx);
             }
 
-            // Extinguisher
-            if (ExtinguisherUpgrade.Instance != null)
-                ExtinguisherUpgrade.Instance.OnHitEnemy(enemy);
 
             // Shatter
             if (ShatterUpgrade.Instance != null)

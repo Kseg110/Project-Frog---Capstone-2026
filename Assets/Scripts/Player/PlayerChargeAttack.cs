@@ -160,7 +160,7 @@ public class PlayerChargeAttack : MonoBehaviour
                         proj.isPlayerProjectile = true; // ensure this is set before anything that checks it
                         proj.player = this.gameObject;
                         proj.currentElement = AnchorElement.Fire;
-                        proj.pointBlankRange = playerAttacks.pointBlankRange;
+                        //proj.pointBlankRange = playerAttacks.pointBlankRange;
                         proj.Initialize(chargePercent);
                         proj.damage = explosionDamage;
                         proj.effectType = "Burn";

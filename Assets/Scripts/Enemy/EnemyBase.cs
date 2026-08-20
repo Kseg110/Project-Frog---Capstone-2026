@@ -309,6 +309,12 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         IsBurning = state;
     }
 
+    public void FlashBurnTick()
+    {
+        if (enemyFlash != null)
+            enemyFlash.Flash();
+    }
+
     // Cleanse all effects (used by Extinguisher, Shatter, etc.)
     public void Cleanse()
     {

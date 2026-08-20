@@ -182,10 +182,12 @@ public class Health : MonoBehaviour, IDamageable
 
         while (timer < duration)
         {
-            float finalTickDamage = baseDamage;
+            float finalTickDamage = baseDamage * 0.5f;
             Debug.Log($"[Burn] Tick damage: {finalTickDamage} | Timer: {timer}/{duration}");
 
             TakeDmg(finalTickDamage);
+
+            enemy?.FlashBurnTick();
 
             timer += tickRate;
             yield return new WaitForSeconds(tickRate);

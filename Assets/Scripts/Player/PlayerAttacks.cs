@@ -349,6 +349,20 @@ public class PlayerAttacks : MonoBehaviour
             //proj.damage = 2f;
         }
 
+        // -----------------
+        // PRIMARY FIRE BURN
+        // -----------------
+        if (proj.currentElement == AnchorElement.Fire)
+        {
+            var fireData = playerAnchor.AttachedAnchor.BaseData as AnchorFireData;
+            if (fireData != null)
+            {
+                proj.effectType = "Burn";
+                proj.effectDuration = fireData.BurnDuration;
+                proj.effectValue = fireData.BurnTickRate;
+            }
+        }
+
         // Always ignore collision with player, regardless of Projectile component
         IgnorePlayerCollision(projObj);
     }

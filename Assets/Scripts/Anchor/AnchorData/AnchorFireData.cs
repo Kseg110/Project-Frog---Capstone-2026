@@ -9,8 +9,8 @@ using UnityEngine;
 public class AnchorFireData : AnchorData
 {
     [Header("Burn Settings")]
-    [SerializeField] private float burnDuration = 2f;   // How long burn lasts
-    [SerializeField] private float burnTickRate = 0.2f; // How often damage ticks
+    [SerializeField] private float burnDuration = 4f;   // How long burn lasts
+    [SerializeField] private float burnTickRate = 1f; // How often damage ticks
 
     public float BurnDuration
     {
