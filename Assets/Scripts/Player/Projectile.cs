@@ -36,6 +36,7 @@ public class Projectile : MonoBehaviour, IProjectile
     // Ice Upgrade
     public bool isPiercingProjectile = false;
     private int pierceCount = 0;
+    public float pierceMultiplier = 1f;
 
     // Default is 0 so basic shots do not apply knockback. Charged attacks will add knockback based on charge time
     [Tooltip("Knockback distance applied to enemies when hit by player projectiles. 0 = no knockback.")]
@@ -56,10 +57,13 @@ public class Projectile : MonoBehaviour, IProjectile
         this.chargePercent = chargePercent;
 
         // Frostwind (Ice primary speed)
-        if (FrostwindUpgrade.Instance != null)
+        if (currentElement == AnchorElement.Ice &&
+            chargePercent <= 0f &&
+            FrostwindUpgrade.Instance != null)
         {
             float bonus = FrostwindUpgrade.Instance.GetBonus();
             speed *= 1f + bonus / 100f;
+            Debug.Log($"[Projectile] Frostwind bonus applied: {bonus}% speed increase. New speed: {speed}");
         }
 
         // Searing Shot (Fire primary dart damage)
@@ -256,18 +260,47 @@ public class Projectile : MonoBehaviour, IProjectile
                 }
             }
 
+            bool wasSlowed = enemy.IsSlowed;
+            bool wasFrozen = enemy.IsFrozen;
+
+            // ICE PRIMARY — SLOW
+            if (currentElement == AnchorElement.Ice && chargePercent <= 0f)
+            {
+                enemy.ApplySlow(3f, 0.70f); // 30% slow
+            }
+
+            // ICE CHARGE — FREEZE
+            if (currentElement == AnchorElement.Ice && chargePercent > 0f)
+            {
+                enemy.Freeze(3f);
+            }
+
             // Cryo Fragility (bonus if slowed)
-            if (CryoFragilityUpgrade.Instance != null && enemy.IsSlowed)
+            if (currentElement == AnchorElement.Ice &&
+                CryoFragilityUpgrade.Instance != null &&
+                CryoFragilityUpgrade.Instance.GetBonus() > 0f &&
+                (wasSlowed || wasFrozen))
             {
                 float bonus = CryoFragilityUpgrade.Instance.GetBonus();
                 finalDamage *= 1f + bonus / 100f;
             }
 
+            // Shatter
+            if (currentElement == AnchorElement.Ice &&
+                ShatterUpgrade.Instance != null &&
+                ShatterUpgrade.Instance.IsEnabled())
+            {
+                ShatterUpgrade.Instance.TryApplyShatter(enemy, wasFrozen);
+            }
+
             // Apply damage + effect
-            if (!string.IsNullOrEmpty(effectType))
-                enemy.TakeDamage(finalDamage, effectType, effectDuration, effectValue);
-            else
-                enemy.TakeDamage(finalDamage);
+            if (!isPiercingProjectile)
+            {
+                if (!string.IsNullOrEmpty(effectType))
+                    enemy.TakeDamage(finalDamage, effectType, effectDuration, effectValue);
+                else
+                    enemy.TakeDamage(finalDamage);
+            }
 
             // -------------------------
             // EXTINGUISHER BONUS DAMAGE 
@@ -335,22 +368,35 @@ public class Projectile : MonoBehaviour, IProjectile
                 PlayHitVfx(defaultHitVfx);
             }
 
-
-            // Shatter
-            if (ShatterUpgrade.Instance != null)
-                ShatterUpgrade.Instance.OnHitEnemy(enemy);
-
-            // Lethal Piercing
-            if (isPiercingProjectile && LethalPiercingUpgrade.Instance != null)
-            {
-                float bonus = LethalPiercingUpgrade.Instance.GetBonus();
-                enemy.TakeDamagePercent(bonus);
-            }
-
-            // Piercing logic
+            // ---------------
+            // LETHAL PIERCING
+            // ---------------
             if (isPiercingProjectile)
             {
+                float baseMultiplier;
+
+                if (LethalPiercingUpgrade.Instance != null &&
+                    LethalPiercingUpgrade.Instance.GetBonus() > 0f)
+                {
+                    baseMultiplier = LethalPiercingUpgrade.Instance.GetBonus() / 100f;
+                }
+                else
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+
+                // Apply multiplier BEFORE damage is applied
+                finalDamage *= pierceMultiplier;
+
+                // Apply damage now
+                enemy.TakeDamage(finalDamage);
+
+                // Update multiplier for next hit
+                pierceMultiplier *= baseMultiplier;
+
                 pierceCount++;
+
                 return;
             }
 

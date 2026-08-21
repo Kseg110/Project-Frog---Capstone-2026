@@ -193,9 +193,20 @@ public class PlayerChargeAttack : MonoBehaviour
                         proj.Initialize(chargePercent);
                         proj.damage = iceDamage;
                         proj.effectType = "Freeze";
-                        proj.effectDuration = 1f;
+                        proj.effectDuration = 3f;
                         proj.effectValue = 1f;
-                        proj.isPiercingProjectile = true;
+
+                        if (LethalPiercingUpgrade.Instance != null &&
+                            LethalPiercingUpgrade.Instance.GetBonus() > 0f)
+                        {
+                            proj.isPiercingProjectile = true;
+                            proj.pierceMultiplier = 1f;
+                        }
+                        else
+                        {
+                            proj.isPiercingProjectile = false;
+                            proj.pierceMultiplier = 1f;
+                        }
 
                         // Apply charged knockback
                         proj.knockbackDistance = Mathf.Lerp(1f, 5f, chargePercent);
