@@ -62,7 +62,7 @@ public class MudPit : MonoBehaviour
 
         if (wasEmpty && set.Count == 1)
         {
-            Debug.Log($"[MudPit] Applying speed modifier to {((MonoBehaviour)victim).gameObject.name}!", ((MonoBehaviour)victim).gameObject);
+            //Debug.Log($"[MudPit] Applying speed modifier to {((MonoBehaviour)victim).gameObject.name}!", ((MonoBehaviour)victim).gameObject);
             victim.AddSpeedModifier(this, speedMult);
 
             if (victim is PlayerMovement pm)

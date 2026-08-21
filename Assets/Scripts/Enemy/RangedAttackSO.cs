@@ -27,7 +27,7 @@ public class RangedAttackSO : AttackBaseSO
     {
         if (projectilePrefab == null)
         {
-            Debug.LogWarning($"[{_attackName}] No projectile prefab assigned.");
+            //Debug.LogWarning($"[{_attackName}] No projectile prefab assigned.");
             return;
         }
 
@@ -55,7 +55,7 @@ public class RangedAttackSO : AttackBaseSO
             {
                 if (shooterEnemy == null || hitEnemy != shooterEnemy)
                 {
-                    Debug.Log($"[{_attackName}] Aborting shot: another enemy ({hitEnemy.name}) in the way.");
+                    //Debug.Log($"[{_attackName}] Aborting shot: another enemy ({hitEnemy.name}) in the way.");
                     return;
                 }
             }
@@ -64,7 +64,7 @@ public class RangedAttackSO : AttackBaseSO
                 // Ensure the hit transform is not the shooter (handles child colliders).
                 if (hit.collider.transform != enemy && !hit.collider.transform.IsChildOf(enemy))
                 {
-                    Debug.Log($"[{_attackName}] Aborting shot: an object tagged 'Enemy' is in the way.");
+                    //Debug.Log($"[{_attackName}] Aborting shot: an object tagged 'Enemy' is in the way.");
                     return;
                 }
             }

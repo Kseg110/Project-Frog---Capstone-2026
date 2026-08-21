@@ -68,7 +68,7 @@ public class PlayerTakeDamage : MonoBehaviour
 
         if (hit == null)
         {
-            Debug.LogError($"Hitbox child '{hitBoxName}' not found on {gameObject.name}");
+            //Debug.LogError($"Hitbox child '{hitBoxName}' not found on {gameObject.name}");
             return;
         }
 
@@ -76,7 +76,7 @@ public class PlayerTakeDamage : MonoBehaviour
 
         if (hitbox == null)
         {
-            Debug.LogError($"No CapsuleCollider found on hitbox object '{hitBoxName}'");
+            //Debug.LogError($"No CapsuleCollider found on hitbox object '{hitBoxName}'");
             return;
         }
 
@@ -89,6 +89,14 @@ public class PlayerTakeDamage : MonoBehaviour
     // Builds the set of renderers the damage flash tints red, EXCLUDING the tether.
     private void CacheFlashRenderers()
     {
+        // If a flash is live, kill it and restore before reading colors — otherwise red gets cached as "original".
+        if (flashCoroutine != null)
+        {
+            StopCoroutine(flashCoroutine);
+            flashCoroutine = null;
+            RestoreOriginalColors();
+        }
+
         Renderer[] allRenderers = GetComponentsInChildren<Renderer>();
 
         // Find the tether subtree (if any) so we can skip every renderer beneath it.
@@ -129,7 +137,7 @@ public class PlayerTakeDamage : MonoBehaviour
         // SHIELD ALWAYS CHECKS FIRST
         if (shield != null && shield.TakeDamage((int)damageAmount))
         {
-            Debug.Log("[Shield] Hit absorbed by shield!");
+            //Debug.Log("[Shield] Hit absorbed by shield!");
 
             // Activate i-frames even if shield absorbed, to prevent multiple hits in quick succession
             nextAllowedDamageTime = Time.time + immortalityTime;
@@ -233,21 +241,24 @@ public class PlayerTakeDamage : MonoBehaviour
         float interval = 1f / flashFrequency / 2f;
         bool isRed = false;
 
-        while (Time.time < nextAllowedDamageTime)
+        try
         {
-            isRed = !isRed;
-
-            for (int i = 0; i < cachedRenderers.Length; i++)
+            while (Time.time < nextAllowedDamageTime)
             {
-                cachedRenderers[i].material.color =
-                    isRed ? Color.red : originalColors[i];
+                isRed = !isRed;
+
+                for (int i = 0; i < cachedRenderers.Length; i++)
+                    cachedRenderers[i].material.color = isRed ? Color.red : originalColors[i];
+
+                yield return new WaitForSeconds(interval);
             }
-
-            yield return new WaitForSeconds(interval);
         }
-
-        RestoreOriginalColors();
-        flashCoroutine = null;
+        finally
+        {
+            // Runs even if the coroutine is stopped mid-flash (dash/knockback teardown).
+            RestoreOriginalColors();
+            flashCoroutine = null;
+        }
     }
 
     private void RestoreOriginalColors()

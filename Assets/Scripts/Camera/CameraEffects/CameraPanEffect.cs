@@ -287,6 +287,14 @@ public class CameraPanEffect : CameraEffectBase
         Spline,
         PointToPoint
     }
+
+    //Hooking into PlayerHUDPanFader to reset the static variable when entering play mode or recompiling scripts.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        GlobalPanActive = false;
+    }
+
     private void Awake()
     {
         controller =

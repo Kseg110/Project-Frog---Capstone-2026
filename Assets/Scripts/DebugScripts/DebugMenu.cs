@@ -7,6 +7,8 @@ public class DebugMenu : MonoBehaviour
     public CombatStatistics statistics;
     public PlayerTakeDamage playerTakeDamage;
     public WaveRoundSystem waveRoundSystem;
+    public UpgradeManager upgradeManager;
+    public InventoryManager inventoryManager;
 
     [Header("Appearance")]
     public GUISkin skin;

@@ -34,7 +34,7 @@ public class EnemyFrogSkeleton : EnemyBase
 
         if (player == null)
         {
-            Debug.Log("player missing");
+            //Debug.Log("player missing");
             return;
         }
 
@@ -86,18 +86,18 @@ public class EnemyFrogSkeleton : EnemyBase
     private IEnumerator HandlePostAttack()
     {
         isHandlingPostAttack = true;
-        Debug.Log($"[Frog] HandlePostAttack START on '{name}'", this);
+        //Debug.Log($"[Frog] HandlePostAttack START on '{name}'", this);
 
         // Wait for the attack animation/logic to complete (or timeout)
         float waited = 0f;
         while (enemyAttack != null && enemyAttack.IsAttacking && waited < postAttackWaitTimeout)
         {
             if (Mathf.Approximately(waited, 0f))
-                Debug.Log($"[Frog] Waiting for attack to finish on '{name}'", this);
+                //Debug.Log($"[Frog] Waiting for attack to finish on '{name}'", this);
             waited += Time.deltaTime;
             yield return null;
         }
-        Debug.Log($"[Frog] Finished waiting (waited={waited:F2}) on '{name}'", this);
+        //Debug.Log($"[Frog] Finished waiting (waited={waited:F2}) on '{name}'", this);
 
         if (player != null && movement != null)
         {
@@ -111,7 +111,7 @@ public class EnemyFrogSkeleton : EnemyBase
                 away = -transform.forward;
             Vector3 retreatTarget = transform.position + away.normalized * postAttackRetreatDistance;
 
-            Debug.Log($"[Frog] Issuing retreat to {retreatTarget} on '{name}' (movement still disabled)", this);
+            //Debug.Log($"[Frog] Issuing retreat to {retreatTarget} on '{name}' (movement still disabled)", this);
             movement.MoveTo(retreatTarget);
 
             // Allow some time to retreat (stop early if close enough)
@@ -125,7 +125,7 @@ public class EnemyFrogSkeleton : EnemyBase
             }
 
             // Request a new slot while movement is still disabled (safe) then re-enable movement so the agent goes to the new slot.
-            Debug.Log($"[Frog] Requesting new slot for '{name}'", this);
+            //Debug.Log($"[Frog] Requesting new slot for '{name}'", this);
             movement.RequestSlot();
             movement.SetMovementEnabled(true);
         }
@@ -133,7 +133,7 @@ public class EnemyFrogSkeleton : EnemyBase
         // Re-enable movement after post-attack behavior
         movement.SetMovementEnabled(true);
 
-        Debug.Log($"[Frog] HandlePostAttack END on '{name}'", this);
+        //Debug.Log($"[Frog] HandlePostAttack END on '{name}'", this);
         isHandlingPostAttack = false;
         yield break;
     }

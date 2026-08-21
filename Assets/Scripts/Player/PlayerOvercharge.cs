@@ -249,7 +249,7 @@ public class PlayerOvercharge : MonoBehaviour
         // Notify Listeners
         OnOverchargeActivated?.Invoke();
 
-        Debug.Log($"Overcharge activated! Anchor Type: {currentAnchorType}");
+       // Debug.Log($"Overcharge activated! Anchor Type: {currentAnchorType}");
     }
 
     private void StartCooldown()
