@@ -175,7 +175,18 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
 
         if (effectType == "Burn")
         {
-            health.ApplyBurn(effectDuration, effectValue, dmg);
+            float burnDamage = dmg;
+
+            if (WildfireUpgrade.Instance != null)
+            {
+                float bonus = WildfireUpgrade.Instance.GetBurnBonus();
+                float before = burnDamage;
+
+                burnDamage *= 1f + bonus / 100f;
+                Debug.Log($"[Wildfire] Burn tick boosted: +{bonus}% → {before} → {burnDamage}");
+            }
+
+            health.ApplyBurn(effectDuration, effectValue, burnDamage);
         }
     }
 
@@ -297,6 +308,12 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
     public void SetBurning(bool state)
     {
         IsBurning = state;
+    }
+
+    public void FlashBurnTick()
+    {
+        if (enemyFlash != null)
+            enemyFlash.Flash();
     }
 
     // Cleanse all effects (used by Extinguisher, Shatter, etc.)
