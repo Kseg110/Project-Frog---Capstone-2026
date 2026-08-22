@@ -21,14 +21,15 @@ public class CameraPanRoundTrigger : MonoBehaviour
 
 
 
-        [Tooltip("Time used when Fixed Return Time is ON.")]
-        public float returnTime = 1f;
+
     }
 
 
     [System.Serializable]
     public class RoundPan
     {
+        [Tooltip("Time used when Fixed Return Time is ON.")]
+        public float returnTime = 1f;
         public int round;
         [Header("Return")]
         [Tooltip("ON = return to the original camera position in exactly returnTime seconds. OFF = return using normal pan speed.")]
