@@ -29,7 +29,30 @@ public class CameraController : MonoBehaviour
     "This does not trigger a pan and does not use camera effects."
 )]
     [SerializeField]
-    private Transform panPoint;
+    private Transform panStart_EndObjects;
+
+    [Header("Auto Find")]
+
+    [SerializeField]
+    private string panStart_EndObjectsTag = "panStart_EndObjects";
+
+    private void Awake()
+    {
+        FindpanStart_EndObjects();
+    }
+
+    private void FindpanStart_EndObjects()
+    {
+        if (panStart_EndObjects != null)
+            return;
+
+        GameObject found = GameObject.FindGameObjectWithTag(panStart_EndObjectsTag);
+
+        if (found != null)
+        {
+            panStart_EndObjects = found.transform;
+        }
+    }
     private void Start()
     {
         // Apply fixed rotation immediately
@@ -61,10 +84,10 @@ public class CameraController : MonoBehaviour
 
         // Desired position relative to the target
         Vector3 desiredPosition = target.position + rotatedOffset;
-        if (panPoint != null)
+        if (panStart_EndObjects != null)
         {
-            panPoint.position = desiredPosition;
-            panPoint.rotation = targetRotation;
+            panStart_EndObjects.position = desiredPosition;
+            panStart_EndObjects.rotation = targetRotation;
         }
 
 

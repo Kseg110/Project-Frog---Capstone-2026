@@ -212,6 +212,69 @@ public class CameraPanEffect : CameraEffectBase
     [SerializeField]
     private Transform PAUSEPOINT;
 
+    [Header("Auto Find Pan / Pause")]
+
+    [Tooltip("If no Pan Point is assigned, the script searches for this tag.")]
+    [SerializeField]
+    private string panPointTag = "PanPoint";
+
+    [Tooltip("If no Pause Point is assigned, the script searches for this tag.")]
+    [SerializeField]
+    private string pausePointTag = "PausePoint";
+
+
+    private void FindMissingPanPoints()
+    {
+        // ---------------------------------------------------------
+        // FIND PAN POINT
+        // ---------------------------------------------------------
+
+        if (panStart_EndObjects == null)
+        {
+            GameObject panObject = FindGameObjectByTagSafe(panPointTag);
+
+            if (panObject != null)
+            {
+                panStart_EndObjects = panObject.transform;
+            }
+        }
+
+        // ---------------------------------------------------------
+        // FIND PAUSE POINT
+        // ---------------------------------------------------------
+
+        if (PAUSEPOINT == null)
+        {
+            GameObject pauseObject = FindGameObjectByTagSafe(pausePointTag);
+
+            if (pauseObject != null)
+            {
+                PAUSEPOINT = pauseObject.transform;
+            }
+        }
+    }
+
+    private GameObject FindGameObjectByTagSafe(string tagName)
+    {
+        if (string.IsNullOrWhiteSpace(tagName))
+            return null;
+
+        try
+        {
+            return GameObject.FindGameObjectWithTag(tagName);
+        }
+        catch (UnityException)
+        {
+            Debug.LogWarning(
+                $"[{nameof(CameraPanEffect)}] Tag '{tagName}' does not exist. " +
+                $"Create the tag or assign the Transform manually.",
+                this
+            );
+
+            return null;
+        }
+    }
+
     [Tooltip("Fixed movement speed to and from the pause point. Does NOT use TriggerPan time.")]
     [SerializeField]
     private float pausePointMoveSpeed = 20f;
@@ -472,6 +535,7 @@ public class CameraPanEffect : CameraEffectBase
             doorSystem =
                 FindAnyObjectByType<DoorSystem>();
         }
+        FindMissingPanPoints();
     }
 
 
