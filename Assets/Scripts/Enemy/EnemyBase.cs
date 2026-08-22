@@ -5,8 +5,8 @@ using UnityEngine.AI;
 
 // Enemy BaseClass
 
-[RequireComponent (typeof(MovementComponent))]
-public abstract class EnemyBase : MonoBehaviour, IDamageable
+[RequireComponent(typeof(MovementComponent))]
+public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
 {
     [Header("References")]
     [SerializeField] protected Transform player;
@@ -249,6 +249,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     private IEnumerator SlowRoutine(float duration, float slowMultiplier)
     {
         IsSlowed = true;
+        statusSlowMultiplier = slowMultiplier;   // Missing from EnemBase, this ensures the OverchargeSlowEffect.cs logic is implemented correctly.
         UpdateActualSpeed();
 
         yield return new WaitForSeconds(duration);
@@ -391,4 +392,3 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         }
     }
 }
-

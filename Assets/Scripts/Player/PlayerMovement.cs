@@ -55,6 +55,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private UIPlayerHUD playerHUD;
     private CapsuleCollider capsuleCollider;
     private PlayerCrosshair playerCrosshair;
+    private PlayerAttacks playerAttacks;
 
     private Vector3 moveInput;
     private Vector3 dashDirection;
@@ -93,6 +94,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         playerAnchor = GetComponent<PlayerAnchor>();
         playerHUD = FindAnyObjectByType<UIPlayerHUD>();
         playerCrosshair = FindAnyObjectByType<PlayerCrosshair>();
+        playerAttacks = GetComponent<PlayerAttacks>();
 
         lookDirection = transform.forward;
 
@@ -332,7 +334,10 @@ public class PlayerMovement : MonoBehaviour, IMovement
                 collisionLayers
             );
 
-            if (!usingGamepad && moveInput.sqrMagnitude > 0.0001f)
+            // Don't let walk-facing override the aim-facing during an attack window.
+            bool suppressWalkRotation = playerAttacks != null && playerAttacks.IsAttacking;
+
+            if (!usingGamepad && moveInput.sqrMagnitude > 0.0001f && !suppressWalkRotation)
                 rb.MoveRotation(Quaternion.LookRotation(moveInput.normalized));
         }
     }
@@ -418,6 +423,17 @@ public class PlayerMovement : MonoBehaviour, IMovement
         moveInput = Vector3.zero;
     }
 
+    // Snaps the player to face a world-space direction. Called by PlayerAttacks on fire so the player turns to aim. 
+    public void FaceDirection(Vector3 direction)
+    {
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.0001f)
+            return;
+
+        lookDirection = direction.normalized;
+        rb.MoveRotation(Quaternion.LookRotation(lookDirection));
+    }
+
     private void StartDash()
     {
         if (CameraPanEffect.GlobalPanActive)
@@ -440,12 +456,12 @@ public class PlayerMovement : MonoBehaviour, IMovement
             Vector3 spawnPosition = transform.position - dashDirection * dashEffectBackOffset + Vector3.up * dashEffectHeightOffset;
             Quaternion spawnRotation = Quaternion.LookRotation(-dashDirection);
 
-            Instantiate(dashEffect, spawnPosition, spawnRotation);; 
+            Instantiate(dashEffect, spawnPosition, spawnRotation); ;
         }
 
         RuntimeManager.PlayOneShot(dashActivationEvent, transform.position);
 
-       // Debug.Log("start dash");
+        // Debug.Log("start dash");
         PlayerDashVFX.Instance.StartDashVFX();
     }
 
@@ -455,7 +471,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         dashCooldownTimer = dashCooldown;
         playerHUD?.UpdateDashCooldown(0f);
 
-       // Debug.Log("end dash");
+        // Debug.Log("end dash");
         PlayerDashVFX.Instance.EndDashVFX();
     }
 

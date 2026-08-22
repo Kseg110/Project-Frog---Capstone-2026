@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class MovementComponent : MonoBehaviour  
+public class MovementComponent : MonoBehaviour
 {
     private NavMeshAgent agent;
     public NavMeshAgent Agent => agent;
@@ -31,9 +31,10 @@ public class MovementComponent : MonoBehaviour
     private bool canMove = true;
 
     [SerializeField] private LayerMask enemyLayer;
+
     private void Awake()
     {
-       // Debug.Log($"{name} Movement Awake");
+        // Debug.Log($"{name} Movement Awake");
         agent = GetComponent<NavMeshAgent>();
 
         player = GameObject.Find("Player").transform;
@@ -82,7 +83,7 @@ public class MovementComponent : MonoBehaviour
         currentSlot = target != null ? target.name : "None";
     }
 
-    public void MoveTo(Vector3 position) 
+    public void MoveTo(Vector3 position)
     {
         if (!agent.enabled) return;
         agent.isStopped = false;
@@ -131,7 +132,7 @@ public class MovementComponent : MonoBehaviour
         if (direction.sqrMagnitude < 0.001f) return;
 
         Quaternion targetRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation,targetRotation,rotationSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
     public void Stop()
@@ -144,7 +145,7 @@ public class MovementComponent : MonoBehaviour
 
     public bool HasReachedDestination()
     {
-        if(!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             return true;
         }
@@ -154,7 +155,7 @@ public class MovementComponent : MonoBehaviour
     {
         Vector3 separation = Vector3.zero;
 
-        Collider[] otherEnemies = Physics.OverlapSphere(transform.position,separationRadius,enemyLayer);
+        Collider[] otherEnemies = Physics.OverlapSphere(transform.position, separationRadius, enemyLayer);
 
         foreach (Collider otherEnemy in otherEnemies)
         {
@@ -163,7 +164,7 @@ public class MovementComponent : MonoBehaviour
             Vector3 away = transform.position - otherEnemy.transform.position;
 
             float distance = away.magnitude;
-  
+
             if (distance > 0.001f)
             {
                 separation += away.normalized / distance;
@@ -176,8 +177,8 @@ public class MovementComponent : MonoBehaviour
 
     public float GetDistanceToTarget()
     {
-        if(target == null) return Mathf.Infinity;
-        return Vector3.Distance(transform.position,target.position);
+        if (target == null) return Mathf.Infinity;
+        return Vector3.Distance(transform.position, target.position);
     }
 
     public void SetMovementEnabled(bool enabled)

@@ -3,7 +3,6 @@ using UnityEngine;
 
 // Attach this to an empty parent GameObject & attach the helper (MudPitTrigger) to child collider(s).
 // The Player (or any IMovement) slows while overlapping this mud pit's colliders.
-
 public class MudPit : MonoBehaviour
 {
     [Header("Slow strength")]
@@ -24,11 +23,9 @@ public class MudPit : MonoBehaviour
     {
         // Catch anything already standing inside the pit when it (or the enemy) spawns.
         if (triggerColliders == null || triggerColliders.Length == 0) return;
-
         foreach (var trig in triggerColliders)
         {
             if (trig == null) continue;
-
             Collider[] overlaps = Physics.OverlapBox(
                 trig.bounds.center,
                 trig.bounds.extents,
@@ -36,7 +33,6 @@ public class MudPit : MonoBehaviour
                 affectedLayers,
                 QueryTriggerInteraction.Ignore
             );
-
             foreach (var hit in overlaps)
                 HandleEnter(hit);
         }
@@ -44,12 +40,17 @@ public class MudPit : MonoBehaviour
 
     public void HandleEnter(Collider other)
     {
-        //Debug.Log($"[MudPit] ENTER from: {other.gameObject.name}", other.gameObject);
+        if ((affectedLayers.value & (1 << other.gameObject.layer)) == 0)
+            return;
 
-        if ((affectedLayers.value & (1 << other.gameObject.layer)) == 0) return;
+        // Skip colliders explicitly opted out (tether hitboxes, overcharge trail colliders).
+        // They're children of the Player but aren't the Player's movement body, and they get disabled/destroyed mid-overlap without firing OnTriggerExit - which would otherwise strand a slow modifier and permanently slow the player.
+        if (other.GetComponentInParent<MudPitIgnore>() != null)
+            return;
 
         IMovement victim = other.GetComponentInParent<IMovement>();
-        if (victim == null) return;
+        if (victim == null)
+            return;
 
         if (!insideColliders.TryGetValue(victim, out var set))
         {
@@ -62,9 +63,7 @@ public class MudPit : MonoBehaviour
 
         if (wasEmpty && set.Count == 1)
         {
-            //Debug.Log($"[MudPit] Applying speed modifier to {((MonoBehaviour)victim).gameObject.name}!", ((MonoBehaviour)victim).gameObject);
             victim.AddSpeedModifier(this, speedMult);
-
             if (victim is PlayerMovement pm)
                 pm.SetInMud(true);
         }
@@ -72,22 +71,22 @@ public class MudPit : MonoBehaviour
 
     public void HandleExit(Collider other)
     {
-        //Debug.Log($"[MudPit] EXIT from: {other.gameObject.name}", other.gameObject);
-
         IMovement victim = other.GetComponentInParent<IMovement>();
         if (victim == null) return;
+
         if (!insideColliders.TryGetValue(victim, out var set)) return;
 
         set.Remove(other);
+
+        // Prune any colliders destroyed mid-overlap.
+        set.RemoveWhere(c => c == null);
 
         if (set.Count == 0)
         {
             victim.RemoveSpeedModifier(this);
             insideColliders.Remove(victim);
-
             if (victim is PlayerMovement pm)
                 pm.SetInMud(false);
         }
-        //insideColliders.Clear();
     }
 }

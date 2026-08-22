@@ -54,6 +54,11 @@ public class PlayerTakeDamage : MonoBehaviour
     private Coroutine flashCoroutine;
     private Coroutine knockbackCoroutine;
 
+    // Permanent Red Fix (Hopefully)
+    private MaterialPropertyBlock flashBlock;
+    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+    private static readonly int ColorId = Shader.PropertyToID("_Color");
+
     private void Awake()
     {
         // Cache references
@@ -89,16 +94,20 @@ public class PlayerTakeDamage : MonoBehaviour
     // Builds the set of renderers the damage flash tints red, EXCLUDING the tether.
     private void CacheFlashRenderers()
     {
+        if (flashCoroutine != null)
+        {
+            StopCoroutine(flashCoroutine);
+            flashCoroutine = null;
+        }
+
         Renderer[] allRenderers = GetComponentsInChildren<Renderer>();
 
-        // Find the tether subtree (if any) so we can skip every renderer beneath it.
         AnchorTether tether = GetComponentInChildren<AnchorTether>();
         Transform tetherRoot = tether != null ? tether.transform : null;
 
         List<Renderer> flashSet = new List<Renderer>(allRenderers.Length);
         foreach (Renderer r in allRenderers)
         {
-            // Skip anything parented under the tether — its materials are owned by AnchorTether.
             if (tetherRoot != null && r.transform.IsChildOf(tetherRoot))
                 continue;
 
@@ -106,10 +115,9 @@ public class PlayerTakeDamage : MonoBehaviour
         }
 
         cachedRenderers = flashSet.ToArray();
-        originalColors = new Color[cachedRenderers.Length];
+        flashBlock = new MaterialPropertyBlock();
 
-        for (int i = 0; i < cachedRenderers.Length; i++)
-            originalColors[i] = cachedRenderers[i].material.color;
+        // No color sampling at all — we never store "original", so it can never be poisoned red. Hopefully.
     }
 
     /// <summary>
@@ -219,7 +227,6 @@ public class PlayerTakeDamage : MonoBehaviour
         if (flashCoroutine != null)
         {
             StopCoroutine(flashCoroutine);
-            RestoreOriginalColors();
         }
 
         flashCoroutine = StartCoroutine(FlashRoutine());
@@ -233,27 +240,46 @@ public class PlayerTakeDamage : MonoBehaviour
         float interval = 1f / flashFrequency / 2f;
         bool isRed = false;
 
-        while (Time.time < nextAllowedDamageTime)
+        try
         {
-            isRed = !isRed;
-
-            for (int i = 0; i < cachedRenderers.Length; i++)
+            while (Time.time < nextAllowedDamageTime)
             {
-                cachedRenderers[i].material.color =
-                    isRed ? Color.red : originalColors[i];
+                isRed = !isRed;
+                SetFlash(isRed);
+                yield return new WaitForSeconds(interval);
             }
-
-            yield return new WaitForSeconds(interval);
         }
-
-        RestoreOriginalColors();
-        flashCoroutine = null;
+        finally
+        {
+            // Clearing the property block reveals the untouched base material — the baseline is never modified, so this can't strand red.
+            SetFlash(false);
+            flashCoroutine = null;
+        }
     }
 
-    private void RestoreOriginalColors()
+    // Applies or clears the red tint via property block, never touching the shared material.
+    private void SetFlash(bool red)
     {
+        if (cachedRenderers == null) return;
+
         for (int i = 0; i < cachedRenderers.Length; i++)
-            cachedRenderers[i].material.color = originalColors[i];
+        {
+            Renderer r = cachedRenderers[i];
+            if (r == null) continue; // renderer destroyed over the object's life — skip, don't crash
+
+            if (red)
+            {
+                r.GetPropertyBlock(flashBlock);
+                flashBlock.SetColor(BaseColorId, Color.red);
+                flashBlock.SetColor(ColorId, Color.red);
+                r.SetPropertyBlock(flashBlock);
+            }
+            else
+            {
+                // Empty block = renderer falls back to its material's real color.
+                r.SetPropertyBlock(null);
+            }
+        }
     }
 
     private void OnDisable()
@@ -263,7 +289,6 @@ public class PlayerTakeDamage : MonoBehaviour
             StopCoroutine(flashCoroutine);
             flashCoroutine = null;
         }
-
-        RestoreOriginalColors();
+        SetFlash(false);
     }
 }
