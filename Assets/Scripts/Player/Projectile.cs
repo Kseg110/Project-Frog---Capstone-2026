@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
 
@@ -16,22 +16,28 @@ public class Projectile : MonoBehaviour, IProjectile
 
     public float speed;
     public float damage;
+    public float chargePercent; // 0.0 to 1.0, passed from PlayerAttacks / PlayerChargeAttack
 
     public string effectType;
     public float effectDuration;
     public float effectValue;
     public bool isPlayerProjectile = false;
 
+    // Context passed from PlayerAttacks / PlayerChargeAttack
+    public GameObject player;                    
+    public AnchorElement currentElement;          
+    public float pointBlankRange = 10f;
+
     // Wind Upgrade
     private bool isHoming = false;
     private bool skipAutoHoming = true; // prevents auto homing in awake    
     private float turnSpeed = 10f;
     private EnemyBase target;
-    private float pointBlankRange = 10f;
 
     // Ice Upgrade
     public bool isPiercingProjectile = false;
     private int pierceCount = 0;
+    public float pierceMultiplier = 1f;
 
     // Default is 0 so basic shots do not apply knockback. Charged attacks will add knockback based on charge time
     [Tooltip("Knockback distance applied to enemies when hit by player projectiles. 0 = no knockback.")]
@@ -83,12 +89,16 @@ public class Projectile : MonoBehaviour, IProjectile
         // Base speed & damage scaling
         speed = Mathf.Lerp(baseSpeed, baseSpeed * 2f, chargePercent);
         damage = Mathf.Lerp(baseDamage, baseDamage * 3f, chargePercent);
+        this.chargePercent = chargePercent;
 
         // Frostwind (Ice primary speed)
-        if (FrostwindUpgrade.Instance != null)
+        if (currentElement == AnchorElement.Ice &&
+            chargePercent <= 0f &&
+            FrostwindUpgrade.Instance != null)
         {
             float bonus = FrostwindUpgrade.Instance.GetBonus();
             speed *= 1f + bonus / 100f;
+            Debug.Log($"[Projectile] Frostwind bonus applied: {bonus}% speed increase. New speed: {speed}");
         }
 
         // Searing Shot (Fire primary dart damage)
@@ -232,26 +242,112 @@ public class Projectile : MonoBehaviour, IProjectile
         {
             float finalDamage = damage;
 
-            // Point Blank Shot
-            float dist = Vector3.Distance(transform.position, enemy.transform.position);
-            if (PointBlankShotUpgrade.Instance != null && dist < pointBlankRange)
+            // ============================
+            // POINT BLANK SHOT BONUS
+            // ============================
+            if (currentElement == AnchorElement.Wind &&
+                PointBlankShotUpgrade.Instance != null &&
+                player != null)
             {
-                float bonus = PointBlankShotUpgrade.Instance.GetBonus();
+                float bonusPercent = PointBlankShotUpgrade.Instance.GetBonus();
+                Vector3 impactPoint = other.ClosestPoint(transform.position);
+                float dist = Vector3.Distance(player.transform.position, impactPoint);
+
+                if (dist <= pointBlankRange)
+                {
+                    finalDamage *= 1f + (bonusPercent / 100f);
+                }
+            }
+
+            // ============================
+            // SEARING SHOT (Fire primary bonus)
+            // ============================
+            if (currentElement == AnchorElement.Fire &&
+                SearingShotUpgrade.Instance != null &&
+                isPlayerProjectile &&
+                chargePercent <= 0f)   // <--- PRIMARY ONLY
+            {
+                float bonus = SearingShotUpgrade.Instance.GetDartBonus();
+                float before = finalDamage;
+
                 finalDamage *= 1f + bonus / 100f;
             }
 
+            // ----------------------
+            // PYRONOVA AOE EXPLOSION
+            // ----------------------
+            if (currentElement == AnchorElement.Fire && chargePercent > 0f)
+            {
+                float aoeRadius = PyronovaUpgrade.Instance.GetAoeRadius();
+                float aoePercent = PyronovaUpgrade.Instance.GetAoeDamagePercent();
+
+                float aoeDamage = finalDamage * (aoePercent / 100f);
+
+                Collider[] hits = Physics.OverlapSphere(enemy.transform.position, aoeRadius);
+
+                foreach (var hit in hits)
+                {
+                    var aoeEnemy = hit.GetComponent<EnemyBase>();
+                    if (aoeEnemy != null && aoeEnemy != enemy)
+                    {
+                        aoeEnemy.TakeDamage(aoeDamage);
+                    }
+                }
+            }
+
+            bool wasSlowed = enemy.IsSlowed;
+            bool wasFrozen = enemy.IsFrozen;
+
+            // ICE PRIMARY — SLOW
+            if (currentElement == AnchorElement.Ice && chargePercent <= 0f)
+            {
+                enemy.ApplySlow(3f, 0.70f); // 30% slow
+            }
+
+            // ICE CHARGE — FREEZE
+            if (currentElement == AnchorElement.Ice && chargePercent > 0f)
+            {
+                enemy.Freeze(3f);
+            }
+
             // Cryo Fragility (bonus if slowed)
-            if (CryoFragilityUpgrade.Instance != null && enemy.IsSlowed)
+            if (currentElement == AnchorElement.Ice &&
+                CryoFragilityUpgrade.Instance != null &&
+                CryoFragilityUpgrade.Instance.GetBonus() > 0f &&
+                (wasSlowed || wasFrozen))
             {
                 float bonus = CryoFragilityUpgrade.Instance.GetBonus();
                 finalDamage *= 1f + bonus / 100f;
             }
 
+            // Shatter
+            if (currentElement == AnchorElement.Ice &&
+                ShatterUpgrade.Instance != null &&
+                ShatterUpgrade.Instance.IsEnabled())
+            {
+                ShatterUpgrade.Instance.TryApplyShatter(enemy, wasFrozen);
+            }
+
             // Apply damage + effect
-            if (!string.IsNullOrEmpty(effectType))
-                enemy.TakeDamage(finalDamage, effectType, effectDuration, effectValue);
-            else
-                enemy.TakeDamage(finalDamage);
+            if (!isPiercingProjectile)
+            {
+                if (!string.IsNullOrEmpty(effectType))
+                    enemy.TakeDamage(finalDamage, effectType, effectDuration, effectValue);
+                else
+                    enemy.TakeDamage(finalDamage);
+            }
+
+            // -------------------------
+            // EXTINGUISHER BONUS DAMAGE 
+            // -------------------------
+            if (currentElement == AnchorElement.Fire &&
+                ExtinguisherUpgrade.Instance != null &&
+                ExtinguisherUpgrade.Instance.IsEnabled() &&
+                enemy.IsBurning)
+            {
+                float extra = ExtinguisherUpgrade.Instance.GetBonusDamage();
+                enemy.TakeDamage(extra);
+            }
 
             // Apply knockback to enemy only if knockbackDistance > 0
             if (knockbackDistance > 0f)
@@ -303,25 +399,35 @@ public class Projectile : MonoBehaviour, IProjectile
                 PlayHitVfx(defaultHitVfx);
             }
 
-            // Extinguisher
-            if (ExtinguisherUpgrade.Instance != null)
-                ExtinguisherUpgrade.Instance.OnHitEnemy(enemy);
-
-            // Shatter
-            if (ShatterUpgrade.Instance != null)
-                ShatterUpgrade.Instance.OnHitEnemy(enemy);
-
-            // Lethal Piercing
-            if (isPiercingProjectile && LethalPiercingUpgrade.Instance != null)
-            {
-                float bonus = LethalPiercingUpgrade.Instance.GetBonus();
-                enemy.TakeDamagePercent(bonus);
-            }
-
-            // Piercing logic
+            // ---------------
+            // LETHAL PIERCING
+            // ---------------
             if (isPiercingProjectile)
             {
+                float baseMultiplier;
+
+                if (LethalPiercingUpgrade.Instance != null &&
+                    LethalPiercingUpgrade.Instance.GetBonus() > 0f)
+                {
+                    baseMultiplier = LethalPiercingUpgrade.Instance.GetBonus() / 100f;
+                }
+                else
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+
+                // Apply multiplier BEFORE damage is applied
+                finalDamage *= pierceMultiplier;
+
+                // Apply damage now
+                enemy.TakeDamage(finalDamage);
+
+                // Update multiplier for next hit
+                pierceMultiplier *= baseMultiplier;
+
                 pierceCount++;
+
                 return;
             }
 
@@ -329,6 +435,22 @@ public class Projectile : MonoBehaviour, IProjectile
             return;
         }
 
+        // ============================================================
+        // DAMAGE ANYTHING WITH HEALTH (TARGET DUMMY SUPPORT)
+        // ============================================================
+        var hp = other.GetComponent<Health>();
+        if (hp != null && isPlayerProjectile)
+        {
+            Debug.Log($"[Projectile] Hit {other.name} for {damage} dmg");
+
+            if (!string.IsNullOrEmpty(effectType))
+                hp.TakeDmg(damage, effectType, effectDuration, effectValue);
+            else
+                hp.TakeDmg(damage);
+
+            Destroy(gameObject);
+            return;
+        }
         // Destroy on hitting walls or other objects
         Destroy(gameObject);
     }
