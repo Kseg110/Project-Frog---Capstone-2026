@@ -308,14 +308,16 @@ public class PlayerMovement : MonoBehaviour, IMovement
         if (playerAnchor != null)
             isTethered = playerAnchor.IsTethered;
 
+        // 1. TETHER IS ACTIVE
         if (isTethered && playerAnchor.CurrentAnchor != null)
         {
             anchorPosition = playerAnchor.CurrentAnchor.transform.position;
             float distanceToAnchor = Vector3.Distance(rb.position, anchorPosition);
+
             if (currentMaxRadius == 0f || distanceToAnchor < currentMaxRadius)
                 currentMaxRadius = Mathf.Max(distanceToAnchor, currentMinRadius);
 
-            // Trigger ring display when new tether attaches
+            // Attached to new anchor -> Show radius ring
             if (!previouslyTethered || activeAnchorVFX == null)
             {
                 if (playerAnchor.CurrentAnchor.TryGetComponent<AnchorRadiusVFX>(out activeAnchorVFX))
@@ -324,18 +326,25 @@ public class PlayerMovement : MonoBehaviour, IMovement
                 }
             }
 
-            // Exceeding maxTetherRadius triggers smooth fade out
-            if (distanceToAnchor > maxTetherRadius && activeAnchorVFX != null)
+            // Exceeded max distance -> Hide ring AND disconnect tether
+            if (distanceToAnchor > maxTetherRadius)
             {
-                activeAnchorVFX.HideRadius();
-                activeAnchorVFX = null;
+                if (activeAnchorVFX != null)
+                {
+                    activeAnchorVFX.HideRadius();
+                    activeAnchorVFX = null;
+                }
+
+                // Release the tether via PlayerAnchor
+                playerAnchor.ReleaseTether();
             }
         }
+        // 2. TETHER IS DISCONNECTED / RELEASED
         else
         {
             currentMaxRadius = 0f;
 
-            // Trigger fade out when tether breaks or releases
+            // Hide ring if we were previously holding a VFX reference
             if (activeAnchorVFX != null)
             {
                 activeAnchorVFX.HideRadius();
@@ -410,30 +419,30 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
     private void StartDash()
     {
+        // Hide radius ring on dash disconnect
+        if (activeAnchorVFX != null)
+        {
+            activeAnchorVFX.HideRadius();
+            activeAnchorVFX = null;
+        }
+
         playerAnchor.ReleaseTether();
         isDashing = true;
         dashTimer = dashDuration;
 
-        // Capture and lock the dash direction at the moment the dash starts.
-        // Normalize to ensure consistent speed and prevent fractional input from changing it.
         dashDirection = (moveInput.sqrMagnitude > 0.01f) ? moveInput.normalized : transform.forward;
-        moveInput = Vector3.zero; // make sure normal movement input doesn't interfere
+        moveInput = Vector3.zero;
 
-        // Lock facing to dash direction immediately
         rb.MoveRotation(Quaternion.LookRotation(dashDirection));
 
         if (dashEffect != null)
         {
-            // Spawn the trail effect behind the player, facing opposite the dash direction
             Vector3 spawnPosition = transform.position - dashDirection * dashEffectBackOffset + Vector3.up * dashEffectHeightOffset;
             Quaternion spawnRotation = Quaternion.LookRotation(-dashDirection);
-
-            Instantiate(dashEffect, spawnPosition, spawnRotation);; 
+            Instantiate(dashEffect, spawnPosition, spawnRotation);
         }
 
         RuntimeManager.PlayOneShot(dashActivationEvent, transform.position);
-
-        Debug.Log("start dash");
         PlayerDashVFX.Instance.StartDashVFX();
     }
 
