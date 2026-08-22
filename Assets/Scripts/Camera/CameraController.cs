@@ -22,7 +22,14 @@ public class CameraController : MonoBehaviour
 
     // Final combined offset from all active effects
     private Vector3 effectOffset;
+    [Header("Pan Point")]
 
+    [Tooltip(
+    "If assigned, the camera stays EXACTLY at this Transform forever. " +
+    "This does not trigger a pan and does not use camera effects."
+)]
+    [SerializeField]
+    private Transform panPoint;
     private void Start()
     {
         // Apply fixed rotation immediately
@@ -41,6 +48,11 @@ public class CameraController : MonoBehaviour
     {
         if (target == null) return;
 
+
+
+
+
+
         // Recalculate fixed rotation (in case values change in inspector)
         Quaternion targetRotation = Quaternion.Euler(cameraRotation);
 
@@ -49,6 +61,12 @@ public class CameraController : MonoBehaviour
 
         // Desired position relative to the target
         Vector3 desiredPosition = target.position + rotatedOffset;
+        if (panPoint != null)
+        {
+            panPoint.position = desiredPosition;
+            panPoint.rotation = targetRotation;
+        }
+
 
         // Smoothly move toward the desired position
         basePosition = Vector3.Lerp(
@@ -66,12 +84,14 @@ public class CameraController : MonoBehaviour
             if (effect != null && effect.enabled)
                 effectOffset += effect.ApplyEffect(Time.deltaTime);
         }
+        if (!CameraPanEffect.GlobalPanActive)
+        {
+            // Final position = smooth follow position + effect offsets
+            transform.position = basePosition + effectOffset;
 
-        // Final position = smooth follow position + effect offsets
-        transform.position = basePosition + effectOffset;
-
-        // Maintain fixed rotation
-        transform.rotation = targetRotation;
+            // Maintain fixed rotation
+            transform.rotation = targetRotation;
+        }
     }
 
 

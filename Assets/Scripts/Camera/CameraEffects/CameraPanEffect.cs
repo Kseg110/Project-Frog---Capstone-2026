@@ -1,307 +1,467 @@
 using FMODUnity;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Splines;
 
 public class CameraPanEffect : CameraEffectBase
 {
-
-    //==================================================
+    // =========================================================
     // PAN SETTINGS
-    //==================================================
+    // =========================================================
 
     [Header("Pan Settings")]
 
-    [Tooltip("Controls how fast the camera moves along the spline path.")]
+    [Tooltip("Speed used for spline and point-to-point movement.")]
     [SerializeField]
-    private float splineSpeed = 20f;
-    // New: global flag other systems (PlayerMovement) can query to know a camera pan is active.
+    private float moveSpeed = 20f;
+
     public static bool GlobalPanActive = false;
 
     [SerializeField]
     private bool GlobalPanActiveInspector;
-    //==================================================
-    // POINT TO POINT SETTINGS
-    //==================================================
 
-    [Header("Point To Point")]
+    private Transform CameraTransform
+    {
+        get
+        {
+            Camera cam = Camera.main;
 
-    [Tooltip("Starting camera position used when no spline exists.")]
+            if (cam == null)
+                return null;
+
+            return cam.transform;
+        }
+    }
     [SerializeField]
-    private Transform panStart_EndObjects;
+    private float pausePointMoveTimer = 0f;
 
 
-    //==================================================
+    // =========================================================
+    // MOVE TO PAUSE POINT — EXACTLY 1 SECOND
+    // =========================================================
+
+    public void MoveCameraToPausePoint()
+    {
+        Transform cam = CameraTransform;
+
+        if (cam == null || PAUSEPOINT == null)
+            return;
+
+        GlobalPanActive = true;
+
+        movingToPausePoint = true;
+        returningFromPausePoint = false;
+        atPausePoint = false;
+
+        // Start the 1 second timer.
+        if (pausePointMoveTimer <= 0f)
+        {
+            pausePointMoveTimer = 0f;
+        }
+
+        pausePointMoveTimer += Time.unscaledDeltaTime;
+
+        float t = Mathf.Clamp01(pausePointMoveTimer / 1f);
+
+        // IMPORTANT:
+        // This moves directly toward the PAUSEPOINT GameObject.
+        cam.position = Vector3.Lerp(
+            cam.position,
+            PAUSEPOINT.position,
+            t
+        );
+
+        // IMPORTANT:
+        // Match the PAUSEPOINT rotation.
+        cam.rotation = Quaternion.Slerp(
+            cam.rotation,
+            PAUSEPOINT.rotation,
+            t
+        );
+
+        // Finished.
+        if (t >= 1f)
+        {
+            cam.position = PAUSEPOINT.position;
+            cam.rotation = PAUSEPOINT.rotation;
+
+            movingToPausePoint = false;
+            atPausePoint = true;
+
+            pausePointMoveTimer = 0f;
+        }
+    }
+
+    // =========================================================
+    // END PAUSE POINT
+    // =========================================================
+
+    public void EndPausePoint()
+    {
+        Transform cam = CameraTransform;
+
+        if (cam == null || panStart_EndObjects == null)
+            return;
+
+        movingToPausePoint = false;
+        atPausePoint = false;
+
+        returningFromPausePoint = true;
+
+        pausePointMoveTimer = 0f;
+
+        GlobalPanActive = true;
+    }
+
+
+    // =========================================================
+    // RETURN TO THE GAMEOBJECT — EXACTLY 1 SECOND
+    // =========================================================
+
+    private void ReturnFromPausePoint()
+    {
+        Transform cam = CameraTransform;
+
+        if (cam == null || panStart_EndObjects == null)
+            return;
+
+        pausePointMoveTimer += Time.unscaledDeltaTime;
+
+        float t = Mathf.Clamp01(pausePointMoveTimer / 1f);
+
+        cam.position = Vector3.Lerp(
+            cam.position,
+            panStart_EndObjects.position,
+            t
+        );
+
+        cam.rotation = Quaternion.Slerp(
+            cam.rotation,
+            panStart_EndObjects.rotation,
+            t
+        );
+
+        if (t >= 1f)
+        {
+            cam.position = panStart_EndObjects.position;
+            cam.rotation = panStart_EndObjects.rotation;
+
+            returningFromPausePoint = false;
+            movingToPausePoint = false;
+            atPausePoint = false;
+
+            pausePointMoveTimer = 0f;
+
+            GlobalPanActive = false;
+        }
+    }
+    // =========================================================
     // CAMERA STARTUP
-    //==================================================
+    // =========================================================
 
     [Header("Camera Startup")]
 
-    [Tooltip("Delay before the camera pan system becomes active.")]
     [SerializeField]
     private float cameraStartupDelay = 1f;
 
-
-    //==================================================
-    // SPLINE REFERENCES
-    //==================================================
-
-    [Header("Spline")]
-
-    [Tooltip("Reference used to find the spline assigned to the current round.")]
     [SerializeField]
-    private CameraPanRoundTrigger roundTrigger;
+    private bool cameraReady;
 
-
-    //==================================================
-    // DOOR SYSTEM
-    //==================================================
-
-    [Header("Door")]
-
-    [Tooltip("Door system used to mark the door as ready after the camera pan finishes.")]
     [SerializeField]
-    private DoorSystem doorSystem;
+    private float cameraReadyTimer;
 
 
-    //==================================================
-    // PLAYER CONTROL
-    //==================================================
+    // =========================================================
+    // CAMERA REFERENCE
+    // =========================================================
 
-    [Header("Player Control")]
+    [Header("Camera Reference")]
 
-    [Tooltip("Stops player movement while the camera pan is active.")]
-    [SerializeField]
-    private bool pausePlayerDuringPan = true;
-    //==================================================
-    // CAMERA STATE TYPES
-    //==================================================
-
-    [Header("Camera State Types")]
-
-    [Tooltip("Current stage of the camera pan.")]
-    [SerializeField]
-    private State state = State.Idle;
-
-
-    [Tooltip("Current movement system being used.")]
-    [SerializeField]
-    private PanMode panMode = PanMode.Spline;
-
-
-
-    //==================================================
-    // CAMERA REFERENCES
-    //==================================================
-
-    [Header("Camera References")]
-
-    [Tooltip("Reference to the main camera controller.")]
+    [Tooltip("Camera controller that normally controls the camera.")]
     [SerializeField]
     private CameraController controller;
-
 
     [Tooltip("Player transform used for returning camera control.")]
     [SerializeField]
     private Transform playerTransform;
 
 
+    // =========================================================
+    // POINT TO POINT
+    // =========================================================
 
+    [Header("Point To Point")]
 
-
-
-    //==================================================
-    // PLAYER PAUSE STATE
-    //==================================================
-
-    [Header("Player Pause State")]
-
-    [Tooltip("Tracks if player movement is currently disabled.")]
     [SerializeField]
-    private bool playerPaused;
+    private Transform panStart_EndObjects;
 
-
-
-    //==================================================
-    // CAMERA TARGET VALUES
-    //==================================================
-
-    [Header("Camera Target Values")]
-
-    [Tooltip("Current target position calculated by the camera effect.")]
     [SerializeField]
-    private Vector3 desiredPosition;
+    private float pointHeightOffset = 20f;
 
-
-    [Tooltip("Current target rotation calculated by the camera effect.")]
     [SerializeField]
-    private Quaternion desiredRotation;
+    private float rotationSpeed = 180f;
 
 
+    // =========================================================
+    // PAUSE POINT
+    // =========================================================
 
-    //==================================================
-    // DOOR TRACKING
-    //==================================================
+    [Header("Pause Point")]
 
-    [Header("Door Tracking")]
+    [Tooltip("Camera moves to this transform and exactly matches its rotation.")]
+    [SerializeField]
+    private Transform PAUSEPOINT;
 
-    [Tooltip("Door index that will become ready when the pan finishes.")]
+    [Tooltip("Fixed movement speed to and from the pause point. Does NOT use TriggerPan time.")]
+    [SerializeField]
+    private float pausePointMoveSpeed = 20f;
+
+    [Tooltip("Fixed rotation speed to and from the pause point.")]
+    [SerializeField]
+    private float pausePointRotationSpeed = 180f;
+
+    [Tooltip("Camera is currently moving toward PAUSEPOINT.")]
+    [SerializeField]
+    private bool movingToPausePoint;
+
+    [Tooltip("Camera is currently returning from PAUSEPOINT.")]
+    [SerializeField]
+    private bool returningFromPausePoint;
+
+    [Tooltip("Camera has reached PAUSEPOINT and is waiting.")]
+    [SerializeField]
+    public bool atPausePoint;
+
+    [Tooltip("Position the camera had before entering the pause point.")]
+    [SerializeField]
+    private Vector3 pauseReturnPosition;
+
+    [Tooltip("Rotation the camera had before entering the pause point.")]
+    [SerializeField]
+    private Quaternion pauseReturnRotation;
+
+
+    // =========================================================
+    // SPLINE
+    // =========================================================
+
+    [Header("Spline")]
+
+    [SerializeField]
+    private CameraPanRoundTrigger roundTrigger;
+
+
+    // =========================================================
+    // DOOR
+    // =========================================================
+
+    [Header("Door")]
+
+    [SerializeField]
+    private DoorSystem doorSystem;
+
     [SerializeField]
     private int doorIndexToReady = -1;
 
-
-    [Tooltip("Prevents the door ready event from being called multiple times.")]
     [SerializeField]
     private bool doorReadyTriggered;
 
 
+    // =========================================================
+    // PLAYER
+    // =========================================================
 
-    //==================================================
-    // PAN INPUT
-    //==================================================
-
-    [Header("Pan Input")]
-
-    [Tooltip("Allows the player to skip the camera pan using dash.")]
-    [SerializeField]
-    private bool allowSkipWithDash = true;
-
-
-
-    //==================================================
-    // SPLINE RUNTIME DATA
-    //==================================================
-
-    [Header("Spline Runtime Data")]
-
-    [Tooltip("Spline currently being followed by the camera.")]
-    [SerializeField]
-    private SplineContainer activeSpline;
-
-
-    [Tooltip("Current distance travelled along the spline.")]
-    [SerializeField]
-    private float splineDistance;
-
-
-    [Tooltip("Total distance length of the active spline.")]
-    [SerializeField]
-    private float splineLength;
-
-
-
-    //==================================================
-    // POINT TO POINT RUNTIME DATA
-    //==================================================
-
-
-
-
-
+    [Header("Player Control")]
 
     [SerializeField]
-    private List<Vector3> pointPath =
-        new List<Vector3>();
+    private bool pausePlayerDuringPan = true;
 
-
-
-
-    [Tooltip("Current point index the camera is moving toward.")]
     [SerializeField]
-    private int currentPointIndex;
+    private bool playerPaused;
 
 
-    [Tooltip("Timer tracking movement between two points.")]
+    // =========================================================
+    // DASH SKIP
+    // =========================================================
+
+    [Header("Dash Skip")]
+
     [SerializeField]
-    private float pointSegmentTimer;
+    private bool allowDashSkip = true;
 
 
-    [Tooltip("Time required to travel between two points.")]
+    // =========================================================
+    // CAMERA STATE
+    // =========================================================
+
+    [Header("Camera State")]
+
     [SerializeField]
-    private float pointSegmentTime;
+    private State state = State.Idle;
 
-
-
-    //==================================================
-    // SPLINE START MOVEMENT DEBUG
-    //==================================================
-
-    [Header("Spline Start Movement Debug")]
-
-    [Tooltip("Distance threshold for reaching the spline starting knot.")]
     [SerializeField]
-    private float splineKnotReachDistance = 1f;
+    private PanMode panMode = PanMode.PointToPoint;
 
-
-    [Tooltip("Speed used when moving the camera to the spline start.")]
-    [SerializeField]
-    private float moveToStartSpeed = 0.5f;
-
-
-    [Tooltip("Distance the camera needs to travel to reach spline start.")]
-    [SerializeField]
-    private float debugDistanceToTravel;
-
-
-    [Tooltip("Distance already travelled toward spline start.")]
-    [SerializeField]
-    private float debugDistanceTravelled;
-
-
-
-    //==================================================
-    // CAMERA READY STATE
-    //==================================================
-
-    [Header("Camera Ready State")]
-
-    [Tooltip("True when the camera startup delay has finished.")]
-    [SerializeField]
-    private bool cameraReady;
-
-
-    [Tooltip("Current timer value before the camera starts.")]
-    [SerializeField]
-    private float cameraReadyTimer;
-    //==================================================
-    // CAMERA STATE TYPES
-    //==================================================
 
     private enum State
     {
         Idle,
         MovingToStart,
         FollowingSpline,
-        Holding,
+        FollowingPoints,
         Returning
     }
 
-
-    //==================================================
-    // CAMERA MOVEMENT TYPE
-    //==================================================
 
     private enum PanMode
     {
         Spline,
         PointToPoint
     }
+<<<<<<< Updated upstream
+=======
+
+
+    // =========================================================
+    // CAMERA TARGET VALUES
+    // =========================================================
+
+    [Header("Camera Target Values")]
+
+    [SerializeField]
+    private Vector3 desiredPosition;
+
+    [SerializeField]
+    private Quaternion desiredRotation;
+
+
+    // =========================================================
+    // SPLINE RUNTIME
+    // =========================================================
+
+    [Header("Spline Runtime")]
+
+    [SerializeField]
+    private SplineContainer activeSpline;
+
+    [SerializeField]
+    private float splineDistance;
+
+    [SerializeField]
+    private float splineLength;
+
+
+    // =========================================================
+    // SPLINE START MOVEMENT DEBUG
+    // =========================================================
+
+    [Header("Spline Start Movement Debug")]
+
+    [SerializeField]
+    private float splineKnotReachDistance = 0.01f;
+
+    [SerializeField]
+    private float moveToStartSpeed = 20f;
+
+    [SerializeField]
+    private float debugDistanceToTravel;
+
+    [SerializeField]
+    private float debugDistanceTravelled;
+
+
+    // =========================================================
+    // POINT RUNTIME
+    // =========================================================
+
+    [Header("Point Runtime")]
+
+    [SerializeField]
+    private List<Vector3> pointPath =
+        new List<Vector3>();
+
+    [SerializeField]
+    private int currentPointIndex;
+
+    [SerializeField]
+    private bool pointInitialized;
+
+    [SerializeField]
+    private float pointSegmentTimer;
+
+    [SerializeField]
+    private float pointSegmentTime;
+
+
+    // =========================================================
+    // POINT DATA
+    // =========================================================
+
+    [System.Serializable]
+    public class PanPoint
+    {
+        public Vector3 pointPosition;
+
+        public float holdTime = 5f;
+    }
+
+
+    [SerializeField]
+    private List<PanPoint> panPoints =
+        new List<PanPoint>();
+
+
+    private List<CameraPanRoundTrigger.PanPoint> activePanPoints;
+
+
+    // =========================================================
+    // RETURN CAMERA
+    // =========================================================
+
+    [Header("Return Camera")]
+
+    [SerializeField]
+    private Vector3 returnPosition;
+
+    [SerializeField]
+    private Quaternion returnRotation;
+
+
+    // =========================================================
+    // RESET STATIC
+    // =========================================================
+
+    [RuntimeInitializeOnLoadMethod(
+        RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        GlobalPanActive = false;
+    }
+
+
+    // =========================================================
+    // AWAKE
+    // =========================================================
+
+>>>>>>> Stashed changes
     private void Awake()
     {
-        controller =
-            GetComponentInParent<CameraController>();
-
-        playerTransform =
-            GameObject.FindGameObjectWithTag("Player")
-            ?.transform;
-
-
-
-        if (doorSystem == null)
+        if (controller == null)
         {
-            doorSystem =
-                FindAnyObjectByType<DoorSystem>();
+            controller =
+                GetComponentInParent<CameraController>();
+        }
+
+        if (playerTransform == null)
+        {
+            GameObject player =
+                GameObject.FindGameObjectWithTag("Player");
+
+            if (player != null)
+            {
+                playerTransform =
+                    player.transform;
+            }
         }
 
         if (roundTrigger == null)
@@ -309,127 +469,69 @@ public class CameraPanEffect : CameraEffectBase
             roundTrigger =
                 FindAnyObjectByType<CameraPanRoundTrigger>();
         }
+
+        if (doorSystem == null)
+        {
+            doorSystem =
+                FindAnyObjectByType<DoorSystem>();
+        }
     }
+
+
+    // =========================================================
+    // UPDATE
+    // =========================================================
 
     private void Update()
     {
-        GlobalPanActiveInspector = GlobalPanActive;
+        GlobalPanActiveInspector =
+            GlobalPanActive;
 
+        // =====================================================
+        // DASH SKIP
+        // =====================================================
 
-
-        if (allowSkipWithDash &&
+        if (allowDashSkip &&
             IsPanning &&
             Input.GetButtonDown("Dash"))
         {
             SkipPan();
         }
-    }
 
-    private void ApplyPointToPointMovement(float deltaTime)
-    {
-        // No valid path, return camera
-        if (pointPath.Count < 2)
+        // =====================================================
+        // PAUSE POINT MOVEMENT
+        // =====================================================
+
+        if (movingToPausePoint)
         {
-            state = State.Returning;
-            return;
+            MoveCameraToPausePoint();
         }
 
+        // =====================================================
+        // PAUSE POINT RETURN
+        // =====================================================
 
-        pointSegmentTimer += deltaTime;
-
-
-        float t =
-            Mathf.Clamp01(
-                pointSegmentTimer /
-                pointSegmentTime
-            );
-
-
-        t = EaseInOutQuad(t);
-
-
-
-        // CURRENT SEGMENT
-        Vector3 start =
-            pointPath[currentPointIndex - 1];
-
-
-        Vector3 end =
-            pointPath[currentPointIndex];
-
-
-
-        desiredPosition =
-            Vector3.Lerp(
-                start,
-                end,
-                t
-            );
-
-
-
-        // CAMERA LOOK DIRECTION
-        Vector3 lookDir =
-            end - desiredPosition;
-
-
-        if (lookDir.sqrMagnitude > 0.001f)
+        if (returningFromPausePoint)
         {
-            desiredRotation =
-                Quaternion.LookRotation(
-                    lookDir.normalized,
-                    Vector3.up
-                );
-        }
-
-
-
-        // FINISHED CURRENT POINT
-        if (t >= 1f)
-        {
-            desiredPosition = end;
-
-
-            pointSegmentTimer = 0f;
-
-
-            currentPointIndex++;
-
-
-
-            // MORE POINTS LEFT
-            if (currentPointIndex < pointPath.Count)
-            {
-                return;
-            }
-
-
-
-            // FINAL POINT REACHED
-            if (!doorReadyTriggered)
-            {
-                MarkDoorReady();
-                doorReadyTriggered = true;
-            }
-
-
-
-            // START RETURNING TO PLAYER CAMERA
-            state = State.Returning;
+            ReturnFromPausePoint();
         }
     }
-    //==========================
-    // SPLINE KNOT TRACKING
-    //==========================
 
 
-
-    //==========================================
+    // =========================================================
     // APPLY EFFECT
-    //==========================================
-    public override Vector3 ApplyEffect(float deltaTime)
+    // =========================================================
 
+    public override Vector3 ApplyEffect(float deltaTime)
     {
+        GlobalPanActiveInspector =
+            GlobalPanActive;
+
+
+        // =====================================================
+        // CAMERA STARTUP
+        // =====================================================
+
         if (!cameraReady)
         {
             cameraReadyTimer += deltaTime;
@@ -443,296 +545,560 @@ public class CameraPanEffect : CameraEffectBase
         }
 
 
+        // =====================================================
+        // CAMERA
+        // =====================================================
+
+        Transform cam = CameraTransform;
+
+        if (cam == null)
+        {
+            return Vector3.zero;
+        }
+
+
+        // =====================================================
+        // PAUSE POINT
+        // =====================================================
+
+        if (movingToPausePoint ||
+            returningFromPausePoint ||
+            atPausePoint)
+        {
+            desiredPosition = cam.position;
+            desiredRotation = cam.rotation;
+
+            if (controller != null)
+            {
+                return cam.position -
+                       controller.GetBasePosition();
+            }
+
+            return Vector3.zero;
+        }
+
+
+        // =====================================================
+        // IDLE
+        // =====================================================
+
         if (state == State.Idle)
         {
             return Vector3.zero;
         }
 
 
-        desiredPosition =
-            transform.position;
-
-        desiredRotation =
-            transform.rotation;
-
-
-
-        //==========================================
-        // MOVE TO START OF SPLINE
-        //==========================================
+        // =====================================================
+        // NORMAL PAN
+        // =====================================================
 
         if (state == State.MovingToStart)
         {
-            if (activeSpline == null)
-            {
-                state = State.Returning;
-            }
-            else
-            {
-                Vector3 startKnotPosition =
-                    activeSpline.Spline.EvaluatePosition(0f);
-
-
-                debugDistanceToTravel =
-                    Vector3.Distance(
-                        panStart_EndObjects.position,
-                        startKnotPosition
-                    );
-
-
-                debugDistanceTravelled +=
-                    moveToStartSpeed * deltaTime;
-
-
-                float travelled =
-                    Mathf.Min(
-                        debugDistanceTravelled,
-                        debugDistanceToTravel
-                    );
-
-
-                float t =
-                    debugDistanceToTravel <= 0.001f
-                    ? 1f
-                    :
-                    travelled /
-                    debugDistanceToTravel;
-
-
-                desiredPosition =
-                    Vector3.Lerp(
-                        panStart_EndObjects.position,
-                        startKnotPosition,
-                        t
-                    );
-
-
-                Vector3 direction =
-                    startKnotPosition -
-                    desiredPosition;
-
-
-                if (direction.sqrMagnitude > 0.001f)
-                {
-                    desiredRotation =
-                        Quaternion.LookRotation(
-                            direction.normalized,
-                            Vector3.up
-                        );
-                }
-
-
-                if (travelled >= debugDistanceToTravel)
-                {
-                    desiredPosition =
-                        startKnotPosition;
-
-
-                    splineDistance = 0f;
-
-
-                    debugDistanceTravelled =
-                        debugDistanceToTravel;
-
-
-                    state =
-                        State.FollowingSpline;
-                }
-            }
+            MoveCameraToSplineStart(deltaTime);
         }
-
-
-
-        //==========================================
-        // FOLLOW SPLINE
-        //==========================================
-
         else if (state == State.FollowingSpline)
         {
-            if (panMode == PanMode.Spline)
-            {
-                if (activeSpline == null ||
-                    activeSpline.Spline == null)
-                {
-                    state =
-                        State.Returning;
-
-                    return Vector3.zero;
-                }
-
-
-
-                splineDistance +=
-                    splineSpeed *
-                    deltaTime;
-
-
-
-                float progress =
-                    Mathf.Clamp01(
-                        splineDistance /
-                        splineLength
-                    );
-
-
-
-                desiredPosition =
-                    activeSpline.Spline
-                    .EvaluatePosition(
-                        progress
-                    );
-
-
-
-                Vector3 splineTangent =
-                    activeSpline.Spline
-                    .EvaluateTangent(
-                        progress
-                    );
-
-
-                if (splineTangent.sqrMagnitude > 0.001f)
-                {
-                    desiredRotation =
-                        Quaternion.LookRotation(
-                            splineTangent.normalized,
-                            Vector3.up
-                        );
-                }
-
-
-
-                // END OF SPLINE
-
-                if (progress >= 1f)
-                {
-                    if (!doorReadyTriggered)
-                    {
-                        MarkDoorReady();
-                        doorReadyTriggered = true;
-                    }
-
-
-                    state =
-                        State.Returning;
-                }
-            }
-            else
-            {
-                ApplyPointToPointMovement(deltaTime);
-            }
+            FollowSpline(deltaTime);
         }
-
-
-
-        //==========================================
-        // RETURN
-        //==========================================
-
+        else if (state == State.FollowingPoints)
+        {
+            FollowPoints(deltaTime);
+        }
         else if (state == State.Returning)
         {
-            Vector3 returnTarget;
+            ReturnCamera(deltaTime);
+        }
 
 
-            if (controller != null)
-            {
-                returnTarget =
-                    controller.GetBasePosition();
-            }
-            else
-            {
-                returnTarget =
-                    transform.position;
-            }
+        desiredPosition =
+            cam.position;
+
+        desiredRotation =
+            cam.rotation;
 
 
+        if (controller != null)
+        {
+            return cam.position -
+                   controller.GetBasePosition();
+        }
 
+
+        return Vector3.zero;
+    }
+
+
+    // =========================================================
+    // SPLINE START
+    // =========================================================
+
+    // =========================================================
+    // MOVE CAMERA TO SPLINE START
+    // =========================================================
+
+    private void MoveCameraToSplineStart(float deltaTime)
+    {
+        Transform cam = CameraTransform;
+
+        if (cam == null)
+            return;
+
+
+        if (activeSpline == null ||
+            activeSpline.Spline == null)
+        {
+            StartPointToPointFallback();
+            return;
+        }
+
+
+        // =====================================================
+        // SPLINE START POSITION
+        // =====================================================
+
+        Vector3 splineStart =
+            activeSpline.transform.TransformPoint(
+                activeSpline.Spline.EvaluatePosition(0f)
+            );
+
+
+        // =====================================================
+        // DEBUG DISTANCE
+        // =====================================================
+
+        debugDistanceToTravel =
+            Vector3.Distance(
+                cam.position,
+                splineStart
+            );
+
+
+        debugDistanceTravelled +=
+            moveToStartSpeed * deltaTime;
+
+
+        // =====================================================
+        // MOVE CAMERA
+        // =====================================================
+
+        cam.position =
+            Vector3.MoveTowards(
+                cam.position,
+                splineStart,
+                moveToStartSpeed * deltaTime
+            );
+
+
+        // =====================================================
+        // ROTATION
+        // =====================================================
+
+        if (enablePanRotation)
+        {
             Vector3 direction =
-                returnTarget -
-                transform.position;
+                splineStart -
+                cam.position;
 
 
-
-            float distance =
-                direction.magnitude;
-
-
-
-            if (distance <= 0.01f)
+            if (direction.sqrMagnitude > 0.001f)
             {
-                desiredPosition =
-                    returnTarget;
+                Quaternion targetRotation =
+                    Quaternion.LookRotation(
+                        direction.normalized,
+                        Vector3.up
+                    );
 
 
-                state =
-                    State.Idle;
+                cam.rotation =
+                    Quaternion.RotateTowards(
+                        cam.rotation,
+                        targetRotation,
+                        rotationSpeed * deltaTime
+                    );
 
 
-                activeSpline = null;
-
-
-                pointPath.Clear();
-
-
-                currentPointIndex = 0;
-
-
-                splineDistance = 0f;
-
-
-
-                if (playerPaused)
-                {
-                    ResumePlayer();
-                }
-            }
-            else
-            {
-                desiredPosition =
-                    transform.position +
-                    direction.normalized;
+                desiredRotation =
+                    cam.rotation;
             }
         }
 
 
+        // =====================================================
+        // REACHED SPLINE START
+        // =====================================================
 
-        transform.position =
-            desiredPosition;
-
-
-        transform.rotation =
-            desiredRotation;
-
-
-
-        Vector3 effectOffset =
-            controller != null
-            ?
-            desiredPosition -
-            controller.GetBasePosition()
-            :
-            Vector3.zero;
+        float distance =
+            Vector3.Distance(
+                cam.position,
+                splineStart
+            );
 
 
+        if (distance <= splineKnotReachDistance)
+        {
+            cam.position =
+                splineStart;
 
-        return effectOffset;
-    }
-    private List<CameraPanRoundTrigger.PanPoint> activePanPoints;
+
+            splineDistance =
+                0f;
 
 
-    [System.Serializable]
-    public class PanPoint
-    {
-        public Vector3 pointPosition;
-        public float holdTime = 5f;
+            debugDistanceTravelled =
+                debugDistanceToTravel;
+
+
+            state =
+                State.FollowingSpline;
+        }
     }
 
+
+    // =========================================================
+    // FOLLOW SPLINE
+    // =========================================================
+
+    // =========================================================
+    // FOLLOW SPLINE
+    // =========================================================
+    [Header("Pan Rotation")]
 
     [SerializeField]
-    private List<PanPoint> panPoints =
-        new List<PanPoint>();
+    private bool enablePanRotation = true;
+    private void FollowSpline(float deltaTime)
+    {
+        Transform cam = CameraTransform;
+
+        if (cam == null)
+            return;
+
+        if (activeSpline == null ||
+            activeSpline.Spline == null)
+        {
+            StartPointToPointFallback();
+            return;
+        }
 
 
+        if (splineLength <= 0.001f)
+        {
+            splineLength =
+                activeSpline.Spline.GetLength();
+        }
+
+
+        // =====================================================
+        // MOVE ALONG SPLINE
+        // =====================================================
+
+        splineDistance +=
+            moveSpeed * deltaTime;
+
+
+        float progress =
+            Mathf.Clamp01(
+                splineDistance /
+                splineLength
+            );
+
+
+        Vector3 localPosition =
+            activeSpline.Spline.EvaluatePosition(
+                progress
+            );
+
+
+        Vector3 worldPosition =
+            activeSpline.transform.TransformPoint(
+                localPosition
+            );
+
+
+        cam.position =
+            worldPosition;
+
+
+        desiredPosition =
+            worldPosition;
+
+
+        // =====================================================
+        // ROTATION
+        // =====================================================
+
+        if (enablePanRotation)
+        {
+            Vector3 localTangent =
+                activeSpline.Spline.EvaluateTangent(
+                    progress
+                );
+
+
+            Vector3 worldTangent =
+                activeSpline.transform.TransformDirection(
+                    localTangent
+                );
+
+
+            if (worldTangent.sqrMagnitude > 0.001f)
+            {
+                Quaternion targetRotation =
+                    Quaternion.LookRotation(
+                        worldTangent.normalized,
+                        Vector3.up
+                    );
+
+
+                cam.rotation =
+                    Quaternion.RotateTowards(
+                        cam.rotation,
+                        targetRotation,
+                        rotationSpeed * deltaTime
+                    );
+
+
+                desiredRotation =
+                    cam.rotation;
+            }
+        }
+
+
+        // =====================================================
+        // SPLINE FINISHED
+        // =====================================================
+
+        if (progress >= 1f)
+        {
+            MarkDoorReady();
+
+            StartReturning();
+        }
+    }
+
+
+    // =========================================================
+    // FOLLOW POINTS
+    // =========================================================
+
+    private void FollowPoints(float deltaTime)
+    {
+        Transform cam = CameraTransform;
+
+        if (cam == null)
+            return;
+
+
+        if (pointPath == null ||
+            pointPath.Count < 2)
+        {
+            StartReturning();
+            return;
+        }
+
+
+        if (currentPointIndex < 1)
+        {
+            currentPointIndex = 1;
+        }
+
+
+        if (currentPointIndex >= pointPath.Count)
+        {
+            MarkDoorReady();
+
+            StartReturning();
+
+            return;
+        }
+
+
+        // =====================================================
+        // CURRENT TARGET
+        // =====================================================
+
+        Vector3 target =
+            pointPath[currentPointIndex];
+
+
+        // =====================================================
+        // MOVE CAMERA
+        // =====================================================
+
+        cam.position =
+            Vector3.MoveTowards(
+                cam.position,
+                target,
+                moveSpeed * deltaTime
+            );
+
+
+        desiredPosition =
+            cam.position;
+
+
+        // =====================================================
+        // ROTATION
+        // =====================================================
+
+        if (enablePanRotation)
+        {
+            Vector3 direction =
+                target -
+                cam.position;
+
+
+            if (direction.sqrMagnitude > 0.001f)
+            {
+                Quaternion targetRotation =
+                    Quaternion.LookRotation(
+                        direction.normalized,
+                        Vector3.up
+                    );
+
+
+                cam.rotation =
+                    Quaternion.RotateTowards(
+                        cam.rotation,
+                        targetRotation,
+                        rotationSpeed * deltaTime
+                    );
+
+
+                desiredRotation =
+                    cam.rotation;
+            }
+        }
+
+
+        // =====================================================
+        // REACHED POINT
+        // =====================================================
+
+        if (Vector3.Distance(
+                cam.position,
+                target
+            ) <= 0.01f)
+        {
+            cam.position =
+                target;
+
+
+            currentPointIndex++;
+
+
+            // =================================================
+            // MORE POINTS
+            // =================================================
+
+            if (currentPointIndex <
+                pointPath.Count)
+            {
+                return;
+            }
+
+
+            // =================================================
+            // ALL POINTS FINISHED
+            // =================================================
+
+            MarkDoorReady();
+
+            StartReturning();
+        }
+    }
+
+    // =========================================================
+    // BUILD POINT PATH
+    // =========================================================
+
+    private bool BuildPointPath(
+        List<CameraPanRoundTrigger.PanPoint> points)
+    {
+        Transform cam = CameraTransform;
+
+        pointPath.Clear();
+
+        panPoints.Clear();
+
+        currentPointIndex = 0;
+
+        pointInitialized = false;
+
+
+        if (cam == null)
+        {
+            return false;
+        }
+
+
+        pointPath.Add(
+            cam.position
+        );
+
+
+        if (points == null ||
+            points.Count == 0)
+        {
+            return false;
+        }
+
+
+        foreach (
+            CameraPanRoundTrigger.PanPoint panPoint
+            in points)
+        {
+            if (panPoint == null)
+            {
+                continue;
+            }
+
+            if (panPoint.pointOfInterest == null)
+            {
+                continue;
+            }
+
+
+            Vector3 target =
+                panPoint.pointOfInterest.position;
+
+
+            target +=
+                Vector3.up *
+                pointHeightOffset;
+
+
+            pointPath.Add(target);
+
+
+            PanPoint storedPoint =
+                new PanPoint();
+
+
+            storedPoint.pointPosition =
+                target;
+
+
+            storedPoint.holdTime =
+                panPoint.holdTime;
+
+
+            panPoints.Add(
+                storedPoint
+            );
+        }
+
+
+        pointInitialized =
+            pointPath.Count >= 2;
+
+
+        return pointInitialized;
+    }
+
+
+    // =========================================================
+    // TRIGGER PAN
+    // =========================================================
 
     public void TriggerPan(
         List<CameraPanRoundTrigger.PanPoint> points,
@@ -740,6 +1106,75 @@ public class CameraPanEffect : CameraEffectBase
         int doorIndex,
         int round)
     {
+        Transform cam = CameraTransform;
+
+        if (cam == null)
+        {
+            Debug.LogWarning(
+                "CameraPanEffect: CameraTransform is null."
+            );
+
+            return;
+        }
+
+
+        // =====================================================
+        // CANCEL PAUSE POINT
+        // =====================================================
+
+        movingToPausePoint = false;
+        returningFromPausePoint = false;
+        atPausePoint = false;
+
+
+        // =====================================================
+        // SAVE RETURN POSITION
+        // =====================================================
+
+        returnPosition =
+            cam.position;
+
+        returnRotation =
+            cam.rotation;
+
+
+        // =====================================================
+        // RESET
+        // =====================================================
+
+        doorIndexToReady =
+            doorIndex;
+
+        doorReadyTriggered =
+            false;
+
+        pointPath.Clear();
+
+        panPoints.Clear();
+
+        currentPointIndex = 0;
+
+        pointInitialized = false;
+
+        pointSegmentTimer = 0f;
+
+        pointSegmentTime = 0f;
+
+        splineDistance = 0f;
+
+        splineLength = 0f;
+
+        debugDistanceTravelled = 0f;
+
+        debugDistanceToTravel = 0f;
+
+        activeSpline = null;
+
+
+        // =====================================================
+        // FIND ROUND TRIGGER
+        // =====================================================
+
         if (roundTrigger == null)
         {
             roundTrigger =
@@ -747,118 +1182,81 @@ public class CameraPanEffect : CameraEffectBase
         }
 
 
-        activeSpline = null;
-
+        // =====================================================
+        // FIND SPLINE
+        // =====================================================
 
         if (roundTrigger != null)
         {
             activeSpline =
-                roundTrigger.GetSplineForRound(round);
+                roundTrigger.GetSplineForRound(
+                    round
+                );
         }
 
 
-        doorIndexToReady = doorIndex;
-        doorReadyTriggered = false;
-
-
-
-        //==========================================
-        // SPLINE MODE
-        //==========================================
+        // =====================================================
+        // SPLINE
+        // =====================================================
 
         if (activeSpline != null &&
             activeSpline.Spline != null &&
             activeSpline.Spline.Count >= 2)
         {
-            panMode = PanMode.Spline;
+            panMode =
+                PanMode.Spline;
 
 
             splineLength =
                 activeSpline.Spline.GetLength();
+
+
+            splineDistance = 0f;
+
+
+            state =
+                State.MovingToStart;
+
+
+            Debug.Log(
+                "CameraPanEffect: Using SPLINE."
+            );
         }
 
 
-
-        //==========================================
-        // POINT TO POINT MODE
-        //==========================================
+        // =====================================================
+        // POINT TO POINT
+        // =====================================================
 
         else
         {
-            panMode = PanMode.PointToPoint;
+            panMode =
+                PanMode.PointToPoint;
 
 
-            activePanPoints = points;
+            activePanPoints =
+                points;
 
 
-            pointPath.Add(
-                transform.position
-            );
+            bool validPath =
+                BuildPointPath(
+                    points
+                );
 
 
-
-            if (activePanPoints != null)
-            {
-                for (int i = 0; i < activePanPoints.Count; i++)
-                {
-                    CameraPanRoundTrigger.PanPoint panPoint =
-                        activePanPoints[i];
-
-
-                    if (panPoint == null)
-                        continue;
-
-
-                    if (panPoint.pointOfInterest == null)
-                        continue;
-
-
-
-                    Vector3 target =
-                        panPoint.pointOfInterest.position +
-                        Vector3.up * 20f;
-
-
-
-                    // CAMERA MOVEMENT PATH
-                    pointPath.Add(target);
-
-
-                    PanPoint newPoint =
-                        new PanPoint();
-
-
-                    newPoint.pointPosition =
-                        target;
-
-
-                    newPoint.holdTime =
-                        panPoint.holdTime;
-
-
-                    panPoints.Add(newPoint);
-
-
-
-                    Debug.Log(
-                        "Pan Point " + i +
-                        " Position: " + target +
-                        " Hold Time: " + panPoint.holdTime
-                    );
-                }
-            }
-
-
-
-            if (pointPath.Count < 2)
+            if (!validPath)
             {
                 Debug.LogWarning(
-                    "CameraPanEffect: No Point To Point targets."
+                    "CameraPanEffect: No valid spline and no valid point-to-point path."
                 );
+
+
+                state =
+                    State.Idle;
+
 
                 return;
             }
-
 
 
             currentPointIndex = 1;
@@ -866,189 +1264,309 @@ public class CameraPanEffect : CameraEffectBase
             pointSegmentTimer = 0f;
 
 
-
             int segments =
                 pointPath.Count - 1;
 
 
-
             pointSegmentTime =
-                5f /
-                Mathf.Max(1, segments);
+                time > 0f
+                ? time / Mathf.Max(1, segments)
+                : 0f;
+
+
+            state =
+                State.FollowingPoints;
+
+
+            Debug.Log(
+                "CameraPanEffect: No spline. Using POINT TO POINT."
+            );
         }
 
 
+        // =====================================================
+        // PAN ACTIVE
+        // =====================================================
 
-        splineDistance = 0f;
+        GlobalPanActive =
+            true;
 
 
+        // =====================================================
+        // PLAYER
+        // =====================================================
 
         if (pausePlayerDuringPan &&
             !playerPaused)
         {
-
-            GlobalPanActive = true;
-
-
-            playerPaused = true;
-        }
-
-
-
-        if (panMode == PanMode.Spline)
-        {
-            state = State.MovingToStart;
-        }
-        else
-        {
-            state = State.FollowingSpline;
+            playerPaused =
+                true;
         }
     }
-    //==========================================
-    // BUILD POINT PATH FROM POINT OF INTEREST LIST
-    // Takes PanPoint list from CameraPanRoundTrigger
-    // Stores locations AND hold times by index.
-    //==========================================
-    //private void BuildPointPathFromPoints(
-    //    List<CameraPanRoundTrigger.PanPoint> points)
-    //{
-    //    pointPath.Clear();
-
-    //    pointHoldTimes.Clear();
 
 
-    //    // Camera starting position
-    //    pointPath.Add(
-    //        transform.position
-    //    );
+    // =========================================================
+    // POINT FALLBACK
+    // =========================================================
+
+    private void StartPointToPointFallback()
+    {
+        if (pointPath != null &&
+            pointPath.Count >= 2)
+        {
+            currentPointIndex = 1;
+
+            state =
+                State.FollowingPoints;
+
+            panMode =
+                PanMode.PointToPoint;
+
+            return;
+        }
 
 
-    //    // Start point has no hold time
-    //    pointHoldTimes.Add(0f);
+        StartReturning();
+    }
 
 
+    // =========================================================
+    // START RETURN
+    // =========================================================
 
-    //    if (points == null ||
-    //        points.Count == 0)
-    //    {
-    //        Debug.LogWarning(
-    //            "CameraPanEffect: No PanPoints found."
-    //        );
-
-    //        return;
-    //    }
-
+    private void StartReturning()
+    {
+        state =
+            State.Returning;
+    }
 
 
-    //    foreach (CameraPanRoundTrigger.PanPoint point in points)
-    //    {
-    //        if (point == null)
-    //            continue;
+    // =========================================================
+    // RETURN CAMERA
+    // =========================================================
+
+    private void ReturnCamera(float deltaTime)
+    {
+        Transform cam = CameraTransform;
+
+        if (cam == null)
+        {
+            state =
+                State.Idle;
+
+            ResumePlayer();
+
+            return;
+        }
 
 
-    //        if (point.pointOfInterest == null)
-    //            continue;
+        cam.position =
+            Vector3.MoveTowards(
+                cam.position,
+                returnPosition,
+                moveSpeed * deltaTime
+            );
 
 
-
-    //        Vector3 location =
-    //            point.pointOfInterest.position +
-    //            Vector3.up * 20f;
-
-
-
-    //        // Add location
-    //        pointPath.Add(location);
+        cam.rotation =
+            Quaternion.RotateTowards(
+                cam.rotation,
+                returnRotation,
+                rotationSpeed * deltaTime
+            );
 
 
+        desiredPosition =
+            cam.position;
 
-    //        // Add matching hold time
-    //        pointHoldTimes.Add(
-    //            point.holdTime
-    //        );
-    //    }
-
+        desiredRotation =
+            cam.rotation;
 
 
-    //    currentPointIndex = 1;
+        if (Vector3.Distance(
+                cam.position,
+                returnPosition
+            ) <= 0.01f &&
+            Quaternion.Angle(
+                cam.rotation,
+                returnRotation
+            ) <= 0.1f)
+        {
+            cam.position =
+                returnPosition;
 
-    //    pointSegmentTimer = 0f;
-
-
-    //    int segments =
-    //        pointPath.Count - 1;
-
-
-    //    pointSegmentTime =
-    //        5f /
-    //        Mathf.Max(
-    //            1,
-    //            segments
-    //        );
-
+            cam.rotation =
+                returnRotation;
 
 
-    //    // Debug positions and holds
-    //    for (int i = 0; i < pointPath.Count; i++)
-    //    {
-    //        Debug.Log(
-    //            "Camera Point [" +
-    //            i +
-    //            "] Location: " +
-    //            pointPath[i] +
-    //            " Hold Time: " +
-    //            pointHoldTimes[i]
-    //        );
-    //    }
-    //}
+            desiredPosition =
+                returnPosition;
+
+            desiredRotation =
+                returnRotation;
+
+
+            state =
+                State.Idle;
+
+
+            activeSpline = null;
+
+            pointPath.Clear();
+
+            panPoints.Clear();
+
+            currentPointIndex = 0;
+
+            pointInitialized = false;
+
+            splineDistance = 0f;
+
+            splineLength = 0f;
+
+            pointSegmentTimer = 0f;
+
+            pointSegmentTime = 0f;
+
+            debugDistanceToTravel = 0f;
+
+            debugDistanceTravelled = 0f;
+
+
+            ResumePlayer();
+        }
+    }
+
+
+    // =========================================================
+    // DASH SKIP
+    // =========================================================
+
     public void SkipPan()
     {
+        // =====================================================
+        // DO NOT SKIP PAUSE POINT MOVEMENT
+        // =====================================================
+
+        if (movingToPausePoint)
+        {
+            return;
+        }
+
+
+        // =====================================================
+        // DO NOT SKIP PAUSE POINT RETURN
+        // =====================================================
+
+        if (returningFromPausePoint)
+        {
+            return;
+        }
+
+
+        // =====================================================
+        // DO NOT SKIP WHILE WAITING AT PAUSE POINT
+        // =====================================================
+
+        if (atPausePoint)
+        {
+            return;
+        }
+
+
+        // =====================================================
+        // NORMAL PAN
+        // =====================================================
+
         if (state == State.Idle)
         {
             return;
         }
 
-        // Mark door as ready if not triggered yet
-        if (!doorReadyTriggered)
+
+        // Mark door ready immediately.
+        MarkDoorReady();
+
+
+        Transform cam =
+            CameraTransform;
+
+
+        // Instantly return camera to
+        // the position from before the pan.
+        if (cam != null)
         {
-            MarkDoorReady();
-            doorReadyTriggered = true;
+            cam.position =
+                returnPosition;
+
+            cam.rotation =
+                returnRotation;
         }
 
-        Vector3 currentPlayerCameraPosition = transform.position;
 
-        if (controller != null)
-        {
-            Vector3 controllerPosition = controller.GetBasePosition();
+        desiredPosition =
+            returnPosition;
 
-            if (controllerPosition != Vector3.zero)
-            {
-                currentPlayerCameraPosition = controllerPosition;
-            }
-        }
+        desiredRotation =
+            returnRotation;
 
-        transform.position = currentPlayerCameraPosition;
 
+        // Clear spline.
         activeSpline = null;
 
+
+        // Clear points.
         pointPath.Clear();
 
-        currentPointIndex = 0;
-        pointSegmentTimer = 0f;
-        pointSegmentTime = 0f;
+        panPoints.Clear();
 
+
+        // Reset point state.
+        currentPointIndex = 0;
+
+        pointInitialized = false;
+
+
+        // Reset spline state.
         splineDistance = 0f;
 
-        state = State.Idle;
+        splineLength = 0f;
 
-        if (playerPaused)
-        {
-            ResumePlayer();
-        }
+
+        // Reset timers.
+        pointSegmentTimer = 0f;
+
+        pointSegmentTime = 0f;
+
+
+        // Reset debug.
+        debugDistanceToTravel = 0f;
+
+        debugDistanceTravelled = 0f;
+
+
+        // Stop pan.
+        state =
+            State.Idle;
+
+
+        // Give control back to player.
+        ResumePlayer();
     }
+
+
+    // =========================================================
+    // DOOR
+    // =========================================================
 
     private void MarkDoorReady()
     {
+        if (doorReadyTriggered)
+        {
+            return;
+        }
+
+
         if (doorSystem != null &&
             doorIndexToReady >= 0)
         {
@@ -1058,20 +1576,47 @@ public class CameraPanEffect : CameraEffectBase
 
             doorIndexToReady = -1;
         }
+
+
+        doorReadyTriggered =
+            true;
     }
+
+
+    // =========================================================
+    // PLAYER
+    // =========================================================
 
     private void ResumePlayer()
     {
-        if (!playerPaused)
-        {
-            return;
-        }
+        playerPaused =
+            false;
 
-
-        GlobalPanActive = false;
-
-       playerPaused = false;
+        GlobalPanActive =
+            false;
     }
+
+
+    // =========================================================
+    // PUBLIC STATE
+    // =========================================================
+
+    public bool IsPanning
+    {
+        get
+        {
+            return
+                state != State.Idle ||
+                movingToPausePoint ||
+                returningFromPausePoint ||
+                atPausePoint;
+        }
+    }
+
+
+    // =========================================================
+    // EASING
+    // =========================================================
 
     private static float EaseInOutQuad(float t)
     {
@@ -1080,45 +1625,125 @@ public class CameraPanEffect : CameraEffectBase
             return 2f * t * t;
         }
 
+
         return -1f +
-            (4f - 2f * t) * t;
+               (4f - 2f * t) * t;
     }
 
-    public bool IsPanning =>
-        state != State.Idle;
+
+    // =========================================================
+    // GIZMOS
+    // =========================================================
+
+    [Header("Gizmo Point References")]
+
+    [SerializeField]
+    private List<Transform> panPointsForGizmos =
+        new List<Transform>();
+
 
     private void OnDrawGizmos()
     {
-        if (panStart_EndObjects != null)
+        // =====================================================
+        // PAUSE POINT
+        // =====================================================
+
+        if (PAUSEPOINT != null)
         {
-            Gizmos.color = Color.green;
+            Gizmos.color =
+                Color.magenta;
+
 
             Gizmos.DrawSphere(
-                 panStart_EndObjects.position,
-                0.5f
+                PAUSEPOINT.position,
+                0.75f
             );
-        }
 
-        if (panStart_EndObjects != null)
-        {
-            Gizmos.color = Color.red;
 
-            Gizmos.DrawSphere(
-                 panStart_EndObjects.position,
-                0.5f
-            );
-        }
+            Gizmos.color =
+                Color.white;
 
-        if (panStart_EndObjects != null &&
-             panStart_EndObjects != null)
-        {
-            Gizmos.color = Color.yellow;
 
             Gizmos.DrawLine(
-                 panStart_EndObjects.position,
-                 panStart_EndObjects.position
+                PAUSEPOINT.position,
+                PAUSEPOINT.position +
+                PAUSEPOINT.forward * 3f
             );
         }
 
+
+        // =====================================================
+        // START / END
+        // =====================================================
+
+        if (panStart_EndObjects != null)
+        {
+            Gizmos.color =
+                Color.green;
+
+
+            Gizmos.DrawSphere(
+                panStart_EndObjects.position,
+                0.5f
+            );
+        }
+
+
+        // =====================================================
+        // POINT PATH
+        // =====================================================
+
+        if (panPointsForGizmos == null ||
+            panPointsForGizmos.Count == 0)
+        {
+            return;
+        }
+
+
+        for (
+            int i = 0;
+            i < panPointsForGizmos.Count;
+            i++)
+        {
+            Transform point =
+                panPointsForGizmos[i];
+
+
+            if (point == null)
+            {
+                continue;
+            }
+
+
+            Gizmos.color =
+                Color.yellow;
+
+
+            Gizmos.DrawSphere(
+                point.position,
+                0.5f
+            );
+
+
+            if (i + 1 <
+                panPointsForGizmos.Count)
+            {
+                Transform next =
+                    panPointsForGizmos[i + 1];
+
+
+                if (next != null)
+                {
+                    Gizmos.color =
+                        Color.cyan;
+
+
+                    Gizmos.DrawLine(
+                        point.position,
+                        next.position
+                    );
+                }
+            }
+        }
     }
 }
