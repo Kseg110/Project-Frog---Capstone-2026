@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 8732270254385064484}
   - component: {fileID: 9129651843082517972}
   - component: {fileID: 5727934348299759323}
+  - component: {fileID: -2879179398470506095}
   m_Layer: 7
   m_Name: CrocCaiman
   m_TagString: Enemy
@@ -279,6 +280,35 @@ MonoBehaviour:
   flashColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.15
   customFlashMaterial: {fileID: 2100000, guid: 95ccb423ed8ea854a905c9cc444a551b, type: 2}
+--- !u!114 &-2879179398470506095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4255145973034431359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bc7ae2f604fc0a4087530c34b500193, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyFadeOut
+  animator: {fileID: 0}
+  scriptsToDisable:
+  - {fileID: 9129651843082517972}
+  - {fileID: 8573468495165241422}
+  agent: {fileID: 5499044141632585682}
+  duration: 3
+  renderers:
+  - {fileID: 8338721137955178831}
+  - {fileID: 3857755592115009349}
+  - {fileID: 7065366239174216328}
+  - {fileID: 3389484813405917767}
+  - {fileID: 5676831708332886945}
+  - {fileID: 6195111898983355139}
+  - {fileID: 8553913379802566411}
+  collidersToDisable:
+  - {fileID: 5331853941283378302}
+  healthBar: {fileID: 6254041990011683529}
 --- !u!1 &7539180464835233359
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,6 +587,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 879b2298185f1c541990b2c47bf42bed, type: 3}
+--- !u!1 &6254041990011683529 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 291176024272139287, guid: 879b2298185f1c541990b2c47bf42bed, type: 3}
+  m_PrefabInstance: {fileID: 5962947329762784990}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &6493838797995227987 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 638977865760132493, guid: 879b2298185f1c541990b2c47bf42bed, type: 3}

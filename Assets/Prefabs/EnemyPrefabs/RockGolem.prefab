@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: -2593096587871656810}
   - component: {fileID: 4653997872707702896}
   - component: {fileID: 1464795206220386133}
+  - component: {fileID: 7006932941768098797}
   m_Layer: 7
   m_Name: RockGolem
   m_TagString: Enemy
@@ -135,6 +136,8 @@ MonoBehaviour:
   attackHitbox: {fileID: 5833809153833045461, guid: d3147fe45c46e7149ae8be3b6377a9d6, type: 3}
   health: {fileID: 0}
   attackRange: 10
+  eyeHeight: 1
+  targetEyeHeight: 1
 --- !u!114 &4548612270063906903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,6 +332,39 @@ MonoBehaviour:
   flashColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.15
   customFlashMaterial: {fileID: 2100000, guid: 95ccb423ed8ea854a905c9cc444a551b, type: 2}
+--- !u!114 &7006932941768098797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3449643467730253744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bc7ae2f604fc0a4087530c34b500193, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyFadeOut
+  animator: {fileID: 0}
+  scriptsToDisable:
+  - {fileID: 4190489891638949421}
+  - {fileID: -2593096587871656810}
+  - {fileID: 4456900721603793363}
+  - {fileID: -2058690530288731817}
+  agent: {fileID: 8753553548209394756}
+  duration: 1
+  renderers:
+  - {fileID: 2907758780347023231}
+  - {fileID: 4441828012672719775}
+  - {fileID: 6959488756468435652}
+  - {fileID: 2002996954385405699}
+  - {fileID: 6704691150697722602}
+  - {fileID: 7748760585187239627}
+  - {fileID: 5530401053052633524}
+  - {fileID: 8880933985839903141}
+  - {fileID: 6202097811739803156}
+  collidersToDisable:
+  - {fileID: 6193369510899100733}
+  healthBar: {fileID: 2122929263972735554}
 --- !u!1001 &1836448197354565205
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -461,6 +497,11 @@ PrefabInstance:
 --- !u!224 &1270654031706055640 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 638977865760132493, guid: 879b2298185f1c541990b2c47bf42bed, type: 3}
+  m_PrefabInstance: {fileID: 1836448197354565205}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2122929263972735554 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 291176024272139287, guid: 879b2298185f1c541990b2c47bf42bed, type: 3}
   m_PrefabInstance: {fileID: 1836448197354565205}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6584235865335416055
