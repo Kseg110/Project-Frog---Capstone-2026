@@ -40,6 +40,9 @@ public class PlayerMovement : MonoBehaviour, IMovement
     //[SerializeField] private EventReference windAnchorEvent;
     [SerializeField] private EventReference dashActivationEvent;
 
+    [Header("Anchor System")]
+    [SerializeField] private float maxTetherRadius = 10f;
+
     private PlayerInput playerInput;
 
     private InputAction moveAction;
@@ -78,6 +81,9 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private float currentMaxRadius;
     private Vector3 anchorPosition;
     private readonly float currentMinRadius = 4f;
+
+    // --- VFX INTEGRATION ---
+    private AnchorRadiusVFX activeAnchorVFX;
 
     private const string GamepadSchemeNameLower = "gamepad";
 
@@ -297,6 +303,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
     }
     private void UpdateTetherStatus()
     {
+        bool previouslyTethered = isTethered;
+
         if (playerAnchor != null)
             isTethered = playerAnchor.IsTethered;
 
@@ -306,10 +314,33 @@ public class PlayerMovement : MonoBehaviour, IMovement
             float distanceToAnchor = Vector3.Distance(rb.position, anchorPosition);
             if (currentMaxRadius == 0f || distanceToAnchor < currentMaxRadius)
                 currentMaxRadius = Mathf.Max(distanceToAnchor, currentMinRadius);
+
+            // Trigger ring display when new tether attaches
+            if (!previouslyTethered || activeAnchorVFX == null)
+            {
+                if (playerAnchor.CurrentAnchor.TryGetComponent<AnchorRadiusVFX>(out activeAnchorVFX))
+                {
+                    activeAnchorVFX.ShowRadius(maxTetherRadius);
+                }
+            }
+
+            // Exceeding maxTetherRadius triggers smooth fade out
+            if (distanceToAnchor > maxTetherRadius && activeAnchorVFX != null)
+            {
+                activeAnchorVFX.HideRadius();
+                activeAnchorVFX = null;
+            }
         }
         else
         {
             currentMaxRadius = 0f;
+
+            // Trigger fade out when tether breaks or releases
+            if (activeAnchorVFX != null)
+            {
+                activeAnchorVFX.HideRadius();
+                activeAnchorVFX = null;
+            }
         }
     }
 

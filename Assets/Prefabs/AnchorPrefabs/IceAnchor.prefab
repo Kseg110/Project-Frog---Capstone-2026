@@ -24,6 +24,10 @@ PrefabInstance:
       propertyPath: InitialModule.startColor.maxColor.r
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2769057338927592912, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 2100000, guid: c914056a48bfe8442bea0be938ecf37a, type: 2}
     - target: {fileID: 4935234711728926343, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -108,6 +112,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6911843594789955862, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
       insertIndex: -1
       addedObject: {fileID: -2625445847057834090}
+    - targetCorrespondingSourceObject: {fileID: 6911843594789955862, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5985547676252482223}
   m_SourcePrefab: {fileID: 100100000, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
 --- !u!1 &2993321440109438229 stripped
 GameObject:
@@ -130,8 +137,41 @@ MonoBehaviour:
   baseIntensity: 10
   maxOverchargeIntensity: 100
   data: {fileID: 11400000, guid: 2f31fb0e8ea9c91458af544eecf718d2, type: 2}
+--- !u!114 &5985547676252482223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2993321440109438229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86d888fd77b0dc04698ff4a11fe538d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorRadiusVFX
+  ringVisualTransform: {fileID: 4928511529198125545}
+  decalProjector: {fileID: 5768000779591662035}
+  spriteRenderer: {fileID: 0}
+  fadeInDuration: 0.3
+  fadeOutDuration: 0.5
 --- !u!108 &3611004053729616516 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 4935234711728926343, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
   m_PrefabInstance: {fileID: 8530280436478970883}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &4928511529198125545 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3604062514608770538, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
+  m_PrefabInstance: {fileID: 8530280436478970883}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5768000779591662035 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2769057338927592912, guid: 740696dcbe336b6479ffe5831f56fce8, type: 3}
+  m_PrefabInstance: {fileID: 8530280436478970883}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.DecalProjector
