@@ -563,6 +563,13 @@ public class CameraPanEffect : CameraEffectBase
         GlobalPanActive = true;
     }
 
+    // =========================================================
+    // PAUSE POINT RETURN
+    // =========================================================
+
+    private Vector3 pauseReturnStartPosition;
+    private Quaternion pauseReturnStartRotation;
+
     private void ReturnFromPausePoint()
     {
         Transform cam = CameraTransform;
@@ -570,13 +577,24 @@ public class CameraPanEffect : CameraEffectBase
         if (cam == null)
             return;
 
-        pausePointMoveTimer +=
-            Time.unscaledDeltaTime;
+        // =====================================================
+        // START RETURN FROM THE CAMERA'S ACTUAL CURRENT
+        // POSITION.
+        //
+        // IMPORTANT:
+        // DO NOT USE PAUSEPOINT.position HERE.
+        // The camera may have been moved somewhere else.
+        // =====================================================
 
-        float t =
-            Mathf.Clamp01(
-                pausePointMoveTimer / 1f
-            );
+        if (pausePointMoveTimer <= 0f)
+        {
+            pauseReturnStartPosition = cam.position;
+            pauseReturnStartRotation = cam.rotation;
+        }
+
+        // =====================================================
+        // RETURN TARGET
+        // =====================================================
 
         Vector3 targetPosition =
             panStart_EndObjects != null
@@ -588,27 +606,55 @@ public class CameraPanEffect : CameraEffectBase
                 ? panStart_EndObjects.rotation
                 : pauseReturnRotation;
 
+        // =====================================================
+        // EXACTLY 1 SECOND
+        // =====================================================
+
+        pausePointMoveTimer += Time.unscaledDeltaTime;
+
+        float t =
+            Mathf.Clamp01(
+                pausePointMoveTimer / 1f
+            );
+
+        // Smooth but does NOT snap.
+        float easedT = EaseInOutQuad(t);
+
+        // =====================================================
+        // MOVE FROM CURRENT CAMERA POSITION
+        // TO THE ACTUAL RETURN TARGET
+        // =====================================================
+
         cam.position =
             Vector3.Lerp(
-                PAUSEPOINT.position,
+                pauseReturnStartPosition,
                 targetPosition,
-                t
+                easedT
             );
 
         cam.rotation =
             Quaternion.Slerp(
-                PAUSEPOINT.rotation,
+                pauseReturnStartRotation,
                 targetRotation,
-                t
+                easedT
             );
+
+        desiredPosition = cam.position;
+        desiredRotation = cam.rotation;
+
+        // =====================================================
+        // FINISHED
+        // =====================================================
 
         if (t >= 1f)
         {
-            cam.position =
-                targetPosition;
+            // Force the exact final position only at the
+            // END of the one-second return.
+            cam.position = targetPosition;
+            cam.rotation = targetRotation;
 
-            cam.rotation =
-                targetRotation;
+            desiredPosition = targetPosition;
+            desiredRotation = targetRotation;
 
             returningFromPausePoint = false;
             movingToPausePoint = false;
