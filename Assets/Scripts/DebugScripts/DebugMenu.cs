@@ -9,6 +9,7 @@ public class DebugMenu : MonoBehaviour
     public WaveRoundSystem waveRoundSystem;
     public UpgradeManager upgradeManager;
     public InventoryManager inventoryManager;
+    public Transform[] teleportSpots;
 
     [Header("Appearance")]
     public GUISkin skin;

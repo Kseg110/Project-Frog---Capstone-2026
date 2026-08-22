@@ -11,6 +11,7 @@ public class GameModeDebugCategory : DebugCategory
     [Header("References")]
     [Tooltip("Automatically resolved to the WaveRoundSystem in the active scene if left empty.")]
     public WaveRoundSystem waveRoundSystem;
+    public GameObject player;
 
     [Header("Wave Skip")]
     [SerializeField] private int skipToWaveNumber = 1;
@@ -19,12 +20,19 @@ public class GameModeDebugCategory : DebugCategory
     [SerializeField] private int selectedCardIndex = 0;
     private bool upgradeCardmenuOpen = false;
 
+    [Header("Zone Positions")]
+    [SerializeField] private Transform[] teleportSpots;
+    [SerializeField] private int teleportIndex = 1; // 1-based input for debug UI
+
     private void OnEnable()
     {
         // Try to resolve automatically when the ScriptableObject is enabled
         if (waveRoundSystem == null)
             AutoFindWaveRoundSystem();
+        AutoFindTeleportSpots();
     }
+
+    
 
     public override void Draw()
     {
@@ -146,6 +154,47 @@ public class GameModeDebugCategory : DebugCategory
                 GUILayout.EndHorizontal();
             }
         }
+
+        // Teleport UI
+        GUILayout.Space(10);
+        GUILayout.Label("Teleport To Area", GUI.skin.box);
+
+        if (teleportSpots == null || teleportSpots.Length == 0)
+        {
+            GUILayout.Label("No teleport spots assigned.", GUI.skin.label);
+        }
+        else if (teleportSpots.Length == 4)
+        {
+            GUILayout.BeginHorizontal();
+            for (int i = 0; i < 4; i++)
+            {
+                if (GUILayout.Button($"Area {i + 1}", GUILayout.Width(100)))
+                {
+                    TeleportToZone(i);
+                }
+            }
+            GUILayout.EndHorizontal();
+        }
+        else
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Area (1-based)", GUILayout.Width(140));
+            string tpText = GUILayout.TextField(teleportIndex.ToString(), GUILayout.Width(80));
+            if (int.TryParse(tpText, out int parsedIndex))
+            {
+                teleportIndex = Mathf.Max(1, parsedIndex);
+            }
+
+            if (GUILayout.Button("Teleport", GUILayout.Width(100)))
+            {
+                int zeroBased = teleportIndex - 1;
+                if (zeroBased >= 0 && zeroBased < teleportSpots.Length)
+                {
+                    TeleportToZone(zeroBased);
+                }
+            }
+            GUILayout.EndHorizontal();
+        }
     }
 
     bool AutoFindWaveRoundSystem()
@@ -183,6 +232,102 @@ public class GameModeDebugCategory : DebugCategory
         // Nothing found
         waveRoundSystem = null;
         return false;
+    }
+
+    bool AutoFindTeleportSpots()
+    {
+        // If already assigned, nothing to do
+        if (teleportSpots != null && teleportSpots.Length > 0)
+            return true;
+
+        // Try to get teleport spots from the scene DebugMenu (preferred)
+        var debugMenu = Object.FindObjectOfType<DebugMenu>();
+        if (debugMenu != null && debugMenu.teleportSpots != null && debugMenu.teleportSpots.Length > 0)
+        {
+            teleportSpots = debugMenu.teleportSpots;
+            return true;
+        }
+
+        // First try: find tagged scene objects named "TeleportSpot"
+        var tagged = GameObject.FindGameObjectsWithTag("TeleportSpot");
+        if (tagged != null && tagged.Length > 0)
+        {
+            teleportSpots = tagged.Select(g => g.transform).ToArray();
+            return true;
+        }
+
+        // Fallback: find transforms with name prefix (useful if you name them TeleportSpot1 etc.)
+        var allTransforms = Object.FindObjectsOfType<Transform>();
+        var matches = allTransforms.Where(t => t.name.StartsWith("TeleportSpot")).ToArray();
+        if (matches != null && matches.Length > 0)
+        {
+            teleportSpots = matches;
+            return true;
+        }
+
+        return false;
+    }
+
+    // Teleport the player to one of the configured teleport spots.
+    public void TeleportToZone(int index)
+    {
+        if (teleportSpots == null || index < 0 || index >= teleportSpots.Length)
+            return;
+
+        Transform spot = teleportSpots[index];
+        if (spot == null)
+            return;
+
+        // Resolve player reference if not set
+        if (player == null)
+        {
+            player = GameObject.FindWithTag("Player");
+            if (player == null)
+            {
+                Debug.LogWarning("TeleportToZone: player GameObject not assigned and no GameObject with tag 'Player' found.");
+                return;
+            }
+        }
+
+        Rigidbody rb = player.GetComponent<Rigidbody>();
+        MonoBehaviour playerMovement = null;
+
+        // Try to find a PlayerMovement-derived script by name
+        var specificMovement = player.GetComponent("PlayerMovement") as MonoBehaviour;
+        if (specificMovement != null)
+            playerMovement = specificMovement;
+
+        // Disable movement script if present to avoid it fighting the teleport
+        if (playerMovement != null)
+            playerMovement.enabled = false;
+
+        if (rb != null)
+        {
+            // Make kinematic while moving to avoid physics glitches
+            bool wasKinematic = rb.isKinematic;
+            rb.isKinematic = true;
+
+            // Move transform directly
+            player.transform.position = spot.position;
+            player.transform.rotation = spot.rotation;
+
+            // Clear velocities
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            // Restore kinematic state
+            rb.isKinematic = wasKinematic;
+        }
+        else
+        {
+            // No rigidbody: just set transform
+            player.transform.position = spot.position;
+            player.transform.rotation = spot.rotation;
+        }
+
+        // Re-enable movement script
+        if (playerMovement != null)
+            playerMovement.enabled = true;
     }
 
 #if UNITY_EDITOR
