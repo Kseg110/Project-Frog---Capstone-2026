@@ -318,8 +318,6 @@ public class CameraPanEffect : CameraEffectBase
         Spline,
         PointToPoint
     }
-<<<<<<< Updated upstream
-=======
 
 
     // =========================================================
@@ -443,7 +441,6 @@ public class CameraPanEffect : CameraEffectBase
     // AWAKE
     // =========================================================
 
->>>>>>> Stashed changes
     private void Awake()
     {
         if (controller == null)
