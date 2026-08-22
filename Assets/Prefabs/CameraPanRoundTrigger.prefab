@@ -403,43 +403,58 @@ MonoBehaviour:
   currentRound: 1
   roundPans:
   - round: -1
+    fixedReturnTime: 0
     panPoints:
     - pointOfInterest: {fileID: 2938782935201370194}
-      holdTime: 5
+      holdTime: 0
+      returnTime: 1
     - pointOfInterest: {fileID: 2725769852603535125}
-      holdTime: 3
+      holdTime: 0
+      returnTime: 1
     - pointOfInterest: {fileID: 6265110377834350301}
-      holdTime: 7
+      holdTime: 0
+      returnTime: 1
     - pointOfInterest: {fileID: 8533538634116137170}
-      holdTime: 3
+      holdTime: 0
+      returnTime: 1
     - pointOfInterest: {fileID: 9178887280987761783}
-      holdTime: 9
+      holdTime: 0
+      returnTime: 1
     - pointOfInterest: {fileID: 8359616220733594506}
-      holdTime: 1
+      holdTime: 0
+      returnTime: 1
     panTime: 5
     doorIndex: 0
   - round: 5
+    fixedReturnTime: 1
     panPoints:
     - pointOfInterest: {fileID: 6619175382093019084}
-      holdTime: 5
+      holdTime: 1
+      returnTime: 1
     panTime: 5
     doorIndex: 1
   - round: 10
+    fixedReturnTime: 1
     panPoints:
     - pointOfInterest: {fileID: 4834223988143609571}
       holdTime: 1
+      returnTime: 1
     panTime: 5
     doorIndex: 2
   - round: 15
+    fixedReturnTime: 1
     panPoints:
     - pointOfInterest: {fileID: 4394146535907762764}
       holdTime: 1
+      returnTime: 1
     panTime: 5
     doorIndex: 3
   - round: 20
+    fixedReturnTime: 1
     panPoints:
     - pointOfInterest: {fileID: 7360722330519178943}
       holdTime: 1
+      returnTime: 1
     panTime: 5
     doorIndex: 4
   heightOffset: 20
