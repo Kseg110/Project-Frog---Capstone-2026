@@ -63,11 +63,27 @@ public class GraphicsSettingsManager : MonoBehaviour
     {
         if (resolutionIndex >= 0 && resolutionIndex < filteredResolutions.Count)
         {
-            Resolution res = filteredResolutions[resolutionIndex];
-            Screen.SetResolution(res.width, res.height, Screen.fullScreenMode);
             currentResolutionIndex = resolutionIndex;
-
             PlayerPrefs.SetInt("ResolutionIndex", resolutionIndex);
+
+            StopAllCoroutines();
+            StartCoroutine(ApplyResolutionRoutine(filteredResolutions[resolutionIndex]));
+        }
+    }
+
+    private IEnumerator ApplyResolutionRoutine(Resolution res)
+    {
+        // Apply new resolution
+        Screen.SetResolution(res.width, res.height, Screen.fullScreenMode);
+
+        // Wait 2 frames for URP render passes and textures to allocate at the new size
+        yield return null;
+        yield return new WaitForEndOfFrame();
+
+        // Reset projection matrix cleanly without disabling camera data
+        if (Camera.main != null)
+        {
+            Camera.main.ResetAspect();
         }
     }
 
@@ -138,7 +154,6 @@ public class GraphicsSettingsManager : MonoBehaviour
         if (PlayerPrefs.HasKey("ResolutionIndex"))
             SetResolution(PlayerPrefs.GetInt("ResolutionIndex"));
 
-        // Save once after applying all loaded prefs rather than on every setting write
         PlayerPrefs.Save();
     }
     #endregion
