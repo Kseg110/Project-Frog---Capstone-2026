@@ -160,7 +160,7 @@ public class Projectile : MonoBehaviour, IProjectile
     private void OnTriggerEnter(Collider other)
     {
         // Ignore trigger colliders that aren't enemies or player
-        if (other.isTrigger && !other.CompareTag("Enemy") && !other.CompareTag("Player"))
+        if (!other.CompareTag("Enemy") && !other.CompareTag("Player"))
             return;
 
         // ============================
