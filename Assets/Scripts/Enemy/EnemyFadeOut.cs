@@ -19,9 +19,15 @@ public class EnemyFadeOut : MonoBehaviour
     [SerializeField] private float duration = 1.0f;
     [Tooltip("Left empty = auto-filled from all child renderers on Awake.")]
     [SerializeField] private Renderer[] renderers;
+
     [Header("Disable On Fade")]
     [Tooltip("Left empty = auto-filled from all child colliders on Awake.")]
     [SerializeField] private Collider[] collidersToDisable;
+
+    [Header("Health Bar Disable")]
+    [Tooltip("If the Enemy currently fading has a health bar - disable that shizzle homeboy!")]
+    [SerializeField] private GameObject healthBar;
+
     // URP Lit uses _BaseColor; some shaders (or Built-in) use _Color. Resolve per-material.
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     private static readonly int ColorId = Shader.PropertyToID("_Color");
@@ -52,6 +58,10 @@ public class EnemyFadeOut : MonoBehaviour
     {
         if (isDead) return;   // guard against double-death
         isDead = true;
+
+        // Disables the Enemy's health bar as soon as the Enemy's health reaches 0.
+        if (healthBar != null)
+            healthBar.SetActive(false);
 
         // Stop the AI from steering a dying frog (kills the per-frame MoveToTarget at the source).
         foreach (var s in scriptsToDisable)
@@ -92,6 +102,7 @@ public class EnemyFadeOut : MonoBehaviour
     {
         if (isFading) return;   // guard against double-trigger
         isFading = true;
+
         CaptureEmission();
         StopAllCoroutines();
         StartCoroutine(FadeRoutine());

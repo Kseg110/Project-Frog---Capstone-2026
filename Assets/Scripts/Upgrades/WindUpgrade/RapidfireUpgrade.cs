@@ -7,41 +7,43 @@ public class RapidfireUpgrade : MonoBehaviour, IElementUpgrade
 
     private bool active = false;
     private float baseAPS;
+    private PlayerAttacks pa;
 
     private void Awake()
     {
         Instance = this;
+    }
 
-        // Get the base APS from the PlayerAttacks component
-        PlayerAttacks pa = FindFirstObjectByType<PlayerAttacks>();
+    private void Start()
+    {
+        pa = FindFirstObjectByType<PlayerAttacks>();
+
         if (pa != null)
             baseAPS = pa.attacksPerSecond;
     }
 
     public void OnElementAttached(AnchorBase anchor)
     {
+        pa = FindFirstObjectByType<PlayerAttacks>();
+        if (pa == null) return;
+
         // Check if the upgrade is active
         active = UpgradeManager.Instance.HasUpgrade("Rapidfire");
         if (!active) return;
 
         float bonus = GetBonus();
 
-        PlayerAttacks pa = FindFirstObjectByType<PlayerAttacks>();
-        if (pa != null)
-        {
-            // Modify APS based on the bonus percentage
-            pa.attacksPerSecond = baseAPS * (1f + bonus / 100f);
-        }
+        pa.attacksPerSecond = baseAPS * (1f + bonus / 100f);
     }
 
     public void OnElementDetached()
     {
+        pa = FindFirstObjectByType<PlayerAttacks>();
+        if (pa == null) return;
+
         active = false;
 
-        // Reset APS to the base value
-        PlayerAttacks pa = FindFirstObjectByType<PlayerAttacks>();
-        if (pa != null)
-            pa.attacksPerSecond = baseAPS;
+        pa.attacksPerSecond = baseAPS;
     }
 
     public float GetBonus()

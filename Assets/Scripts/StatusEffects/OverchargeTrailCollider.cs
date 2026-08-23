@@ -14,6 +14,13 @@ public class OverchargeTrailCollider : MonoBehaviour
     [SerializeField] private int maxColliders = 12;
     [SerializeField] private float colliderSpacing = 0.3f;
 
+    [Header("Layer")]
+    [Tooltip("Dedicated layer for spawned trail colliders — must exist in Tags & Layers. Kept separate from the Player's layer so projectiles can be excluded from the trail without also passing through the real Player.")]
+    [SerializeField] private string trailColliderLayer = "OverchargeTrail";
+
+    [Tooltip("Projectile layer that trail colliders should never collide with.")]
+    [SerializeField] private string projectileLayer = "Projectile";
+
     [Header("Element VFX")]
     [SerializeField] private ParticleSystem fireVFX;
     [SerializeField] private ParticleSystem iceVFX;
@@ -34,13 +41,28 @@ public class OverchargeTrailCollider : MonoBehaviour
     // The anchor type that determines which VFX to spawn on each collider
     private PlayerOvercharge.AnchorType currentAnchorType = PlayerOvercharge.AnchorType.None;
 
+    // Cached layer index for spawned trail colliders.
+    private int trailLayerIndex = -1;
+
     private void Awake()
     {
         trailRenderer = GetComponent<TrailRenderer>();
-        if(trailRenderer == null)
+        if (trailRenderer == null)
         {
             Debug.Log("[OverchargeTrailCollider] No TrailRenderer found on GameObject");
         }
+
+        // Resolve layers and tell physics the trail layer ignores the projectile layer entirely.
+        trailLayerIndex = LayerMask.NameToLayer(trailColliderLayer);
+        int projIndex = LayerMask.NameToLayer(projectileLayer);
+
+        if (trailLayerIndex == -1)
+            Debug.LogWarning($"[OverchargeTrailCollider] Layer '{trailColliderLayer}' does not exist — create it in Tags & Layers. Trail colliders will fall back to this object's layer and can still be hit by projectiles.", this);
+        if (projIndex == -1)
+            Debug.LogWarning($"[OverchargeTrailCollider] Layer '{projectileLayer}' does not exist — projectiles will not be excluded from the trail.", this);
+
+        if (trailLayerIndex != -1 && projIndex != -1)
+            Physics.IgnoreLayerCollision(trailLayerIndex, projIndex, true);
     }
 
     private void Update()
@@ -70,7 +92,7 @@ public class OverchargeTrailCollider : MonoBehaviour
         if (positionCount < 2) return;
 
         // Calculate how many colliders needed
-        int neededColliders = Mathf.Min(positionCount, maxColliders); 
+        int neededColliders = Mathf.Min(positionCount, maxColliders);
 
         // Create or reuse colliders
         while (activeColliders.Count < neededColliders)
@@ -101,7 +123,12 @@ public class OverchargeTrailCollider : MonoBehaviour
     {
         GameObject colliderObj = new GameObject("TrailCollider");
         colliderObj.transform.SetParent(transform);
-        colliderObj.layer = gameObject.layer;
+
+        // Dedicated layer (NOT the Player's) so IgnoreLayerCollision can exclude projectiles from the trail without also making projectiles pass through the actual Player.
+        colliderObj.layer = trailLayerIndex != -1 ? trailLayerIndex : gameObject.layer;
+
+        // Opt this collider out of the mud pit.
+        colliderObj.AddComponent<MudPitIgnore>();
 
         SphereCollider sphere = colliderObj.AddComponent<SphereCollider>();
         sphere.isTrigger = true;
@@ -165,7 +192,7 @@ public class OverchargeTrailCollider : MonoBehaviour
 
     private void ClearAllColliders()
     {
-        foreach(GameObject collider in activeColliders)
+        foreach (GameObject collider in activeColliders)
         {
             if (collider != null)
             {

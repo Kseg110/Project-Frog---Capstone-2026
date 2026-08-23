@@ -6,6 +6,9 @@ public class ExtinguisherUpgrade : MonoBehaviour, IElementUpgrade
 
     public AnchorElement Element => AnchorElement.Fire;
 
+    [Header("Extinguisher Settings")]
+    [SerializeField] private float bonusDamage = 30f;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -19,16 +22,13 @@ public class ExtinguisherUpgrade : MonoBehaviour, IElementUpgrade
     public void OnElementAttached(AnchorBase anchor) { }
     public void OnElementDetached() { }
 
-    public void OnHitEnemy(EnemyBase enemy)
+    public float GetBonusDamage()
     {
-        if (!UpgradeManager.Instance.HasUpgrade("Extinguisher"))
-            return;
-
-        if (enemy != null && enemy.IsBurning)
-        {
-            enemy.TakeDamage(30);
-            enemy.Cleanse();
-        }
+        return bonusDamage;
     }
 
+    public bool IsEnabled()
+    {
+        return UpgradeManager.Instance.HasUpgrade("Extinguisher");
+    }
 }

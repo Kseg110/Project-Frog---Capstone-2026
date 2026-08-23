@@ -5,8 +5,8 @@ using UnityEngine.AI;
 
 // Enemy BaseClass
 
-[RequireComponent (typeof(MovementComponent))]
-public abstract class EnemyBase : MonoBehaviour, IDamageable
+[RequireComponent(typeof(MovementComponent))]
+public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
 {
     [Header("References")]
     [SerializeField] protected Transform player;
@@ -175,7 +175,18 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         if (effectType == "Burn")
         {
-            health.ApplyBurn(effectDuration, effectValue, dmg);
+            float burnDamage = dmg;
+
+            if (WildfireUpgrade.Instance != null)
+            {
+                float bonus = WildfireUpgrade.Instance.GetBurnBonus();
+                float before = burnDamage;
+
+                burnDamage *= 1f + bonus / 100f;
+                Debug.Log($"[Wildfire] Burn tick boosted: +{bonus}% → {before} → {burnDamage}");
+            }
+
+            health.ApplyBurn(effectDuration, effectValue, burnDamage);
         }
     }
 
@@ -249,6 +260,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     private IEnumerator SlowRoutine(float duration, float slowMultiplier)
     {
         IsSlowed = true;
+        statusSlowMultiplier = slowMultiplier;   // Missing from EnemBase, this ensures the OverchargeSlowEffect.cs logic is implemented correctly.
         UpdateActualSpeed();
 
         yield return new WaitForSeconds(duration);
@@ -296,6 +308,12 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public void SetBurning(bool state)
     {
         IsBurning = state;
+    }
+
+    public void FlashBurnTick()
+    {
+        if (enemyFlash != null)
+            enemyFlash.Flash();
     }
 
     // Cleanse all effects (used by Extinguisher, Shatter, etc.)
@@ -391,4 +409,3 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         }
     }
 }
-

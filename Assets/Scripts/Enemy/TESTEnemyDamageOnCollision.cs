@@ -8,8 +8,19 @@ public class TESTEnemyDamageOnCollision : MonoBehaviour
     [SerializeField] private float knockbackDistance = 5f;
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag != "Player") { return; }
-        TryDamage(other);
+        if (other.gameObject.layer == LayerMask.NameToLayer("Terrain")) 
+        { 
+            Destroy(gameObject);
+            return;
+        }
+        if (other.tag == "Player")
+        {
+            TryDamage(other);
+        }
+        if(other.tag != "projectile")
+        {
+           Destroy(gameObject);
+        }
     }
 
     private void OnTriggerStay(Collider other)

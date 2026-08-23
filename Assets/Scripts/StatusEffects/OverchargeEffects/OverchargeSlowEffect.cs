@@ -1,24 +1,19 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class OverchargeSlowEffect : MonoBehaviour
 {
     private float slowPercent;
     private float duration;
     private Coroutine slowCoroutine;
-    private bool isSlowed = false;
 
-    private NavMeshAgent navAgent;
-    private float originalSpeed;
+    private IMovement movement;
 
     private void Awake()
     {
-        navAgent = GetComponent<NavMeshAgent>();
-        if (navAgent == null)
-        {
-            Debug.LogWarning($"[SlowEffect] No EnemyBase component found on {gameObject.name}");
-        }
+        movement = GetComponentInParent<IMovement>();
+        if (movement == null)
+            Debug.LogWarning($"[SlowEffect] No IMovement found on {gameObject.name}");
     }
 
     public void ApplySlow(float percent, float totalDuration)
@@ -31,18 +26,19 @@ public class OverchargeSlowEffect : MonoBehaviour
             StopCoroutine(slowCoroutine);
             RemoveSlow();
         }
+
         slowCoroutine = StartCoroutine(SlowCoroutine());
     }
 
     private IEnumerator SlowCoroutine()
     {
-        if (navAgent != null)
+        if (movement != null)
         {
-            originalSpeed = navAgent.speed;
+            // Convert percent (50)  multiplier (0.5). 
             float slowMultiplier = 1f - (slowPercent / 100f);
-            navAgent.speed = originalSpeed * slowMultiplier;
-            isSlowed = true;
+            movement.AddSpeedModifier(this, slowMultiplier);
         }
+
         yield return new WaitForSeconds(duration);
 
         RemoveSlow();
@@ -51,19 +47,15 @@ public class OverchargeSlowEffect : MonoBehaviour
 
     private void RemoveSlow()
     {
-        if (isSlowed && navAgent != null)
-        {
-            navAgent.speed = originalSpeed;
-            isSlowed = false;
-        }
+        if (movement != null)
+            movement.RemoveSpeedModifier(this);
     }
 
     private void OnDestroy()
     {
         if (slowCoroutine != null)
-        {
             StopCoroutine(slowCoroutine);
-        }
+
         RemoveSlow();
     }
 }

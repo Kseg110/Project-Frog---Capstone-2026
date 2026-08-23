@@ -121,7 +121,7 @@ public class EnemyKnockback : MonoBehaviour
 
         bool hadAgent = agent != null && agent.enabled;
 
-        Debug.Log($"[EnemyKnockback] KnockbackRoutine START on '{name}' dir={dir} distance={distance:F2} hadAgent={hadAgent}", this);
+        //Debug.Log($"[EnemyKnockback] KnockbackRoutine START on '{name}' dir={dir} distance={distance:F2} hadAgent={hadAgent}", this);
 
 
         if (hadAgent)
@@ -178,7 +178,7 @@ public class EnemyKnockback : MonoBehaviour
                         }
                         else
                         {
-                            Debug.Log($"[EnemyKnockback] Overlap blocked by '{blocking?.name}' (root='{blocking?.transform?.root?.name}', attachedRb={(blocking?.attachedRigidbody != null ? blocking.attachedRigidbody.name : "null")})", this);
+                            //Debug.Log($"[EnemyKnockback] Overlap blocked by '{blocking?.name}' (root='{blocking?.transform?.root?.name}', attachedRb={(blocking?.attachedRigidbody != null ? blocking.attachedRigidbody.name : "null")})", this);
 
                             bool moved = false;
 
@@ -309,7 +309,7 @@ public class EnemyKnockback : MonoBehaviour
                         }
                         else
                         {
-                            Debug.Log($"[EnemyKnockback] Knockback blocked by capsule cast on '{name}' — hit '{hit.collider?.name}'. Stopping knockback.", this);
+                            //Debug.Log($"[EnemyKnockback] Knockback blocked by capsule cast on '{name}' — hit '{hit.collider?.name}'. Stopping knockback.", this);
                             break;
                         }
                     }
@@ -334,7 +334,7 @@ public class EnemyKnockback : MonoBehaviour
 
         Vector3 finalPos = rb.isKinematic ? transform.position : rb.position;
 
-        Debug.Log($"[EnemyKnockback] KnockbackRoutine END on '{name}' finalPos={finalPos}", this);
+        //Debug.Log($"[EnemyKnockback] KnockbackRoutine END on '{name}' finalPos={finalPos}", this);
 
         IsBeingKnockedBack = false;
 

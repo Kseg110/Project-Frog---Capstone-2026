@@ -4,26 +4,41 @@ using UnityEngine;
 public class TargetManager : MonoBehaviour
 {
     public static TargetManager Instance { get; private set; }
+
+    [Header("Melee ring")]
     [SerializeField] private Transform[] slots;
     [SerializeField] private int maxEnemiesPerSlot = 1;
-    [SerializeField] private Transform player; //only use to move the target slots DO NOT DIRECTLY TARGET THE PLAYER
+    [Header("Ranged ring")]
+    [SerializeField] private Transform[] rangedSlots;
+    [SerializeField] private int maxEnemiesPerSlotRanged = 3;
+
+    [SerializeField] private Transform player;
 
     [Header("Movement settings")]
-    [SerializeField] private float smoothTime = 0.2f; //adjust to make this move faster towards the player the further they are (farther player = faster tracking, slows down as it nears the player)//
+    [SerializeField] private float smoothTime = 0.2f;
 
     [Header("Rotation settings")]
     [SerializeField] private float rotationAmount = 5f;
     [SerializeField] private float rotationSpeed = 1.5f;
 
     private Quaternion startingRotation;
-
-
-
     private Vector3 velocity;
 
     private int[] enemies;
-    private Dictionary<MovementComponent, int> enemySlots = new();
+    private int[] rangedEnemies;
+    private Dictionary<MovementComponent, SlotInfo> enemySlots = new();
 
+
+    private class SlotInfo
+    {
+        public int index;
+        public bool isRanged;
+        public SlotInfo(int index, bool isRanged)
+        {
+            this.index = index;
+            this.isRanged = isRanged;
+        }
+    }
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -37,6 +52,7 @@ public class TargetManager : MonoBehaviour
         startingRotation = transform.localRotation;
 
         enemies = new int[slots.Length];
+        rangedEnemies = new int[rangedSlots.Length];
 
         player = GameObject.Find("Player").transform;
     }
@@ -65,55 +81,140 @@ public class TargetManager : MonoBehaviour
 
     public Transform RequestSlot(MovementComponent enemy)
     {
-        //Debug.Log($"Request from {enemy.name}");
-        //Debug.Log($"Slots array: {slots}");
-        //Debug.Log($"Enemies array: {enemies}");
-        //Debug.Log($"EnemySlots dictionary: {enemySlots}");
-
         int previousSlot = -1;
-    
-        //if already in a slot, remove it and stop it from being selected again//
-        if (enemySlots.TryGetValue(enemy, out int currentIndex))
-        {
-            previousSlot = currentIndex;
-            enemies[currentIndex]--;
-            enemySlots.Remove(enemy);
-        }
+        bool previousWasRanged = false;
 
+        if (enemySlots.TryGetValue(enemy, out SlotInfo currentSlotInfo))
+        {
+            previousSlot = currentSlotInfo.index;
+            previousWasRanged = currentSlotInfo.isRanged;
+
+            ReleaseSlot(enemy);
+        }
+        //Try to get in the melee ring first
         List<int> availableSlots = new List<int>();
 
         // Find a slot(cannot be previous slot)
         for (int i = 0; i < slots.Length; i++)
         {
-            if (i != previousSlot && enemies[i] < maxEnemiesPerSlot)
+            if (!previousWasRanged && i == previousSlot)
+            {
+                continue;
+            }
+
+            if (enemies[i] < maxEnemiesPerSlot)
             {
                 availableSlots.Add(i);
             }
         }
-        //(unless it's the only slot left)
-        if (availableSlots.Count == 0 && previousSlot != -1 && enemies[previousSlot] < maxEnemiesPerSlot)
+
+        if (availableSlots.Count > 0)
         {
-            availableSlots.Add(previousSlot);
+            int chosenSlot =
+                availableSlots[Random.Range(0, availableSlots.Count)];
+
+            enemies[chosenSlot]++;
+            enemySlots.Add(enemy, new SlotInfo(chosenSlot, false));
+
+            return slots[chosenSlot];
         }
 
-        //(or no more slots available)
-        if (availableSlots.Count == 0)
-            return null;
+        //Once all melee slots are used, assign ranged slots
+        List<int> availableOuterSlots = new List<int>();
 
-        // Pick a random available slot
-        int chosenSlot = availableSlots[Random.Range(0, availableSlots.Count)];
+        for (int i = 0; i < rangedSlots.Length; i++)
+        {
+            if (previousWasRanged && i == previousSlot)
+            {
+                continue;
+            }
 
-        enemies[chosenSlot]++;
-        enemySlots.Add(enemy, chosenSlot);
+            if (rangedEnemies[i] < maxEnemiesPerSlot)
+            {
+                availableOuterSlots.Add(i);
+            }
+        }
 
-        return slots[chosenSlot];
+        if (availableOuterSlots.Count > 0)
+        {
+            int chosenSlot = availableOuterSlots[Random.Range(0, availableOuterSlots.Count)];
+
+            rangedEnemies[chosenSlot]++;
+            enemySlots.Add(enemy, new SlotInfo(chosenSlot, true));
+
+            return rangedSlots[chosenSlot];
+        }
+        //if both rings are full return null
+        Debug.LogWarning("TARGET MANAGER HAS RUN OUT OF AVAILABLE SLOTS//");    
+        return null;
     }
     public void ReleaseSlot(MovementComponent enemy)
     {
-        if (enemySlots.TryGetValue(enemy, out int index))
+        if (!enemySlots.TryGetValue(enemy, out SlotInfo slot))
+            return;
+
+        if (slot.isRanged)
         {
-            enemies[index]--;
-            enemySlots.Remove(enemy);
+            rangedEnemies[slot.index]--;
         }
+        else
+        {
+            enemies[slot.index]--;
+        }
+
+        enemySlots.Remove(enemy);
+
+        if(!slot.isRanged)
+        {
+            PromoteOuterEnemy();
+        }
+    }
+
+    //call this when a slot is freed to ensure the melee ring is always full (if there are enough enemies to fill it//
+    private void PromoteOuterEnemy()
+    {
+        List<int> availableInnerSlots = new List<int>();
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (enemies[i] < maxEnemiesPerSlot)
+            {
+                availableInnerSlots.Add(i);
+            }
+        }
+        //if no slots available, return
+        if (availableInnerSlots.Count == 0)
+            return;
+
+        MovementComponent enemyToPromote = null;
+        SlotInfo outerSlot = null;
+
+        foreach (var pair in enemySlots)
+        {
+            if (pair.Value.isRanged)
+            {
+                enemyToPromote = pair.Key;
+                outerSlot = pair.Value;
+                break;
+            }
+        }
+        //if no enemy to send into melee, return
+        if (enemyToPromote == null)
+            return;
+
+        // Pick an available inner slot
+        int newSlot = availableInnerSlots[Random.Range(0, availableInnerSlots.Count)];
+
+        // Free the enemy's old outer slot
+        rangedEnemies[outerSlot.index]--;
+
+        // Occupy the new inner slot
+        enemies[newSlot]++;
+
+        // Update the enemy's slot information
+        enemySlots[enemyToPromote] = new SlotInfo(newSlot, false);
+
+        // Tell the enemy to move toward its new target
+        enemyToPromote.SetTarget(slots[newSlot]);
     }
 }
