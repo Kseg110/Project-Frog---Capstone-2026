@@ -385,6 +385,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FrogSkeleton (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -442,6 +446,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FrogSkeleton (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -458,6 +466,10 @@ PrefabInstance:
     - target: {fileID: 4255145973034431359, guid: a1f0976d03c74e84595a21eecbbe5c17, type: 3}
       propertyPath: m_Name
       value: CrocCaiman (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255145973034431359, guid: a1f0976d03c74e84595a21eecbbe5c17, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8604627787603212412, guid: a1f0976d03c74e84595a21eecbbe5c17, type: 3}
       propertyPath: m_LocalPosition.x
@@ -556,6 +568,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FrogSkeleton (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -612,6 +628,10 @@ PrefabInstance:
     - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
       propertyPath: m_Name
       value: FrogSkeleton (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -875,6 +895,10 @@ PrefabInstance:
     - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
       propertyPath: m_Name
       value: FrogSkeleton (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1222,11 +1246,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: FrogSkeleton (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+--- !u!114 &1008775891 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6445298027122802616, guid: 8004996074e7a6845978bfbe2514fdf3, type: 3}
+  m_PrefabInstance: {fileID: 1211252537}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4555f368afc274d4ead1b16b74b4e10c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
 --- !u!1 &1125573291
 GameObject:
   m_ObjectHideFlags: 0
@@ -1590,6 +1629,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CrocCaiman (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 4255145973034431359, guid: a1f0976d03c74e84595a21eecbbe5c17, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8604627787603212412, guid: a1f0976d03c74e84595a21eecbbe5c17, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.9689472
@@ -1643,6 +1686,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 583013283057882193, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: inventoryManager
+      value: 
+      objectReference: {fileID: 1008775891}
     - target: {fileID: 900614694835417969, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.2311
@@ -1800,6 +1847,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FrogSkeleton (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1856,6 +1907,10 @@ PrefabInstance:
     - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
       propertyPath: m_Name
       value: FrogSkeleton (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1971,6 +2026,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FrogSkeleton (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2048,6 +2107,10 @@ PrefabInstance:
     - target: {fileID: 4255145973034431359, guid: a1f0976d03c74e84595a21eecbbe5c17, type: 3}
       propertyPath: m_Name
       value: CrocCaiman (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255145973034431359, guid: a1f0976d03c74e84595a21eecbbe5c17, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8604627787603212412, guid: a1f0976d03c74e84595a21eecbbe5c17, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2145,6 +2208,10 @@ PrefabInstance:
     - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
       propertyPath: m_Name
       value: FrogSkeleton (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4397625788936971336, guid: c93262774253a2b4d9356e0e664a1b9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

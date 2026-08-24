@@ -17,7 +17,7 @@ namespace Assets.Scripts.Player
         private static readonly int DeathHash = Animator.StringToHash("Death"); // Trigger 
         private static readonly int MovementSpeedHash = Animator.StringToHash("MovementSpeed"); // Float
         private static readonly int ForwardSpeedHash = Animator.StringToHash("ForwardSpeed"); // Float 
-        private static readonly int TurnSpeedHash = Animator.StringToHash("TrunSpeed"); // Float
+        private static readonly int TurnSpeedHash = Animator.StringToHash("TurnSpeed"); // Float
         private static readonly int EatFlyHash = Animator.StringToHash("EatFly"); // Trigger
         private static readonly int TetherHash = Animator.StringToHash("Tether"); // Trigger 
         private static readonly int TakeDamageHash = Animator.StringToHash("TakeDamage"); // Trigger
@@ -67,9 +67,9 @@ namespace Assets.Scripts.Player
             animator.SetFloat(TurnSpeedHash, playerMovement.speed);
         }
 
-        private void AnimatorHelper()
+        private bool IsAnimatorValid()
         {
-            if (animator != null) return;
+            return animator != null;
         }
 
         #region Public animaton methods to call from other scripts
@@ -78,31 +78,31 @@ namespace Assets.Scripts.Player
         /// </summary>
         public void PlayPrimaryAttack()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetBool(PrimaryAttackHash, true);
         }
 
         public void StopPrimaryAttack()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetBool(PrimaryAttackHash, false);
         }
 
         public void PlaySecondaryAttack()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetBool(SecondaryAttackHash, true);
         }
 
         public void StopSecondaryAttack()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetBool(SecondaryAttackHash, false);
         }
 
         public void PlayTongueAttack()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetTrigger(TongueAttackHash);
         }
 
@@ -111,50 +111,50 @@ namespace Assets.Scripts.Player
         /// </summary>
         public void PlayDash()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetBool(IsDashingHash, true);
         }
         public void StopDash()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetBool(IsDashingHash, false);
         }
 
         public void PlayTakeDamage()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetTrigger(TakeDamageHash);
         }
 
         public void PlayTether()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetTrigger(TetherHash);
             animator.SetBool(IsTetheredHash, true);
         }
 
         public void StopTether()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetBool(IsTetheredHash, false);
         }
 
         public void PlayBeakTether()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetTrigger(BreakTetherHash);
             animator.SetBool(IsTetheredHash, false);
         }
 
         public void PlayDeath()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetTrigger(DeathHash);
         }
 
         public void PlayBloodPact()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetTrigger(BloodPactHash);
         }
 
@@ -163,7 +163,7 @@ namespace Assets.Scripts.Player
         /// </summary>
         public void PlayEatFly()
         {
-            AnimatorHelper();
+            if (!IsAnimatorValid()) return;
             animator.SetTrigger(EatFlyHash);
         }
 

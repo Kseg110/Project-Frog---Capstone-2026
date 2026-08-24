@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using FMODUnity;
+using Assets.Scripts.Player;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerAnchor))]
@@ -82,6 +83,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     private readonly float currentMinRadius = 4f;
 
     private const string GamepadSchemeNameLower = "gamepad";
+    private PlayerAnimation playerAnimation;
 
     private void Awake()
     {
@@ -99,6 +101,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         lookDirection = transform.forward;
 
         playerInput = GetComponent<PlayerInput>();
+        playerAnimation = GetComponentInChildren<PlayerAnimation>();
 
         // Enable PlayerMK by default, will switch to Gamepad if input is detected
         foreach (var map in playerInput.actions.actionMaps)
@@ -463,6 +466,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         // Debug.Log("start dash");
         PlayerDashVFX.Instance.StartDashVFX();
+        playerAnimation.PlayDash();
     }
 
     private void EndDash()
@@ -473,6 +477,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         // Debug.Log("end dash");
         PlayerDashVFX.Instance.EndDashVFX();
+        playerAnimation.StopDash();
     }
 
     public void SetInMud(bool value)
