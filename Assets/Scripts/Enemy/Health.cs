@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using FMODUnity;
+using Assets.Scripts.Player;
 
 public class Health : MonoBehaviour, IDamageable
 {
@@ -23,10 +24,14 @@ public class Health : MonoBehaviour, IDamageable
     private Coroutine burnRoutine;
     private EnemyBase enemy;
 
+    private float deathAnimationDuration = 3f;
+    private PlayerAnimation playerAnimation;
+
     private void Awake()
     {
         healthbar = GetComponentInChildren<Healthbar>();
         enemy = GetComponent<EnemyBase>();
+        playerAnimation = GetComponentInChildren<PlayerAnimation>();
 
         if (CompareTag("Player"))
             playerHUD = FindAnyObjectByType<UIPlayerHUD>();
@@ -138,13 +143,8 @@ public class Health : MonoBehaviour, IDamageable
 
         if (CompareTag("Player"))
         {
-            UIDeathOverlay deathOverlay = FindFirstObjectByType<UIDeathOverlay>();
-            if (deathOverlay != null)
-                deathOverlay.ShowDeathOverlay();
-            else
-                //Debug.LogError("No PlayerDeathOverlay found in scene.");
-
-            gameObject.SetActive(false);
+            // Start coroutine for player death anim sequence
+            StartCoroutine(PlayerDeathSequence());
         }
         else
         {
@@ -160,6 +160,21 @@ public class Health : MonoBehaviour, IDamageable
             else
                 Destroy(gameObject);
         }
+    }
+
+    private IEnumerator PlayerDeathSequence()
+    {
+        playerAnimation.PlayDeath();
+        yield return new WaitForSeconds(deathAnimationDuration);
+
+        // Show death overlay
+        UIDeathOverlay deathOverlay = FindFirstObjectByType<UIDeathOverlay>();
+        if (deathOverlay != null)
+            deathOverlay.ShowDeathOverlay();
+        else
+            //Debug.LogError("No PlayerDeathOverlay found in scene.");
+
+            gameObject.SetActive(false);
     }
 
     // ============================================================

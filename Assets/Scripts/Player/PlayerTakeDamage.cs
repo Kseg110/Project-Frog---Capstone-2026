@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.Player;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -47,6 +48,8 @@ public class PlayerTakeDamage : MonoBehaviour
     private Renderer[] cachedRenderers;
     private Color[] originalColors;
 
+    private PlayerAnimation playerAnimation;
+
     // I-frame timing
     private float nextAllowedDamageTime = 0f;
 
@@ -89,6 +92,8 @@ public class PlayerTakeDamage : MonoBehaviour
 
         // Rigidbody handled manually
         rb.isKinematic = true;
+        playerAnimation = GetComponentInChildren<PlayerAnimation>();
+
     }
 
     // Builds the set of renderers the damage flash tints red, EXCLUDING the tether.
@@ -169,6 +174,8 @@ public class PlayerTakeDamage : MonoBehaviour
 
         knockbackCoroutine =
             StartCoroutine(KnockbackRoutine(direction.normalized, distance));
+
+        playerAnimation.PlayTakeDamage();
     }
 
     /// <summary>
