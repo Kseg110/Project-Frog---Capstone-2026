@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using Assets.Scripts.Player;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private int maximumInventorySize = 3;
     [SerializeField] private Vector2 flyIconSize = new Vector2(50f, 50f);
     public List<GameObject> flyInventoryUIPrefabList;
+
+    [SerializeField] private PlayerAnimation playerAnimation;
+
 
     public void GainFlyInInventory(int numberOfFlies)
     {
@@ -68,6 +72,7 @@ public class InventoryManager : MonoBehaviour
         flyInventoryUIPrefabList.RemoveAt(flyInventoryUIPrefabList.Count - 1);
         Debug.Log($"After Consume: {flyInventoryUIPrefabList.Count}");
 
+        playerAnimation.PlayEatFly();
         playerTongueHealing.HealPlayer(1);
         playerTongueHealing.ApplyHealSlow(); // slow only fires on a successful consume
     }

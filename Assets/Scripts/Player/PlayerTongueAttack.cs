@@ -1,3 +1,4 @@
+using Assets.Scripts.Player;
 using UnityEngine;
 
 public class PlayerTongueAttack : MonoBehaviour
@@ -25,6 +26,8 @@ public class PlayerTongueAttack : MonoBehaviour
     public bool IsActive => extending || retracting;
     public System.Action OnTongueFinished;
 
+    private PlayerAnimation playerAnimation;
+
     private void Awake()
     {
         if (tongueMesh == null)
@@ -32,11 +35,19 @@ public class PlayerTongueAttack : MonoBehaviour
             Debug.LogError($"Please assign tongueMesh in ${gameObject.name}", this);
         }
         tongueLocation = tongueMesh.localPosition;
+
+        playerAnimation = GetComponentInChildren<PlayerAnimation>();
     }
 
     /// <summary>
-    /// Begins extending the tongue. Does nothing if already retracting.
+    /// Begins extending the tongue. Does nothing if already retracting. + Animation
     /// </summary>
+    
+    public void TongueAnimHelper()
+    {
+        playerAnimation.PlayTongueAttack();
+        BeginTongueExtend();
+    }
     public void BeginTongueExtend()
     {
         if (retracting) return;
