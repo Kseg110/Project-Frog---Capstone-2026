@@ -21,15 +21,14 @@ public class GameModeDebugCategory : DebugCategory
     private bool upgradeCardmenuOpen = false;
 
     [Header("Zone Positions")]
-    [SerializeField] private Transform[] teleportSpots;
-    [SerializeField] private int teleportIndex = 1; // 1-based input for debug UI
+    // Teleport spots are provided by the in-scene DebugMenu MonoBehaviour. The category only renders UI buttons.
+    private int teleportIndex = 1; // 1-based input for debug UI (UI state only)
 
     private void OnEnable()
     {
         // Try to resolve automatically when the ScriptableObject is enabled
         if (waveRoundSystem == null)
             AutoFindWaveRoundSystem();
-        AutoFindTeleportSpots();
     }
 
     
@@ -155,22 +154,27 @@ public class GameModeDebugCategory : DebugCategory
             }
         }
 
-        // Teleport UI
+        // Teleport UI (uses the in-scene DebugMenu for spot data and teleport action)
         GUILayout.Space(10);
         GUILayout.Label("Teleport To Area", GUI.skin.box);
 
-        if (teleportSpots == null || teleportSpots.Length == 0)
+        var debugMenu = Object.FindObjectOfType<DebugMenu>();
+        if (debugMenu == null)
         {
-            GUILayout.Label("No teleport spots assigned.", GUI.skin.label);
+            GUILayout.Label("No DebugMenu instance found in scene.", GUI.skin.label);
         }
-        else if (teleportSpots.Length == 4)
+        else if (debugMenu.teleportSpots == null || debugMenu.teleportSpots.Length == 0)
+        {
+            GUILayout.Label("No teleport spots assigned on DebugMenu.", GUI.skin.label);
+        }
+        else if (debugMenu.teleportSpots.Length == 4)
         {
             GUILayout.BeginHorizontal();
             for (int i = 0; i < 4; i++)
             {
                 if (GUILayout.Button($"Area {i + 1}", GUILayout.Width(100)))
                 {
-                    TeleportToZone(i);
+                    debugMenu.TeleportToZone(i);
                 }
             }
             GUILayout.EndHorizontal();
@@ -188,9 +192,9 @@ public class GameModeDebugCategory : DebugCategory
             if (GUILayout.Button("Teleport", GUILayout.Width(100)))
             {
                 int zeroBased = teleportIndex - 1;
-                if (zeroBased >= 0 && zeroBased < teleportSpots.Length)
+                if (zeroBased >= 0 && zeroBased < debugMenu.teleportSpots.Length)
                 {
-                    TeleportToZone(zeroBased);
+                    debugMenu.TeleportToZone(zeroBased);
                 }
             }
             GUILayout.EndHorizontal();
@@ -234,101 +238,7 @@ public class GameModeDebugCategory : DebugCategory
         return false;
     }
 
-    bool AutoFindTeleportSpots()
-    {
-        // If already assigned, nothing to do
-        if (teleportSpots != null && teleportSpots.Length > 0)
-            return true;
-
-        // Try to get teleport spots from the scene DebugMenu (preferred)
-        var debugMenu = Object.FindObjectOfType<DebugMenu>();
-        if (debugMenu != null && debugMenu.teleportSpots != null && debugMenu.teleportSpots.Length > 0)
-        {
-            teleportSpots = debugMenu.teleportSpots;
-            return true;
-        }
-
-        // First try: find tagged scene objects named "TeleportSpot"
-        var tagged = GameObject.FindGameObjectsWithTag("TeleportSpot");
-        if (tagged != null && tagged.Length > 0)
-        {
-            teleportSpots = tagged.Select(g => g.transform).ToArray();
-            return true;
-        }
-
-        // Fallback: find transforms with name prefix (useful if you name them TeleportSpot1 etc.)
-        var allTransforms = Object.FindObjectsOfType<Transform>();
-        var matches = allTransforms.Where(t => t.name.StartsWith("TeleportSpot")).ToArray();
-        if (matches != null && matches.Length > 0)
-        {
-            teleportSpots = matches;
-            return true;
-        }
-
-        return false;
-    }
-
-    // Teleport the player to one of the configured teleport spots.
-    public void TeleportToZone(int index)
-    {
-        if (teleportSpots == null || index < 0 || index >= teleportSpots.Length)
-            return;
-
-        Transform spot = teleportSpots[index];
-        if (spot == null)
-            return;
-
-        // Resolve player reference if not set
-        if (player == null)
-        {
-            player = GameObject.FindWithTag("Player");
-            if (player == null)
-            {
-                Debug.LogWarning("TeleportToZone: player GameObject not assigned and no GameObject with tag 'Player' found.");
-                return;
-            }
-        }
-
-        Rigidbody rb = player.GetComponent<Rigidbody>();
-        MonoBehaviour playerMovement = null;
-
-        // Try to find a PlayerMovement-derived script by name
-        var specificMovement = player.GetComponent("PlayerMovement") as MonoBehaviour;
-        if (specificMovement != null)
-            playerMovement = specificMovement;
-
-        // Disable movement script if present to avoid it fighting the teleport
-        if (playerMovement != null)
-            playerMovement.enabled = false;
-
-        if (rb != null)
-        {
-            // Make kinematic while moving to avoid physics glitches
-            bool wasKinematic = rb.isKinematic;
-            rb.isKinematic = true;
-
-            // Move transform directly
-            player.transform.position = spot.position;
-            player.transform.rotation = spot.rotation;
-
-            // Clear velocities
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-
-            // Restore kinematic state
-            rb.isKinematic = wasKinematic;
-        }
-        else
-        {
-            // No rigidbody: just set transform
-            player.transform.position = spot.position;
-            player.transform.rotation = spot.rotation;
-        }
-
-        // Re-enable movement script
-        if (playerMovement != null)
-            playerMovement.enabled = true;
-    }
+    // Teleport spot resolution and teleport behavior are handled by the in-scene DebugMenu MonoBehaviour.
 
 #if UNITY_EDITOR
     private void ShowCardDropdown(List<UpgradeDataSO> cards)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DebugMenu : MonoBehaviour
@@ -10,6 +11,7 @@ public class DebugMenu : MonoBehaviour
     public UpgradeManager upgradeManager;
     public InventoryManager inventoryManager;
     public Transform[] teleportSpots;
+    public GameObject player;
 
     [Header("Appearance")]
     public GUISkin skin;
@@ -31,6 +33,75 @@ public class DebugMenu : MonoBehaviour
             Debug.LogError("No Debug Categories assigned to the Debug Menu. Please add at least one category.");
 
         }
+        AutoResolveTeleportSpots();
+    }
+
+    void AutoResolveTeleportSpots() //If TeleportSpots aren't assigned, this tries to find them. 
+    {
+        if (teleportSpots != null && teleportSpots.Length > 0)
+            return;
+
+        var tagged = GameObject.FindGameObjectsWithTag("TeleportSpot");
+        if (tagged != null && tagged.Length > 0)
+        {
+            teleportSpots = tagged.Select(g => g.transform).ToArray();
+            return;
+        }
+
+        var allTransforms = Object.FindObjectsOfType<Transform>();
+        var matches = allTransforms.Where(t => t.name.StartsWith("TeleportSpot")).ToArray();
+        if (matches != null && matches.Length > 0)
+        {
+            teleportSpots = matches;
+            return;
+        }
+    }
+
+    public void TeleportToZone(int index) //Teleports the player around to specified locations
+    {
+        if (teleportSpots == null || index < 0 || index >= teleportSpots.Length)
+            return;
+
+        Transform spot = teleportSpots[index];
+        if (spot == null)
+            return;
+
+        if (player == null)
+            player = GameObject.FindWithTag("Player");
+
+        if (player == null)
+        {
+            Debug.LogWarning("TeleportToZone: player GameObject not assigned and no GameObject with tag 'Player' found.");
+            return;
+        }
+
+        Rigidbody rb = player.GetComponent<Rigidbody>();
+        MonoBehaviour playerMovement = player.GetComponent("PlayerMovement") as MonoBehaviour;
+
+        if (playerMovement != null)
+            playerMovement.enabled = false;
+
+        if (rb != null)
+        {
+            bool wasKinematic = rb.isKinematic;
+            rb.isKinematic = true;
+
+            player.transform.position = spot.position;
+            player.transform.rotation = spot.rotation;
+
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            rb.isKinematic = wasKinematic;
+        }
+        else
+        {
+            player.transform.position = spot.position;
+            player.transform.rotation = spot.rotation;
+        }
+
+        if (playerMovement != null)
+            playerMovement.enabled = true;
     }
 
     void Update()
@@ -40,7 +111,7 @@ public class DebugMenu : MonoBehaviour
         
     }
 
-    void OnGUI()
+    void OnGUI() //Debug Menu's window. 
     {
         if (!isOpen) return;
         
