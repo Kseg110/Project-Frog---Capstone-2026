@@ -25,8 +25,7 @@ Material:
   m_Parent: {fileID: 2100000, guid: 46ea99f8ea5457348a7e896f7f6f4d80, type: 2}
   m_ModifiedSerializedProperties: 2
   m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _ALPHATEST_ON
+  m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -39,7 +38,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Alpha:
-        m_Texture: {fileID: 2800000, guid: dec47b4d4bc06994eaa80395141a43ec, type: 3}
+        m_Texture: {fileID: 2800000, guid: b5ebbd71ce4373a4fa93ed3e58d0bf86, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Base_Color:
+        m_Texture: {fileID: 2800000, guid: 7709f3c92cdea194e9067e8871ba14d3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Basecolour:
@@ -52,7 +55,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 0.617
+    - _AlphaClip: 0.125
+    - _Amplification: 0.02
+    - _Frequency: 5.42
+    - _Metallic_Strength: 0
+    - _RoughnessStrength: 0
+    - _Wind_Density: 0.39
+    - _Wind_Power: 0.327
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1

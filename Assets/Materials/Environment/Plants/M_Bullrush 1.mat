@@ -26,7 +26,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Alpha:
-        m_Texture: {fileID: 2800000, guid: 799ad180f2be9c546aa77c46fdf6a384, type: 3}
+        m_Texture: {fileID: 2800000, guid: 140c256504aca5b4e9184d0f54a1b527, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Base_Color:
+        m_Texture: {fileID: 2800000, guid: 64a75884414a63846ab55daf2ae39e4d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Basecolour:
@@ -39,7 +43,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 1
+    - _AlphaClip: 0.7
+    - _Amplification: 0.05
+    - _Frequency: 6.89
+    - _Metallic_Strength: 0.05
+    - _Wind_Density: 0.46
+    - _Wind_Power: 0.442
     m_Colors:
     - _BaseColour: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
