@@ -14,11 +14,23 @@ public class TutorialTriggerTextFadeIn : MonoBehaviour
     [Tooltip("Time in seconds for the fade animation.")]
     public float fadeDuration = 0.25f;
 
-    [Tooltip("Start hidden (alpha = 0) on Awake")] 
+    [Tooltip("Start hidden (alpha = 0) on Awake")]
     public bool startHidden = true;
+
+    [Header("Backup timing")]
+    [Tooltip("Auto-hide popup after this many seconds if it doesn't disappear")]
+    public float autoHideDuration = 10f;
+
+    [Tooltip("Delay after an auto-hide before the player can reactivate the popup")]
+    public float reactivateDelay = 5f;
 
     private CanvasGroup canvasGroup;
     private Coroutine fadeCoroutine;
+
+    // new
+    private Coroutine autoHideCoroutine;
+    private Coroutine reactivateCoroutine;
+    private bool canReactivate = true;
 
     private void Awake()
     {
@@ -52,21 +64,74 @@ public class TutorialTriggerTextFadeIn : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         if (!IsPlayerCollider(other)) return;
-        HidePopup();
+        // Player leaving should hide immediately and NOT start reactivate cooldown
+        HidePopup(startReactivateCooldown: false);
     }
 
     private void ShowPopup()
     {
         if (popupUI == null || canvasGroup == null) return;
+
+        // If we're in reactivation cooldown, ignore attempts to show
+        if (!canReactivate) return;
+
         if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
         fadeCoroutine = StartCoroutine(FadeCanvas(canvasGroup.alpha, 1f, fadeDuration));
+
+        // restart auto-hide timer whenever popup is shown
+        if (autoHideCoroutine != null)
+        {
+            StopCoroutine(autoHideCoroutine);
+            autoHideCoroutine = null;
+        }
+        autoHideCoroutine = StartCoroutine(AutoHideTimer());
     }
 
-    private void HidePopup()
+    private void HidePopup(bool startReactivateCooldown = false)
     {
         if (popupUI == null || canvasGroup == null) return;
+
+        // Stop pending auto-hide if hiding manually
+        if (autoHideCoroutine != null)
+        {
+            StopCoroutine(autoHideCoroutine);
+            autoHideCoroutine = null;
+        }
+
         if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
         fadeCoroutine = StartCoroutine(FadeCanvas(canvasGroup.alpha, 0f, fadeDuration));
+
+        // If this hide was triggered by the auto-hide timer, start a reactivation cooldown
+        if (startReactivateCooldown)
+        {
+            if (reactivateCoroutine != null)
+            {
+                StopCoroutine(reactivateCoroutine);
+                reactivateCoroutine = null;
+            }
+            reactivateCoroutine = StartCoroutine(ReactivateCooldown());
+        }
+    }
+
+    private IEnumerator AutoHideTimer()
+    {
+        yield return new WaitForSeconds(autoHideDuration);
+
+        // If popup is still visible, auto-hide and start reactivate cooldown
+        if (canvasGroup != null && canvasGroup.alpha > 0.001f)
+        {
+            HidePopup(startReactivateCooldown: true);
+        }
+
+        autoHideCoroutine = null;
+    }
+
+    private IEnumerator ReactivateCooldown()
+    {
+        canReactivate = false;
+        yield return new WaitForSeconds(reactivateDelay);
+        canReactivate = true;
+        reactivateCoroutine = null;
     }
 
     private IEnumerator FadeCanvas(float from, float to, float duration)

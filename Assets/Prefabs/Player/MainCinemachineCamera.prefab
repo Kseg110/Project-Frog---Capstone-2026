@@ -44,10 +44,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4f02246d178fd8468cd4588858b6d18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraPanEffect
-  panTime: 1
-  usePlayerOffset: 1
+  moveSpeed: 20
+  GlobalPanActiveInspector: 0
+  pausePointMoveTimer: 0
+  cameraStartupDelay: 1
+  cameraReady: 0
+  cameraReadyTimer: 0
+  controller: {fileID: 0}
+  playerTransform: {fileID: 0}
+  panStart_EndObjects: {fileID: 0}
+  pointHeightOffset: 20
+  rotationSpeed: 180
+  PAUSEPOINT: {fileID: 0}
+  panPointTag: PanStarEnd
+  pausePointTag: PausePanPoint
+  pausePointMoveSpeed: 20
+  pausePointRotationSpeed: 180
+  movingToPausePoint: 0
+  returningFromPausePoint: 0
+  atPausePoint: 0
+  pauseReturnPosition: {x: 0, y: 0, z: 0}
+  pauseReturnRotation: {x: 0, y: 0, z: 0, w: 0}
+  roundTrigger: {fileID: 0}
   doorSystem: {fileID: 0}
+  doorIndexToReady: -1
+  doorReadyTriggered: 0
   pausePlayerDuringPan: 1
+  playerPaused: 0
+  allowDashSkip: 1
+  state: 0
+  panMode: 1
+  desiredPosition: {x: 0, y: 0, z: 0}
+  desiredRotation: {x: 0, y: 0, z: 0, w: 0}
+  activeSpline: {fileID: 0}
+  splineDistance: 0
+  splineLength: 0
+  splineKnotReachDistance: 0.01
+  moveToStartSpeed: 20
+  debugDistanceToTravel: 0
+  debugDistanceTravelled: 0
+  pointPath: []
+  currentPointIndex: 0
+  pointInitialized: 0
+  pointSegmentTimer: 0
+  pointSegmentTime: 0
+  panPoints: []
+  returnPosition: {x: 0, y: 0, z: 0}
+  returnRotation: {x: 0, y: 0, z: 0, w: 0}
+  enablePanRotation: 0
+  panPointsForGizmos: []
 --- !u!1 &908429537415091973
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,6 +200,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5215828458694763310}
   - {fileID: 2973362614577386409}
   - {fileID: 5454897685938972209}
   - {fileID: 5460714836251572676}
@@ -316,6 +362,8 @@ MonoBehaviour:
   followSpeed: 10
   cameraEffects:
   - {fileID: 3038890095713493783}
+  panStart_EndObjects: {fileID: 0}
+  panStart_EndObjectsTag: PanStarEnd
 --- !u!114 &3935746092735270070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,6 +378,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioListener
   nonRigidbodyVelocity: 0
   attenuationObject: {fileID: 0}
+--- !u!1 &5741370986171149814
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5215828458694763310}
+  - component: {fileID: 2109189758492003882}
+  m_Layer: 0
+  m_Name: PausePointEscape
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5215828458694763310
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5741370986171149814}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.16112807, y: -0.121014625, z: 0.032617446, w: -0.978943}
+  m_LocalPosition: {x: 96.673904, y: -20.073818, z: 31.71302}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4997265718896820422}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2109189758492003882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5741370986171149814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3203aa6431a020346a58e36fe1f96c45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PausePointEscape
+  cameraPanEffect: {fileID: 0}
+  pauseManager: {fileID: 0}
 --- !u!1 &8318406258843379600
 GameObject:
   m_ObjectHideFlags: 0

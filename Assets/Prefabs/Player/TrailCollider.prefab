@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 113067487273363146}
   - component: {fileID: 7500760902402484646}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: TrailCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,6 +108,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: IceTrailVFX
       objectReference: {fileID: 0}
+    - target: {fileID: 8919273103041669320, guid: 1de09d68db0d7e74287a3e6a3af14665, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -129,6 +133,10 @@ PrefabInstance:
     - target: {fileID: 3979189161583374536, guid: 90795e9d3d31ae4499357912b325a9fe, type: 3}
       propertyPath: m_Name
       value: WindTrailVFX
+      objectReference: {fileID: 0}
+    - target: {fileID: 3979189161583374536, guid: 90795e9d3d31ae4499357912b325a9fe, type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 5521159856736677749, guid: 90795e9d3d31ae4499357912b325a9fe, type: 3}
       propertyPath: m_LocalPosition.x
@@ -231,6 +239,10 @@ PrefabInstance:
     - target: {fileID: 5769394689151585958, guid: b8ffba7299f62a540b8620e3070519c0, type: 3}
       propertyPath: m_Name
       value: FireTrailVFX
+      objectReference: {fileID: 0}
+    - target: {fileID: 5769394689151585958, guid: b8ffba7299f62a540b8620e3070519c0, type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

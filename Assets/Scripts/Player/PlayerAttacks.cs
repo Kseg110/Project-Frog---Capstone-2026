@@ -1,6 +1,8 @@
-﻿using FMODUnity;
-using UnityEngine;
+﻿using Assets.Scripts.Player;
+using FMODUnity;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerMovement))]
@@ -19,6 +21,9 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private float basicShotSlowMultiplier = 0.5f;
     [SerializeField] private float basicShotSlowDuration = 1f;
 
+    [Header("Wind Upgrades")]
+    [SerializeField] public float pointBlankRange = 10f;
+
     [Header("Aiming Correction")]
     [SerializeField] private float aimCorrectionStrength = 1.0f;
     [SerializeField] private float targetHeightOffset = 1.0f;
@@ -26,8 +31,6 @@ public class PlayerAttacks : MonoBehaviour
     [Header("FMod Events")]
     [SerializeField] private EventReference basicShotEvent;
     [SerializeField] private EventReference chargeShotEvent;
-
-
 
     public event System.Action<bool> OnShotFired;
 
@@ -53,6 +56,7 @@ public class PlayerAttacks : MonoBehaviour
     private PlayerAnchor playerAnchor;
     private PlayerInput playerInput;
     private PlayerCrosshair playerCrosshair;
+    private PlayerAnimation playerAnimation;
 
     // Input actions
     private InputAction attackAction;          // Fire1 → LMB / Right Trigger
@@ -76,6 +80,14 @@ public class PlayerAttacks : MonoBehaviour
         playerChargeAttack = GetComponent<PlayerChargeAttack>();
         playerAnchor = GetComponent<PlayerAnchor>();
         playerCrosshair = FindAnyObjectByType<PlayerCrosshair>();
+        playerAnimation = GetComponentInChildren<PlayerAnimation>();
+
+        if (playerAnimation != null )
+        {
+            playerAnimation.OnPrimeProjectileSpawn.AddListener(FirePrimaryProjectile);
+            playerAnimation.OnSecProjectileSpawn.AddListener(FireSecondaryProjectile);
+            playerAnimation.OnTongueRelease.AddListener(ReleaseTongue);
+        }
 
         playerTongueAttack.OnTongueFinished += playerMovement.ResumeMovement;
 
@@ -89,6 +101,13 @@ public class PlayerAttacks : MonoBehaviour
     {
         if (playerTongueAttack != null)
             playerTongueAttack.OnTongueFinished -= playerMovement.ResumeMovement;
+
+        if (playerAnimation != null)
+        {
+            playerAnimation.OnPrimeProjectileSpawn.RemoveListener(FirePrimaryProjectile);
+            playerAnimation.OnSecProjectileSpawn.RemoveListener(FireSecondaryProjectile);
+            playerAnimation.OnTongueRelease.RemoveListener(ReleaseTongue);
+        }
     }
 
     // ============================================================
@@ -143,6 +162,7 @@ public class PlayerAttacks : MonoBehaviour
             {
                 isBasicShotSlowed = false;
                 playerMovement.RemoveSpeedModifier(this);
+                playerAnimation.StopPrimaryAttack();
             }
         }
 
@@ -155,6 +175,7 @@ public class PlayerAttacks : MonoBehaviour
                 {
                     playerMovement.StopMovement(GetAimDirection());
                     playerChargeAttack.BeginCharge(playerAnchor.AttachedAnchor);
+                    playerAnimation.PlaySecondaryAttack();
                 }
 
                 if (secondaryHeld)
@@ -167,6 +188,7 @@ public class PlayerAttacks : MonoBehaviour
                     RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
 
                     playerMovement.ResumeMovement();
+                    playerAnimation.StopSecondaryAttack();
                 }
             }
             else
@@ -203,8 +225,13 @@ public class PlayerAttacks : MonoBehaviour
         OnShotFired?.Invoke(false);
         ApplyBasicShotSlow();
 
-        Shoot(0f, aimDirection);
+        //Shoot(0f, aimDirection); // now handled in FirePrimaryProjectile method
+        Shoot(0f, aimDirection); // uncomment FirePrimaryProjectile for proper animation event to fire projectile
+        /////////////////////////////////////////////////////////////////////////////
         lastFireTime = Time.time;
+
+        playerMovement.FaceDirection(aimDirection);
+        playerAnimation.PlayPrimaryAttack();
 
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
     }
@@ -278,6 +305,57 @@ public class PlayerAttacks : MonoBehaviour
         // Apply perspective correction
         finalDirection = ApplyPerspectiveCorrection(finalDirection);
 
+        // ---------------------------------------------------------
+        // WIND PRIMARY MULTISHOT
+        // ---------------------------------------------------------
+        if (playerAnchor != null && playerAnchor.IsTethered && playerAnchor.AttachedAnchor.Element == AnchorElement.Wind)
+        {
+            int baseProjectiles = 4;
+            int extra = MultishotUpgrade.Instance != null ? MultishotUpgrade.Instance.GetExtraDarts() : 0;
+            int totalProjectiles = baseProjectiles + extra;
+
+            float spreadAngle = 5f;
+            List<GameObject> spawnedProjectiles = new List<GameObject>();
+
+            for (int i = 0; i < totalProjectiles; i++)
+            {
+                float angle = spreadAngle * (i - totalProjectiles / 2f);
+                Vector3 spreadDir = Quaternion.Euler(0, angle, 0) * finalDirection;
+                Vector3 spawnPos = firePoint.position + spreadDir * 0.3f;
+
+                GameObject obj = Instantiate(projectilePrefab, spawnPos, Quaternion.LookRotation(spreadDir));
+                var projMulti = obj.GetComponent<Projectile>();
+
+                if (projMulti != null)
+                {
+                    projMulti.isPlayerProjectile = true;
+                    projMulti.player = this.gameObject;                   
+                    projMulti.currentElement = AnchorElement.Wind;         
+                    projMulti.pointBlankRange = pointBlankRange;
+                    projMulti.Initialize(chargePercent);
+                }
+
+                IgnorePlayerCollision(obj);
+
+                foreach (var other in spawnedProjectiles)
+                {
+                    Collider[] colsA = obj.GetComponentsInChildren<Collider>();
+                    Collider[] colsB = other.GetComponentsInChildren<Collider>();
+                    foreach (var c1 in colsA)
+                        foreach (var c2 in colsB)
+                            Physics.IgnoreCollision(c1, c2);
+                }
+
+                spawnedProjectiles.Add(obj);
+            }
+
+            return;
+        }
+
+        // ---------------------------------------------------------
+        // NORMAL SINGLE SHOT
+        // ---------------------------------------------------------
+
         Quaternion rotation = Quaternion.LookRotation(finalDirection);
         GameObject projObj = Instantiate(projectilePrefab, firePoint.position, rotation);
 
@@ -286,14 +364,51 @@ public class PlayerAttacks : MonoBehaviour
         {
             // CRITICAL: Set isPlayerProjectile FIRST before anything else
             proj.isPlayerProjectile = true;
+            proj.player = this.gameObject;                                
+            proj.currentElement = playerAnchor.IsTethered
+                ? playerAnchor.AttachedAnchor.Element
+                : AnchorElement.Broken;
+
+            proj.pointBlankRange = pointBlankRange;
             proj.Initialize(chargePercent);
             //proj.damage = 2f;
+        }
+
+        // -----------------
+        // PRIMARY FIRE BURN
+        // -----------------
+        if (proj.currentElement == AnchorElement.Fire)
+        {
+            var fireData = playerAnchor.AttachedAnchor.BaseData as AnchorFireData;
+            if (fireData != null)
+            {
+                proj.effectType = "Burn";
+                proj.effectDuration = fireData.BurnDuration;
+                proj.effectValue = fireData.BurnTickRate;
+            }
         }
 
         // Always ignore collision with player, regardless of Projectile component
         IgnorePlayerCollision(projObj);
     }
 
+    private void FirePrimaryProjectile()
+    {
+        //Vector3 aimDirection = GetAimDirection();
+        //Shoot(0f, aimDirection);
+
+        //RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+    }
+
+    private void FireSecondaryProjectile()
+    {
+
+    }
+
+    private void ReleaseTongue()
+    {
+
+    }
 
     private Vector3 ApplyPerspectiveCorrection(Vector3 baseDirection)
     {
@@ -339,7 +454,7 @@ public class PlayerAttacks : MonoBehaviour
         Vector3 aimDirection = GetTongueAimDirection();
         playerMovement.StopMovement(aimDirection);
         transform.rotation = Quaternion.LookRotation(aimDirection);
-        playerTongueAttack.BeginTongueExtend();
+        playerTongueAttack.TongueAnimHelper();
     }
 
     private Vector3 GetTongueAimDirection()

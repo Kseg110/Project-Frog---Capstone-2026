@@ -49,8 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeTrap
   damageAmount: 15
-  knockbackForce: 6
-  knockbackDuration: 0.2
+  knockbackDistance: 8
   targetMode: 2
   triggerTag: trap
   trapActivateEvent:
@@ -85,7 +84,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6352246536278076628, guid: 94ce57092f292af4889631872d304d11, type: 3}
+  - {fileID: 2100000, guid: 9776b0a0e976e7c419c2f4a68c594b0e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -188,8 +187,6 @@ MonoBehaviour:
   - {fileID: 6574503791373018394}
   disableTrapsOnStart: 1
   stayActiveOnce: 1
-  damageAmount: 0
-  knockbackDistance: 0
 --- !u!1 &2390915587331600022
 GameObject:
   m_ObjectHideFlags: 0

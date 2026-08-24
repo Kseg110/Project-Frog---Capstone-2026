@@ -226,11 +226,11 @@ public class PlayerAnchor : MonoBehaviour
     public void StartTether()
     {
         // Check for overcharge preventing tethering 
-        //if (playerOvercharge != null && !playerOvercharge.CanTether())
-        //{
-        //    Debug.Log("Cannot tether: Overcharge in cooldown");
-        //    return;
-        //}
+        if (playerOvercharge != null && !playerOvercharge.CanTether())
+        {
+            //Debug.Log("Cannot tether: Overcharge in cooldown");
+            return;
+        }
 
         // currentAnchor is already LOS-filtered by GetClosestAnchorInRange().
         if (currentAnchor == null)

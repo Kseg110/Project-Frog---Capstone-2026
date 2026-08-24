@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerChargeAttack : MonoBehaviour
@@ -28,6 +28,8 @@ public class PlayerChargeAttack : MonoBehaviour
     private float cooldownTimer;
     private UIPlayerHUD playerHUD;
 
+    private PlayerAttacks playerAttacks;
+
     public bool IsCharging => isCharging;
     public bool IsOnCooldown => cooldownTimer > 0f;
     public float CooldownProgress => Mathf.Clamp01(1f - (cooldownTimer / CooldownTime));
@@ -46,10 +48,11 @@ public class PlayerChargeAttack : MonoBehaviour
         }
         //if (playerAnchor == null)
         //{
-        //    Debug.LogError("[PlayerChargeAttack] No PlayerAnchor reference — charge cannot be tether-gated!", this);
+        //    Debug.LogError("[PlayerChargeAttack] No PlayerAnchor reference â€” charge cannot be tether-gated!", this);
         //}
 
         playerHUD = FindAnyObjectByType<UIPlayerHUD>();
+        playerAttacks = GetComponent<PlayerAttacks>();
     }
 
     private void OnEnable()
@@ -74,7 +77,7 @@ public class PlayerChargeAttack : MonoBehaviour
         playerHUD?.UpdateChargeAttackCooldown(CooldownProgress);
     }
 
-    // Fired when the tether is released by any means. If the player was mid-charge, drop it — no projectile, no cooldown penalty.
+    // Fired when the tether is released by any means. If the player was mid-charge, drop it â€” no projectile, no cooldown penalty.
     private void HandleTetherReleased()
     {
         if (isCharging)
@@ -155,6 +158,9 @@ public class PlayerChargeAttack : MonoBehaviour
                     if (proj != null)
                     {
                         proj.isPlayerProjectile = true; // ensure this is set before anything that checks it
+                        proj.player = this.gameObject;
+                        proj.currentElement = AnchorElement.Fire;
+                        //proj.pointBlankRange = playerAttacks.pointBlankRange;
                         proj.Initialize(chargePercent);
                         proj.damage = explosionDamage;
                         proj.effectType = "Burn";
@@ -163,13 +169,8 @@ public class PlayerChargeAttack : MonoBehaviour
 
                         // Apply charged knockback: scale from 1m to 5m with chargePercent
                         proj.knockbackDistance = Mathf.Lerp(1f, 5f, chargePercent);
-                        //Debug.Log($"[PlayerChargeAttack] Spawned charged projectile '{projObj.name}' knockbackDistance={proj.knockbackDistance} charge={chargePercent}", this);
                     }
-                    else
-                    {
-                        //Debug.LogWarning($"[PlayerChargeAttack] FireChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
-                    }
-
+                   
                     IgnorePlayerCollision(projObj);
                     break;
                 }
@@ -186,12 +187,26 @@ public class PlayerChargeAttack : MonoBehaviour
                     if (proj != null)
                     {
                         proj.isPlayerProjectile = true;
+                        proj.player = this.gameObject;
+                        proj.currentElement = AnchorElement.Ice;
+                        proj.pointBlankRange = playerAttacks.pointBlankRange;
                         proj.Initialize(chargePercent);
                         proj.damage = iceDamage;
                         proj.effectType = "Freeze";
-                        proj.effectDuration = 1f;
+                        proj.effectDuration = 3f;
                         proj.effectValue = 1f;
-                        proj.isPiercingProjectile = true;
+
+                        if (LethalPiercingUpgrade.Instance != null &&
+                            LethalPiercingUpgrade.Instance.GetBonus() > 0f)
+                        {
+                            proj.isPiercingProjectile = true;
+                            proj.pierceMultiplier = 1f;
+                        }
+                        else
+                        {
+                            proj.isPiercingProjectile = false;
+                            proj.pierceMultiplier = 1f;
+                        }
 
                         // Apply charged knockback
                         proj.knockbackDistance = Mathf.Lerp(1f, 5f, chargePercent);
@@ -231,6 +246,9 @@ public class PlayerChargeAttack : MonoBehaviour
                         if (proj != null)
                         {
                             proj.isPlayerProjectile = true;
+                            proj.player = this.gameObject;
+                            proj.currentElement = AnchorElement.Wind;
+                            proj.pointBlankRange = playerAttacks.pointBlankRange;
                             proj.Initialize(chargePercent);
                             proj.damage = windDamage;
 
@@ -239,10 +257,6 @@ public class PlayerChargeAttack : MonoBehaviour
 
                             if (HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
                                 proj.EnableHomingDelayed(WindHomingDelay);
-                        }
-                        else
-                        {
-                            //Debug.LogWarning($"[PlayerChargeAttack] WindChargeProjectilePrefab on {name} contains no Projectile component on root or children.");
                         }
 
                         IgnorePlayerCollision(projObj);
@@ -305,5 +319,4 @@ public class PlayerChargeAttack : MonoBehaviour
             proj.effectValue = effectValue;
         }
     }
-
 }
