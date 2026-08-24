@@ -226,6 +226,8 @@ public class PlayerAttacks : MonoBehaviour
         ApplyBasicShotSlow();
 
         //Shoot(0f, aimDirection); // now handled in FirePrimaryProjectile method
+        Shoot(0f, aimDirection); // uncomment FirePrimaryProjectile for proper animation event to fire projectile
+        /////////////////////////////////////////////////////////////////////////////
         lastFireTime = Time.time;
 
         playerMovement.FaceDirection(aimDirection);
@@ -392,10 +394,10 @@ public class PlayerAttacks : MonoBehaviour
 
     private void FirePrimaryProjectile()
     {
-        Vector3 aimDirection = GetAimDirection();
-        Shoot(0f, aimDirection);
+        //Vector3 aimDirection = GetAimDirection();
+        //Shoot(0f, aimDirection);
 
-        RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+        //RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
     }
 
     private void FireSecondaryProjectile()
