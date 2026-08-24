@@ -1,4 +1,5 @@
-﻿using FMODUnity;
+﻿using Assets.Scripts.Player;
+using FMODUnity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -55,6 +56,7 @@ public class PlayerAttacks : MonoBehaviour
     private PlayerAnchor playerAnchor;
     private PlayerInput playerInput;
     private PlayerCrosshair playerCrosshair;
+    private PlayerAnimation playerAnimation;
 
     // Input actions
     private InputAction attackAction;          // Fire1 → LMB / Right Trigger
@@ -78,6 +80,14 @@ public class PlayerAttacks : MonoBehaviour
         playerChargeAttack = GetComponent<PlayerChargeAttack>();
         playerAnchor = GetComponent<PlayerAnchor>();
         playerCrosshair = FindAnyObjectByType<PlayerCrosshair>();
+        playerAnimation = GetComponentInChildren<PlayerAnimation>();
+
+        if (playerAnimation != null )
+        {
+            playerAnimation.OnPrimeProjectileSpawn.AddListener(FirePrimaryProjectile);
+            playerAnimation.OnSecProjectileSpawn.AddListener(FireSecondaryProjectile);
+            playerAnimation.OnTongueRelease.AddListener(ReleaseTongue);
+        }
 
         playerTongueAttack.OnTongueFinished += playerMovement.ResumeMovement;
 
@@ -91,6 +101,13 @@ public class PlayerAttacks : MonoBehaviour
     {
         if (playerTongueAttack != null)
             playerTongueAttack.OnTongueFinished -= playerMovement.ResumeMovement;
+
+        if (playerAnimation != null)
+        {
+            playerAnimation.OnPrimeProjectileSpawn.RemoveListener(FirePrimaryProjectile);
+            playerAnimation.OnSecProjectileSpawn.RemoveListener(FireSecondaryProjectile);
+            playerAnimation.OnTongueRelease.RemoveListener(ReleaseTongue);
+        }
     }
 
     // ============================================================
@@ -145,6 +162,7 @@ public class PlayerAttacks : MonoBehaviour
             {
                 isBasicShotSlowed = false;
                 playerMovement.RemoveSpeedModifier(this);
+                playerAnimation.StopPrimaryAttack();
             }
         }
 
@@ -157,6 +175,7 @@ public class PlayerAttacks : MonoBehaviour
                 {
                     playerMovement.StopMovement(GetAimDirection());
                     playerChargeAttack.BeginCharge(playerAnchor.AttachedAnchor);
+                    playerAnimation.PlaySecondaryAttack();
                 }
 
                 if (secondaryHeld)
@@ -169,6 +188,7 @@ public class PlayerAttacks : MonoBehaviour
                     RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
 
                     playerMovement.ResumeMovement();
+                    playerAnimation.StopSecondaryAttack();
                 }
             }
             else
@@ -190,7 +210,6 @@ public class PlayerAttacks : MonoBehaviour
             if (attackWindowTimer == 0f)
                 playerMovement.ResumeMovement();
         }
-
     }
 
     // ============================================================
@@ -206,10 +225,11 @@ public class PlayerAttacks : MonoBehaviour
         OnShotFired?.Invoke(false);
         ApplyBasicShotSlow();
 
-        Shoot(0f, aimDirection);
+        //Shoot(0f, aimDirection); // now handled in FirePrimaryProjectile method
         lastFireTime = Time.time;
 
         playerMovement.FaceDirection(aimDirection);
+        playerAnimation.PlayPrimaryAttack();
 
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
     }
@@ -370,6 +390,24 @@ public class PlayerAttacks : MonoBehaviour
         IgnorePlayerCollision(projObj);
     }
 
+    private void FirePrimaryProjectile()
+    {
+        Vector3 aimDirection = GetAimDirection();
+        Shoot(0f, aimDirection);
+
+        RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+    }
+
+    private void FireSecondaryProjectile()
+    {
+
+    }
+
+    private void ReleaseTongue()
+    {
+
+    }
+
     private Vector3 ApplyPerspectiveCorrection(Vector3 baseDirection)
     {
         if (playerCrosshair == null || !playerCrosshair.HasValidWorldTarget())
@@ -414,7 +452,7 @@ public class PlayerAttacks : MonoBehaviour
         Vector3 aimDirection = GetTongueAimDirection();
         playerMovement.StopMovement(aimDirection);
         transform.rotation = Quaternion.LookRotation(aimDirection);
-        playerTongueAttack.BeginTongueExtend();
+        playerTongueAttack.TongueAnimHelper();
     }
 
     private Vector3 GetTongueAimDirection()

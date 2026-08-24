@@ -1,5 +1,6 @@
 using UnityEngine;
 using FMODUnity;
+using Assets.Scripts.Player;
 
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(PlayerTongueAttack))]
@@ -28,6 +29,7 @@ public class PlayerTongueHealing : MonoBehaviour
     // Heal-slow state, mirrors the basic-shot slow in PlayerAttacks.
     private bool isHealSlowed = false;
     private float healSlowTimer = 0f;
+
 
     private void Awake()
     {
