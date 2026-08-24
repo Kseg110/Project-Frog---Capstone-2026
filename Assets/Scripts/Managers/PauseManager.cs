@@ -25,6 +25,7 @@ public class PauseManager : MonoBehaviour
 
     private string currentActionMapName;
     private bool isPaused = false;
+    public bool ispaused => isPaused;
 
     private void Awake()
     {

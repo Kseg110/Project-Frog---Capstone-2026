@@ -14,22 +14,45 @@ public class CameraPanRoundTrigger : MonoBehaviour
     public class PanPoint
     {
         public Transform pointOfInterest;
-        public float holdTime = 5f;
-    }
 
+        [Header("Hold")]
+        [Tooltip("How long the camera holds at this point.")]
+        public float holdTime = 5f;
+
+
+
+
+    }
 
 
     [System.Serializable]
     public class RoundPan
     {
+        [Tooltip("Time used when Fixed Return Time is ON.")]
+        public float returnTime = 1f;
         public int round;
-
+        [Header("Return")]
+        [Tooltip("ON = return to the original camera position in exactly returnTime seconds. OFF = return using normal pan speed.")]
+        public bool fixedReturnTime = false;
         public List<PanPoint> panPoints =
             new List<PanPoint>();
 
         public float panTime = 2f;
 
         public int doorIndex = 0;
+    }
+    public bool GetFixedReturnTime()
+    {
+        foreach (RoundPan pan in roundPans)
+        {
+            if (pan != null &&
+                pan.round == currentRound)
+            {
+                return pan.fixedReturnTime;
+            }
+        }
+
+        return false;
     }
     public List<PanPoint> GetPanPoints()
     {
@@ -125,7 +148,8 @@ public class CameraPanRoundTrigger : MonoBehaviour
                     pan.panPoints,
                     pan.panTime,
                     pan.doorIndex,
-                    pan.round
+                    pan.round,
+                    pan.fixedReturnTime
                 );
 
 
