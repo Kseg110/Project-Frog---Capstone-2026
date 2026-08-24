@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 638977865760132493}
   - component: {fileID: 1485617097320877864}
   - component: {fileID: 468123468717275831}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Healthbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,7 +58,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 1310950511
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &468123468717275831
@@ -75,6 +75,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Healthbar
   foregroundImage: {fileID: 2913371411299085299}
   uiContainer: {fileID: 750935248908777305}
+  health: {fileID: 0}
 --- !u!1 &6198850457002399083
 GameObject:
   m_ObjectHideFlags: 0
@@ -86,7 +87,7 @@ GameObject:
   - component: {fileID: 1962530179093921842}
   - component: {fileID: 3055946602009932053}
   - component: {fileID: 2913371411299085299}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Foreground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,7 +160,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 750935248908777305}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UIContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -198,7 +199,7 @@ GameObject:
   - component: {fileID: 8923129434236931821}
   - component: {fileID: 3703910024961345032}
   - component: {fileID: 8414934782962566090}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}

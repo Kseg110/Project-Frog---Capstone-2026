@@ -11,6 +11,7 @@ public class GameModeDebugCategory : DebugCategory
     [Header("References")]
     [Tooltip("Automatically resolved to the WaveRoundSystem in the active scene if left empty.")]
     public WaveRoundSystem waveRoundSystem;
+    public GameObject player;
 
     [Header("Wave Skip")]
     [SerializeField] private int skipToWaveNumber = 1;
@@ -19,12 +20,18 @@ public class GameModeDebugCategory : DebugCategory
     [SerializeField] private int selectedCardIndex = 0;
     private bool upgradeCardmenuOpen = false;
 
+    [Header("Zone Positions")]
+    // Teleport spots are provided by the in-scene DebugMenu MonoBehaviour. The category only renders UI buttons.
+    private int teleportIndex = 1; // 1-based input for debug UI (UI state only)
+
     private void OnEnable()
     {
         // Try to resolve automatically when the ScriptableObject is enabled
         if (waveRoundSystem == null)
             AutoFindWaveRoundSystem();
     }
+
+    
 
     public override void Draw()
     {
@@ -146,6 +153,52 @@ public class GameModeDebugCategory : DebugCategory
                 GUILayout.EndHorizontal();
             }
         }
+
+        // Teleport UI (uses the in-scene DebugMenu for spot data and teleport action)
+        GUILayout.Space(10);
+        GUILayout.Label("Teleport To Area", GUI.skin.box);
+
+        var debugMenu = Object.FindObjectOfType<DebugMenu>();
+        if (debugMenu == null)
+        {
+            GUILayout.Label("No DebugMenu instance found in scene.", GUI.skin.label);
+        }
+        else if (debugMenu.teleportSpots == null || debugMenu.teleportSpots.Length == 0)
+        {
+            GUILayout.Label("No teleport spots assigned on DebugMenu.", GUI.skin.label);
+        }
+        else if (debugMenu.teleportSpots.Length == 4)
+        {
+            GUILayout.BeginHorizontal();
+            for (int i = 0; i < 4; i++)
+            {
+                if (GUILayout.Button($"Area {i + 1}", GUILayout.Width(100)))
+                {
+                    debugMenu.TeleportToZone(i);
+                }
+            }
+            GUILayout.EndHorizontal();
+        }
+        else
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Area (1-based)", GUILayout.Width(140));
+            string tpText = GUILayout.TextField(teleportIndex.ToString(), GUILayout.Width(80));
+            if (int.TryParse(tpText, out int parsedIndex))
+            {
+                teleportIndex = Mathf.Max(1, parsedIndex);
+            }
+
+            if (GUILayout.Button("Teleport", GUILayout.Width(100)))
+            {
+                int zeroBased = teleportIndex - 1;
+                if (zeroBased >= 0 && zeroBased < debugMenu.teleportSpots.Length)
+                {
+                    debugMenu.TeleportToZone(zeroBased);
+                }
+            }
+            GUILayout.EndHorizontal();
+        }
     }
 
     bool AutoFindWaveRoundSystem()
@@ -184,6 +237,8 @@ public class GameModeDebugCategory : DebugCategory
         waveRoundSystem = null;
         return false;
     }
+
+    // Teleport spot resolution and teleport behavior are handled by the in-scene DebugMenu MonoBehaviour.
 
 #if UNITY_EDITOR
     private void ShowCardDropdown(List<UpgradeDataSO> cards)
