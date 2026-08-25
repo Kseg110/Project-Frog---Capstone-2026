@@ -7,52 +7,72 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VP_Duckweed
+  m_Name: Vertex_Painting
   m_Shader: {fileID: -6465566751694194690, guid: 66d6673aa4c29be4594c1acad313e9fe, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHATEST_ON
-  - _RECEIVE_SHADOWS_OFF
-  - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2450
   stringTagMap:
-    RenderType: Transparent
+    RenderType: TransparentCutout
   disabledShaderPasses:
   - MOTIONVECTORS
-  - DepthOnly
-  - SHADOWCASTER
-  m_LockedProperties: _ZTest
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _Alpha_1:
-        m_Texture: {fileID: 2800000, guid: 4a9ee25dc0ca19e43b9049ef5a1482d4, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9641aa9087c82ca4a94a04ebb9e2c452, type: 3}
         m_Scale: {x: 70, y: 70}
         m_Offset: {x: 0, y: 0}
     - _Alpha_2:
-        m_Texture: {fileID: 2800000, guid: 9641aa9087c82ca4a94a04ebb9e2c452, type: 3}
-        m_Scale: {x: 50, y: 50}
+        m_Texture: {fileID: 2800000, guid: 4a9ee25dc0ca19e43b9049ef5a1482d4, type: 3}
+        m_Scale: {x: 100, y: 100}
         m_Offset: {x: 0, y: 0}
     - _Alpha_3:
         m_Texture: {fileID: 2800000, guid: c34cb6d01e495914ebb5b003879b6abb, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 70, y: 70}
         m_Offset: {x: 0, y: 0}
     - _Base_Color_1:
-        m_Texture: {fileID: 2800000, guid: d060ddbf41da6fe47bb787853b81f483, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4ed257a01ea637b48b227be53df3ea19, type: 3}
         m_Scale: {x: 70, y: 70}
         m_Offset: {x: 0, y: 0}
     - _Base_Color_2:
-        m_Texture: {fileID: 2800000, guid: 4ed257a01ea637b48b227be53df3ea19, type: 3}
-        m_Scale: {x: 50, y: 50}
+        m_Texture: {fileID: 2800000, guid: d060ddbf41da6fe47bb787853b81f483, type: 3}
+        m_Scale: {x: 100, y: 100}
         m_Offset: {x: 0, y: 0}
     - _Base_Color_3:
         m_Texture: {fileID: 2800000, guid: c34cb6d01e495914ebb5b003879b6abb, type: 3}
-        m_Scale: {x: 20, y: 20}
+        m_Scale: {x: 70, y: 70}
+        m_Offset: {x: 0, y: 0}
+    - _Mask_Map_1:
+        m_Texture: {fileID: 2800000, guid: fa40bfbd9177971479a7d292dbe0336f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask_Map_2:
+        m_Texture: {fileID: 2800000, guid: 221af3a2710089046be319c6d32c7b5c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask_Map_3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal_1:
+        m_Texture: {fileID: 2800000, guid: e855acfc0312cad4191c30e39559f903, type: 3}
+        m_Scale: {x: 70, y: 70}
+        m_Offset: {x: 0, y: 0}
+    - _Normal_2:
+        m_Texture: {fileID: 2800000, guid: afe2588d4b9dc9f41a2f18a70ce7d4ba, type: 3}
+        m_Scale: {x: 100, y: 100}
+        m_Offset: {x: 0, y: 0}
+    - _Normal_3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 70, y: 70}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_076722375c674023a425f4e220486129_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: d89c91615316e46439863d13bb033cf8, type: 3}
@@ -128,39 +148,47 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 1
+    - _AO_Strength_1: 1
+    - _AO_Strength_2: 1
+    - _AO_Strength_3: 1
     - _AlphaClip: 1
-    - _AlphaToMask: 0
-    - _Alpha_Clip: -0.52
+    - _AlphaToMask: 1
+    - _Alpha_Clip: 0.17
     - _Blend: 0
     - _BlendModePreserveSpecular: 0
-    - _CastShadows: 0
-    - _Cull: 0
+    - _CastShadows: 1
+    - _Cull: 2
     - _Dry_Mud_N_Stregnth: 1
-    - _DstBlend: 10
-    - _DstBlendAlpha: 10
+    - _DstBlend: 0
+    - _DstBlendAlpha: 0
     - _Moss_N_Strength: 1
+    - _Normal_Strength_1: 1
+    - _Normal_Strength_2: 1
+    - _Normal_Strength_3: 1
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _ReceiveShadows: 0
+    - _ReceiveShadows: 1
     - _Rough_Dirt_N_Strength: 2.4
+    - _Roughness_Strength_1: -2
+    - _Roughness_Strength_2: -2
+    - _Roughness_Strength_3: 2.66
     - _Smooth_Dirt_N_Stregnth: 1
     - _Soft_Mud_N_Stregnth: 1
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _Surface: 1
+    - _Surface: 0
     - _UV_Scale_2: 2
     - _UV_Scale_3: 2
     - _UV_Scale_4: 2
     - _UV_Scale_5: 2
     - _WorkflowMode: 1
     - _ZTest: 4
-    - _ZWrite: 0
-    - _ZWriteControl: 0
+    - _ZWrite: 1
+    - _ZWriteControl: 1
     m_Colors:
-    - _Color_Correction_1: {r: 0.5050108, g: 0.542977, b: 0.49687517, a: 1}
-    - _Color_Correction_2: {r: 1, g: 0.84102863, b: 0.3825996, a: 1}
-    - _Color_Correction_3: {r: 0, g: 0, b: 0, a: 1}
+    - _Color_Correction_1: {r: 1, g: 1, b: 0.47484273, a: 1}
+    - _Color_Correction_2: {r: 1, g: 0.9835372, b: 0.6383648, a: 1}
+    - _Color_Correction_3: {r: 1, g: 1, b: 1, a: 1}
     - _Dry_Mud_CC: {r: 1, g: 1, b: 1, a: 1}
     - _Moss_CC: {r: 1, g: 1, b: 1, a: 1}
     - _Rough_Dirt_CC: {r: 1, g: 1, b: 1, a: 1}
