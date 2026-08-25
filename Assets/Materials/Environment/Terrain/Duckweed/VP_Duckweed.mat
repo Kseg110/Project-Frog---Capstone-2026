@@ -12,7 +12,7 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHAPREMULTIPLY_ON
+  - _ALPHATEST_ON
   - _RECEIVE_SHADOWS_OFF
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
@@ -24,15 +24,15 @@ Material:
     RenderType: Transparent
   disabledShaderPasses:
   - MOTIONVECTORS
-  - SHADOWCASTER
   - DepthOnly
-  m_LockedProperties: 
+  - SHADOWCASTER
+  m_LockedProperties: _ZTest
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _Alpha_1:
         m_Texture: {fileID: 2800000, guid: 4a9ee25dc0ca19e43b9049ef5a1482d4, type: 3}
-        m_Scale: {x: 60, y: 60}
+        m_Scale: {x: 70, y: 70}
         m_Offset: {x: 0, y: 0}
     - _Alpha_2:
         m_Texture: {fileID: 2800000, guid: 9641aa9087c82ca4a94a04ebb9e2c452, type: 3}
@@ -44,7 +44,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _Base_Color_1:
         m_Texture: {fileID: 2800000, guid: d060ddbf41da6fe47bb787853b81f483, type: 3}
-        m_Scale: {x: 60, y: 60}
+        m_Scale: {x: 70, y: 70}
         m_Offset: {x: 0, y: 0}
     - _Base_Color_2:
         m_Texture: {fileID: 2800000, guid: 4ed257a01ea637b48b227be53df3ea19, type: 3}
@@ -129,11 +129,11 @@ Material:
     m_Ints: []
     m_Floats:
     - _Alpha: 1
-    - _AlphaClip: 0
+    - _AlphaClip: 1
     - _AlphaToMask: 0
-    - _Alpha_Clip: 0.37
+    - _Alpha_Clip: -0.52
     - _Blend: 0
-    - _BlendModePreserveSpecular: 1
+    - _BlendModePreserveSpecular: 0
     - _CastShadows: 0
     - _Cull: 0
     - _Dry_Mud_N_Stregnth: 1
@@ -146,7 +146,7 @@ Material:
     - _Rough_Dirt_N_Strength: 2.4
     - _Smooth_Dirt_N_Stregnth: 1
     - _Soft_Mud_N_Stregnth: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _SrcBlendAlpha: 1
     - _Surface: 1
     - _UV_Scale_2: 2
