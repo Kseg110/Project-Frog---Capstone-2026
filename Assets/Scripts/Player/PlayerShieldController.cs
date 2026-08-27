@@ -16,36 +16,51 @@ public class PlayerShieldController : MonoBehaviour
 
     private ShieldType currentShield = ShieldType.None;
 
-    // Wind shield = multiple hits
-    private int windCharges = 0;
-
     // Cooldowns
     private bool fireReady = true;
     private bool iceReady = true;
+    private bool windReady = true;
 
-    private bool firePending = false;
-    private bool icePending = false;
-    private bool windPending = false;
+    private bool windBroken = false;
+    private bool iceBroken = false;
+    private bool fireBroken = false;
 
-    private float fireCooldown = 10f;
-    private float iceCooldown = 10f;
-    private float windCooldown = 10f;
+    // Fire break effects
+    [SerializeField] private float fireBreakRadius = 5f;
+    [SerializeField] private float fireBreakDamage = 15f;
+    [SerializeField] private float fireBreakBurnDuration = 2f;
+    [SerializeField] private float fireBreakBurnTickRate = 0.2f;
+    [SerializeField] private float fireCooldown = 10f;
+
+    // Ice break effects
+    [SerializeField] private float iceCooldown = 10f;
+    [SerializeField] private float iceBreakKnockbackRadius = 6f;
+    [SerializeField] private float iceBreakFreezeDuration = 3f;
+
+    // Wind break effects
+    [SerializeField] private float windBreakKnockbackRadius = 5f;
+    [SerializeField] private float windBreakKnockbackForce = 15f;
+    [SerializeField] private float windSpeedBuffPercent = 35f;
+    [SerializeField] private float windSpeedBuffDuration = 5f;
+    [SerializeField] private float windCooldown = 10f;
 
     private PlayerAnchor anchor;
+    private PlayerMovement movement;
 
     private void Awake()
     {
         anchor = FindFirstObjectByType<PlayerAnchor>();
+        movement = FindFirstObjectByType<PlayerMovement>();
     }
-
-    // ============================================================
-    // PUBLIC API
-    // ============================================================
 
     private void Update()
     {
         TryAutoReactivateShield();
     }
+
+    // ============================================================
+    // AUTO REACTIVATION
+    // ============================================================
 
     private void TryAutoReactivateShield()
     {
@@ -53,36 +68,48 @@ public class PlayerShieldController : MonoBehaviour
             return; // Shield is active, no need to reactivate
 
         // FIRE
-        if (firePending && fireReady)
+        if (!fireBroken &&
+            anchor != null &&
+            anchor.IsTetherActive &&
+            anchor.AttachedAnchor != null &&
+            anchor.AttachedAnchor.Element == AnchorElement.Fire &&
+            UpgradeManager.Instance.HasUpgrade("Fire Shield"))
         {
             GiveFireShield();
-            firePending = false;
-            return;
         }
 
         // ICE
-        if (icePending && iceReady)
+        if (!iceBroken &&
+            anchor != null &&
+            anchor.IsTetherActive &&
+            anchor.AttachedAnchor != null &&
+            anchor.AttachedAnchor.Element == AnchorElement.Ice &&
+            UpgradeManager.Instance.HasUpgrade("Ice Shield"))
         {
             GiveIceShield();
-            icePending = false;
-            return;
         }
 
         // WIND
-        if (windPending)
+        if (!windBroken &&
+            anchor != null &&
+            anchor.IsTetherActive &&
+            anchor.AttachedAnchor != null &&
+            anchor.AttachedAnchor.Element == AnchorElement.Wind &&
+            UpgradeManager.Instance.HasUpgrade("Wind Shield"))
         {
-            GiveWindShield(2);
-            windPending = false;
-            return;
+            GiveWindShield();
         }
     }
+
+    // ============================================================
+    // PUBLIC API
+    // ============================================================
 
     public void GiveFireShield()
     {
         if (!fireReady) return;
 
         currentShield = ShieldType.Fire;
-        Debug.Log("Fire shield gained!");
     }
 
     public void GiveIceShield()
@@ -90,20 +117,18 @@ public class PlayerShieldController : MonoBehaviour
         if (!iceReady) return;
 
         currentShield = ShieldType.Ice;
-        Debug.Log("Ice shield gained!");
     }
 
-    public void GiveWindShield(int charges)
+    public void GiveWindShield()
     {
-        windCharges = charges;
+        if (!windReady) return;
+
         currentShield = ShieldType.Wind;
-        Debug.Log($"Wind shield gained ({charges} charges)!");
     }
 
     public void RemoveShield()
     {
         currentShield = ShieldType.None;
-        windCharges = 0;
     }
 
     /// <summary>
@@ -115,36 +140,22 @@ public class PlayerShieldController : MonoBehaviour
             return false; // no shield → player takes damage
 
         // Shield absorbs the hit
-        Debug.Log($"[Shield] Hit absorbed by {currentShield} shield!");
+        //Debug.Log($"[Shield] Hit absorbed by {currentShield} shield!");
         ShieldType brokenType = currentShield;
         OnShieldBroken?.Invoke(brokenType);
 
         switch (brokenType)
         {
             case ShieldType.Fire:
-                TriggerFireExplosion();
-                StartCoroutine(FireCooldownRoutine());
-                RemoveShield();
+                HandleFireDamage();
                 break;
 
             case ShieldType.Ice:
-                TriggerIceExplosion();
-                StartCoroutine(IceCooldownRoutine());
-                RemoveShield();
+                HandleIceDamage();
                 break;
 
             case ShieldType.Wind:
-                windCharges--;
-                if (windCharges > 0)
-                {
-                    Debug.Log($"Wind shield absorbed hit. {windCharges} charges left.");
-                }
-                else
-                {
-                    Debug.Log("Wind shield fully depleted.");
-                    RemoveShield();
-                    StartCoroutine(WindCooldownRoutine());
-                }
+                HandleWindDamage();
                 break;
         }
 
@@ -155,62 +166,165 @@ public class PlayerShieldController : MonoBehaviour
     // FIRE EXPLOSION
     // ============================================================
 
-    private void TriggerFireExplosion()
+    private void HandleFireDamage()
+    {
+        if (fireBroken)
+        {
+            return;
+        }
+
+        fireBroken = true;
+
+        ApplyFireBreakEffects();
+        RemoveShield();
+
+        StartCoroutine(FireShieldCooldownRoutine());
+    }
+
+    private void ApplyFireBreakEffects()
     {
         EnemyBase[] enemies = FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
+        Vector3 playerPos = anchor.transform.position;
 
         foreach (var enemy in enemies)
         {
-            float dist = Vector3.Distance(anchor.transform.position, enemy.transform.position);
-            if (dist <= 6f)
-                enemy.TakeDamage(20f, "Burn", 2f, 0.2f);
-        }
+            if (enemy == null) continue;
 
-        Debug.Log("[Shield] Fire explosion triggered!");
+            float dist = Vector3.Distance(playerPos, enemy.transform.position);
+            if (dist > fireBreakRadius)
+                continue;
+
+            // DAMAGE
+            enemy.TakeDamage(fireBreakDamage);
+
+            // APPLY BURN
+            enemy.TakeDamage(0f, "Burn", fireBreakBurnDuration, fireBreakBurnTickRate);
+
+            // KNOCKBACK
+            Vector3 dir = (enemy.transform.position - playerPos).normalized;
+            dir.y = 0f;
+
+            var knock = enemy.GetComponent<EnemyKnockback>();
+            if (knock != null)
+                knock.ApplyKnockback(dir, 5f);
+        }
+    }
+
+    private IEnumerator FireShieldCooldownRoutine()
+    {
+        yield return new WaitForSeconds(fireCooldown);
+
+        fireBroken = false;
     }
 
     // ============================================================
     // ICE EXPLOSION
     // ============================================================
 
-    private void TriggerIceExplosion()
+    private void HandleIceDamage()
+    {
+        if (iceBroken)
+        {
+            return;
+        }
+
+        iceBroken = true;
+
+        ApplyIceBreakEffects();
+        RemoveShield();
+
+        StartCoroutine(IceShieldCooldownRoutine());
+    }
+
+    private void ApplyIceBreakEffects()
     {
         EnemyBase[] enemies = FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
+        Vector3 playerPos = anchor.transform.position;
 
         foreach (var enemy in enemies)
         {
-            float dist = Vector3.Distance(anchor.transform.position, enemy.transform.position);
-            if (dist <= 10f)
-                enemy.Freeze(1f);
+            if (enemy == null) continue;
+
+            float dist = Vector3.Distance(playerPos, enemy.transform.position);
+            if (dist > iceBreakKnockbackRadius)
+                continue;
+
+            // Knockback
+            Vector3 dir = (enemy.transform.position - playerPos).normalized;
+            dir.y = 0f;
+
+            var knock = enemy.GetComponent<EnemyKnockback>();
+            if (knock != null)
+                knock.ApplyKnockback(dir, 5f);
+
+            // Freeze
+            enemy.Freeze(iceBreakFreezeDuration);
+        }
+    }
+
+    private IEnumerator IceShieldCooldownRoutine()
+    {
+        yield return new WaitForSeconds(iceCooldown);
+
+        iceBroken = false;
+    }
+
+    // ============================================================
+    // WIND BREAK EFFECTS
+    // ============================================================
+
+    private void HandleWindDamage()
+    {
+        if (windBroken)
+        {
+            return;
         }
 
-        Debug.Log("[Shield] Ice freeze explosion triggered!");
+        windBroken = true;
+
+        ApplyWindBreakEffects();
+        StartCoroutine(WindSpeedBuffRoutine());
+        RemoveShield();
+
+        StartCoroutine(WindShieldCooldownRoutine());
     }
 
-    // ============================================================
-    // COOLDOWNS
-    // ============================================================
-
-    private IEnumerator FireCooldownRoutine()
+    private void ApplyWindBreakEffects()
     {
-        fireReady = false;
-        yield return new WaitForSeconds(fireCooldown);
-        fireReady = true;
-        firePending = true;
+        EnemyBase[] enemies = FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
+        Vector3 playerPos = anchor.transform.position;
+
+        foreach (var enemy in enemies)
+        {
+            if (enemy == null) continue;
+
+            float dist = Vector3.Distance(playerPos, enemy.transform.position);
+            if (dist > windBreakKnockbackRadius)
+                continue;
+
+            Vector3 dir = (enemy.transform.position - playerPos).normalized;
+            dir.y = 0f;
+
+            var knock = enemy.GetComponent<EnemyKnockback>();
+            if (knock != null)
+                knock.ApplyKnockback(dir, 5f);
+        }
     }
 
-    private IEnumerator IceCooldownRoutine()
+    private IEnumerator WindSpeedBuffRoutine()
     {
-        iceReady = false;
-        yield return new WaitForSeconds(iceCooldown);
-        iceReady = true;
-        icePending = true;
+        float mult = 1f + (windSpeedBuffPercent / 100f);
+        movement.AddSpeedModifier(this, mult);
+
+        yield return new WaitForSeconds(windSpeedBuffDuration);
+
+        movement.RemoveSpeedModifier(this);
     }
 
-    private IEnumerator WindCooldownRoutine()
+    private IEnumerator WindShieldCooldownRoutine()
     {
-        windPending = false;
         yield return new WaitForSeconds(windCooldown);
-        windPending = true;
+
+        windBroken = false;
     }
 }
