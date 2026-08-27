@@ -294,10 +294,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 5
+  m_Radius: 1
+  m_Height: 6
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: -0.95, z: 0}
 --- !u!54 &3884833353889795412
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -340,7 +340,7 @@ MonoBehaviour:
   roamRadius: 10
   minMoveInterval: 1
   maxMoveInterval: 3
-  flyHeight: 3.8
+  flyHeight: 3
   moveSpeed: 3.5
   rotationSpeed: 5
   stoppingDistance: 0.5

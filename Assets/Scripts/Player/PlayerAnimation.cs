@@ -204,5 +204,12 @@ namespace Assets.Scripts.Player
         }
         #endregion
 
+        // Animator speed helped funciton to hold pose easily without extra events
+        public void SetAnimatorSpeed(float speed)
+        {
+            if (!IsAnimatorValid()) return;
+            animator.speed = speed;
+        }
+
     }
 }

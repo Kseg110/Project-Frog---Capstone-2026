@@ -408,7 +408,11 @@ public class PlayerAttacks : MonoBehaviour
 
     private void ReleaseTongue()
     {
-
+        // animation event fires tongue at the right frame of animation
+        if (playerTongueAttack != null)
+        {
+            playerTongueAttack.BeginTongueExtend();
+        }
     }
 
     private Vector3 ApplyPerspectiveCorrection(Vector3 baseDirection)
@@ -451,11 +455,14 @@ public class PlayerAttacks : MonoBehaviour
     private void TryTongue()
     {
         if (isCharging) return;
+        if (playerTongueAttack.IsActive) return;
+
+        // play tongue attack animation
+        playerAnimation.PlayTongueAttack();
 
         Vector3 aimDirection = GetTongueAimDirection();
         playerMovement.StopMovement(aimDirection);
         transform.rotation = Quaternion.LookRotation(aimDirection);
-        playerTongueAttack.TongueAnimHelper();
     }
 
     private Vector3 GetTongueAimDirection()
