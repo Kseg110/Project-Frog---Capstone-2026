@@ -31,11 +31,15 @@ public class PlayerShieldController : MonoBehaviour
     [SerializeField] private float fireBreakBurnDuration = 2f;
     [SerializeField] private float fireBreakBurnTickRate = 0.2f;
     [SerializeField] private float fireCooldown = 10f;
+    [SerializeField] private GameObject fireBreakVFX;
+    [SerializeField] private float fireBreakVFXDuration = 2f;
 
     // Ice break effects
     [SerializeField] private float iceCooldown = 10f;
     [SerializeField] private float iceBreakKnockbackRadius = 6f;
     [SerializeField] private float iceBreakFreezeDuration = 3f;
+    [SerializeField] private GameObject iceBreakVFX;
+    [SerializeField] private float iceBreakVFXDuration = 2f;
 
     // Wind break effects
     [SerializeField] private float windBreakKnockbackRadius = 5f;
@@ -43,6 +47,8 @@ public class PlayerShieldController : MonoBehaviour
     [SerializeField] private float windSpeedBuffPercent = 35f;
     [SerializeField] private float windSpeedBuffDuration = 5f;
     [SerializeField] private float windCooldown = 10f;
+    [SerializeField] private GameObject windBreakVFX;
+    [SerializeField] private float windBreakVFXDuration = 2f;
 
     private PlayerAnchor anchor;
     private PlayerMovement movement;
@@ -140,7 +146,6 @@ public class PlayerShieldController : MonoBehaviour
             return false; // no shield → player takes damage
 
         // Shield absorbs the hit
-        //Debug.Log($"[Shield] Hit absorbed by {currentShield} shield!");
         ShieldType brokenType = currentShield;
         OnShieldBroken?.Invoke(brokenType);
 
@@ -185,6 +190,12 @@ public class PlayerShieldController : MonoBehaviour
     {
         EnemyBase[] enemies = FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
         Vector3 playerPos = anchor.transform.position;
+
+        if (fireBreakVFX != null)
+        {
+            GameObject vfx = Instantiate(fireBreakVFX, playerPos, Quaternion.identity);
+            Destroy(vfx, fireBreakVFXDuration);
+        }
 
         foreach (var enemy in enemies)
         {
@@ -241,6 +252,12 @@ public class PlayerShieldController : MonoBehaviour
         EnemyBase[] enemies = FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
         Vector3 playerPos = anchor.transform.position;
 
+        if (iceBreakVFX != null)
+        {
+            GameObject vfx = Instantiate(iceBreakVFX, playerPos, Quaternion.identity);
+            Destroy(vfx, iceBreakVFXDuration);
+        }
+
         foreach (var enemy in enemies)
         {
             if (enemy == null) continue;
@@ -293,6 +310,12 @@ public class PlayerShieldController : MonoBehaviour
     {
         EnemyBase[] enemies = FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
         Vector3 playerPos = anchor.transform.position;
+
+        if (windBreakVFX != null)
+        {
+            GameObject vfx = Instantiate(windBreakVFX, playerPos, Quaternion.identity);
+            Destroy(vfx, windBreakVFXDuration);
+        }
 
         foreach (var enemy in enemies)
         {
