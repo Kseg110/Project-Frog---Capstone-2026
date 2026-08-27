@@ -16,6 +16,7 @@ public class EnemyFadeOut : MonoBehaviour
     [SerializeField] private NavMeshAgent agent;
 
     [Header("Fade")]
+    [SerializeField] private Material deathMaterial;
     [SerializeField] private float duration = 1.0f;
     [Tooltip("Left empty = auto-filled from all child renderers on Awake.")]
     [SerializeField] private Renderer[] renderers;
@@ -87,6 +88,8 @@ public class EnemyFadeOut : MonoBehaviour
         else
         {
             // No animator wired — skip straight to the fade.
+
+            ChangeToDeathMaterial();
             BeginFade();
         }
     }
@@ -154,6 +157,16 @@ public class EnemyFadeOut : MonoBehaviour
             // Fade emission toward black by the same factor so the glow dies with the surface.
             if (baseEmission != null && r.material.HasProperty(EmissionColorId))
                 r.material.SetColor(EmissionColorId, baseEmission[i] * alpha);
+        }
+    }
+
+
+    private void ChangeToDeathMaterial()
+    {
+        foreach (Renderer renderer in renderers)
+        {
+            renderer.material = deathMaterial;
+            Debug.Log($"Changed material of {renderer.gameObject.name} to {deathMaterial.name}.");
         }
     }
 }
