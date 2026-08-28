@@ -38,8 +38,8 @@ public class DoorSystem : MonoBehaviour
         //[Tooltip("If true the door GameObject will be destroyed when opened and cannot be restored.")]
         //public bool destroyDoor = false;
 
-        //[Tooltip("Optional Animator. If present and has a bool 'Open' parameter, it will be used to animate opening.")]
-        //public Animator doorAnimator;
+        [Tooltip("Optional Animator. If present and has a bool 'Open' parameter, it will be used to animate opening.")]
+        public Animator doorAnimator;
 
         [Tooltip("How far this door moves when opened. Positive = down, Negative = up.")]
         public float lowerDistance = 5f;
@@ -224,6 +224,9 @@ public class DoorSystem : MonoBehaviour
             return;
         }
 
+        StartCoroutine(OpenDoorRoutine(link));
+
+        /*
         // Play DoorWiggle animation before lowering if an Animator is available
         Animator anim = link.door.GetComponent<Animator>();
         if (anim == null && doorAnimator != null) anim = doorAnimator;
@@ -237,6 +240,7 @@ public class DoorSystem : MonoBehaviour
         Vector3 target = link.originalPosition + Vector3.down * link.lowerDistance;
         MoveDoor(link, target, link.lowerSpeed);
         link.opened = true;
+        */
 
         /*
         if (link.doorAnimator != null)
@@ -319,6 +323,34 @@ public class DoorSystem : MonoBehaviour
         //link.opened = true;
 
         //Debug.Log($"DoorSystem: Door '{link.door?.name}' lowered by {link.lowerDistance} units.");
+    }
+
+    private IEnumerator OpenDoorRoutine(DoorLink link)
+    {
+        // 1. Resolve Animator reference: local link animator, or global fallback
+        Animator anim = link.door.GetComponent<Animator>();
+        if (anim == null && doorAnimator != null)
+        {
+            anim = doorAnimator;
+        }
+
+        // 2. Trigger animation and wait for clip duration
+        if (anim != null && !string.IsNullOrEmpty(wiggleTriggerName))
+        {
+            anim.SetTrigger(wiggleTriggerName);
+
+            // Wait one frame so Animator transitions into the new state
+            yield return null;
+
+            // Get the current animation clip length and wait for it to finish
+            AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+            yield return new WaitForSeconds(stateInfo.length);
+        }
+
+        // 3. Lower door position after animation completes
+        Vector3 target = link.originalPosition + Vector3.down * link.lowerDistance;
+        MoveDoor(link, target, link.lowerSpeed);
+        link.opened = true;
     }
 
     private void CloseDoor(DoorLink link)
