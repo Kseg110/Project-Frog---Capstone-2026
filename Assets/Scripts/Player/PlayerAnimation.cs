@@ -26,6 +26,7 @@ namespace Assets.Scripts.Player
         private static readonly int BreakTetherHash = Animator.StringToHash("BreakTether"); // Trigger
         private static readonly int IsDashingHash = Animator.StringToHash("IsDashing"); // Bool
         private static readonly int IsTetheredHash = Animator.StringToHash("IsTethered"); // Bool
+        private static readonly int Health = Animator.StringToHash("Health");// float
 
         [Header("Animation Events")]
         // UnityEvents that can be subscribed to and or set in inspector
@@ -39,7 +40,9 @@ namespace Assets.Scripts.Player
         public bool isHoldingPrimaryAttack = false;
         public bool isHoldingSecondaryAttack = false;
         private int pauseFrame = -1;
+        private Health playerHealth;
         public bool PausedThisFrame => pauseFrame == Time.frameCount;
+
 
         private void Awake()
         {
@@ -51,6 +54,9 @@ namespace Assets.Scripts.Player
 
             if (animator == null)
                 animator = GetComponent<Animator>();
+
+            if (playerHealth == null)
+                playerHealth = GetComponentInParent<Health>();
 
             if (animator == null)
             {
@@ -65,6 +71,9 @@ namespace Assets.Scripts.Player
                 return;
 
             UpdateMovementAnimations();
+
+            float currentHealth = playerHealth != null ? playerHealth.CurrentHealth : 0f;
+            animator.SetFloat(Health, currentHealth);
         }
 
         private void UpdateMovementAnimations()
@@ -245,6 +254,7 @@ namespace Assets.Scripts.Player
         public void AnimEvent_AnimationComplete()
         {
             OnAnimationComplete?.Invoke();
+            animator.speed = 0f;
         }
         #endregion
 
