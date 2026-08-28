@@ -38,8 +38,8 @@ public class DoorSystem : MonoBehaviour
         //[Tooltip("If true the door GameObject will be destroyed when opened and cannot be restored.")]
         //public bool destroyDoor = false;
 
-        [Tooltip("Optional Animator. If present and has a bool 'Open' parameter, it will be used to animate opening.")]
-        public Animator doorAnimator;
+        //[Tooltip("Optional Animator. If present and has a bool 'Open' parameter, it will be used to animate opening.")]
+        //public Animator doorAnimator;
 
         [Tooltip("How far this door moves when opened. Positive = down, Negative = up.")]
         public float lowerDistance = 5f;
@@ -97,8 +97,20 @@ public class DoorSystem : MonoBehaviour
     [Header("References")]
     [SerializeField] private WaveRoundSystem waveRoundSystem;
     [SerializeField] private int currentWave;
+
+    [Header("Animation Settings")]
+    [SerializeField] private Animator doorAnimator;
+    [SerializeField] private string wiggleStateName = "DoorWiggle";
+    [SerializeField] private string wiggleTriggerName = "Wiggle";
+
     private void Awake()
     {
+        // Auto-assign Animator if not set in Inspector
+        if (doorAnimator == null)
+        {
+            doorAnimator = GetComponent<Animator>();
+        }
+
         if (waveRoundSystem == null)
             waveRoundSystem = FindAnyObjectByType<WaveRoundSystem>();
 
@@ -206,6 +218,27 @@ public class DoorSystem : MonoBehaviour
 
     private void OpenDoor(DoorLink link)
     {
+        if (link.door == null)
+        {
+            link.opened = true;
+            return;
+        }
+
+        // Play DoorWiggle animation before lowering if an Animator is available
+        Animator anim = link.door.GetComponent<Animator>();
+        if (anim == null && doorAnimator != null) anim = doorAnimator;
+
+        if (anim != null)
+        {
+            anim.Play(wiggleStateName, 0, 0f);
+        }
+
+        // Lower the door relative to original position
+        Vector3 target = link.originalPosition + Vector3.down * link.lowerDistance;
+        MoveDoor(link, target, link.lowerSpeed);
+        link.opened = true;
+
+        /*
         if (link.doorAnimator != null)
         {
             bool hasBoolOpen = false;
@@ -236,7 +269,7 @@ public class DoorSystem : MonoBehaviour
         {
             link.opened = true;
             return;
-        }
+        }*/
 
         //if (link.destroyDoor)
         //{
@@ -280,10 +313,10 @@ public class DoorSystem : MonoBehaviour
         */
 
         // NEW: Lower the door instead of disabling anything.
-        Vector3 target = link.originalPosition + Vector3.down * link.lowerDistance;
+        //Vector3 target = link.originalPosition + Vector3.down * link.lowerDistance;
 
-        MoveDoor(link, target, link.lowerSpeed);
-        link.opened = true;
+        //MoveDoor(link, target, link.lowerSpeed);
+        //link.opened = true;
 
         //Debug.Log($"DoorSystem: Door '{link.door?.name}' lowered by {link.lowerDistance} units.");
     }
