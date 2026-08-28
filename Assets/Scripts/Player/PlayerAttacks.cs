@@ -71,6 +71,7 @@ public class PlayerAttacks : MonoBehaviour
 
     private bool isBasicShotSlowed = false;
     public bool IsAttacking => isCharging || playerTongueAttack.IsActive || attackWindowTimer > 0f;
+    public bool isFiringPrime => playerAnimation != null && playerAnimation.isHoldingPrimaryAttack;
 
     private void Awake()
     {
@@ -151,7 +152,9 @@ public class PlayerAttacks : MonoBehaviour
 
         // PRIMARY ATTACK - Block if dashing
         if (attackHeld && !playerMovement.IsDashing)
+        {
             TryBasicShot();
+        }
         else if (!attackHeld && playerAnimation != null)
         {
             playerAnimation.StopPrimaryAttack();
@@ -221,9 +224,23 @@ public class PlayerAttacks : MonoBehaviour
     private void TryBasicShot()
     {
         if (playerTongueAttack.IsActive) return;
+        Vector3 aimDirection = GetAimDirection();
+
+        if (playerAnimation != null && playerAnimation.isHoldingPrimaryAttack)
+        {
+            // make player face direction of fire while holding shoot input
+            playerMovement.FaceDirection(aimDirection);
+            if (playerAnimation.PausedThisFrame)
+                return;
+            if (Time.time >= lastFireTime + fireCooldown)
+            {
+                FirePrimaryProjectile();
+            }
+            return;
+        }
+
         if (Time.time < lastFireTime + fireCooldown) return;
 
-        Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
         OnShotFired?.Invoke(false);
         ApplyBasicShotSlow();
@@ -397,8 +414,8 @@ public class PlayerAttacks : MonoBehaviour
     {
         Vector3 aimDirection = GetAimDirection();
         Shoot(0f, aimDirection);
-
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+        lastFireTime = Time.time;
     }
 
     private void FireSecondaryProjectile()

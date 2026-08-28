@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Assets.Scripts.Player
@@ -34,6 +35,11 @@ namespace Assets.Scripts.Player
         public UnityEvent OnTongueRelease;
         public UnityEvent OnAnimationComplete;
 
+        // Tracks if player is holding fire input
+        public bool isHoldingPrimaryAttack = false;
+        public bool isHoldingSecondaryAttack = false;
+        private int pauseFrame = -1;
+        public bool PausedThisFrame => pauseFrame == Time.frameCount;
 
         private void Awake()
         {
@@ -79,25 +85,43 @@ namespace Assets.Scripts.Player
         public void PlayPrimaryAttack()
         {
             if (!IsAnimatorValid()) return;
+            if (isHoldingPrimaryAttack) return;
             animator.SetBool(PrimaryAttackHash, true);
+            animator.speed = 1f;
         }
 
         public void StopPrimaryAttack()
         {
             if (!IsAnimatorValid()) return;
-            animator.SetBool(PrimaryAttackHash, false);
+            if (isHoldingPrimaryAttack)
+            {
+                isHoldingPrimaryAttack = false;
+                pauseFrame = -1;
+                StopAllCoroutines();
+                animator.speed = 1f;
+                animator.SetBool(PrimaryAttackHash, false);
+            }
+            else
+            {
+                animator.SetBool(PrimaryAttackHash, false);
+                animator.speed = 1f;
+            }
         }
 
         public void PlaySecondaryAttack()
         {
             if (!IsAnimatorValid()) return;
+            if (isHoldingSecondaryAttack) return;
             animator.SetBool(SecondaryAttackHash, true);
+            //animator.speed = 1f;
         }
 
         public void StopSecondaryAttack()
         {
             if (!IsAnimatorValid()) return;
             animator.SetBool(SecondaryAttackHash, false);
+            isHoldingSecondaryAttack = false;
+            animator.speed = 1f;
         }
 
         public void PlayTongueAttack()
@@ -177,6 +201,17 @@ namespace Assets.Scripts.Player
         public void AnimEvent_SpawnPrimeProjectile()
         {
             OnPrimeProjectileSpawn?.Invoke();
+            isHoldingPrimaryAttack = true;
+            pauseFrame = Time.frameCount;
+
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            int stateHash = stateInfo.fullPathHash;
+            float frozenTime = stateInfo.normalizedTime;
+
+            animator.SetBool(PrimaryAttackHash, false);
+            animator.speed = 0f;
+            animator.Update(0f);
+            StartCoroutine(HoldAnimationAtTime(stateHash, frozenTime));
         }
 
         public void AnimEvent_SpawnSecProjectile()
@@ -209,6 +244,21 @@ namespace Assets.Scripts.Player
         {
             if (!IsAnimatorValid()) return;
             animator.speed = speed;
+        }
+
+        private IEnumerator HoldAnimationAtTime(int stateHash, float normalizedTime)
+        {
+            while (isHoldingPrimaryAttack)
+            {
+                // Keep animator frozen at this position
+                animator.speed = 0f;
+                animator.Play(stateHash, 0, normalizedTime);
+                animator.Update(0f);
+                yield return null;
+            }
+
+            // Resume when no longer holding
+            animator.speed = 1f;
         }
 
     }

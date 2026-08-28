@@ -292,7 +292,11 @@ public class PlayerMovement : MonoBehaviour, IMovement
             {
                 dir.y = 0f;
                 lookDirection = dir.normalized;
-                rb.MoveRotation(Quaternion.LookRotation(lookDirection));
+                bool isFiring = playerAttacks != null && playerAttacks.isFiringPrime;
+                if (isFiring)
+                {
+                    rb.MoveRotation(Quaternion.LookRotation(lookDirection));
+                }
             }
         }
 
@@ -338,7 +342,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
             );
 
             // Don't let walk-facing override the aim-facing during an attack window.
-            bool suppressWalkRotation = playerAttacks != null && playerAttacks.IsAttacking;
+            bool suppressWalkRotation = playerAttacks != null && (playerAttacks.IsAttacking || playerAttacks.isFiringPrime);
 
             if (!usingGamepad && moveInput.sqrMagnitude > 0.0001f && !suppressWalkRotation)
                 rb.MoveRotation(Quaternion.LookRotation(moveInput.normalized));
