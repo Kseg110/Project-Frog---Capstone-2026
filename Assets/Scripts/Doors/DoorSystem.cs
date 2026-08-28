@@ -355,6 +355,22 @@ public class DoorSystem : MonoBehaviour
 
     private void CloseDoor(DoorLink link)
     {
+        if (link == null) return;
+
+        // Immediately stop opening and disable ready state
+        link.ready = false;
+
+        // Stop active movement routine if currently opening or moving
+        if (link.moveRoutine != null)
+        {
+            StopCoroutine(link.moveRoutine);
+            link.moveRoutine = null;
+        }
+
+        // Start closing sequence with animation wait
+        StartCoroutine(CloseDoorRoutine(link));
+
+        /*
         //if (link.destroyed)
         //{
         //Debug.LogWarning($"DoorSystem: Door '{link.door?.name}' was destroyed and cannot be restored.");
@@ -431,8 +447,53 @@ public class DoorSystem : MonoBehaviour
 
         if (waveRoundSystem != null)
             waveRoundSystem.OnPlayerReachedNextArea();
+        */
     }
-   
+
+    private IEnumerator CloseDoorRoutine(DoorLink link)
+    {
+        if (link.door != null)
+        {
+            // 1. Resolve Animator reference (local link animator or global fallback)
+            Animator anim = link.door.GetComponent<Animator>();
+            if (anim == null && doorAnimator != null)
+            {
+                anim = doorAnimator;
+            }
+
+            // 2. Play wiggle animation and wait for completion
+            if (anim != null && !string.IsNullOrEmpty(wiggleTriggerName))
+            {
+                anim.SetTrigger(wiggleTriggerName);
+
+                // Wait one frame so Animator transitions into the wiggle state
+                yield return null;
+
+                // Wait for clip duration
+                AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+                yield return new WaitForSeconds(stateInfo.length);
+            }
+
+            // 3. Move door back up from current position to original position
+            MoveDoor(
+                link,
+                link.originalPosition,
+                link.riseSpeed
+            );
+        }
+
+        // 4. Update tracking flags and state
+        link.opened = false;
+        link.lastClosedTime = Time.time;
+        link.playerClosed = true;
+
+        // 5. Notify round system
+        if (waveRoundSystem != null)
+        {
+            waveRoundSystem.OnPlayerReachedNextArea();
+        }
+    }
+
     internal void OnTriggerActivated(int index)
     {
         if (index < 0 || index >= links.Length) return;
