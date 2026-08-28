@@ -111,7 +111,7 @@ namespace Assets.Scripts.Player
         public void PlaySecondaryAttack()
         {
             if (!IsAnimatorValid()) return;
-            if (isHoldingSecondaryAttack) return;
+            //if (isHoldingSecondaryAttack) return;
             animator.SetBool(SecondaryAttackHash, true);
             //animator.speed = 1f;
         }
@@ -120,8 +120,8 @@ namespace Assets.Scripts.Player
         {
             if (!IsAnimatorValid()) return;
             animator.SetBool(SecondaryAttackHash, false);
-            isHoldingSecondaryAttack = false;
-            animator.speed = 1f;
+            //isHoldingSecondaryAttack = false;
+            //animator.speed = 1f;
         }
 
         public void PlayTongueAttack()
@@ -201,17 +201,26 @@ namespace Assets.Scripts.Player
         public void AnimEvent_SpawnPrimeProjectile()
         {
             OnPrimeProjectileSpawn?.Invoke();
-            isHoldingPrimaryAttack = true;
-            pauseFrame = Time.frameCount;
+            bool shouldHold = playerAttacks != null && playerAttacks.IsPrimaryInputHeld();
+            if (shouldHold)
+            {
+                isHoldingPrimaryAttack = true;
+                pauseFrame = Time.frameCount;
 
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            int stateHash = stateInfo.fullPathHash;
-            float frozenTime = stateInfo.normalizedTime;
+                AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                int stateHash = stateInfo.fullPathHash;
+                float frozenTime = stateInfo.normalizedTime;
 
-            animator.SetBool(PrimaryAttackHash, false);
-            animator.speed = 0f;
-            animator.Update(0f);
-            StartCoroutine(HoldAnimationAtTime(stateHash, frozenTime));
+                animator.SetBool(PrimaryAttackHash, false);
+                animator.speed = 0f;
+                animator.Update(0f);
+                StartCoroutine(HoldAnimationAtTime(stateHash, frozenTime));
+            }
+            else
+            {
+                animator.SetBool(PrimaryAttackHash, false);
+                animator.speed = 1f;
+            }
         }
 
         public void AnimEvent_SpawnSecProjectile()

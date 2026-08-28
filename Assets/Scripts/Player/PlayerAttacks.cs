@@ -70,6 +70,7 @@ public class PlayerAttacks : MonoBehaviour
     private const float triggerThreshold = 0.5f;
 
     private bool isBasicShotSlowed = false;
+    private bool pendingSecondaryRelease = false;
     public bool IsAttacking => isCharging || playerTongueAttack.IsActive || attackWindowTimer > 0f;
     public bool isFiringPrime => playerAnimation != null && playerAnimation.isHoldingPrimaryAttack;
 
@@ -185,16 +186,22 @@ public class PlayerAttacks : MonoBehaviour
                 }
 
                 if (secondaryHeld)
+                {
                     playerChargeAttack.UpdateCharge();
+                    
+                }
+
 
                 if (secondaryReleased)
                 {
-                    playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
-                    OnShotFired?.Invoke(true);
-                    RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
+                    //playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+                    //OnShotFired?.Invoke(true);
+                    //RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
 
-                    playerMovement.ResumeMovement();
-                    playerAnimation.StopSecondaryAttack();
+                    //playerMovement.ResumeMovement();
+                    //playerAnimation.StopSecondaryAttack();
+                    //FireSecondaryProjectile();
+                    pendingSecondaryRelease = true;
                 }
             }
             else
@@ -305,6 +312,16 @@ public class PlayerAttacks : MonoBehaviour
         }
 
         basicShotSlowTimer = Mathf.Max(basicShotSlowTimer, basicShotSlowDuration);
+    }
+    public bool IsPrimaryInputHeld()
+    {
+        if (attackAction == null) return false;
+        bool held = attackAction.IsPressed();
+        float val = 0f;
+        try { val = attackAction.ReadValue<float>(); } catch { }
+        if (!held && val >= triggerThreshold)
+            held = true;
+        return held;
     }
 
     private void Shoot(float chargePercent, Vector3? direction = null)
@@ -420,6 +437,23 @@ public class PlayerAttacks : MonoBehaviour
 
     private void FireSecondaryProjectile()
     {
+        if (playerChargeAttack != null && playerChargeAttack.IsCharging)
+        {
+            playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+            OnShotFired?.Invoke(true);
+            RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
+            lastFireTime = Time.time;
+
+            
+        }
+        else if (pendingSecondaryRelease)
+        {
+            playerChargeAttack?.CancelCharge();
+        }
+        playerMovement?.ResumeMovement();
+        playerAnimation?.StopSecondaryAttack();
+
+        pendingSecondaryRelease = false;
 
     }
 
