@@ -21,6 +21,7 @@ namespace Assets.Scripts.Player
         private static readonly int TurnSpeedHash = Animator.StringToHash("TurnSpeed"); // Float
         private static readonly int EatFlyHash = Animator.StringToHash("EatFly"); // Trigger
         private static readonly int TetherHash = Animator.StringToHash("Tether"); // Trigger 
+        private static readonly int UnTetherHash = Animator.StringToHash("UnTether"); // Trigger
         private static readonly int TakeDamageHash = Animator.StringToHash("TakeDamage"); // Trigger
         private static readonly int BloodPactHash = Animator.StringToHash("BloodPact"); // Trigger
         private static readonly int BreakTetherHash = Animator.StringToHash("BreakTether"); // Trigger
@@ -155,6 +156,13 @@ namespace Assets.Scripts.Player
             if (!IsAnimatorValid()) return;
             animator.SetTrigger(TetherHash);
             animator.SetBool(IsTetheredHash, true);
+        }
+
+        public void PlayUnTether()
+        {
+            if (!IsAnimatorValid()) return;
+            animator.SetTrigger(UnTetherHash);
+            animator.SetBool(IsTetheredHash, false);
         }
 
         public void StopTether()
