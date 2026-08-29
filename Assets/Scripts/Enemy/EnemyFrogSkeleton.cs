@@ -20,12 +20,15 @@ public class EnemyFrogSkeleton : EnemyBase
     private float attackRangeLeeway = 0.15f;
 
     private EnemyAttack enemyAttack;
+    private Animator animator;
     private bool isHandlingPostAttack = false;
 
     protected override void Awake()
     {
         base.Awake();
         enemyAttack = GetComponent<EnemyAttack>();
+        animator = GetComponent<Animator>();
+        // or GetComponentInChildren<Animator>() if the Animator sits on a child mesh
     }
 
     protected override void Update()
@@ -74,6 +77,23 @@ public class EnemyFrogSkeleton : EnemyBase
         }
     }
 
+    // Called by a player projectile (via Projectile.OnTriggerEnter) when this enemy is hit.
+    // Plays the matching reaction animation. Stagger = regular shot, KnockbackReact = charged shot.
+    public void PlayHitReaction(HitReaction reaction)
+    {
+        if (animator == null) return;
+
+        switch (reaction)
+        {
+            case HitReaction.Stagger:
+                animator.SetTrigger("Stagger");
+                break;
+            case HitReaction.Knockback:
+                animator.SetTrigger("KnockbackReact");
+                break;
+        }
+    }
+
     // Instantly rotate to face the player (Y axis only)
     private void FacePlayerInstant()
     {
@@ -94,7 +114,7 @@ public class EnemyFrogSkeleton : EnemyBase
         {
             if (Mathf.Approximately(waited, 0f))
                 //Debug.Log($"[Frog] Waiting for attack to finish on '{name}'", this);
-            waited += Time.deltaTime;
+                waited += Time.deltaTime;
             yield return null;
         }
         //Debug.Log($"[Frog] Finished waiting (waited={waited:F2}) on '{name}'", this);
@@ -121,7 +141,7 @@ public class EnemyFrogSkeleton : EnemyBase
                 if (Vector3.Distance(transform.position, retreatTarget) < 0.6f)
                     break;
                 elapsed += Time.deltaTime;
-                yield return null;  
+                yield return null;
             }
 
             // Request a new slot while movement is still disabled (safe) then re-enable movement so the agent goes to the new slot.
