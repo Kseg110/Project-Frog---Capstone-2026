@@ -78,8 +78,12 @@ namespace Assets.Scripts.Player
 
         private void UpdateMovementAnimations()
         {
-            animator.SetFloat(ForwardSpeedHash, playerMovement.speed);
-            animator.SetFloat(TurnSpeedHash, playerMovement.speed);
+            float movement = 0f;
+            if (playerMovement != null)
+                movement = playerMovement.GetMovementFraction();
+            const float dampTime = 0.1f;
+            animator.SetFloat(ForwardSpeedHash, movement, dampTime, Time.deltaTime);
+            //animator.SetFloat(TurnSpeedHash, playerMovement.speed);
         }
 
         private bool IsAnimatorValid()

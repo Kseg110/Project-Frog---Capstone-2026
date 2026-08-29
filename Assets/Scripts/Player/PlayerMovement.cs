@@ -517,4 +517,14 @@ public class PlayerMovement : MonoBehaviour, IMovement
         }
     }
 
+    // Animator helper for movement speed changes in movement blend tree
+    public float GetMovementFraction()
+    {
+        if (moveSpeed <= 0f) return 0f;
+        float currentMax = CurrentSpeed;
+        float inputFraction = speed;
+        float actualSpeed = currentMax * inputFraction;
+        return Mathf.Clamp01(actualSpeed / moveSpeed);
+    }
+
 }
