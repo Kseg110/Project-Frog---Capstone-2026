@@ -111,13 +111,13 @@ namespace Assets.Scripts.Player
                 isHoldingPrimaryAttack = false;
                 pauseFrame = -1;
                 StopAllCoroutines();
-                animator.speed = 1f;
+                animator.SetFloat("AttackSpeed", 0f);
                 animator.SetBool(PrimaryAttackHash, false);
             }
             else
             {
                 animator.SetBool(PrimaryAttackHash, false);
-                animator.speed = 1f;
+                animator.SetFloat("AttackSpeed", 1f);
             }
         }
 
@@ -225,14 +225,14 @@ namespace Assets.Scripts.Player
                 float frozenTime = stateInfo.normalizedTime;
 
                 animator.SetBool(PrimaryAttackHash, false);
-                animator.speed = 0f;
-                animator.Update(0f);
+                animator.SetFloat("AttackSpeed", 0f);
+                //animator.Update(0f);
                 StartCoroutine(HoldAnimationAtTime(stateHash, frozenTime));
             }
             else
             {
                 animator.SetBool(PrimaryAttackHash, false);
-                animator.speed = 1f;
+                animator.SetFloat("AttackSpeed", 2f);
             }
         }
 
@@ -274,14 +274,14 @@ namespace Assets.Scripts.Player
             while (isHoldingPrimaryAttack)
             {
                 // Keep animator frozen at this position
-                animator.speed = 0f;
+                animator.SetFloat("AttackSpeed", 0f);
                 animator.Play(stateHash, 0, normalizedTime);
-                animator.Update(0f);
+                //animator.Update(0f);
                 yield return null;
             }
 
             // Resume when no longer holding
-            animator.speed = 1f;
+            animator.SetFloat("AttackSpeed", 1f);
         }
 
     }
