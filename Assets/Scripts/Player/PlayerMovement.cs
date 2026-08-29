@@ -481,7 +481,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         // Debug.Log("end dash");
         PlayerDashVFX.Instance.EndDashVFX();
-        playerAnimation.StopDash();
+        //playerAnimation.StopDash();
     }
 
     public void SetInMud(bool value)

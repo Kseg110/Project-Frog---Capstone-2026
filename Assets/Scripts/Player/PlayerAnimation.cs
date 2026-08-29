@@ -26,6 +26,7 @@ namespace Assets.Scripts.Player
         private static readonly int BloodPactHash = Animator.StringToHash("BloodPact"); // Trigger
         private static readonly int BreakTetherHash = Animator.StringToHash("BreakTether"); // Trigger
         private static readonly int IsDashingHash = Animator.StringToHash("IsDashing"); // Bool
+        private static readonly int DashHash = Animator.StringToHash("Dash");// Trigger
         private static readonly int IsTetheredHash = Animator.StringToHash("IsTethered"); // Bool
         private static readonly int Health = Animator.StringToHash("Health");// float
 
@@ -137,13 +138,13 @@ namespace Assets.Scripts.Player
         public void PlayDash()
         {
             if (!IsAnimatorValid()) return;
-            animator.SetBool(IsDashingHash, true);
+            animator.SetTrigger(DashHash);
         }
-        public void StopDash()
-        {
-            if (!IsAnimatorValid()) return;
-            animator.SetBool(IsDashingHash, false);
-        }
+        //public void StopDash()
+        //{
+        //    if (!IsAnimatorValid()) return;
+        //    animator.SetBool(IsDashingHash, false);
+        //}
 
         public void PlayTakeDamage()
         {

@@ -270,6 +270,10 @@ public class PlayerAnchor : MonoBehaviour
     /// </summary>
     public void ReleaseTether(bool playReel = false)
     {
+        if (isTethered)
+        {
+            playerAnimation.PlayUnTether();
+        }
         isTethered = false;
         AnchorBase releasedAnchor = attachedAnchor;   // cache before we clear it
         attachedAnchor = null;
@@ -284,7 +288,6 @@ public class PlayerAnchor : MonoBehaviour
         }
 
         playerAnimation.StopTether();
-        playerAnimation.PlayUnTether();
         OnTetherReleased?.Invoke();
         OnAnchorChanged?.Invoke(null);
     }
