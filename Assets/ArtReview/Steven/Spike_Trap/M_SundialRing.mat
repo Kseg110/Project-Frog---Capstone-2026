@@ -23,12 +23,12 @@ Material:
   m_Name: M_SundialRing
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 2100000, guid: a18b2ca51473aeb459514fc6623941bf, type: 2}
-  m_ModifiedSerializedProperties: 0
+  m_ModifiedSerializedProperties: 2
   m_ValidKeywords:
   - _ALPHATEST_ON
   - _EMISSION
   m_InvalidKeywords: []
-  m_LightmapFlags: 4
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -39,9 +39,24 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: 78564c2bbf8ae474c806d08e9c6e439d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 2800000, guid: 78564c2bbf8ae474c806d08e9c6e439d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 78564c2bbf8ae474c806d08e9c6e439d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats: []
-    m_Colors: []
+    m_Colors:
+    - _BaseColor: {r: 0.8396226, g: 0.20990565, b: 0.20990565, a: 1}
+    - _Color: {r: 0.8396226, g: 0.20990562, b: 0.20990562, a: 1}
+    - _EmissionColor: {r: 2.608238, g: 0.42411497, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
