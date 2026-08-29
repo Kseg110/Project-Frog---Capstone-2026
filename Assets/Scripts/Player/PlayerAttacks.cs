@@ -19,7 +19,7 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private float maxChargeTime = 2f;
     [SerializeField] private float tongueAutoAimRange = 10f;
     [SerializeField] private float basicShotSlowMultiplier = 0.5f;
-    [SerializeField] private float basicShotSlowDuration = 1f;
+    [SerializeField] private float basicShotSlowDuration = 0.5f;
 
     [Header("Wind Upgrades")]
     [SerializeField] public float pointBlankRange = 10f;
@@ -155,6 +155,7 @@ public class PlayerAttacks : MonoBehaviour
         if (attackHeld && !playerMovement.IsDashing)
         {
             TryBasicShot();
+            ApplyBasicShotSlow();
         }
         else if (!attackHeld && playerAnimation != null)
         {
@@ -311,7 +312,8 @@ public class PlayerAttacks : MonoBehaviour
             isBasicShotSlowed = true;
         }
 
-        basicShotSlowTimer = Mathf.Max(basicShotSlowTimer, basicShotSlowDuration);
+        //basicShotSlowTimer = Mathf.Max(basicShotSlowTimer, basicShotSlowDuration);
+        basicShotSlowTimer = basicShotSlowDuration;
     }
     public bool IsPrimaryInputHeld()
     {

@@ -6006,7 +6006,7 @@ MonoBehaviour:
   maxChargeTime: 2
   tongueAutoAimRange: 10
   basicShotSlowMultiplier: 0.5
-  basicShotSlowDuration: 1
+  basicShotSlowDuration: 0.5
   pointBlankRange: 10
   aimCorrectionStrength: 1
   targetHeightOffset: 0
@@ -7837,6 +7837,8 @@ MonoBehaviour:
   OnAnimationComplete:
     m_PersistentCalls:
       m_Calls: []
+  isHoldingPrimaryAttack: 0
+  isHoldingSecondaryAttack: 0
 --- !u!95 &5067372081892461315 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: ae1fa9168003b9c439700a1049f5183a, type: 3}
