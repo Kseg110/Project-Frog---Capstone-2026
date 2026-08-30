@@ -6,8 +6,6 @@ public class WindShieldUpgrade : MonoBehaviour, IElementUpgrade
 
     private PlayerShieldController shield;
 
-    private int charges = 2;
-
     private void Awake()
     {
         shield = FindFirstObjectByType<PlayerShieldController>();
@@ -18,8 +16,7 @@ public class WindShieldUpgrade : MonoBehaviour, IElementUpgrade
         if (anchor.Element != AnchorElement.Wind) return;
         if (!UpgradeManager.Instance.HasUpgrade("Wind Shield")) return;
 
-        shield.GiveWindShield(charges);
-        Debug.Log("[Shield] Wind shield activated!");
+        shield.GiveWindShield();
     }
 
     public void OnElementDetached()

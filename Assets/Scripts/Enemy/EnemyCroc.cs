@@ -1,4 +1,5 @@
 using UnityEngine;
+using FMODUnity;
 
 //Summary: A ranged enemy that inherits from EnemyBase and delegates all attack behaviour to a pluggable AttackBaseSO ScriptableObject. This is for the Croc! -E.M
 
@@ -29,6 +30,9 @@ public class EnemyCroc : EnemyBase
     [SerializeField] private float eyeHeight = 1.0f;
     [Tooltip("Height above player position used as ray target for LOS checks.")]
     [SerializeField] private float targetEyeHeight = 1.0f;
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference spearThrowEvent;
 
     protected override void Awake()
     {
@@ -131,6 +135,8 @@ public class EnemyCroc : EnemyBase
         if (attackSO.CanAttack(player, transform))
         {
             attackSO.Attack(player, transform);
+
+            RuntimeManager.PlayOneShot(spearThrowEvent, transform.position);
         }
     }
 

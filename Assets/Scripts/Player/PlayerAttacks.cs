@@ -30,6 +30,7 @@ public class PlayerAttacks : MonoBehaviour
 
     [Header("FMod Events")]
     [SerializeField] private EventReference basicShotEvent;
+    [SerializeField] private EventReference basicShotEvent2;
     [SerializeField] private EventReference chargeShotEvent;
 
     public event System.Action<bool> OnShotFired;
@@ -152,6 +153,10 @@ public class PlayerAttacks : MonoBehaviour
         // PRIMARY ATTACK - Block if dashing
         if (attackHeld && !playerMovement.IsDashing)
             TryBasicShot();
+        else if (!attackHeld && playerAnimation != null)
+        {
+            playerAnimation.StopPrimaryAttack();
+        }
 
         // Tick down basic shot slow timer
         if (isBasicShotSlowed)
@@ -162,7 +167,6 @@ public class PlayerAttacks : MonoBehaviour
             {
                 isBasicShotSlowed = false;
                 playerMovement.RemoveSpeedModifier(this);
-                playerAnimation.StopPrimaryAttack();
             }
         }
 
@@ -226,14 +230,12 @@ public class PlayerAttacks : MonoBehaviour
         ApplyBasicShotSlow();
 
         //Shoot(0f, aimDirection); // now handled in FirePrimaryProjectile method
-        Shoot(0f, aimDirection); // uncomment FirePrimaryProjectile for proper animation event to fire projectile
-        /////////////////////////////////////////////////////////////////////////////
         lastFireTime = Time.time;
 
         playerMovement.FaceDirection(aimDirection);
         playerAnimation.PlayPrimaryAttack();
 
-        RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+        //RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
     }
 
 
@@ -394,10 +396,11 @@ public class PlayerAttacks : MonoBehaviour
 
     private void FirePrimaryProjectile()
     {
-        //Vector3 aimDirection = GetAimDirection();
-        //Shoot(0f, aimDirection);
+        Vector3 aimDirection = GetAimDirection();
+        Shoot(0f, aimDirection);
 
-        //RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+        RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+        RuntimeManager.PlayOneShot(basicShotEvent2, transform.position);
     }
 
     private void FireSecondaryProjectile()
