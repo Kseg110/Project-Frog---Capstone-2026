@@ -36,20 +36,11 @@ public class PlayerChargeAttack : MonoBehaviour
 
     private void Awake()
     {
-        //if (FireChargeProjectilePrefab == null || IceChargeProjectilePrefab == null || WindChargeProjectilePrefab == null)
-        //{
-        //    Debug.LogError("[PlayerChargeAttack] Missing projectile prefab assignment!", this);
-        //}
-
         // A charge attack is only ever fired from an active tether, so we need to know tether state.
         if (playerAnchor == null)
         {
             playerAnchor = GetComponent<PlayerAnchor>();
         }
-        //if (playerAnchor == null)
-        //{
-        //    Debug.LogError("[PlayerChargeAttack] No PlayerAnchor reference — charge cannot be tether-gated!", this);
-        //}
 
         playerHUD = FindAnyObjectByType<UIPlayerHUD>();
         playerAttacks = GetComponent<PlayerAttacks>();
@@ -169,8 +160,12 @@ public class PlayerChargeAttack : MonoBehaviour
 
                         // Apply charged knockback: scale from 1m to 5m with chargePercent
                         proj.knockbackDistance = Mathf.Lerp(1f, 5f, chargePercent);
+
+                        // Charged attacks play the knockback reaction on the enemy.
+                        proj.hitReaction = HitReaction.Knockback;
+                        Debug.Log($"[ChargeAttack] Set {proj.hitReaction} on instance {proj.GetInstanceID()} ({proj.gameObject.name})");
                     }
-                   
+
                     IgnorePlayerCollision(projObj);
                     break;
                 }
@@ -210,6 +205,10 @@ public class PlayerChargeAttack : MonoBehaviour
 
                         // Apply charged knockback
                         proj.knockbackDistance = Mathf.Lerp(1f, 5f, chargePercent);
+
+                        // Charged attacks play the knockback reaction on the enemy.
+                        proj.hitReaction = HitReaction.Knockback;
+                        //Debug.Log($"[ChargeAttack] Set {proj.hitReaction} on instance {proj.GetInstanceID()} ({proj.gameObject.name})");
                     }
                     else
                     {
@@ -255,6 +254,10 @@ public class PlayerChargeAttack : MonoBehaviour
                             // Apply charged knockback (same per projectile)
                             proj.knockbackDistance = Mathf.Lerp(5f, 12f, chargePercent);
 
+                            // Charged attacks play the knockback reaction on the enemy.
+                            proj.hitReaction = HitReaction.Knockback;
+                            //Debug.Log($"[ChargeAttack] Set {proj.hitReaction} on instance {proj.GetInstanceID()} ({proj.gameObject.name})");
+
                             if (HomingDartsUpgrade.Instance != null && HomingDartsUpgrade.Instance.IsEnabled())
                                 proj.EnableHomingDelayed(WindHomingDelay);
                         }
@@ -270,7 +273,7 @@ public class PlayerChargeAttack : MonoBehaviour
                                     Physics.IgnoreCollision(c1, c2);
                         }
 
-                        spawnedProjectiles.Add(projObj);        
+                        spawnedProjectiles.Add(projObj);
                     }
                     break;
                 }
