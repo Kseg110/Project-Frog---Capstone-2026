@@ -517,7 +517,8 @@ public class PlayerMovement : MonoBehaviour, IMovement
         }
     }
 
-    // Animator helper for movement speed changes in movement blend tree
+    #region animation blend helpers
+    // Animator helpers for movement speed changes in movement blend tree
     public float GetMovementFraction()
     {
         if (moveSpeed <= 0f) return 0f;
@@ -527,4 +528,14 @@ public class PlayerMovement : MonoBehaviour, IMovement
         return Mathf.Clamp01(actualSpeed / moveSpeed);
     }
 
+    public float GetForwardFraction()
+    {
+        return Mathf.Clamp(moveInput.z, -1f, 1f);
+    }
+
+    public float GetStrafeFraction()
+    {
+        return Mathf.Clamp(moveInput.x, -1f, 1f);
+    }
+    #endregion
 }

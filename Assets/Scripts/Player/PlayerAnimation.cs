@@ -16,9 +16,9 @@ namespace Assets.Scripts.Player
         private static readonly int SecondaryAttackHash = Animator.StringToHash("SecAttack"); // Bool
         private static readonly int TongueAttackHash = Animator.StringToHash("TongueAttack"); // Trigger
         private static readonly int DeathHash = Animator.StringToHash("Death"); // Trigger 
-        private static readonly int MovementSpeedHash = Animator.StringToHash("MovementSpeed"); // Float
         private static readonly int ForwardSpeedHash = Animator.StringToHash("ForwardSpeed"); // Float 
-        private static readonly int TurnSpeedHash = Animator.StringToHash("TurnSpeed"); // Float
+        private static readonly int StrafeXHash = Animator.StringToHash("StrafeX"); // Float
+        private static readonly int StrafeYHash = Animator.StringToHash("StrafeY"); // Float
         private static readonly int EatFlyHash = Animator.StringToHash("EatFly"); // Trigger
         private static readonly int TetherHash = Animator.StringToHash("Tether"); // Trigger 
         private static readonly int UnTetherHash = Animator.StringToHash("UnTether"); // Trigger
@@ -29,6 +29,8 @@ namespace Assets.Scripts.Player
         private static readonly int DashHash = Animator.StringToHash("Dash");// Trigger
         private static readonly int IsTetheredHash = Animator.StringToHash("IsTethered"); // Bool
         private static readonly int Health = Animator.StringToHash("Health");// float
+        private static readonly int AttackSpeedHash = Animator.StringToHash("AttackSpeed");// float
+        private static readonly int isAttackingHash = Animator.StringToHash("isAttacking");// Bool
 
         [Header("Animation Events")]
         // UnityEvents that can be subscribed to and or set in inspector
@@ -80,12 +82,36 @@ namespace Assets.Scripts.Player
 
         private void UpdateMovementAnimations()
         {
-            float movement = 0f;
+            const float dampTime = 0.08f;
+
+            bool isHoldingFire = isHoldingPrimaryAttack || (playerAttacks != null && playerAttacks.IsPrimaryInputHeld());
+            animator.SetBool(isAttackingHash, isHoldingFire);
+
+            float forwardFrac = 0f;
+            float strafeFrac = 0f;
+            float moveMag = 0f;
+
+
+            //if (playerMovement != null)
+            //{
+            //    movementSpeed = playerMovement.GetMovementFraction();
+            //    animator.SetFloat(ForwardSpeedHash, movementSpeed, dampTime, Time.deltaTime);
+            //}
+
             if (playerMovement != null)
-                movement = playerMovement.GetMovementFraction();
-            const float dampTime = 0.1f;
-            animator.SetFloat(ForwardSpeedHash, movement, dampTime, Time.deltaTime);
-            //animator.SetFloat(TurnSpeedHash, playerMovement.speed);
+                {
+                    forwardFrac = playerMovement.GetForwardFraction();
+                    strafeFrac = playerMovement.GetStrafeFraction();
+                    moveMag = playerMovement.GetMovementSpeed();
+                }
+
+            // 1D locomotion blend tree
+            float locomotionValue = Mathf.Clamp01(moveMag) * 2f;
+            animator.SetFloat(ForwardSpeedHash, locomotionValue, dampTime, Time.deltaTime);
+
+            // 2D strafe blend tree
+            animator.SetFloat(StrafeXHash, strafeFrac, dampTime, Time.deltaTime);
+            animator.SetFloat(StrafeYHash, forwardFrac, dampTime, Time.deltaTime);
         }
 
         private bool IsAnimatorValid()
