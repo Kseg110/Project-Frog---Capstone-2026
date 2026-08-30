@@ -97,8 +97,20 @@ public class DoorSystem : MonoBehaviour
     [Header("References")]
     [SerializeField] private WaveRoundSystem waveRoundSystem;
     [SerializeField] private int currentWave;
+
+    [Header("Animation Settings")]
+    [SerializeField] private Animator doorAnimator;
+    [SerializeField] private string wiggleStateName = "DoorWiggle";
+    [SerializeField] private string wiggleTriggerName = "Wiggle";
+
     private void Awake()
     {
+        // Auto-assign Animator if not set in Inspector
+        if (doorAnimator == null)
+        {
+            doorAnimator = GetComponent<Animator>();
+        }
+
         if (waveRoundSystem == null)
             waveRoundSystem = FindAnyObjectByType<WaveRoundSystem>();
 
@@ -206,6 +218,31 @@ public class DoorSystem : MonoBehaviour
 
     private void OpenDoor(DoorLink link)
     {
+        if (link.door == null)
+        {
+            link.opened = true;
+            return;
+        }
+
+        StartCoroutine(OpenDoorRoutine(link));
+
+        /*
+        // Play DoorWiggle animation before lowering if an Animator is available
+        Animator anim = link.door.GetComponent<Animator>();
+        if (anim == null && doorAnimator != null) anim = doorAnimator;
+
+        if (anim != null)
+        {
+            anim.Play(wiggleStateName, 0, 0f);
+        }
+
+        // Lower the door relative to original position
+        Vector3 target = link.originalPosition + Vector3.down * link.lowerDistance;
+        MoveDoor(link, target, link.lowerSpeed);
+        link.opened = true;
+        */
+
+        /*
         if (link.doorAnimator != null)
         {
             bool hasBoolOpen = false;
@@ -236,7 +273,7 @@ public class DoorSystem : MonoBehaviour
         {
             link.opened = true;
             return;
-        }
+        }*/
 
         //if (link.destroyDoor)
         //{
@@ -280,16 +317,60 @@ public class DoorSystem : MonoBehaviour
         */
 
         // NEW: Lower the door instead of disabling anything.
-        Vector3 target = link.originalPosition + Vector3.down * link.lowerDistance;
+        //Vector3 target = link.originalPosition + Vector3.down * link.lowerDistance;
 
-        MoveDoor(link, target, link.lowerSpeed);
-        link.opened = true;
+        //MoveDoor(link, target, link.lowerSpeed);
+        //link.opened = true;
 
         //Debug.Log($"DoorSystem: Door '{link.door?.name}' lowered by {link.lowerDistance} units.");
     }
 
+    private IEnumerator OpenDoorRoutine(DoorLink link)
+    {
+        // 1. Resolve Animator reference: local link animator, or global fallback
+        Animator anim = link.door.GetComponent<Animator>();
+        if (anim == null && doorAnimator != null)
+        {
+            anim = doorAnimator;
+        }
+
+        // 2. Trigger animation and wait for clip duration
+        if (anim != null && !string.IsNullOrEmpty(wiggleTriggerName))
+        {
+            anim.SetTrigger(wiggleTriggerName);
+
+            // Wait one frame so Animator transitions into the new state
+            yield return null;
+
+            // Get the current animation clip length and wait for it to finish
+            AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+            yield return new WaitForSeconds(stateInfo.length);
+        }
+
+        // 3. Lower door position after animation completes
+        Vector3 target = link.originalPosition + Vector3.down * link.lowerDistance;
+        MoveDoor(link, target, link.lowerSpeed);
+        link.opened = true;
+    }
+
     private void CloseDoor(DoorLink link)
     {
+        if (link == null) return;
+
+        // Immediately stop opening and disable ready state
+        link.ready = false;
+
+        // Stop active movement routine if currently opening or moving
+        if (link.moveRoutine != null)
+        {
+            StopCoroutine(link.moveRoutine);
+            link.moveRoutine = null;
+        }
+
+        // Start closing sequence with animation wait
+        StartCoroutine(CloseDoorRoutine(link));
+
+        /*
         //if (link.destroyed)
         //{
         //Debug.LogWarning($"DoorSystem: Door '{link.door?.name}' was destroyed and cannot be restored.");
@@ -366,8 +447,53 @@ public class DoorSystem : MonoBehaviour
 
         if (waveRoundSystem != null)
             waveRoundSystem.OnPlayerReachedNextArea();
+        */
     }
-   
+
+    private IEnumerator CloseDoorRoutine(DoorLink link)
+    {
+        if (link.door != null)
+        {
+            // 1. Resolve Animator reference (local link animator or global fallback)
+            Animator anim = link.door.GetComponent<Animator>();
+            if (anim == null && doorAnimator != null)
+            {
+                anim = doorAnimator;
+            }
+
+            // 2. Play wiggle animation and wait for completion
+            if (anim != null && !string.IsNullOrEmpty(wiggleTriggerName))
+            {
+                anim.SetTrigger(wiggleTriggerName);
+
+                // Wait one frame so Animator transitions into the wiggle state
+                yield return null;
+
+                // Wait for clip duration
+                AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+                yield return new WaitForSeconds(stateInfo.length);
+            }
+
+            // 3. Move door back up from current position to original position
+            MoveDoor(
+                link,
+                link.originalPosition,
+                link.riseSpeed
+            );
+        }
+
+        // 4. Update tracking flags and state
+        link.opened = false;
+        link.lastClosedTime = Time.time;
+        link.playerClosed = true;
+
+        // 5. Notify round system
+        if (waveRoundSystem != null)
+        {
+            waveRoundSystem.OnPlayerReachedNextArea();
+        }
+    }
+
     internal void OnTriggerActivated(int index)
     {
         if (index < 0 || index >= links.Length) return;
