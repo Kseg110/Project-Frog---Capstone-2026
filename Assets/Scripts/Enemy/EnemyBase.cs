@@ -159,7 +159,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
             health.TakeDmg(dmg);
         }
 
-        if (enemyFlash != null)
+        if (enemyFlash != null && (dmg <health.CurrentHealth))
         {
             enemyFlash.Flash();
         }
@@ -170,7 +170,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
         if (health != null)
             health.TakeDmg(dmg);
 
-        if (enemyFlash != null)
+        if (enemyFlash != null && (dmg < health.CurrentHealth))
             enemyFlash.Flash();
 
         if (effectType == "Burn")
@@ -197,7 +197,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
         float damageAmount = (percent / 100f) * health.maxHealth;
         health.TakeDmg(damageAmount);
 
-        if (enemyFlash != null)
+        if (enemyFlash != null && (damageAmount < health.CurrentHealth))
         {
             enemyFlash.Flash();
         }

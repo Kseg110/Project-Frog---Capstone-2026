@@ -30,6 +30,7 @@ public class PlayerAttacks : MonoBehaviour
 
     [Header("FMod Events")]
     [SerializeField] private EventReference basicShotEvent;
+    [SerializeField] private EventReference basicShotEvent2;
     [SerializeField] private EventReference chargeShotEvent;
 
     public event System.Action<bool> OnShotFired;
@@ -434,6 +435,7 @@ public class PlayerAttacks : MonoBehaviour
         Vector3 aimDirection = GetAimDirection();
         Shoot(0f, aimDirection);
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
+        RuntimeManager.PlayOneShot(basicShotEvent2, transform.position);
         lastFireTime = Time.time;
     }
 
