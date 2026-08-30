@@ -9,6 +9,10 @@ public class PlayerTongueAttack : MonoBehaviour
     [SerializeField] private float retractSpeed = 25f;
     [SerializeField] private float tongueWidth = 0.3f;
 
+    [Header("Tongue Mesh Settings")]
+    [SerializeField] private float baseScaleZ = 1f;
+    [SerializeField] private float scalePerUnit = 1f;
+
     [Header("Wall Collision")]
     [Tooltip("Layers that block the tongue and cause it to reel back on contact (e.g. Walls).")]
     [SerializeField] private LayerMask wallLayers;
@@ -23,6 +27,7 @@ public class PlayerTongueAttack : MonoBehaviour
     private bool extending = false;
     private bool retracting = false;
     private Vector3 tongueLocation;
+    private Vector3 initialPosition;
     public bool IsActive => extending || retracting;
     public System.Action OnTongueFinished;
 
@@ -43,16 +48,12 @@ public class PlayerTongueAttack : MonoBehaviour
     /// Begins extending the tongue. Does nothing if already retracting. + Animation
     /// </summary>
     
-    public void TongueAnimHelper()
-    {
-        playerAnimation.PlayTongueAttack();
-        BeginTongueExtend();
-    }
     public void BeginTongueExtend()
     {
         if (retracting) return;
         extending = true;
         retracting = false;
+        playerAnimation.SetAnimatorSpeed(0f);
     }
 
     /// <summary>
@@ -66,6 +67,7 @@ public class PlayerTongueAttack : MonoBehaviour
             extending = false;
             retracting = true;
         }
+        playerAnimation.SetAnimatorSpeed(1f);
     }
 
     private void Update()
@@ -121,7 +123,9 @@ public class PlayerTongueAttack : MonoBehaviour
 
     private void UpdateTongueVisual()
     {
-        tongueMesh.localScale = new Vector3(tongueWidth, currentLength / 2f, tongueWidth);
-        tongueMesh.localPosition = tongueLocation + new Vector3(0, 0, currentLength / 2f); //MAKE THIS 0, 0, 0 WHEN FINAL MESH IS ADDED, And make sure the pivot for that mesh isn't dead center.
+        float scaleZ = baseScaleZ + (currentLength * scalePerUnit);
+        tongueMesh.localScale = new Vector3(tongueMesh.localScale.x, tongueMesh.localScale.y, scaleZ);
+        //tongueMesh.localPosition = tongueLocation + new Vector3(0, 0, 0);
+        //tongueMesh.localPosition = tongueLocation + new Vector3(0, 0, currentLength / 2f); //MAKE THIS 0, 0, 0 WHEN FINAL MESH IS ADDED, And make sure the pivot for that mesh isn't dead center.
     }
 }

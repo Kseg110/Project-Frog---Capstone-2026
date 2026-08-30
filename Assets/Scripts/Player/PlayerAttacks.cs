@@ -19,7 +19,7 @@ public class PlayerAttacks : MonoBehaviour
     [SerializeField] private float maxChargeTime = 2f;
     [SerializeField] private float tongueAutoAimRange = 10f;
     [SerializeField] private float basicShotSlowMultiplier = 0.5f;
-    [SerializeField] private float basicShotSlowDuration = 1f;
+    [SerializeField] private float basicShotSlowDuration = 0.5f;
 
     [Header("Wind Upgrades")]
     [SerializeField] public float pointBlankRange = 10f;
@@ -71,7 +71,9 @@ public class PlayerAttacks : MonoBehaviour
     private const float triggerThreshold = 0.5f;
 
     private bool isBasicShotSlowed = false;
+    private bool pendingSecondaryRelease = false;
     public bool IsAttacking => isCharging || playerTongueAttack.IsActive || attackWindowTimer > 0f;
+    public bool isFiringPrime => playerAnimation != null && playerAnimation.isHoldingPrimaryAttack;
 
     private void Awake()
     {
@@ -152,7 +154,10 @@ public class PlayerAttacks : MonoBehaviour
 
         // PRIMARY ATTACK - Block if dashing
         if (attackHeld && !playerMovement.IsDashing)
+        {
             TryBasicShot();
+            ApplyBasicShotSlow();
+        }
         else if (!attackHeld && playerAnimation != null)
         {
             playerAnimation.StopPrimaryAttack();
@@ -183,16 +188,22 @@ public class PlayerAttacks : MonoBehaviour
                 }
 
                 if (secondaryHeld)
+                {
                     playerChargeAttack.UpdateCharge();
+                    
+                }
+
 
                 if (secondaryReleased)
                 {
-                    playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
-                    OnShotFired?.Invoke(true);
-                    RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
+                    //playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+                    //OnShotFired?.Invoke(true);
+                    //RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
 
-                    playerMovement.ResumeMovement();
-                    playerAnimation.StopSecondaryAttack();
+                    //playerMovement.ResumeMovement();
+                    //playerAnimation.StopSecondaryAttack();
+                    //FireSecondaryProjectile();
+                    pendingSecondaryRelease = true;
                 }
             }
             else
@@ -222,9 +233,23 @@ public class PlayerAttacks : MonoBehaviour
     private void TryBasicShot()
     {
         if (playerTongueAttack.IsActive) return;
+        Vector3 aimDirection = GetAimDirection();
+
+        if (playerAnimation != null && playerAnimation.isHoldingPrimaryAttack)
+        {
+            // make player face direction of fire while holding shoot input
+            playerMovement.FaceDirection(aimDirection);
+            if (playerAnimation.PausedThisFrame)
+                return;
+            if (Time.time >= lastFireTime + fireCooldown)
+            {
+                FirePrimaryProjectile();
+            }
+            return;
+        }
+
         if (Time.time < lastFireTime + fireCooldown) return;
 
-        Vector3 aimDirection = GetAimDirection();
         attackWindowTimer = attackWindowDuration;
         OnShotFired?.Invoke(false);
         ApplyBasicShotSlow();
@@ -288,7 +313,18 @@ public class PlayerAttacks : MonoBehaviour
             isBasicShotSlowed = true;
         }
 
-        basicShotSlowTimer = Mathf.Max(basicShotSlowTimer, basicShotSlowDuration);
+        //basicShotSlowTimer = Mathf.Max(basicShotSlowTimer, basicShotSlowDuration);
+        basicShotSlowTimer = basicShotSlowDuration;
+    }
+    public bool IsPrimaryInputHeld()
+    {
+        if (attackAction == null) return false;
+        bool held = attackAction.IsPressed();
+        float val = 0f;
+        try { val = attackAction.ReadValue<float>(); } catch { }
+        if (!held && val >= triggerThreshold)
+            held = true;
+        return held;
     }
 
     private void Shoot(float chargePercent, Vector3? direction = null)
@@ -398,19 +434,40 @@ public class PlayerAttacks : MonoBehaviour
     {
         Vector3 aimDirection = GetAimDirection();
         Shoot(0f, aimDirection);
-
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
         RuntimeManager.PlayOneShot(basicShotEvent2, transform.position);
+        lastFireTime = Time.time;
     }
 
     private void FireSecondaryProjectile()
     {
+        if (playerChargeAttack != null && playerChargeAttack.IsCharging)
+        {
+            playerChargeAttack.ReleaseCharge(firePoint.position, GetAimDirection());
+            OnShotFired?.Invoke(true);
+            RuntimeManager.PlayOneShot(chargeShotEvent, transform.position);
+            lastFireTime = Time.time;
+
+            
+        }
+        else if (pendingSecondaryRelease)
+        {
+            playerChargeAttack?.CancelCharge();
+        }
+        playerMovement?.ResumeMovement();
+        playerAnimation?.StopSecondaryAttack();
+
+        pendingSecondaryRelease = false;
 
     }
 
     private void ReleaseTongue()
     {
-
+        // animation event fires tongue at the right frame of animation
+        if (playerTongueAttack != null)
+        {
+            playerTongueAttack.BeginTongueExtend();
+        }
     }
 
     private Vector3 ApplyPerspectiveCorrection(Vector3 baseDirection)
@@ -453,11 +510,14 @@ public class PlayerAttacks : MonoBehaviour
     private void TryTongue()
     {
         if (isCharging) return;
+        if (playerTongueAttack.IsActive) return;
+
+        // play tongue attack animation
+        playerAnimation.PlayTongueAttack();
 
         Vector3 aimDirection = GetTongueAimDirection();
         playerMovement.StopMovement(aimDirection);
         transform.rotation = Quaternion.LookRotation(aimDirection);
-        playerTongueAttack.TongueAnimHelper();
     }
 
     private Vector3 GetTongueAimDirection()
