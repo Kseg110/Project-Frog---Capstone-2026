@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Assets.Scripts.Player
@@ -15,16 +16,21 @@ namespace Assets.Scripts.Player
         private static readonly int SecondaryAttackHash = Animator.StringToHash("SecAttack"); // Bool
         private static readonly int TongueAttackHash = Animator.StringToHash("TongueAttack"); // Trigger
         private static readonly int DeathHash = Animator.StringToHash("Death"); // Trigger 
-        private static readonly int MovementSpeedHash = Animator.StringToHash("MovementSpeed"); // Float
         private static readonly int ForwardSpeedHash = Animator.StringToHash("ForwardSpeed"); // Float 
-        private static readonly int TurnSpeedHash = Animator.StringToHash("TurnSpeed"); // Float
+        private static readonly int StrafeXHash = Animator.StringToHash("StrafeX"); // Float
+        private static readonly int StrafeYHash = Animator.StringToHash("StrafeY"); // Float
         private static readonly int EatFlyHash = Animator.StringToHash("EatFly"); // Trigger
         private static readonly int TetherHash = Animator.StringToHash("Tether"); // Trigger 
+        private static readonly int UnTetherHash = Animator.StringToHash("UnTether"); // Trigger
         private static readonly int TakeDamageHash = Animator.StringToHash("TakeDamage"); // Trigger
         private static readonly int BloodPactHash = Animator.StringToHash("BloodPact"); // Trigger
         private static readonly int BreakTetherHash = Animator.StringToHash("BreakTether"); // Trigger
         private static readonly int IsDashingHash = Animator.StringToHash("IsDashing"); // Bool
+        private static readonly int DashHash = Animator.StringToHash("Dash");// Trigger
         private static readonly int IsTetheredHash = Animator.StringToHash("IsTethered"); // Bool
+        private static readonly int Health = Animator.StringToHash("Health");// float
+        private static readonly int AttackSpeedHash = Animator.StringToHash("AttackSpeed");// float
+        private static readonly int isAttackingHash = Animator.StringToHash("isAttacking");// Bool
 
         [Header("Animation Events")]
         // UnityEvents that can be subscribed to and or set in inspector
@@ -33,6 +39,13 @@ namespace Assets.Scripts.Player
         public UnityEvent OnFlyEaten;
         public UnityEvent OnTongueRelease;
         public UnityEvent OnAnimationComplete;
+
+        // Tracks if player is holding fire input
+        public bool isHoldingPrimaryAttack = false;
+        public bool isHoldingSecondaryAttack = false;
+        private int pauseFrame = -1;
+        private Health playerHealth;
+        public bool PausedThisFrame => pauseFrame == Time.frameCount;
 
 
         private void Awake()
@@ -45,6 +58,9 @@ namespace Assets.Scripts.Player
 
             if (animator == null)
                 animator = GetComponent<Animator>();
+
+            if (playerHealth == null)
+                playerHealth = GetComponentInParent<Health>();
 
             if (animator == null)
             {
@@ -59,12 +75,43 @@ namespace Assets.Scripts.Player
                 return;
 
             UpdateMovementAnimations();
+
+            float currentHealth = playerHealth != null ? playerHealth.CurrentHealth : 0f;
+            animator.SetFloat(Health, currentHealth);
         }
 
         private void UpdateMovementAnimations()
         {
-            animator.SetFloat(ForwardSpeedHash, playerMovement.speed);
-            animator.SetFloat(TurnSpeedHash, playerMovement.speed);
+            const float dampTime = 0.08f;
+
+            bool isHoldingFire = isHoldingPrimaryAttack || (playerAttacks != null && playerAttacks.IsPrimaryInputHeld());
+            animator.SetBool(isAttackingHash, isHoldingFire);
+
+            float forwardFrac = 0f;
+            float strafeFrac = 0f;
+            float moveMag = 0f;
+
+
+            //if (playerMovement != null)
+            //{
+            //    movementSpeed = playerMovement.GetMovementFraction();
+            //    animator.SetFloat(ForwardSpeedHash, movementSpeed, dampTime, Time.deltaTime);
+            //}
+
+            if (playerMovement != null)
+                {
+                    forwardFrac = playerMovement.GetForwardFraction();
+                    strafeFrac = playerMovement.GetStrafeFraction();
+                    moveMag = playerMovement.GetMovementSpeed();
+                }
+
+            // 1D locomotion blend tree
+            float locomotionValue = Mathf.Clamp01(moveMag) * 2f;
+            animator.SetFloat(ForwardSpeedHash, locomotionValue, dampTime, Time.deltaTime);
+
+            // 2D strafe blend tree
+            animator.SetFloat(StrafeXHash, strafeFrac, dampTime, Time.deltaTime);
+            animator.SetFloat(StrafeYHash, forwardFrac, dampTime, Time.deltaTime);
         }
 
         private bool IsAnimatorValid()
@@ -79,13 +126,18 @@ namespace Assets.Scripts.Player
         public void PlayPrimaryAttack()
         {
             if (!IsAnimatorValid()) return;
+            if (isHoldingPrimaryAttack) return;
             animator.SetBool(PrimaryAttackHash, true);
+            //animator.SetFloat("AttackSpeed", 1f);
         }
 
         public void StopPrimaryAttack()
         {
             if (!IsAnimatorValid()) return;
-            animator.SetBool(PrimaryAttackHash, false);
+
+                isHoldingPrimaryAttack = false;
+                animator.SetFloat("AttackSpeed", 1f);
+                animator.SetBool(PrimaryAttackHash, false);
         }
 
         public void PlaySecondaryAttack()
@@ -112,13 +164,13 @@ namespace Assets.Scripts.Player
         public void PlayDash()
         {
             if (!IsAnimatorValid()) return;
-            animator.SetBool(IsDashingHash, true);
+            animator.SetTrigger(DashHash);
         }
-        public void StopDash()
-        {
-            if (!IsAnimatorValid()) return;
-            animator.SetBool(IsDashingHash, false);
-        }
+        //public void StopDash()
+        //{
+        //    if (!IsAnimatorValid()) return;
+        //    animator.SetBool(IsDashingHash, false);
+        //}
 
         public void PlayTakeDamage()
         {
@@ -131,6 +183,13 @@ namespace Assets.Scripts.Player
             if (!IsAnimatorValid()) return;
             animator.SetTrigger(TetherHash);
             animator.SetBool(IsTetheredHash, true);
+        }
+
+        public void PlayUnTether()
+        {
+            if (!IsAnimatorValid()) return;
+            animator.SetTrigger(UnTetherHash);
+            animator.SetBool(IsTetheredHash, false);
         }
 
         public void StopTether()
@@ -177,6 +236,18 @@ namespace Assets.Scripts.Player
         public void AnimEvent_SpawnPrimeProjectile()
         {
             OnPrimeProjectileSpawn?.Invoke();
+            bool shouldHold = playerAttacks != null && playerAttacks.IsPrimaryInputHeld();
+            if (shouldHold)
+            {
+                isHoldingPrimaryAttack = true;
+
+                animator.SetFloat("AttackSpeed", 0f);
+            }
+            else
+            {
+                animator.SetBool(PrimaryAttackHash, false);
+                animator.SetFloat("AttackSpeed", 2f);
+            }
         }
 
         public void AnimEvent_SpawnSecProjectile()
@@ -203,6 +274,13 @@ namespace Assets.Scripts.Player
             OnAnimationComplete?.Invoke();
         }
         #endregion
+
+        // Animator speed helped funciton to hold pose easily without extra events
+        public void SetAnimatorSpeed(float speed)
+        {
+            if (!IsAnimatorValid()) return;
+            animator.speed = speed;
+        }
 
     }
 }

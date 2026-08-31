@@ -315,7 +315,7 @@ public class EnemyKnockback : MonoBehaviour
                     }
                 }
 
-                if (Vector3.Distance(oldPosition, rb.position) < 0.001f && !rb.isKinematic) { Debug.Log($"[EnemyKnockback] Knockback movement stalled on '{name}' (oldPos==newPos) — breaking.", this); break; } else { Vector3 newPos = rb.isKinematic ? transform.position : rb.position; Debug.Log($"[EnemyKnockback] '{name}' moved from {oldPosition} to {newPos} during knockback.", this); }
+                if (Vector3.Distance(oldPosition, rb.position) < 0.001f && !rb.isKinematic) { /* Debug.Log($"[EnemyKnockback] Knockback movement stalled on '{name}' (oldPos==newPos) — breaking.", this); break; } else { Vector3 newPos = rb.isKinematic ? transform.position : rb.position; Debug.Log($"[EnemyKnockback] '{name}' moved from {oldPosition} to {newPos} during knockback.", this); */ }
             }
             elapsed += Time.fixedDeltaTime;
 
