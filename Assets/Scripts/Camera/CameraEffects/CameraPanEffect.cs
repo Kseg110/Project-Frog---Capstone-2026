@@ -15,10 +15,32 @@ public class CameraPanEffect : CameraEffectBase
     [SerializeField]
     private float moveSpeed = 20f;
 
+    // =========================================================
+    // GLOBAL PAN
+    // =========================================================
+    //
+    // FALSE:
+    //     Camera is not currently in an active pan.
+    //
+    // TRUE:
+    //     Camera pan is active.
+    //
+    // IMPORTANT:
+    // GlobalPanActive is NOT turned on until the camera
+    // startup/ready timer has finished.
+    //
+    // It is turned OFF only after the entire pan AND return
+    // have completed.
+    // =========================================================
+
     public static bool GlobalPanActive = false;
 
     [SerializeField]
     private bool GlobalPanActiveInspector;
+
+    // =========================================================
+    // CAMERA TRANSFORM
+    // =========================================================
 
     private Transform CameraTransform
     {
@@ -39,6 +61,10 @@ public class CameraPanEffect : CameraEffectBase
 
     [SerializeField]
     private float pausePointMoveTimer = 0f;
+
+    [SerializeField]
+    [Min(0.01f)]
+    private float panMoveTime = 3f;
 
     // =========================================================
     // CAMERA STARTUP
@@ -405,6 +431,8 @@ public class CameraPanEffect : CameraEffectBase
 
     private void Awake()
     {
+        GlobalPanActive = false;
+
         if (controller == null)
         {
             controller =
@@ -479,7 +507,18 @@ public class CameraPanEffect : CameraEffectBase
             return;
         }
 
-        GlobalPanActive = true;
+        // Pause-point movement is an active camera operation.
+        // It can only activate GlobalPanActive if the camera
+        // is already ready.
+
+        if (cameraReady)
+        {
+            GlobalPanActive = true;
+        }
+        else
+        {
+            GlobalPanActive = false;
+        }
 
         movingToPausePoint = true;
         returningFromPausePoint = false;
@@ -490,7 +529,7 @@ public class CameraPanEffect : CameraEffectBase
 
         float t =
             Mathf.Clamp01(
-                pausePointMoveTimer / 1f
+                pausePointMoveTimer / panMoveTime
             );
 
         cam.position =
@@ -544,7 +583,9 @@ public class CameraPanEffect : CameraEffectBase
         returningFromPausePoint = false;
         atPausePoint = false;
 
-        GlobalPanActive = true;
+        // Do not activate before ready.
+        GlobalPanActive =
+            cameraReady;
     }
 
     public void EndPausePoint()
@@ -560,7 +601,8 @@ public class CameraPanEffect : CameraEffectBase
 
         pausePointMoveTimer = 0f;
 
-        GlobalPanActive = true;
+        GlobalPanActive =
+            cameraReady;
     }
 
     // =========================================================
@@ -577,24 +619,11 @@ public class CameraPanEffect : CameraEffectBase
         if (cam == null)
             return;
 
-        // =====================================================
-        // START RETURN FROM THE CAMERA'S ACTUAL CURRENT
-        // POSITION.
-        //
-        // IMPORTANT:
-        // DO NOT USE PAUSEPOINT.position HERE.
-        // The camera may have been moved somewhere else.
-        // =====================================================
-
         if (pausePointMoveTimer <= 0f)
         {
             pauseReturnStartPosition = cam.position;
             pauseReturnStartRotation = cam.rotation;
         }
-
-        // =====================================================
-        // RETURN TARGET
-        // =====================================================
 
         Vector3 targetPosition =
             panStart_EndObjects != null
@@ -606,24 +635,16 @@ public class CameraPanEffect : CameraEffectBase
                 ? panStart_EndObjects.rotation
                 : pauseReturnRotation;
 
-        // =====================================================
-        // EXACTLY 1 SECOND
-        // =====================================================
-
-        pausePointMoveTimer += Time.unscaledDeltaTime;
+        pausePointMoveTimer +=
+            Time.unscaledDeltaTime;
 
         float t =
             Mathf.Clamp01(
-                pausePointMoveTimer / 1f
+                pausePointMoveTimer / panMoveTime
             );
 
-        // Smooth but does NOT snap.
-        float easedT = EaseInOutQuad(t);
-
-        // =====================================================
-        // MOVE FROM CURRENT CAMERA POSITION
-        // TO THE ACTUAL RETURN TARGET
-        // =====================================================
+        float easedT =
+            EaseInOutQuad(t);
 
         cam.position =
             Vector3.Lerp(
@@ -642,14 +663,8 @@ public class CameraPanEffect : CameraEffectBase
         desiredPosition = cam.position;
         desiredRotation = cam.rotation;
 
-        // =====================================================
-        // FINISHED
-        // =====================================================
-
         if (t >= 1f)
         {
-            // Force the exact final position only at the
-            // END of the one-second return.
             cam.position = targetPosition;
             cam.rotation = targetRotation;
 
@@ -675,9 +690,20 @@ public class CameraPanEffect : CameraEffectBase
         GlobalPanActiveInspector =
             GlobalPanActive;
 
+        // =====================================================
+        // CAMERA READY TIMER
+        // =====================================================
+        //
+        // GlobalPanActive MUST stay false until this timer
+        // reaches the ready time.
+        //
+        // =====================================================
+
         if (!cameraReady)
         {
             cameraReadyTimer += deltaTime;
+
+            GlobalPanActive = false;
 
             if (cameraReadyTimer <
                 cameraStartupDelay)
@@ -686,6 +712,27 @@ public class CameraPanEffect : CameraEffectBase
             }
 
             cameraReady = true;
+        }
+
+        // =====================================================
+        // READY HAS NOW FINISHED
+        // =====================================================
+        //
+        // If a pan is already running, activate GlobalPanActive
+        // now.
+        //
+        // This means the pan can begin internally while the
+        // camera is not ready, but GlobalPanActive stays false
+        // until the ready timer completes.
+        //
+        // =====================================================
+
+        if (state != State.Idle ||
+            movingToPausePoint ||
+            returningFromPausePoint ||
+            atPausePoint)
+        {
+            GlobalPanActive = true;
         }
 
         Transform cam = CameraTransform;
@@ -753,15 +800,6 @@ public class CameraPanEffect : CameraEffectBase
 
     // =========================================================
     // MOVE TO SPLINE START
-    // =========================================================
-    //
-    // IMPORTANT:
-    //
-    // This is ONLY done once at the beginning.
-    //
-    // Once FollowingSpline starts, the camera is controlled
-    // ONLY by EvaluatePosition on the spline.
-    //
     // =========================================================
 
     private void MoveCameraToSplineStart(float deltaTime)
@@ -877,17 +915,6 @@ public class CameraPanEffect : CameraEffectBase
     // =========================================================
     // FOLLOW SPLINE
     // =========================================================
-    //
-    // THIS IS THE IMPORTANT FIX.
-    //
-    // The camera NEVER gets snapped to a knot when
-    // holdTime == 0.
-    //
-    // The spline itself controls the camera position.
-    //
-    // PanPoints ONLY provide hold times.
-    //
-    // =========================================================
 
     private void FollowSpline(float deltaTime)
     {
@@ -908,6 +935,7 @@ public class CameraPanEffect : CameraEffectBase
 
         if (knotCount < 2)
         {
+            MarkDoorReady();
             StartReturning();
             return;
         }
@@ -919,7 +947,7 @@ public class CameraPanEffect : CameraEffectBase
         }
 
         // =====================================================
-        // HOLDING AT A KNOT
+        // HOLDING AT SPLINE POINT
         // =====================================================
 
         if (holdingAtSplinePoint)
@@ -932,15 +960,6 @@ public class CameraPanEffect : CameraEffectBase
             // =================================================
             // ZERO HOLD
             // =================================================
-            //
-            // IMPORTANT:
-            //
-            // If hold time is zero, NEVER force the camera
-            // to the knot and NEVER start a hold.
-            //
-            // Continue immediately.
-            //
-            // =================================================
 
             if (holdTime <= 0.000001f)
             {
@@ -951,7 +970,6 @@ public class CameraPanEffect : CameraEffectBase
 
                 if (currentSplinePointIndex >= knotCount)
                 {
-                    MarkDoorReady();
                     StartReturning();
                     return;
                 }
@@ -960,7 +978,7 @@ public class CameraPanEffect : CameraEffectBase
             }
 
             // =================================================
-            // POSITIVE HOLD
+            // REAL HOLD
             // =================================================
 
             Vector3 knotPosition =
@@ -968,13 +986,20 @@ public class CameraPanEffect : CameraEffectBase
                     currentSplinePointIndex
                 );
 
-            // Only a REAL hold is allowed to place the camera
-            // exactly on the knot.
             cam.position =
                 knotPosition;
 
             desiredPosition =
                 knotPosition;
+
+            // =================================================
+            // FINAL POINT
+            // =================================================
+            //
+            // Door was already made ready when this point was
+            // reached. The hold does NOT delay the door.
+            //
+            // =================================================
 
             splinePointHoldTimer +=
                 deltaTime;
@@ -993,7 +1018,6 @@ public class CameraPanEffect : CameraEffectBase
 
             if (currentSplinePointIndex >= knotCount)
             {
-                MarkDoorReady();
                 StartReturning();
             }
 
@@ -1003,19 +1027,6 @@ public class CameraPanEffect : CameraEffectBase
         // =====================================================
         // MOVE ALONG SPLINE
         // =====================================================
-        //
-        // We advance by distance.
-        //
-        // We do NOT calculate knot progress using:
-        //
-        // knotIndex / (knotCount - 1)
-        //
-        // because knots are not necessarily evenly distributed.
-        //
-        // =====================================================
-
-        float previousDistance =
-            splineDistance;
 
         float distanceThisFrame =
             Mathf.Max(
@@ -1033,10 +1044,11 @@ public class CameraPanEffect : CameraEffectBase
             );
 
         // =====================================================
-        // CHECK WHETHER A POSITIVE-HOLD KNOT WAS CROSSED
+        // CHECK KNOTS
         // =====================================================
 
-        while (currentSplinePointIndex < knotCount)
+        while (currentSplinePointIndex <
+               knotCount)
         {
             float knotDistance =
                 GetSplineKnotDistance(
@@ -1049,11 +1061,7 @@ public class CameraPanEffect : CameraEffectBase
                 );
 
             // =================================================
-            // ZERO HOLD:
-            //
-            // DO ABSOLUTELY NOTHING.
-            //
-            // This is the key fix.
+            // ZERO HOLD
             // =================================================
 
             if (holdTime <= 0.000001f)
@@ -1064,19 +1072,11 @@ public class CameraPanEffect : CameraEffectBase
             }
 
             // =================================================
-            // POSITIVE HOLD KNOT
+            // POSITIVE HOLD
             // =================================================
 
             if (splineDistance >= knotDistance)
             {
-                // We have crossed the knot.
-
-                // Move the spline distance exactly to the knot
-                // BEFORE beginning the hold.
-                //
-                // This prevents the camera from being moved
-                // backwards by a later spline evaluation.
-
                 splineDistance =
                     knotDistance;
 
@@ -1090,6 +1090,23 @@ public class CameraPanEffect : CameraEffectBase
 
                 desiredPosition =
                     knotPosition;
+
+                // =================================================
+                // FINAL POINT REACHED
+                // =================================================
+                //
+                // THIS IS THE IMPORTANT FIX.
+                //
+                // Door becomes ready IMMEDIATELY.
+                // It does NOT wait for holdTime.
+                //
+                // =================================================
+
+                if (currentSplinePointIndex ==
+                    knotCount - 1)
+                {
+                    MarkDoorReady();
+                }
 
                 holdingAtSplinePoint = true;
 
@@ -1105,7 +1122,8 @@ public class CameraPanEffect : CameraEffectBase
         // END OF SPLINE
         // =====================================================
 
-        if (splineDistance >= splineLength - 0.000001f)
+        if (splineDistance >=
+            splineLength - 0.000001f)
         {
             splineDistance =
                 splineLength;
@@ -1121,29 +1139,33 @@ public class CameraPanEffect : CameraEffectBase
             desiredPosition =
                 endPosition;
 
-            // The final knot can have a hold.
-            if (currentSplinePointIndex <
-                knotCount)
-            {
-                float finalHold =
-                    GetSplinePointHoldTime(
-                        knotCount - 1
-                    );
-
-                if (finalHold > 0.000001f)
-                {
-                    currentSplinePointIndex =
-                        knotCount - 1;
-
-                    splinePointHoldTimer = 0f;
-
-                    holdingAtSplinePoint = true;
-
-                    return;
-                }
-            }
+            // =================================================
+            // FINAL POINT = DOOR READY NOW
+            // =================================================
 
             MarkDoorReady();
+
+            // =================================================
+            // FINAL HOLD
+            // =================================================
+
+            float finalHold =
+                GetSplinePointHoldTime(
+                    knotCount - 1
+                );
+
+            if (finalHold >
+                0.000001f)
+            {
+                currentSplinePointIndex =
+                    knotCount - 1;
+
+                splinePointHoldTimer = 0f;
+
+                holdingAtSplinePoint = true;
+
+                return;
+            }
 
             StartReturning();
 
@@ -1152,14 +1174,6 @@ public class CameraPanEffect : CameraEffectBase
 
         // =====================================================
         // NORMAL SPLINE POSITION
-        // =====================================================
-        //
-        // ONLY THE SPLINE IS ALLOWED TO SET POSITION HERE.
-        //
-        // No PanPoint transform.
-        // No knot snapping.
-        // No correction to a knot.
-        //
         // =====================================================
 
         float progress =
@@ -1262,15 +1276,9 @@ public class CameraPanEffect : CameraEffectBase
     // =========================================================
     // GET SPLINE KNOT DISTANCE
     // =========================================================
-    //
-    // Converts a knot's spline parameter into distance.
-    //
-    // This is much safer than assuming every knot is evenly
-    // spaced along the spline.
-    //
-    // =========================================================
 
-    private float GetSplineKnotDistance(int knotIndex)
+    private float GetSplineKnotDistance(
+        int knotIndex)
     {
         if (activeSpline == null ||
             activeSpline.Spline == null)
@@ -1351,6 +1359,7 @@ public class CameraPanEffect : CameraEffectBase
         if (pointPath == null ||
             pointPath.Count < 2)
         {
+            MarkDoorReady();
             StartReturning();
             return;
         }
@@ -1363,10 +1372,7 @@ public class CameraPanEffect : CameraEffectBase
         if (currentPointIndex >=
             pointPath.Count)
         {
-            MarkDoorReady();
-
             StartReturning();
-
             return;
         }
 
@@ -1406,10 +1412,7 @@ public class CameraPanEffect : CameraEffectBase
             if (currentPointIndex >=
                 pointPath.Count)
             {
-                MarkDoorReady();
-
                 StartReturning();
-
                 return;
             }
 
@@ -1471,6 +1474,22 @@ public class CameraPanEffect : CameraEffectBase
         {
             cam.position =
                 target;
+
+            // =================================================
+            // FINAL POINT
+            // =================================================
+            //
+            // Door becomes ready RIGHT NOW.
+            //
+            // It does NOT wait for the hold.
+            //
+            // =================================================
+
+            if (currentPointIndex ==
+                pointPath.Count - 1)
+            {
+                MarkDoorReady();
+            }
 
             pointHoldTimer = 0f;
 
@@ -1584,13 +1603,6 @@ public class CameraPanEffect : CameraEffectBase
 
     // =========================================================
     // PREPARE SPLINE HOLD TIMES
-    // =========================================================
-    //
-    // ONLY HOLD TIMES COME FROM PAN POINTS.
-    //
-    // The PanPoint positions are NOT used for spline
-    // positioning.
-    //
     // =========================================================
 
     private void PrepareSplineHoldTimes(
@@ -1722,6 +1734,22 @@ public class CameraPanEffect : CameraEffectBase
         activeSpline = null;
 
         // =====================================================
+        // GLOBAL PAN
+        // =====================================================
+        //
+        // IMPORTANT:
+        // If camera is not ready yet, GlobalPanActive MUST
+        // remain false.
+        //
+        // ApplyEffect() will turn it on when the ready timer
+        // finishes if this pan is still active.
+        //
+        // =====================================================
+
+        GlobalPanActive =
+            cameraReady;
+
+        // =====================================================
         // FIND ROUND TRIGGER
         // =====================================================
 
@@ -1759,7 +1787,6 @@ public class CameraPanEffect : CameraEffectBase
 
             splineDistance = 0f;
 
-            // ONLY COPY HOLD TIMES.
             PrepareSplineHoldTimes(
                 points
             );
@@ -1772,12 +1799,6 @@ public class CameraPanEffect : CameraEffectBase
 
             state =
                 State.MovingToStart;
-
-            Debug.Log(
-                $"CameraPanEffect: SPLINE mode. " +
-                $"Knots = {activeSpline.Spline.Count}. " +
-                $"Hold times = {splineHoldTimes.Count}."
-            );
         }
 
         // =====================================================
@@ -1804,6 +1825,8 @@ public class CameraPanEffect : CameraEffectBase
                 state =
                     State.Idle;
 
+                GlobalPanActive = false;
+
                 return;
             }
 
@@ -1818,13 +1841,6 @@ public class CameraPanEffect : CameraEffectBase
         }
 
         // =====================================================
-        // PAN ACTIVE
-        // =====================================================
-
-        GlobalPanActive =
-            true;
-
-        // =====================================================
         // PLAYER
         // =====================================================
 
@@ -1833,6 +1849,13 @@ public class CameraPanEffect : CameraEffectBase
         {
             playerPaused = true;
         }
+
+        // =====================================================
+        // GLOBAL PAN FINAL CHECK
+        // =====================================================
+
+        GlobalPanActive =
+            cameraReady;
     }
 
     // =========================================================
@@ -1859,6 +1882,7 @@ public class CameraPanEffect : CameraEffectBase
             return;
         }
 
+        MarkDoorReady();
         StartReturning();
     }
 
@@ -1872,6 +1896,14 @@ public class CameraPanEffect : CameraEffectBase
 
         state =
             State.Returning;
+
+        // The pan is STILL ACTIVE during return.
+        //
+        // GlobalPanActive remains true here.
+        //
+        // It is only turned false in FinishPanReturn().
+        GlobalPanActive =
+            cameraReady;
     }
 
     // =========================================================
@@ -1885,7 +1917,11 @@ public class CameraPanEffect : CameraEffectBase
         if (cam == null)
         {
             state = State.Idle;
+
+            GlobalPanActive = false;
+
             ResumePlayer();
+
             return;
         }
 
@@ -1941,6 +1977,12 @@ public class CameraPanEffect : CameraEffectBase
             desiredRotation =
                 cam.rotation;
 
+            // =================================================
+            // STILL ACTIVE DURING RETURN
+            // =================================================
+
+            GlobalPanActive = true;
+
             if (t >= 1f)
             {
                 FinishPanReturn();
@@ -1973,6 +2015,8 @@ public class CameraPanEffect : CameraEffectBase
         desiredRotation =
             cam.rotation;
 
+        GlobalPanActive = true;
+
         if (Vector3.Distance(
                 cam.position,
                 returnPosition
@@ -1989,10 +2033,15 @@ public class CameraPanEffect : CameraEffectBase
     // =========================================================
     // FINISH RETURN
     // =========================================================
+    //
+    // THIS IS THE ONLY NORMAL PLACE WHERE GLOBAL PAN IS
+    // TURNED OFF AFTER A PAN.
+    // =========================================================
 
     private void FinishPanReturn()
     {
-        Transform cam = CameraTransform;
+        Transform cam =
+            CameraTransform;
 
         if (cam != null)
         {
@@ -2048,6 +2097,12 @@ public class CameraPanEffect : CameraEffectBase
 
         debugDistanceTravelled = 0f;
 
+        // =====================================================
+        // PAN IS 100% FINISHED
+        // =====================================================
+
+        GlobalPanActive = false;
+
         ResumePlayer();
     }
 
@@ -2069,6 +2124,7 @@ public class CameraPanEffect : CameraEffectBase
         if (state == State.Idle)
             return;
 
+        // Door is ready because skip goes directly to the end.
         MarkDoorReady();
 
         Transform cam =
@@ -2128,11 +2184,18 @@ public class CameraPanEffect : CameraEffectBase
         state =
             State.Idle;
 
+        // Skip completes the pan immediately.
+        GlobalPanActive = false;
+
         ResumePlayer();
     }
 
     // =========================================================
     // DOOR
+    // =========================================================
+    //
+    // Called immediately when final point is reached.
+    // NOT after final hold.
     // =========================================================
 
     private void MarkDoorReady()
@@ -2161,7 +2224,10 @@ public class CameraPanEffect : CameraEffectBase
     {
         playerPaused = false;
 
-        GlobalPanActive = false;
+        // GlobalPanActive is intentionally NOT changed here.
+        //
+        // FinishPanReturn() controls when the global pan
+        // state becomes false.
     }
 
     // =========================================================
