@@ -1,11 +1,20 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using FMODUnity;
 // Drives the fade out system which calls Die() from Health.cs in order to play both cleanly fade Enemies from the scene, and - if applicable - play a death animation. -E.M
 public class EnemyFadeOut : MonoBehaviour
 {
+    [Header("Death Rig Swap (optional)")]
+    [Tooltip("Optional. Mesh/rig to DISABLE on death (e.g. the live animated TPose rig). Leave empty on enemies that don't swap rigs.")]
+    [SerializeField] private GameObject meshToDisable;
+    [Tooltip("Optional. Mesh/rig to ENABLE on death (e.g. the fall-apart corpse rig). Should share the same parent transform as the disabled mesh so it appears in place. Leave empty on enemies that don't swap rigs.")]
+    [SerializeField] private GameObject meshToEnable;
+    [Tooltip("Optional. Animator whose Avatar is cleared on death (e.g. the live rig's Animator). Cleared only at death so the live rig's animations still play normally while alive. Leave empty on enemies that don't swap rigs.")]
+    [SerializeField] private Animator avatarToClear;
+
     [Header("Death Animation")]
-    [Tooltip("Left empty = auto-filled from this object on Awake.")]
+    [Tooltip("Left empty = auto-filled on Awake (from the swap-in mesh if one is assigned, otherwise from this object).")]
     [SerializeField] private Animator animator;
     private static readonly int IsDeadHash = Animator.StringToHash("isDead");
 
@@ -16,8 +25,9 @@ public class EnemyFadeOut : MonoBehaviour
     [SerializeField] private NavMeshAgent agent;
 
     [Header("Fade")]
+    [SerializeField] private Material deathMaterial;
     [SerializeField] private float duration = 1.0f;
-    [Tooltip("Left empty = auto-filled from all child renderers on Awake.")]
+    [Tooltip("Left empty = auto-filled on Awake (from the swap-in mesh if one is assigned, otherwise from all child renderers).")]
     [SerializeField] private Renderer[] renderers;
 
     [Header("Disable On Fade")]
@@ -27,6 +37,9 @@ public class EnemyFadeOut : MonoBehaviour
     [Header("Health Bar Disable")]
     [Tooltip("If the Enemy currently fading has a health bar - disable that shizzle homeboy!")]
     [SerializeField] private GameObject healthBar;
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference enemyDeathEvent;
 
     // URP Lit uses _BaseColor; some shaders (or Built-in) use _Color. Resolve per-material.
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
@@ -38,12 +51,18 @@ public class EnemyFadeOut : MonoBehaviour
     private bool isDead;   // guard so Die() only runs once
     private void Awake()
     {
+        // If a swap-in mesh is assigned, target its animator/renderers (it may be inactive at Awake, so include inactive).
+        // Otherwise fall back to this object, preserving original behaviour for enemies that don't swap rigs.
         if (animator == null)
-            animator = GetComponent<Animator>();
+            animator = meshToEnable != null
+                ? meshToEnable.GetComponentInChildren<Animator>(true)
+                : GetComponent<Animator>();
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
         if (renderers == null || renderers.Length == 0)
-            renderers = GetComponentsInChildren<Renderer>();
+            renderers = meshToEnable != null
+                ? meshToEnable.GetComponentsInChildren<Renderer>(true)
+                : GetComponentsInChildren<Renderer>();
         if (collidersToDisable == null || collidersToDisable.Length == 0)
             collidersToDisable = GetComponentsInChildren<Collider>();
         if (scriptsToDisable == null || scriptsToDisable.Length == 0)
@@ -58,6 +77,8 @@ public class EnemyFadeOut : MonoBehaviour
     {
         if (isDead) return;   // guard against double-death
         isDead = true;
+
+        RuntimeManager.PlayOneShot(enemyDeathEvent, transform.position);
 
         // Disables the Enemy's health bar as soon as the Enemy's health reaches 0.
         if (healthBar != null)
@@ -75,6 +96,21 @@ public class EnemyFadeOut : MonoBehaviour
             agent.ResetPath();
         }
 
+        // ---- OPTIONAL RIG/MESH SWAP ----
+        // Done BEFORE the isDead trigger so the death animation fires on the swapped-in mesh, not the live one.
+        // Both meshes should share the same parent transform, so the swap-in appears in the same position/rotation.
+        // Skipped entirely when the fields are left empty (enemies that don't swap rigs are unaffected).
+
+        // Clear the live rig's Avatar at death (not before) so its animations run normally while alive,
+        // but stop driving the shared skeleton once we hand off to the corpse rig.
+        if (avatarToClear != null)
+            avatarToClear.avatar = null;
+
+        if (meshToDisable != null)
+            meshToDisable.SetActive(false);
+        if (meshToEnable != null)
+            meshToEnable.SetActive(true);
+
         // Disable colliders immediately so a dying enemy stops blocking movement / registering on the tether.
         foreach (var c in collidersToDisable)
             if (c != null) c.enabled = false;
@@ -86,7 +122,9 @@ public class EnemyFadeOut : MonoBehaviour
         }
         else
         {
-            // No animator wired — skip straight to the fade.
+            // No animator wired   skip straight to the fade.
+
+            ChangeToDeathMaterial();
             BeginFade();
         }
     }
@@ -154,6 +192,16 @@ public class EnemyFadeOut : MonoBehaviour
             // Fade emission toward black by the same factor so the glow dies with the surface.
             if (baseEmission != null && r.material.HasProperty(EmissionColorId))
                 r.material.SetColor(EmissionColorId, baseEmission[i] * alpha);
+        }
+    }
+
+
+    private void ChangeToDeathMaterial()
+    {
+        foreach (Renderer renderer in renderers)
+        {
+            renderer.material = deathMaterial;
+            Debug.Log($"Changed material of {renderer.gameObject.name} to {deathMaterial.name}.");
         }
     }
 }

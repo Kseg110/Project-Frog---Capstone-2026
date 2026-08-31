@@ -37,12 +37,16 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _Ambient_Occlusion:
+        m_Texture: {fileID: 2800000, guid: b883345594090ed438ff90623ec0852b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseColour:
-        m_Texture: {fileID: 2800000, guid: a59350ca0d66e2a45a5619e554363bd6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5d857439eb1a20647a00492ddae2a9f0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Metallic:
-        m_Texture: {fileID: 2800000, guid: d64ec4b0cfd025442bf29d48389a98bb, type: 3}
+        m_Texture: {fileID: 2800000, guid: a6015ad1bf9a8ce4396e98a0d1e876b0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal:
@@ -55,10 +59,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AO_Strength: 0
     - _MetallicStrength: 0
+    - _Metallic_Strength: 0.503
     - _NormalStrength: 0.12
     - _RoughnessStrength: 0.662
+    - _Roughness_Strength: 0
     m_Colors:
     - _BaseColourAlpha: {r: 1, g: 1, b: 1, a: 1}
+    - _Color_Correction: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

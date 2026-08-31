@@ -8,12 +8,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_Lilypad 1
-  m_Shader: {fileID: -6465566751694194690, guid: ca5aabd965eb90b44bae53c0e0573218, type: 3}
-  m_Parent: {fileID: 2100000, guid: 46ea99f8ea5457348a7e896f7f6f4d80, type: 2}
+  m_Shader: {fileID: -6465566751694194690, guid: ca176608197d9994a9573074157f41d0, type: 3}
+  m_Parent: {fileID: -876546973899608171, guid: ca176608197d9994a9573074157f41d0, type: 3}
   m_ModifiedSerializedProperties: 2
   m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 2
+  m_InvalidKeywords:
+  - _EMISSION
+  m_LightmapFlags: 6
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -25,7 +26,15 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Alpha:
-        m_Texture: {fileID: 2800000, guid: 562dda68fd974de459e45ea110422947, type: 3}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BaseColour:
+        m_Texture: {fileID: 2800000, guid: 51df4a94a1661f3468d4b7c9c0e02428, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Base_Color:
+        m_Texture: {fileID: 2800000, guid: 51df4a94a1661f3468d4b7c9c0e02428, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Basecolour:
@@ -33,19 +42,67 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal:
-        m_Texture: {fileID: 2800000, guid: 990044bbbfb8dd242a0e5fd3105f2d3d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 929b56072a1d89449958c5262add7908, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Roughness:
         m_Texture: {fileID: 2800000, guid: b7c2d0416d83b794b85edf721b04ab53, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_076722375c674023a425f4e220486129_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: d89c91615316e46439863d13bb033cf8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_1b0939888ec34711a9ed3d013bc06671_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: f5bdb0112dc33c24daca29e0425c67df, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_7abf6d64ea3c4b23873c0a2c4a13c30e_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 9c0358c83f4d0874186fad49a124fa06, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_8dd52cd97d594dc3be55551a12152a76_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: f5e502e1d33c812419dfdd92195077c8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_8e77cb44373846e2aa8a6e95456a5c47_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: e465e36b9ed1d0a4e8979d00a48b08cc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_9a27a25527fe4bdf9402f6af64bcaca0_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 7ab3244aff242da46a1c9b2ec4957fb5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_bf61481ee27d434e8b870668af144d87_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 4653f7965734aa34aab57c2ce4adf7b4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_c4809c762cef472087308d9a4a674a7e_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 4a33ca974f68ea042a3d81aafa1630c1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_cd68b39463e1475d89f95888c48375d6_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 310becd710aa81445af9773cbd429b4e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_def222169bc0452d9c159b59272c9664_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: b5c616fc9e163ce4f8fb36ecfac67b06, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 0.331
-    - _RoughnessStrength: 0
+    - _AlphaClip: 0
+    - _Amplification: 0
+    - _Frequency: 0
+    - _Metallic_Strength: 0
+    - _QueueControl: 0
+    - _RoughnessStrength: 1.43
+    - _Wind_Density: 0
+    - _Wind_Power: 0
     m_Colors:
     - _BaseColour: {r: 0.8448638, g: 0.6982374, b: 0.41180462, a: 1}
+    - _ColorCorrection: {r: 1, g: 0.9316132, b: 0.62159324, a: 1}
+    - _Moss_CC: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &4675246009953270912

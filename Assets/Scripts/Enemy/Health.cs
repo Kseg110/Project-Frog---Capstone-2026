@@ -24,7 +24,7 @@ public class Health : MonoBehaviour, IDamageable
     private Coroutine burnRoutine;
     private EnemyBase enemy;
 
-    private float deathAnimationDuration = 3f;
+    private float deathAnimationDuration = 1.5f;
     private PlayerAnimation playerAnimation;
 
     private void Awake()

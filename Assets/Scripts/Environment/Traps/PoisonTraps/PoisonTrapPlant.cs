@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using FMODUnity;
 
 public class PoisonTrapPlant : MonoBehaviour
 {
@@ -16,7 +17,8 @@ public class PoisonTrapPlant : MonoBehaviour
     [SerializeField] private LayerMask projectileLayers;
     [SerializeField] private float projectileActivationDistance = 5f;
 
-
+    [Header("FMod Events")]
+    [SerializeField] private EventReference plantActivationEvent;
 
     [Header("Activation")]
     [SerializeField] private float activeDuration = 60f;
@@ -322,6 +324,8 @@ public class PoisonTrapPlant : MonoBehaviour
         if ((affectLayer.value & mask) != 0)
         {
             ActivateTrap();
+
+            RuntimeManager.PlayOneShot(plantActivationEvent, transform.position);
         }
     }
 
