@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using FMODUnity;
+using Assets.Scripts.Player;
 
 
 public class PlayerAnchor : MonoBehaviour
@@ -44,6 +45,8 @@ public class PlayerAnchor : MonoBehaviour
     // The anchor actually attached to. Distinct from currentAnchor, which is only the nearest valid CANDIDATE and gets reassigned every frame.
     private AnchorBase attachedAnchor;
 
+    private PlayerAnimation playerAnimation;
+
     public bool IsTethered => isTethered;
     public AnchorBase CurrentAnchor => currentAnchor;
     public AnchorBase AttachedAnchor => attachedAnchor;
@@ -72,6 +75,8 @@ public class PlayerAnchor : MonoBehaviour
         {
             anchorTether.OnTetherBroken += HandleTetherBrokenByRope;
         }
+
+        playerAnimation = GetComponentInChildren<PlayerAnimation>();
 
         RebindTetherActionFromCurrentMap();
     }
@@ -250,6 +255,7 @@ public class PlayerAnchor : MonoBehaviour
         // Attach confirmed — now it's safe to commit logical tether state.
         isTethered = true;
         attachedAnchor = currentAnchor;
+        playerAnimation.PlayTether();
 
         RuntimeManager.PlayOneShot(tetherAttachEvent, transform.position);
         attachedAnchor.Activate();
@@ -264,6 +270,10 @@ public class PlayerAnchor : MonoBehaviour
     /// </summary>
     public void ReleaseTether(bool playReel = false)
     {
+        if (isTethered)
+        {
+            playerAnimation.PlayUnTether();
+        }
         isTethered = false;
         AnchorBase releasedAnchor = attachedAnchor;   // cache before we clear it
         attachedAnchor = null;
@@ -277,6 +287,7 @@ public class PlayerAnchor : MonoBehaviour
                 anchorTether.SetEndPoint(null, true);
         }
 
+        playerAnimation.StopTether();
         OnTetherReleased?.Invoke();
         OnAnchorChanged?.Invoke(null);
     }

@@ -24,8 +24,8 @@ public class Projectile : MonoBehaviour, IProjectile
     public bool isPlayerProjectile = false;
 
     // Context passed from PlayerAttacks / PlayerChargeAttack
-    public GameObject player;                    
-    public AnchorElement currentElement;          
+    public GameObject player;
+    public AnchorElement currentElement;
     public float pointBlankRange = 10f;
 
     // Wind Upgrade
@@ -42,6 +42,11 @@ public class Projectile : MonoBehaviour, IProjectile
     // Default is 0 so basic shots do not apply knockback. Charged attacks will add knockback based on charge time
     [Tooltip("Knockback distance applied to enemies when hit by player projectiles. 0 = no knockback.")]
     public float knockbackDistance = 0f;
+
+    // Which reaction animation the struck enemy should play.
+    // Defaults to Stagger so regular shots need no change; charged attacks set this to Knockback.
+    [Tooltip("Reaction animation played by the enemy on hit. Stagger = regular, Knockback = charged.")]
+    public HitReaction hitReaction = HitReaction.Stagger;
 
     // Cache arena colliders globally to avoid repeated Find calls
     private static Collider[] cachedArenaColliders = null;
@@ -63,7 +68,7 @@ public class Projectile : MonoBehaviour, IProjectile
             if (cachedArenaLayer != layerIndex || cachedArenaColliders == null)
             {
                 cachedArenaLayer = layerIndex;
-                cachedArenaColliders = FindObjectsOfType<Collider>()
+                cachedArenaColliders = FindObjectsByType<Collider>(FindObjectsSortMode.None)
                     .Where(c => c != null && c.gameObject.layer == layerIndex)
                     .ToArray();
             }
@@ -347,6 +352,18 @@ public class Projectile : MonoBehaviour, IProjectile
             {
                 float extra = ExtinguisherUpgrade.Instance.GetBonusDamage();
                 enemy.TakeDamage(extra);
+            }
+
+            // -------------------------
+            // HIT REACTION ANIMATION
+            // Tell the frog (if this enemy is one) which reaction to play.
+            // Stagger for regular shots, KnockbackReact for charged shots.
+            // -------------------------
+            var frog = enemy.GetComponentInParent<EnemyFrogSkeleton>();
+            if (frog != null)
+            {
+                //Debug.Log($"[Projectile] Hit reaction = {hitReaction} on instance {GetInstanceID()} (charge% {chargePercent})");
+                frog.PlayHitReaction(hitReaction);
             }
 
             // Apply knockback to enemy only if knockbackDistance > 0

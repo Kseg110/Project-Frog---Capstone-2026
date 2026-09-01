@@ -292,7 +292,11 @@ public class PlayerMovement : MonoBehaviour, IMovement
             {
                 dir.y = 0f;
                 lookDirection = dir.normalized;
-                rb.MoveRotation(Quaternion.LookRotation(lookDirection));
+                bool isFiring = playerAttacks != null && playerAttacks.isFiringPrime;
+                if (isFiring)
+                {
+                    rb.MoveRotation(Quaternion.LookRotation(lookDirection));
+                }
             }
         }
 
@@ -338,7 +342,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
             );
 
             // Don't let walk-facing override the aim-facing during an attack window.
-            bool suppressWalkRotation = playerAttacks != null && playerAttacks.IsAttacking;
+            bool suppressWalkRotation = playerAttacks != null && (playerAttacks.IsAttacking || playerAttacks.isFiringPrime);
 
             if (!usingGamepad && moveInput.sqrMagnitude > 0.0001f && !suppressWalkRotation)
                 rb.MoveRotation(Quaternion.LookRotation(moveInput.normalized));
@@ -477,7 +481,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
 
         // Debug.Log("end dash");
         PlayerDashVFX.Instance.EndDashVFX();
-        playerAnimation.StopDash();
+        //playerAnimation.StopDash();
     }
 
     public void SetInMud(bool value)
@@ -513,4 +517,25 @@ public class PlayerMovement : MonoBehaviour, IMovement
         }
     }
 
+    #region animation blend helpers
+    // Animator helpers for movement speed changes in movement blend tree
+    public float GetMovementFraction()
+    {
+        if (moveSpeed <= 0f) return 0f;
+        float currentMax = CurrentSpeed;
+        float inputFraction = speed;
+        float actualSpeed = currentMax * inputFraction;
+        return Mathf.Clamp01(actualSpeed / moveSpeed);
+    }
+
+    public float GetForwardFraction()
+    {
+        return Mathf.Clamp(moveInput.z, -1f, 1f);
+    }
+
+    public float GetStrafeFraction()
+    {
+        return Mathf.Clamp(moveInput.x, -1f, 1f);
+    }
+    #endregion
 }

@@ -8,19 +8,23 @@ public class TESTEnemyDamageOnCollision : MonoBehaviour
     [SerializeField] private float knockbackDistance = 5f;
     private void OnTriggerEnter(Collider other)
     {
+
         if (other.gameObject.layer == LayerMask.NameToLayer("Terrain")) 
-        { 
+        {
+            Debug.Log("CrocProjectile hit terrain and was destroyed.");
             Destroy(gameObject);
             return;
         }
         if (other.tag == "Player")
         {
             TryDamage(other);
+            Debug.Log("CrocProjectile hit player.");
         }
-        if(other.tag != "projectile")
-        {
-           Destroy(gameObject);
-        }
+        //if(other.tag != "projectile")
+        //{
+        //    Debug.Log($"CrocProjectile hit: {other.gameObject.name} | Tag: {other.tag} | Layer: {LayerMask.LayerToName(other.gameObject.layer)}");
+        //    Destroy(gameObject);
+        //}
     }
 
     private void OnTriggerStay(Collider other)
@@ -31,7 +35,7 @@ public class TESTEnemyDamageOnCollision : MonoBehaviour
 
     private void TryDamage(Collider other)
     {
-        if (!CompareTag("Enemy")) return;
+        if (!other.CompareTag("Player")) return;
 
         PlayerTakeDamage playerTakeDamage = other.GetComponentInParent<PlayerTakeDamage>();
 
