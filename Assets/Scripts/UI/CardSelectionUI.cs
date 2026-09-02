@@ -13,6 +13,7 @@ public class CardSelectionUI : MonoBehaviour
     [SerializeField] private UIPlayerHUD playerHUD;
     [SerializeField] private PlayerCrosshair playerCrosshair;
     [SerializeField] private Canvas crosshairCanvas;
+    [SerializeField] private CanvasGroup cardContainerGroup;
 
     private CanvasGroup canvasGroup;
     public bool IsCardSelectionActive { get; private set; }
@@ -26,6 +27,7 @@ public class CardSelectionUI : MonoBehaviour
         upgradeManager = UpgradeManager.Instance;
         playerCrosshair = FindFirstObjectByType<PlayerCrosshair>();
         crosshairCanvas = FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+        cardContainerGroup = cardContainer.GetComponent<CanvasGroup>();
     }
 
     private void Start()
@@ -45,7 +47,7 @@ public class CardSelectionUI : MonoBehaviour
         canvasGroup.alpha = 1f;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
-        StartCoroutine(FadeCanvas(1f, 0.35f));
+        StartCoroutine(FadeCardContainer(1f, 0.35f));
     }
 
     private void HideUI()
@@ -54,22 +56,21 @@ public class CardSelectionUI : MonoBehaviour
         canvasGroup.alpha = 0f;
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
-        StartCoroutine(FadeCanvas(0f, 0.35f));
     }
 
-    private IEnumerator FadeCanvas(float target, float duration)
+    private IEnumerator FadeCardContainer(float target, float duration)
     {
-        float start = canvasGroup.alpha;
+        float start = cardContainerGroup.alpha;
         float t = 0f;
 
         while (t < duration)
         {
             t += Time.unscaledDeltaTime;
-            canvasGroup.alpha = Mathf.Lerp(start, target, t / duration);
+            cardContainerGroup.alpha = Mathf.Lerp(start, target, t / duration);
             yield return null;
         }
 
-        canvasGroup.alpha = target;
+        cardContainerGroup.alpha = target;
     }
 
     private void ShowCardSelection()
@@ -141,6 +142,7 @@ public class CardSelectionUI : MonoBehaviour
         }
 
         yield return StartCoroutine(chosenUI.PlayDissolveAnimation());
+        yield return StartCoroutine(FadeCardContainer(0f, 0.5f));
 
         foreach (Transform child in cardContainer)
             Destroy(child.gameObject);
