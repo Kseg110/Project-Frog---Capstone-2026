@@ -19,7 +19,7 @@ Material:
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses:
@@ -51,6 +51,30 @@ Material:
         m_Scale: {x: 0, y: 0}
         m_Offset: {x: 0, y: 0}
     - _Base_Color_3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask_Map_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask_Map_2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask_Map_3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal_2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal_3:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -128,9 +152,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AO_Strength_1: 0
+    - _AO_Strength_2: 0
+    - _AO_Strength_3: 0
     - _AlphaClip: 1
     - _AlphaToMask: 0
     - _Alpha_Clip: 0
+    - _Alpha_Clipping: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _CastShadows: 0
@@ -139,10 +167,16 @@ Material:
     - _DstBlend: 10
     - _DstBlendAlpha: 10
     - _Moss_N_Strength: 1
+    - _Normal_Strength_1: 0
+    - _Normal_Strength_2: 0
+    - _Normal_Strength_3: 0
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Rough_Dirt_N_Strength: 2.4
+    - _Roughness_Strength_1: 0
+    - _Roughness_Strength_2: 0
+    - _Roughness_Strength_3: 0
     - _Smooth_Dirt_N_Stregnth: 1
     - _Soft_Mud_N_Stregnth: 1
     - _SrcBlend: 1
