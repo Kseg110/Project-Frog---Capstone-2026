@@ -12,9 +12,11 @@ public class CardSelectionUI : MonoBehaviour
     [SerializeField] private UpgradeManager upgradeManager;
     [SerializeField] private UIPlayerHUD playerHUD;
     [SerializeField] private PlayerCrosshair playerCrosshair;
+    [SerializeField] private Canvas crosshairCanvas;
 
     private CanvasGroup canvasGroup;
     public bool IsCardSelectionActive { get; private set; }
+    private bool cardAlreadyChosen = false;
 
     private List<CardUI> spawnedCards = new List<CardUI>();
 
@@ -23,6 +25,7 @@ public class CardSelectionUI : MonoBehaviour
         canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
         upgradeManager = UpgradeManager.Instance;
         playerCrosshair = FindFirstObjectByType<PlayerCrosshair>();
+        crosshairCanvas = FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
     }
 
     private void Start()
@@ -42,6 +45,7 @@ public class CardSelectionUI : MonoBehaviour
         canvasGroup.alpha = 1f;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
+        StartCoroutine(FadeCanvas(1f, 0.35f));
     }
 
     private void HideUI()
@@ -50,10 +54,27 @@ public class CardSelectionUI : MonoBehaviour
         canvasGroup.alpha = 0f;
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
+        StartCoroutine(FadeCanvas(0f, 0.35f));
+    }
+
+    private IEnumerator FadeCanvas(float target, float duration)
+    {
+        float start = canvasGroup.alpha;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            canvasGroup.alpha = Mathf.Lerp(start, target, t / duration);
+            yield return null;
+        }
+
+        canvasGroup.alpha = target;
     }
 
     private void ShowCardSelection()
     {
+        cardAlreadyChosen = false;
         IsCardSelectionActive = true;
         Time.timeScale = 0f;
         ShowUI();
@@ -63,6 +84,8 @@ public class CardSelectionUI : MonoBehaviour
         // Hide the player's crosshair while selecting a card
         if (playerCrosshair != null)
             playerCrosshair.gameObject.SetActive(false);
+        if (crosshairCanvas != null)
+            crosshairCanvas.gameObject.SetActive(false);
 
         var manager = UpgradeManager.Instance;
        
@@ -95,6 +118,11 @@ public class CardSelectionUI : MonoBehaviour
 
     private void OnCardChosen(UpgradeDataSO chosenCard)
     {
+        if (cardAlreadyChosen)
+            return;
+
+        cardAlreadyChosen = true;
+
         IsCardSelectionActive = false;
 
         upgradeManager.OnCardChosen(chosenCard);
@@ -125,6 +153,8 @@ public class CardSelectionUI : MonoBehaviour
 
         if (playerCrosshair != null)
             playerCrosshair.gameObject.SetActive(true);
+        if (crosshairCanvas != null)
+            crosshairCanvas.gameObject.SetActive(true);
 
         waveSpawner.StartNextWaveAfterCard();
     }
