@@ -102,7 +102,9 @@ namespace Assets.Scripts.Player
                 {
                     forwardFrac = playerMovement.GetForwardFraction();
                     strafeFrac = playerMovement.GetStrafeFraction();
-                    moveMag = playerMovement.GetMovementSpeed();
+
+                    playerMovement.GetMovementSpeed();
+                    moveMag = playerMovement.GetMovementFraction();
                 }
 
             // 1D locomotion blend tree
