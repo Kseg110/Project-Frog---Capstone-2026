@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEditor;
+using FMODUnity;
 
 public class CardSelectionUI : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class CardSelectionUI : MonoBehaviour
     [SerializeField] private UpgradeManager upgradeManager;
     [SerializeField] private UIPlayerHUD playerHUD;
     [SerializeField] private PlayerCrosshair playerCrosshair;
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference cardSelectionEvent;
 
     private CanvasGroup canvasGroup;
     public bool IsCardSelectionActive { get; private set; }
@@ -69,6 +73,8 @@ public class CardSelectionUI : MonoBehaviour
         // Ask the upgrade manager to pick 3 random cards for the player to choose from
         List<UpgradeDataSO> selectedCards = upgradeManager.GetRandomCards(3);
         StartCoroutine(SpawnCardsSequentially(selectedCards));
+
+        RuntimeManager.PlayOneShot(cardSelectionEvent, transform.position);
     }
 
     private IEnumerator SpawnCardsSequentially(List<UpgradeDataSO> cards)
