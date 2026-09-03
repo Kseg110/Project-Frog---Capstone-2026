@@ -14,10 +14,13 @@ public class EnemyRockGolem : EnemyBase
     [Tooltip("Height above player position used as ray target for LOS checks.")]
     [SerializeField] private float targetEyeHeight = 1.0f;
 
+    private Animator animator;
+
     protected override void Awake()
     {
         base.Awake();
         enemyAttack = GetComponent<EnemyAttack>();
+        animator = GetComponent<Animator>();
     }
 
     protected override void Update()
@@ -70,6 +73,21 @@ public class EnemyRockGolem : EnemyBase
         {
             //Debug.Log("[Golem] Calling TriggerAttack");
             enemyAttack.TriggerAttack(player.position);
+        }
+    }
+
+    public void PlayHitReaction(HitReaction reaction)
+    {
+        if (animator == null) return;
+
+        switch (reaction)
+        {
+            case HitReaction.Block:
+                animator.SetTrigger("Block");
+                break;
+            case HitReaction.TakeHit:
+                animator.SetTrigger("TakeHit");
+                break;
         }
     }
     #endregion
