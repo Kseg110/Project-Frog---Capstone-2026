@@ -8,6 +8,7 @@ public class RockGolemAttack : EnemyAttack
     [SerializeField] private EnemyBurrowAttackDataSO attackData;
 
     private Vector3 pendingTargetPosition;
+    private Transform player;
 
     private Animator animator;
     private static readonly int AttackingHash = Animator.StringToHash("Attack");
@@ -15,6 +16,8 @@ public class RockGolemAttack : EnemyAttack
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        GameObject playerObject = GameObject.FindWithTag("Player");
+        player = playerObject.transform;
     }
 
     protected override void OnExecuteAttack(Vector3 targetPosition)
@@ -52,6 +55,8 @@ public class RockGolemAttack : EnemyAttack
 
         Vector3 origin = GetGroundPosition(transform.position);
 
+        Vector3 targetPosition = player != null ? player.position : pendingTargetPosition;
+
         GameObject go = Instantiate(burrowProjectilePrefab, origin, Quaternion.identity);
 
         if (!go.TryGetComponent<EnemyBurrowProjectile>(out var projectile))
@@ -62,7 +67,7 @@ public class RockGolemAttack : EnemyAttack
         }
 
         // targetPosition = player's last-known position at initiation; not re-tracked.
-        projectile.Initialize(origin, pendingTargetPosition, attackData);
+        projectile.Initialize(origin, targetPosition, attackData);
     }
 
     public void AnimEvent_AttackEnd()
