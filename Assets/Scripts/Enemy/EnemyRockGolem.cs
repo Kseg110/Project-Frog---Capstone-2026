@@ -76,17 +76,17 @@ public class EnemyRockGolem : EnemyBase
         }
     }
 
-    public void PlayHitReaction(HitReaction reaction)
+    public override void PlayHitReaction(HitReaction reaction)
     {
         if (animator == null) return;
 
         switch (reaction)
         {
-            case HitReaction.Block:
-                animator.SetTrigger("Block");
+            case HitReaction.Stagger:
+                animator.SetTrigger("Stagger");
                 break;
-            case HitReaction.TakeHit:
-                animator.SetTrigger("TakeHit");
+            case HitReaction.Knockback:
+                animator.SetTrigger("Knockback");
                 break;
         }
     }
