@@ -26,7 +26,7 @@ public class CardSelectionUI : MonoBehaviour
         canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
         upgradeManager = UpgradeManager.Instance;
         playerCrosshair = FindFirstObjectByType<PlayerCrosshair>();
-        crosshairCanvas = FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+        StartCoroutine(WaitForCrosshairCanvas());
         cardContainerGroup = cardContainer.GetComponent<CanvasGroup>();
     }
 
@@ -93,6 +93,15 @@ public class CardSelectionUI : MonoBehaviour
         // Ask the upgrade manager to pick 3 random cards for the player to choose from
         List<UpgradeDataSO> selectedCards = upgradeManager.GetRandomCards(3);
         StartCoroutine(SpawnCardsSequentially(selectedCards));
+    }
+
+    private IEnumerator WaitForCrosshairCanvas()
+    {
+        while (crosshairCanvas == null)
+        {
+            crosshairCanvas = GameObject.Find("CrosshairCanvas")?.GetComponent<Canvas>();
+            yield return null;
+        }
     }
 
     private IEnumerator SpawnCardsSequentially(List<UpgradeDataSO> cards)
