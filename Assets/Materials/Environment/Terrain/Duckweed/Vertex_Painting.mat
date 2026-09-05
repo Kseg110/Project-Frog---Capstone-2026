@@ -13,6 +13,7 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHATEST_ON
+  - _RECEIVE_SHADOWS_OFF
   m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
@@ -22,6 +23,7 @@ Material:
     RenderType: TransparentCutout
   disabledShaderPasses:
   - MOTIONVECTORS
+  - SHADOWCASTER
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -151,23 +153,29 @@ Material:
     - _AO_Strength_1: 1
     - _AO_Strength_2: 1
     - _AO_Strength_3: 1
+    - _AliphaClip_2: 0.96
     - _AlphaClip: 1
+    - _AlphaClip3: 0.2
+    - _AlphaClip_1: 1.91
     - _AlphaToMask: 1
-    - _Alpha_Clip: 0.17
+    - _Alpha_Clip: 0.04
+    - _Alpha_Clipping: 0.26
+    - _Alpha_Clipping_3: 0.17
     - _Blend: 0
     - _BlendModePreserveSpecular: 0
-    - _CastShadows: 1
+    - _CastShadows: 0
     - _Cull: 2
     - _Dry_Mud_N_Stregnth: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
+    - _Edge_Threshold_1: 0
     - _Moss_N_Strength: 1
     - _Normal_Strength_1: 1
     - _Normal_Strength_2: 1
     - _Normal_Strength_3: 1
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _ReceiveShadows: 1
+    - _ReceiveShadows: 0
     - _Rough_Dirt_N_Strength: 2.4
     - _Roughness_Strength_1: -2
     - _Roughness_Strength_2: -2
@@ -184,7 +192,7 @@ Material:
     - _WorkflowMode: 1
     - _ZTest: 4
     - _ZWrite: 1
-    - _ZWriteControl: 1
+    - _ZWriteControl: 0
     m_Colors:
     - _Color_Correction_1: {r: 1, g: 1, b: 0.47484273, a: 1}
     - _Color_Correction_2: {r: 1, g: 0.9835372, b: 0.6383648, a: 1}
