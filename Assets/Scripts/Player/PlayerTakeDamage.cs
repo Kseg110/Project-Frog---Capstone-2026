@@ -3,9 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Handles taking damage, i-frames, knockback, and flashing visuals for the player.
-/// </summary>
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Rigidbody))]
@@ -14,24 +11,20 @@ using UnityEngine;
 public class PlayerTakeDamage : MonoBehaviour
 {
     [Header("Damage Settings")]
-    [Tooltip("How long after taking damage until the player can be damaged again (i-frames/cooldown).")]
     [SerializeField] private float immortalityTime = 1f;
 
     [Header("Knockback")]
-    [Tooltip("Knockback speed in meters per second.")]
     [SerializeField] private float knockbackSpeed = 20f;
-
-    [Tooltip("Power of the knockback ease-out curve. Higher = snappier start, slower end.")]
     [SerializeField] private float knockbackEasePower = 2f;
 
     [Header("Visual Feedback")]
-    [Tooltip("Red flashes per second during immortality time.")]
     [SerializeField] private float flashFrequency = 10f;
+
+    [Tooltip("Create an Unlit/Lit solid Red material and drag it here in the Inspector.")]
+    [SerializeField] private Material redFlashMaterial;
 
     [Header("Collision")]
     [SerializeField] private LayerMask collisionLayers;
-
-    [Tooltip("Child object name containing the capsule collider hitbox.")]
     [SerializeField] private string hitBoxName = "Hitbox";
 
     public bool isGod;
@@ -41,62 +34,43 @@ public class PlayerTakeDamage : MonoBehaviour
     private PlayerMovement playerMovement;
     private PlayerImmortality playerImmortality;
     private PlayerShieldController shield;
-
     private Rigidbody rb;
     private CapsuleCollider hitbox;
-
-    private Renderer[] cachedRenderers;
-    private Color[] originalColors;
-
     private PlayerAnimation playerAnimation;
 
-    // I-frame timing
-    private float nextAllowedDamageTime = 0f;
+    // Renderer and Material Caching
+    private Renderer[] cachedRenderers;
+    private Material[][] originalMaterials;
 
-    // Coroutine handles
+    // Timing & Handles
+    private float nextAllowedDamageTime = 0f;
     private Coroutine flashCoroutine;
     private Coroutine knockbackCoroutine;
 
-    // Permanent Red Fix (Hopefully)
-    private MaterialPropertyBlock flashBlock;
-    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
-    private static readonly int ColorId = Shader.PropertyToID("_Color");
-
     private void Awake()
     {
-        // Cache references
         playerHealth = GetComponent<Health>();
         playerMovement = GetComponent<PlayerMovement>();
         playerImmortality = GetComponent<PlayerImmortality>();
         shield = GetComponent<PlayerShieldController>();
         rb = GetComponent<Rigidbody>();
+        playerAnimation = GetComponentInChildren<PlayerAnimation>();
 
-        // Get hitbox collider from child object
         Transform hit = transform.Find(hitBoxName);
-
-        if (hit == null)
+        if (hit != null)
         {
-            //Debug.LogError($"Hitbox child '{hitBoxName}' not found on {gameObject.name}");
-            return;
-        }
-
-        hitbox = hit.GetComponent<CapsuleCollider>();
-
-        if (hitbox == null)
-        {
-            //Debug.LogError($"No CapsuleCollider found on hitbox object '{hitBoxName}'");
-            return;
+            hitbox = hit.GetComponent<CapsuleCollider>();
         }
 
         CacheFlashRenderers();
-
-        // Rigidbody handled manually
         rb.isKinematic = true;
-        playerAnimation = GetComponentInChildren<PlayerAnimation>();
-
     }
 
-    // Builds the set of renderers the damage flash tints red, EXCLUDING the tether.
+    public void RefreshRenderers()
+    {
+        CacheFlashRenderers();
+    }
+
     private void CacheFlashRenderers()
     {
         if (flashCoroutine != null)
@@ -105,129 +79,108 @@ public class PlayerTakeDamage : MonoBehaviour
             flashCoroutine = null;
         }
 
-        Renderer[] allRenderers = GetComponentsInChildren<Renderer>();
+        // Get MeshRenderers AND SkinnedMeshRenderers (including inactive)
+        Renderer[] allRenderers = GetComponentsInChildren<Renderer>(true);
 
         AnchorTether tether = GetComponentInChildren<AnchorTether>();
         Transform tetherRoot = tether != null ? tether.transform : null;
 
-        List<Renderer> flashSet = new List<Renderer>(allRenderers.Length);
+        List<Renderer> flashSet = new List<Renderer>();
         foreach (Renderer r in allRenderers)
         {
             if (tetherRoot != null && r.transform.IsChildOf(tetherRoot))
+                continue;
+
+            if (r is ParticleSystemRenderer || r is TrailRenderer)
                 continue;
 
             flashSet.Add(r);
         }
 
         cachedRenderers = flashSet.ToArray();
-        flashBlock = new MaterialPropertyBlock();
 
-        // No color sampling at all — we never store "original", so it can never be poisoned red. Hopefully.
+        // Store original materials so we can restore them perfectly
+        originalMaterials = new Material[cachedRenderers.Length][];
+        for (int i = 0; i < cachedRenderers.Length; i++)
+        {
+            originalMaterials[i] = cachedRenderers[i].sharedMaterials;
+        }
     }
 
-    /// <summary>
-    /// Attempts to apply damage and knockback.
-    /// </summary>
-    public void TryApplyDamageAndKnockback(
-        float damageAmount,
-        Vector3 knockDirection,
-        float knockbackDistance)
+    public void TryApplyDamageAndKnockback(float damageAmount, Vector3 knockDirection, float knockbackDistance)
     {
-        if (isGod)
+        if (isGod || Time.time < nextAllowedDamageTime)
             return;
 
-        if (Time.time < nextAllowedDamageTime)
-            return;
-
-        // SHIELD ALWAYS CHECKS FIRST
         if (shield != null && shield.TakeDamage((int)damageAmount))
         {
-            //Debug.Log("[Shield] Hit absorbed by shield!");
-
-            // Activate i-frames even if shield absorbed, to prevent multiple hits in quick succession
             nextAllowedDamageTime = Time.time + immortalityTime;
             return;
         }
 
-        // If shield didn't absorb, check I-frames 
-        if (playerImmortality.IsImmortal)
+        if (playerImmortality != null && playerImmortality.IsImmortal)
             return;
 
-        // Start i-frames
         nextAllowedDamageTime = Time.time + Mathf.Max(0f, immortalityTime);
 
-        // Otherwise → real damage
-        playerHealth.TakeDmg(damageAmount);
+        if (playerHealth != null)
+            playerHealth.TakeDmg(damageAmount);
 
-        // Effects
         StartKnockback(knockDirection, knockbackDistance);
         StartFlash();
     }
 
-    /// <summary>
-    /// Starts knockback coroutine.
-    /// </summary>
     private void StartKnockback(Vector3 direction, float distance)
     {
         if (knockbackCoroutine != null)
             StopCoroutine(knockbackCoroutine);
 
-        knockbackCoroutine =
-            StartCoroutine(KnockbackRoutine(direction.normalized, distance));
+        knockbackCoroutine = StartCoroutine(KnockbackRoutine(direction.normalized, distance));
 
-        playerAnimation.PlayTakeDamage();
+        if (playerAnimation != null)
+            playerAnimation.PlayTakeDamage();
     }
 
-    /// <summary>
-    /// Collision-safe knockback movement.
-    /// </summary>
     private IEnumerator KnockbackRoutine(Vector3 dir, float distance)
     {
-        playerMovement.StopMovement();
+        if (playerMovement != null)
+            playerMovement.StopMovement();
 
         Vector3 start = rb.position;
-
         float duration = Mathf.Max(0.01f, distance / knockbackSpeed);
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
             float t = elapsed / duration;
+            float easedT = 1f - Mathf.Pow(1f - t, knockbackEasePower);
 
-            // Ease-out interpolation
-            float easedT =
-                1f - Mathf.Pow(1f - t, knockbackEasePower);
-
-            Vector3 targetOffset =
-                Vector3.Lerp(Vector3.zero, dir * distance, easedT);
-
+            Vector3 targetOffset = Vector3.Lerp(Vector3.zero, dir * distance, easedT);
             Vector3 desiredPosition = start + targetOffset;
-
             Vector3 motion = desiredPosition - rb.position;
 
-            // Collision-safe movement using HITBOX collider
-            CollisionUtility.MoveWithCapsuleCollision(
-                rb,
-                hitbox,
-                motion,
-                collisionLayers
-            );
+            if (hitbox != null)
+            {
+                CollisionUtility.MoveWithCapsuleCollision(rb, hitbox, motion, collisionLayers);
+            }
 
             elapsed += Time.fixedDeltaTime;
-
             yield return new WaitForFixedUpdate();
         }
 
-        playerMovement.ResumeMovement();
+        if (playerMovement != null)
+            playerMovement.ResumeMovement();
 
         knockbackCoroutine = null;
     }
 
-    /// <summary>
-    /// Starts flashing visuals.
-    /// </summary>
     private void StartFlash()
     {
+        if (cachedRenderers == null || cachedRenderers.Length == 0)
+        {
+            CacheFlashRenderers();
+        }
+
         if (cachedRenderers.Length == 0 || flashFrequency <= 0f)
             return;
 
@@ -239,9 +192,6 @@ public class PlayerTakeDamage : MonoBehaviour
         flashCoroutine = StartCoroutine(FlashRoutine());
     }
 
-    /// <summary>
-    /// Flashes player renderers during i-frames.
-    /// </summary>
     private IEnumerator FlashRoutine()
     {
         float interval = 1f / flashFrequency / 2f;
@@ -258,13 +208,11 @@ public class PlayerTakeDamage : MonoBehaviour
         }
         finally
         {
-            // Clearing the property block reveals the untouched base material — the baseline is never modified, so this can't strand red.
             SetFlash(false);
             flashCoroutine = null;
         }
     }
 
-    // Applies or clears the red tint via property block, never touching the shared material.
     private void SetFlash(bool red)
     {
         if (cachedRenderers == null) return;
@@ -272,19 +220,22 @@ public class PlayerTakeDamage : MonoBehaviour
         for (int i = 0; i < cachedRenderers.Length; i++)
         {
             Renderer r = cachedRenderers[i];
-            if (r == null) continue; // renderer destroyed over the object's life — skip, don't crash
+            if (r == null) continue;
 
-            if (red)
+            if (red && redFlashMaterial != null)
             {
-                r.GetPropertyBlock(flashBlock);
-                flashBlock.SetColor(BaseColorId, Color.red);
-                flashBlock.SetColor(ColorId, Color.red);
-                r.SetPropertyBlock(flashBlock);
+                // Create an array matching the renderer's sub-mesh count filled with red material
+                Material[] redMats = new Material[originalMaterials[i].Length];
+                for (int m = 0; m < redMats.Length; m++)
+                {
+                    redMats[m] = redFlashMaterial;
+                }
+                r.sharedMaterials = redMats;
             }
             else
             {
-                // Empty block = renderer falls back to its material's real color.
-                r.SetPropertyBlock(null);
+                // Revert to original materials
+                r.sharedMaterials = originalMaterials[i];
             }
         }
     }
