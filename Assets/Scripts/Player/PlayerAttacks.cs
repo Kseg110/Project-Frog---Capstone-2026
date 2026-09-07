@@ -371,6 +371,7 @@ public class PlayerAttacks : MonoBehaviour
                     projMulti.currentElement = AnchorElement.Wind;         
                     projMulti.pointBlankRange = pointBlankRange;
                     projMulti.Initialize(chargePercent);
+                    projMulti.knockbackDistance *= 0.5f;
                 }
 
                 IgnorePlayerCollision(obj);
@@ -409,6 +410,11 @@ public class PlayerAttacks : MonoBehaviour
 
             proj.pointBlankRange = pointBlankRange;
             proj.Initialize(chargePercent);
+
+            if (proj.currentElement == AnchorElement.Wind)
+            {
+                proj.knockbackDistance *= 0.5f;
+            }
             //proj.damage = 2f;
         }
 
