@@ -348,7 +348,7 @@ public class PlayerAttacks : MonoBehaviour
         // ---------------------------------------------------------
         if (playerAnchor != null && playerAnchor.IsTethered && playerAnchor.AttachedAnchor.Element == AnchorElement.Wind)
         {
-            int baseProjectiles = 4;
+            int baseProjectiles = 2;
             int extra = MultishotUpgrade.Instance != null ? MultishotUpgrade.Instance.GetExtraDarts() : 0;
             int totalProjectiles = baseProjectiles + extra;
 
