@@ -79,7 +79,7 @@ public class PauseManager : MonoBehaviour
         if (pauseAction.WasPressedThisFrame())
         {
             TogglePause();
-            Debug.Log("Escape Key pressed");
+            //Debug.Log("Escape Key pressed");
         }
     }
 
@@ -104,7 +104,7 @@ public class PauseManager : MonoBehaviour
         else
             PauseGame();
 
-        Debug.Log("Pause Toggled");
+        //Debug.Log("Pause Toggled");
     }
 
     public void ResumeGame()
@@ -183,7 +183,7 @@ public class PauseManager : MonoBehaviour
         if (iconManager != null)
             iconManager.RefreshIcons();
 
-        Debug.Log("Pause triggered");
+        //Debug.Log("Pause triggered");
     }
 
     public void QuitGame()
