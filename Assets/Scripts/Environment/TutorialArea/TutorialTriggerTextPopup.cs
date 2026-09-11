@@ -12,6 +12,8 @@ public class TutorialTriggerTextPopup : MonoBehaviour
     [Tooltip("Tag used to identify the player. If the collider's root has PlayerMovement or PlayerAnchor, the tag is not required.")]
     public string playerTag = "Player";
 
+    private bool hasTriggered = false;
+
     private void Awake()
     {
         if (popupUI != null)
@@ -20,16 +22,25 @@ public class TutorialTriggerTextPopup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (hasTriggered) return;
+
         if (!IsPlayerCollider(other)) return;
+
         if (popupUI != null)
             popupUI.SetActive(true);
     }
 
     private void OnTriggerExit(Collider other)
     {
+        if (hasTriggered) return;
+
         if (!IsPlayerCollider(other)) return;
+
         if (popupUI != null)
             popupUI.SetActive(false);
+
+        // Destroys this trigger object so it cannot be activated again
+        Destroy(gameObject);
     }
 
     private bool IsPlayerCollider(Collider col)
