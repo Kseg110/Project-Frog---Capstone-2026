@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class UIPlayerHUD : MonoBehaviour
 {
     [Header("Health Wheel")]
+    [SerializeField] private Image healthBackgroundImage;
     [SerializeField] private Image healthFillImage;
     [SerializeField] private float healthLerpSpeed = 5f;
 
