@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEditor;
 using FMODUnity;
+using System; // added for Action
 
 public class CardSelectionUI : MonoBehaviour
 {
@@ -24,6 +25,9 @@ public class CardSelectionUI : MonoBehaviour
     private bool cardAlreadyChosen = false;
 
     private List<CardUI> spawnedCards = new List<CardUI>();
+
+    // Event fired when the card selection UI becomes visible (before Time.timeScale is set)
+    public static event Action OnCardSelectionShown;
 
     private void Awake()
     {
@@ -81,6 +85,10 @@ public class CardSelectionUI : MonoBehaviour
     {
         cardAlreadyChosen = false;
         IsCardSelectionActive = true;
+
+        // Fire event so other systems (e.g. spears) can react immediately before timeScale is changed
+        OnCardSelectionShown?.Invoke();
+
         Time.timeScale = 0f;
         ShowUI();
         playerHUD.HideHUD();
