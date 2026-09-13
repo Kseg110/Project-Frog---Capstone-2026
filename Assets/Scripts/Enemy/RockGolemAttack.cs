@@ -5,6 +5,7 @@ public class RockGolemAttack : EnemyAttack
 {
     [Header("Projectile")]
     [SerializeField] private GameObject burrowProjectilePrefab;
+    //[SerializeField] private GameObject attackVFX;
     [SerializeField] private EnemyBurrowAttackDataSO attackData;
 
     private Vector3 pendingTargetPosition;
