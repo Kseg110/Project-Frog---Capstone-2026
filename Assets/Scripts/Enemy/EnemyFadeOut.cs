@@ -52,6 +52,12 @@ public class EnemyFadeOut : MonoBehaviour
     [Tooltip("Stops the fading corpse casting a full-strength shadow after it has visually disappeared.")]
     [SerializeField] private bool disableShadowsOnFade = true;
 
+    [Header("Fade Property Resolution")]
+    [Tooltip("Exposed alpha property on the death material's shader - use the Reference name from Shader Graph's Node/Property settings, e.g. _Alpha. Leave empty to auto-detect (_Alpha, _Opacity, then _BaseColor / _Color alpha).")]
+    [SerializeField] private string alphaPropertyOverride = "";
+    [Tooltip("Exposed emission property to dim alongside alpha, again by Reference name (e.g. _EmissionStrength). Leave empty to auto-detect (_EmissionStrength, then _EmissionColor). Shaders with neither simply skip the emission ramp.")]
+    [SerializeField] private string emissionPropertyOverride = "";
+
     [Header("Disable On Fade")]
     [Tooltip("Left empty = auto-filled from all child colliders on Awake.")]
     [SerializeField] private Collider[] collidersToDisable;
@@ -63,16 +69,33 @@ public class EnemyFadeOut : MonoBehaviour
     [Header("FMod Events")]
     [SerializeField] private EventReference enemyDeathEvent;
 
-    // URP Lit uses _BaseColor; some shaders (or Built-in) use _Color. Resolve per-material.
-    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
-    private static readonly int ColorId = Shader.PropertyToID("_Color");
-    private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
-    private static readonly int ZWriteId = Shader.PropertyToID("_ZWrite");
+    // Checked in order, and only the FIRST match on a given shader is used.
+    // Scalar Shader Graph properties come first: a graph that exposes its own _Alpha has it wired to the Fragment stage's Alpha block, whereas a _BaseColor that URP injects for material override may not drive anything.
+    // Stock URP Lit has no _Alpha, so it still falls through to _BaseColor exactly as before.
+    private static readonly string[] DefaultAlphaCandidates = { "_Alpha", "_Opacity", "_BaseColor", "_Color" };
+    private static readonly string[] DefaultEmissionCandidates = { "_EmissionStrength", "_EmissionColor" };
 
-    // Original emission colors, captured at fade start so we scale from the true value rather than compounding frame to frame.
-    private Color[] baseEmission;
+    private static readonly int ZWriteId = Shader.PropertyToID("_ZWrite");
+    private static readonly int ZWriteControlId = Shader.PropertyToID("_ZWriteControl");   // Shader Graph's Depth Write dropdown: 0 = Auto, 1 = ForceEnabled, 2 = ForceDisabled
+
+    // One entry per material slot per renderer, resolved once when the fade starts so the per-frame ramp is pure Set calls - no HasProperty / string lookups, and no re-reading an already dimmed emission value.
+    private struct FadeTarget
+    {
+        public Material material;
+        public bool hasAlpha;
+        public int alphaId;
+        public bool alphaIsScalar;      // true = SetFloat (Shader Graph slider), false = alpha channel of a Color
+        public bool hasEmission;
+        public int emissionId;
+        public bool emissionIsScalar;
+        public Color emissionColor;     // captured start value, so we scale from the true original
+        public float emissionScalar;
+    }
+
+    private readonly List<FadeTarget> fadeTargets = new List<FadeTarget>();
     private bool isFading;
     private bool isDead;   // guard so Die() only runs once
+
     private void Awake()
     {
         // If a swap-in mesh is assigned, target its animator/renderers (it may be inactive at Awake, so include inactive).
@@ -95,8 +118,9 @@ public class EnemyFadeOut : MonoBehaviour
             if (b != null) scriptsToDisable = new MonoBehaviour[] { b };
         }
     }
+
     // Call this from the health system when HP hits 0.
-    // Stops AI + agent + colliders, plays the baked "fall apart" animation, waits for it to finish, then fades out and destroys.
+    // Stops AI + agent + colliders, plays the baked "fall apart" animation (or any other animation that calls isDead), waits for it to finish, then fades out and destroys.
     public void Die()
     {
         if (isDead) return;   // guard against double-death
@@ -214,6 +238,7 @@ public class EnemyFadeOut : MonoBehaviour
         yield return new WaitForSeconds(clipLength);
         BeginFade();
     }
+
     public void BeginFade()
     {
         if (isFading) return;   // guard against double-trigger
@@ -222,23 +247,113 @@ public class EnemyFadeOut : MonoBehaviour
         // Pull held weapons into the renderer array first so they share the whole pipeline.
         MergeWeaponRenderers();
 
-        // Swap to the transparent death material FIRST - CaptureEmission reads from the live material, so doing this after would snapshot the wrong emission values.
+        // Swap to the transparent death material FIRST - the fade targets are resolved against the instanced copies of THAT material, so doing this after would cache properties from the wrong shader.
         ChangeToDeathMaterial();
-        CaptureEmission();
+        BuildFadeTargets();
         StopAllCoroutines();
         StartCoroutine(FadeRoutine());
     }
-    // Snapshot each renderer's starting emission color once, so ApplyAlpha can scale from the original toward black instead of reading an already-dimmed value each frame.
-    private void CaptureEmission()
+
+    // Resolves the alpha (and optional emission) property once per instanced material, using the shader's own property table rather than assuming _BaseColor.
+    // Shader Graph exposes alpha as a standalone float/slider rather than the alpha channel of a color, so we check for both. If no alpha property is found, we log a warning so the designer knows the death material would pop instead of fading.
+    private void BuildFadeTargets()
     {
-        baseEmission = new Color[renderers.Length];
-        for (int i = 0; i < renderers.Length; i++)
+        fadeTargets.Clear();
+        bool warnedAboutAlpha = false;
+
+        foreach (var r in renderers)
         {
-            var r = renderers[i];
-            if (r != null && r.material.HasProperty(EmissionColorId))
-                baseEmission[i] = r.material.GetColor(EmissionColorId);
+            if (r == null) continue;
+
+            // r.materials returns the per-renderer instances created in ChangeToDeathMaterial, so edits here are local to this corpse.
+            var mats = r.materials;
+            for (int m = 0; m < mats.Length; m++)
+            {
+                var mat = mats[m];
+                if (mat == null) continue;
+
+                var target = new FadeTarget { material = mat };
+
+                target.hasAlpha = TryResolveAlpha(mat, out int alphaId, out bool alphaIsScalar);
+                target.alphaId = alphaId;
+                target.alphaIsScalar = alphaIsScalar;
+
+                target.hasEmission = TryResolveEmission(mat, out int emissionId, out bool emissionIsScalar);
+                target.emissionId = emissionId;
+                target.emissionIsScalar = emissionIsScalar;
+                if (target.hasEmission)
+                {
+                    if (emissionIsScalar) target.emissionScalar = mat.GetFloat(emissionId);
+                    else target.emissionColor = mat.GetColor(emissionId);
+                }
+
+                if (!target.hasAlpha && !warnedAboutAlpha)
+                {
+                    warnedAboutAlpha = true;
+                    Debug.LogWarning($"[EnemyFadeOut] Shader '{mat.shader.name}' on {gameObject.name} exposes no alpha property this script recognises, so the corpse will pop out instead of fading. Set Alpha Property Override to the shader's Reference name (Shader Graph: select the property, copy the Reference field, e.g. _Alpha).");
+                }
+
+                fadeTargets.Add(target);
+            }
         }
     }
+
+    private bool TryResolveAlpha(Material mat, out int id, out bool isScalar)
+    {
+        if (TryResolveProperty(mat, alphaPropertyOverride, out id, out isScalar)) return true;
+
+        foreach (var name in DefaultAlphaCandidates)
+            if (TryResolveProperty(mat, name, out id, out isScalar)) return true;
+
+        id = 0;
+        isScalar = false;
+        return false;
+    }
+
+    private bool TryResolveEmission(Material mat, out int id, out bool isScalar)
+    {
+        if (TryResolveProperty(mat, emissionPropertyOverride, out id, out isScalar)) return true;
+
+        foreach (var name in DefaultEmissionCandidates)
+            if (TryResolveProperty(mat, name, out id, out isScalar)) return true;
+
+        id = 0;
+        isScalar = false;
+        return false;
+    }
+
+    // Material.HasProperty is type-blind - it returns true for a texture named _Emission just as happily as for a float - so we query the shader's property table instead and record whether to drive it as a float or a colour.
+    private static bool TryResolveProperty(Material mat, string propertyName, out int id, out bool isScalar)
+    {
+        id = 0;
+        isScalar = false;
+
+        if (mat == null || string.IsNullOrEmpty(propertyName)) return false;
+
+        Shader shader = mat.shader;
+        if (shader == null) return false;
+
+        int index = shader.FindPropertyIndex(propertyName);
+        if (index < 0) return false;
+
+        switch (shader.GetPropertyType(index))
+        {
+            case ShaderPropertyType.Float:
+            case ShaderPropertyType.Range:
+                isScalar = true;
+                break;
+            case ShaderPropertyType.Color:
+            case ShaderPropertyType.Vector:
+                isScalar = false;
+                break;
+            default:
+                return false;   // Texture / Int - nothing we can ramp.
+        }
+
+        id = Shader.PropertyToID(propertyName);
+        return true;
+    }
+
     private IEnumerator FadeRoutine()
     {
         float t = 0f;
@@ -251,44 +366,42 @@ public class EnemyFadeOut : MonoBehaviour
         }
         ApplyAlpha(0f);
 
-        // Safety net: base-color alpha and emission are both zeroed, but hard-disable renderers so any residual specular/reflection is gone before destroy.
+        // Safety net: alpha and emission are both zeroed, but hard-disable renderers so any residual specular/reflection is gone before destroy.
         foreach (var r in renderers)
             if (r != null) r.enabled = false;
         Destroy(gameObject);
     }
+
     private void ApplyAlpha(float alpha)
     {
-        for (int i = 0; i < renderers.Length; i++)
+        for (int i = 0; i < fadeTargets.Count; i++)
         {
-            var r = renderers[i];
-            if (r == null) continue;
+            var target = fadeTargets[i];
+            var mat = target.material;
+            if (mat == null) continue;
 
-            // Every slot on the renderer, not just slot 0 - this rig has multi-submesh meshes.
-            var mats = r.materials;
-            for (int m = 0; m < mats.Length; m++)
+            if (target.hasAlpha)
             {
-                var mat = mats[m];
-                if (mat == null) continue;
-
-                // Fade base color alpha.
-                int propId;
-                if (mat.HasProperty(BaseColorId)) propId = BaseColorId;
-                else if (mat.HasProperty(ColorId)) propId = ColorId;
-                else propId = 0;
-                if (propId != 0)
+                if (target.alphaIsScalar)
                 {
-                    Color c = mat.GetColor(propId);
-                    c.a = alpha;
-                    mat.SetColor(propId, c);
+                    mat.SetFloat(target.alphaId, alpha);
                 }
+                else
+                {
+                    Color c = mat.GetColor(target.alphaId);
+                    c.a = alpha;
+                    mat.SetColor(target.alphaId, c);
+                }
+            }
 
-                // Fade emission toward black by the same factor so the glow dies with the surface.
-                if (baseEmission != null && mat.HasProperty(EmissionColorId))
-                    mat.SetColor(EmissionColorId, baseEmission[i] * alpha);
+            // Dim emission by the same factor so the glow dies with the surface.
+            if (target.hasEmission)
+            {
+                if (target.emissionIsScalar) mat.SetFloat(target.emissionId, target.emissionScalar * alpha);
+                else mat.SetColor(target.emissionId, target.emissionColor * alpha);
             }
         }
     }
-
 
     // Replaces EVERY material slot on every tracked renderer with the transparent death material. The single-slot version only swapped submesh 0, leaving the rest opaque.
     private void ChangeToDeathMaterial()
@@ -310,11 +423,17 @@ public class EnemyFadeOut : MonoBehaviour
 
             if (forceDepthWriteOnFade)
             {
-                // Transparent URP materials disable ZWrite, which lets the far side of the mesh render through the near side (the "x-ray" look). Forcing it back on restores correct self-occlusion for the duration of the fade.
+                // Transparent materials disable ZWrite, which lets the far side of the mesh render through the near side (the "x-ray" look).
+                // Shader Graph gates this behind _ZWriteControl (its Depth Write dropdown, "Auto" by default), so set both:
+                // the control tells the shader to honour the override, _ZWrite is the value the pass actually reads.
                 var instanced = r.materials;
                 for (int i = 0; i < instanced.Length; i++)
-                    if (instanced[i] != null && instanced[i].HasProperty(ZWriteId))
-                        instanced[i].SetInt(ZWriteId, 1);
+                {
+                    var mat = instanced[i];
+                    if (mat == null) continue;
+                    if (mat.HasProperty(ZWriteControlId)) mat.SetFloat(ZWriteControlId, 1f);   // ForceEnabled
+                    if (mat.HasProperty(ZWriteId)) mat.SetFloat(ZWriteId, 1f);
+                }
             }
 
             if (disableShadowsOnFade)

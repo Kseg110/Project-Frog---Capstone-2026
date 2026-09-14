@@ -73,6 +73,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{c5dbb731-5239-4b84-9da4-850c07312779}">
+		<property name="volume">
+			<value>10</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{f41179e9-7c77-4e4f-bbeb-f12fe77be27b}</destination>
 		</relationship>
@@ -90,6 +93,12 @@
 	</object>
 	<object class="MixerBusPanner" id="{2dbd3f2a-1a17-404d-915c-e1cb52f1555d}" />
 	<object class="SingleSound" id="{9db37043-7481-4a1e-90c6-8fe57f3d536e}">
+		<property name="triggerProbabilityEnabled">
+			<value>true</value>
+		</property>
+		<property name="triggerProbability">
+			<value>20</value>
+		</property>
 		<property name="length">
 			<value>1.2000000000000002</value>
 		</property>

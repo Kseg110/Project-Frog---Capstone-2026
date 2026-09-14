@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+//using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class DebugMenu : MonoBehaviour
@@ -12,6 +13,7 @@ public class DebugMenu : MonoBehaviour
     public InventoryManager inventoryManager;
     public Transform[] teleportSpots;
     public GameObject player;
+    public bool active = false;
 
     [Header("Appearance")]
     public GUISkin skin;
@@ -106,7 +108,12 @@ public class DebugMenu : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.BackQuote))
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            active = true;   // Toggles bool allowing for debug menu to work on tilda key ~
+        }
+
+        if (Input.GetKeyDown(KeyCode.BackQuote) && active == true)
             isOpen = !isOpen;
         
     }
