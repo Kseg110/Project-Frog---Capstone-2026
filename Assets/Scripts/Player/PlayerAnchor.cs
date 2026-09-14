@@ -256,6 +256,7 @@ public class PlayerAnchor : MonoBehaviour
         isTethered = true;
         attachedAnchor = currentAnchor;
         playerAnimation.PlayTether();
+        attachedAnchor.OnTetherAttached(); // Toggles active state for anchor ring vfx true
 
         RuntimeManager.PlayOneShot(tetherAttachEvent, transform.position);
         attachedAnchor.Activate();
@@ -273,6 +274,7 @@ public class PlayerAnchor : MonoBehaviour
         if (isTethered)
         {
             playerAnimation.PlayUnTether();
+            attachedAnchor.OnTetherDetached(); // Toggles off active state for anchor ring vfx false
         }
         isTethered = false;
         AnchorBase releasedAnchor = attachedAnchor;   // cache before we clear it
@@ -285,6 +287,7 @@ public class PlayerAnchor : MonoBehaviour
                 anchorTether.ReelInAndBreak();
             else
                 anchorTether.SetEndPoint(null, true);
+
         }
 
         playerAnimation.StopTether();

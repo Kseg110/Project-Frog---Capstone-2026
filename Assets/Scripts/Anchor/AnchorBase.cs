@@ -5,6 +5,7 @@
 
 using UnityEngine;
 using FMODUnity;
+using Unity.IO.LowLevel.Unsafe;
 
 public abstract class AnchorBase : MonoBehaviour
 {
@@ -18,6 +19,9 @@ public abstract class AnchorBase : MonoBehaviour
     [SerializeField] private Light pointLight;
     [SerializeField] private float baseIntensity = 1f;
     [SerializeField] private float maxOverchargeIntensity = 50f;
+
+    [Header("Anchor VFX")]
+    [SerializeField] private GameObject anchorRingVFX;
 
     private float originalIntensity;
     private float targetIntensity;
@@ -84,6 +88,22 @@ public abstract class AnchorBase : MonoBehaviour
         if (pointLight != null)
         {
             targetIntensity = originalIntensity;
+        }
+    }
+
+    public virtual void OnTetherAttached()
+    {
+        if (anchorRingVFX != null)
+        {
+            anchorRingVFX.SetActive(true);
+        }
+    }
+
+    public virtual void OnTetherDetached()
+    {
+        if (anchorRingVFX != null)
+        {
+            anchorRingVFX.SetActive(false);
         }
     }
 
