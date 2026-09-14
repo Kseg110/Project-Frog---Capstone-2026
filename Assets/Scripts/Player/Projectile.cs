@@ -114,7 +114,7 @@ public class Projectile : MonoBehaviour, IProjectile
         }
 
         // Visual charge scaling
-        float scale = Mathf.Lerp(0.25f, maxScale, chargePercent);
+        float scale = Mathf.Lerp(0.75f, maxScale, chargePercent);
         transform.localScale = Vector3.one * scale;
 
         Destroy(gameObject, 3f);
